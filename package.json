@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "rsbuild preview"
   },
-	"packageManager": "pnpm@8.9.2",
+  "packageManager": "pnpm@8.9.2",
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/x": "^1.0.5",
@@ -19,7 +19,8 @@
     "markdown-it": "^14.1.0",
     "openai": "^4.77.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "semver": "^7.7.1"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.0",
@@ -31,6 +32,7 @@
     "@types/node": "^22.13.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@types/semver": "^7.5.8",
     "eslint": "^9.21.0",
     "eslint-plugin-react": "^7.37.1",
     "eslint-plugin-react-hooks": "^5.0.0",

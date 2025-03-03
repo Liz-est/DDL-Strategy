@@ -42,6 +42,7 @@ import MarkdownIt from 'markdown-it';
 import { isTempId } from '../utils/utils';
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { DIFY_INFO } from '../utils/vars';
+import { gte } from 'semver'
 
 /**
  * 消息对象中的文件 item
@@ -104,7 +105,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     onConversationIdChange,
   } = props;
   const [initLoading, setInitLoading] = useState<boolean>(false);
-  const [content, setContent] = useState('');
   const [target, setTarget] = useState('');
   const [historyMessages, setHistoryMessages] = useState<MessageInfo<string>[]>(
     [],
@@ -216,7 +216,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     const difyVersion = DIFY_INFO.version
     let baseData = result.data
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
-    if (Number(difyVersion) >= 1) {
+    if (gte(difyVersion, '1.0.0')) {
       baseData = baseData.reverse()
     } 
     baseData.forEach((item) => {
