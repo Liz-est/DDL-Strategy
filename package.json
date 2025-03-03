@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "rsbuild preview"
   },
+	"packageManager": "pnpm@8.9.2",
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/x": "^1.0.5",
