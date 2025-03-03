@@ -218,7 +218,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
     if (gte(difyVersion, '1.0.0')) {
       baseData = baseData.reverse()
-    } 
+    }
     baseData.forEach((item) => {
       newMessages.push(
         {
@@ -323,7 +323,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             message_files?.length ?
             message_files.map((item: IMessageFileItem)=>{
               return (
-                <img src={item.url} key={item.id} alt={item.filename} />
+                <img src={item.url} key={item.id} alt={item.filename} className='max-w-full' />
               )
             })
             : null
