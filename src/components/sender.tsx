@@ -23,9 +23,6 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
   const [fileIdMap, setFileIdMap] = useState<Record<string, string>>({});
 
-  console.log('files', files);
-  console.log('fileIdMap', fileIdMap);
-
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const senderHeader = (
     <Sender.Header
