@@ -2,7 +2,7 @@
 
 一个基于 Dify API 的 AI 会话 Web 应用。
 
-![Screen Shot](image.png)
+![Screen Shot](./docs/running_sample.png)
 
 ## 特性
 
@@ -26,14 +26,56 @@
 
 我们支持让用户在运行时手动配置 Dify 相关信息（ API 服务器域名和 API Key），也支持开发者通过指定环境变量的方式，统一指定配置。
 
-如果你想选择前一种方式，下面的内容可以直接跳过，反之如果你倾向于后一种方式，并且想在本地开发时模拟相似的环境，可以在根目录创建一个 `.env.local` 文件，并添加以下环境变量:
+#### 1.1 获取配置
+
+无论采取哪种配置方式，你都需要在 Dify 控制台获取几个关键变量：
+
+- API 服务器域名
+- API 版本，固定为 `/v1`
+- API Key
+
+进入 Dify 的应用详情，点击左侧的 `访问 API`：
+
+![获取域名和前缀](./docs/get_api_base.jpg)
+
+`API 服务器` 后展示的域名即为 API 服务器域名，域名后即为 API 版本，固定为 `/v1`。
+
+点击右侧的 `API 密钥` 按钮，即可看到 API Key 的管理弹窗：
+
+![获取 API Key](./docs/get_api_key_entry.jpg)
+
+你可以选择创建一个新的 API Key，或者复制现有的 API Key。
+
+![获取 API Key](./docs/get_api_key.jpg)
+
+完成以上步骤后，我们将会得到如下信息：
+
+- API 服务器域名: `https://api.dify.ai` OR 私有化部署后的 API 域名
+- API 版本: `/v1`
+- API Key: `app-YOUR_API_KEY`
+
+#### 1.2 运行时配置
+
+点击页面左上角的配置按钮，即可进入运行时配置页面：
+
+![运行时配置](./docs/config-button.jpg)
+
+依次填入我们在上一步中获取的信息：
+
+![运行时配置](./docs/config_form.jpg)
+
+点击确定按钮，提示 “更新配置成功”，将会重新加载应用信息：
+
+![运行时配置](./docs/config_success.jpg)
+
+#### 1.3. 编译时配置
+
+如果你想在编译时注入配置，所有访问者都使用同一个身份，并且在本地开发时模拟相似的环境，可以在根目录创建一个 `.env.local` 文件，并添加以下环境变量（仍然是依次填入上一步获取到的信息）:
 
 ```bash
-# Dify API 域名，如果是私有化部署，请修改为你的域名
+# .env.local
 DIFY_API_BASE=https://api.dify.ai
-# Dify API 版本，固定为 /v1
 DIFY_API_VERSION=/v1
-# Dify API Key，在 Dify 控制台获取，生成的是一个 app- 开头的 key
 DIFY_API_KEY=app-YOUR_API_KEY
 ```
 
