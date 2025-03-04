@@ -2,7 +2,15 @@
 
 一个基于 Dify API 的 AI 会话 Web 应用。
 
+## 运行截图
+
+`<think>` 标签（DeepSeek 深度思考）：
+
 ![Screen Shot](./docs/running_sample.png)
+
+Chatflow 工作流：
+
+![Screen Shot](./docs/sample_chatflow.jpg)
 
 ## 特性
 
