@@ -67,8 +67,6 @@ interface IWorkflowLogsProps {
 export default function WorkflowLogs(props: IWorkflowLogsProps) {
   const { items } = props;
 
-  console.log('items111', items);
-
   const collapseItems = [
     {
       key: 'workflow',

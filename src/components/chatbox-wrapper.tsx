@@ -238,7 +238,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           } else if (parsedData.event === 'node_finished') {
             const newNodes: IWorkflowNode[] = [...workflowLogsRef.current[parsedData.message_id].nodes].map((item) => {
               if (item.id === innerData.id) {
-                console.log('节点结束', item)
                 return {
                   ...item,
                   status: 'success',
