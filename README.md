@@ -1,6 +1,6 @@
 # Dify Chat Web
 
-一个基于 Dify API 的 AI 会话 Web 应用。
+一个基于 Dify API 的 AI 会话 Web APP, 适配 `<think>` 深度思考标签、 Dify Chatflow 应用输出的工作流信息展示。
 
 ## 运行截图
 
