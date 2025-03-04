@@ -1,8 +1,12 @@
 import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
   CopyOutlined,
   DislikeOutlined,
+  InfoOutlined,
   LikeOutlined,
   MessageOutlined,
+  PlayCircleOutlined,
   RobotOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
@@ -18,7 +22,7 @@ import {
   Tag,
   Typography,
   message as antdMessage,
-	theme,
+  theme,
 } from 'antd';
 import { Chatbox } from './chatbox';
 import {
@@ -43,6 +47,7 @@ import { isTempId } from '../utils/utils';
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { DIFY_INFO } from '../utils/vars';
 import { gte } from 'semver'
+import WorkflowNodeIcon from './workflow-node-icon';
 
 /**
  * 消息对象中的文件 item
@@ -92,9 +97,28 @@ interface IChatboxWrapperProps {
   onConversationIdChange: (id: string) => void;
 }
 
+interface IWorkflowNode {
+  /**
+   * 步骤 ID
+   */
+  id: string
+  /**
+   * 步骤标题
+   */
+  title: string
+  /**
+   * 运行状态
+   */
+  status: 'init' | 'running' | 'success' | 'error'
+  /**
+   * 节点类型 question-classifier/问题分类器
+   */
+  type: 'question-classifier'
+}
+
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [entryForm] = Form.useForm();
-	const { token } = theme.useToken()
+  const { token } = theme.useToken()
 
   const {
     appInfo,
@@ -115,14 +139,23 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [formVisible, setFormVisible] = useState<boolean>(false);
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
-	// 定义 ref, 用于获取最新的 conversationId
-	const conversationIdRef = useRef<string>();
+  // 定义 ref, 用于获取最新的 conversationId
+  const conversationIdRef = useRef<string>();
   const difyApiRef = useRef<DifyApi>(difyApi);
   useEffect(() => {
     conversationIdRef.current = conversationId; // 实时更新 ref
     difyApiRef.current = difyApi; // 实时更新 ref
   }, [conversationId]);
   const filesRef = useRef<IFile[]>([]);
+  /**
+   * messageID 为 key，映射到工作流运行日志
+   */
+  const workflowLogsRef = useRef<Record<string, {
+    status: 'running' | 'finished'
+    nodes: IWorkflowNode[]
+  }>>({})
+
+  console.log('workflowLogs', workflowLogsRef.current)
 
   /**
    * 获取下一轮问题建议
@@ -161,6 +194,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             answer: string;
             conversation_id: string;
             message_id: string;
+
+            data: {
+              // 工作流节点的数据
+              id: string
+              node_type: IWorkflowNode['type']
+              title: string
+            }
           };
           try {
             parsedData = JSON.parse(chunk.data);
@@ -169,10 +209,64 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           }
           if (parsedData.event === 'message_end') {
             onSuccess(result);
-						// 如果开启了建议问题，获取下一轮问题建议
-						if (appParameters?.suggested_questions_after_answer.enabled) {
-							getNextSuggestions(parsedData.message_id);
-						}
+            // 如果开启了建议问题，获取下一轮问题建议
+            if (appParameters?.suggested_questions_after_answer.enabled) {
+              getNextSuggestions(parsedData.message_id);
+            }
+          }
+          const innerData = parsedData.data
+          if (parsedData.event === 'workflow_started') {
+            workflowLogsRef.current = {
+              ...workflowLogsRef.current,
+              [parsedData.message_id]: {
+                status: 'running',
+                nodes: []
+              }
+            }
+          } else if (parsedData.event === 'workflow_finished') {
+            workflowLogsRef.current = {
+              ...workflowLogsRef.current,
+              [parsedData.message_id]: {
+                ...workflowLogsRef.current[parsedData.message_id],
+                status: 'finished',
+              }
+            }
+          } else if (parsedData.event === 'node_started') {
+            console.log('节点开始', parsedData)
+            // 开始写入工作流数据
+            workflowLogsRef.current = {
+              ...workflowLogsRef.current,
+              [parsedData.message_id]: {
+                ...workflowLogsRef.current[parsedData.message_id],
+                nodes: [
+                  ...(workflowLogsRef.current[parsedData.message_id].nodes || []),
+                  {
+                    id: innerData.id,
+                    status: 'running',
+                    type: innerData.node_type,
+                    title: innerData.title,
+                  }
+                ]
+              }
+            }
+          } else if (parsedData.event === 'node_finished') {
+            const newNodes: IWorkflowNode[] = [...workflowLogsRef.current[parsedData.message_id].nodes].map((item) => {
+              if (item.id === innerData.id) {
+                console.log('节点结束', item)
+                return {
+                  ...item,
+                  status: 'success'
+                }
+              }
+              return item
+            })
+            workflowLogsRef.current = {
+              ...workflowLogsRef.current,
+              [parsedData.message_id]: {
+                ...workflowLogsRef.current[parsedData.message_id],
+                nodes: newNodes
+              }
+            }
           }
           if (!parsedData.answer) {
             console.log('没有数据', chunk);
@@ -303,94 +397,114 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     </Typography>
   );
 
-  const items: GetProp<typeof Bubble.List, 'items'> = useMemo(() => {
-    console.log('message变更', [...historyMessages, ...messages]);
-    return [...historyMessages, ...messages].map((messageItem) => {
-      const { id, message, status, message_files } = messageItem;
-      const isQuery = id.toString().endsWith('query');
-			const isLiked = messageItem.feedback?.rating === 'like';
-			const isDisLiked = messageItem.feedback?.rating === 'dislike';
-      return {
-        key: id,
-        // 不要开启 loading 和 typing, 否则流式会无效
-        // loading: status === 'loading',
-        content: message,
-        messageRender: (content: string) => {
-          return <>
+  const items: GetProp<typeof Bubble.List, 'items'> = [...historyMessages, ...messages].map((messageItem) => {
+    const { id, message, status, message_files } = messageItem;
+    const isQuery = id.toString().endsWith('query');
+    const isLiked = messageItem.feedback?.rating === 'like';
+    const isDisLiked = messageItem.feedback?.rating === 'dislike';
+    return {
+      key: id,
+      // 不要开启 loading 和 typing, 否则流式会无效
+      // loading: status === 'loading',
+      content: message,
+      messageRender: (content: string) => {
+        const workflowNodes = workflowLogsRef.current[(messageItem.id as string).split('-answer')[0]]?.nodes
+        return <>
+          {/* 工作流执行日志 */}
+          {
+            workflowNodes?.length ?
+              <div className='border border-solid border-blue-200 rounded-md p-2'>
+                {
+                  workflowNodes?.map((item) => {
+                    return (
+                      <div className='flex items-center justify-between w-full'>
+                        <div className='flex items-center'>
+                          <div className='mr-2'><WorkflowNodeIcon type={item.type} /></div>
+                          <div>{item.title}</div>
+                        </div>
+                        <div>{item.status === 'success' ? <CheckCircleOutlined />
+                          : item.status === 'error' ? <CloseCircleOutlined className='text-red-700' /> : item.status === 'running' ? <PlayCircleOutlined /> : <InfoOutlined />}</div>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              : null
+          }
           {/* 用户发送的图片列表 */}
           <>
-          {
-            message_files?.length ?
-            message_files.map((item: IMessageFileItem)=>{
-              return (
-                <img src={item.url} key={item.id} alt={item.filename} className='max-w-full' />
-              )
-            })
-            : null
-          }
+            {
+              message_files?.length ?
+                message_files.map((item: IMessageFileItem) => {
+                  return (
+                    <img src={item.url} key={item.id} alt={item.filename} className='max-w-full' />
+                  )
+                })
+                : null
+            }
           </>
+          {/* 文本内容 */}
           {renderMarkdown(content)}
-          </>
-        },
-        // 用户发送消息时，status 为 local，需要展示为用户头像
-        role: isQuery || status === 'local' ? 'user' : 'ai',
-        footer: isQuery ? null : (
-          <Space>
-            <Button
-              color="default"
-              variant="text"
-              size="small"
-              icon={<SyncOutlined />}
-            />
-            <Button
-              color="default"
-              variant="text"
-              size="small"
-              icon={<CopyOutlined />}
-              onClick={async() => {
-								await copyToClipboard(message);
-								antdMessage.success('复制成功')
-							}}
-            />
-            <Button
-              color="default"
-              variant="text"
-              size="small"
-              icon={<LikeOutlined className={isLiked ? 'text-blue-700' : ''} />}
-              onClick={async () => {
-                await difyApi.feedbackMessage({
-                  messageId: (id as string).replace('-answer', ''),
-                  rating: isLiked ? null : 'like',
-                  content: '',
-                });
-                antdMessage.success('操作成功');
-                getConversationMessages(conversationId!);
-              }}
-            />
-            <Button
-              color="default"
-              variant="text"
-              size="small"
-              icon={
-                <DislikeOutlined
-                  className={isDisLiked ? 'text-blue-700' : ''}
-                />
-              }
-              onClick={async () => {
-                await difyApi.feedbackMessage({
-                  messageId: (id as string).replace('-answer', ''),
-                  rating: isDisLiked ? null : 'dislike',
-                  content: '',
-                });
-                antdMessage.success('操作成功');
-                getConversationMessages(conversationId!);
-              }}
-            />
-          </Space>
-        ),
-      };
-    }) as GetProp<typeof Bubble.List, 'items'>;
-  }, [historyMessages, messages]);
+        </>
+      },
+      // 用户发送消息时，status 为 local，需要展示为用户头像
+      role: isQuery || status === 'local' ? 'user' : 'ai',
+      footer: isQuery ? null : (
+        <Space>
+          <Button
+            color="default"
+            variant="text"
+            size="small"
+            icon={<SyncOutlined />}
+          />
+          <Button
+            color="default"
+            variant="text"
+            size="small"
+            icon={<CopyOutlined />}
+            onClick={async () => {
+              await copyToClipboard(message);
+              antdMessage.success('复制成功')
+            }}
+          />
+          <Button
+            color="default"
+            variant="text"
+            size="small"
+            icon={<LikeOutlined className={isLiked ? 'text-blue-700' : ''} />}
+            onClick={async () => {
+              await difyApi.feedbackMessage({
+                messageId: (id as string).replace('-answer', ''),
+                rating: isLiked ? null : 'like',
+                content: '',
+              });
+              antdMessage.success('操作成功');
+              getConversationMessages(conversationId!);
+            }}
+          />
+          <Button
+            color="default"
+            variant="text"
+            size="small"
+            icon={
+              <DislikeOutlined
+                className={isDisLiked ? 'text-blue-700' : ''}
+              />
+            }
+            onClick={async () => {
+              await difyApi.feedbackMessage({
+                messageId: (id as string).replace('-answer', ''),
+                rating: isDisLiked ? null : 'dislike',
+                content: '',
+              });
+              antdMessage.success('操作成功');
+              getConversationMessages(conversationId!);
+            }}
+          />
+        </Space>
+      ),
+    };
+  }) as GetProp<typeof Bubble.List, 'items'>
 
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
@@ -452,7 +566,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           </div>
         ) : conversationId ? (
           <Chatbox
-						nextSuggestions={nextSuggestions}
+            nextSuggestions={nextSuggestions}
             items={items}
             isRequesting={agent.isRequesting()}
             onPromptsItemClick={onPromptsItemClick}
