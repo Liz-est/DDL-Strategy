@@ -47,7 +47,7 @@ import { isTempId } from '../utils/utils';
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { DIFY_INFO } from '../utils/vars';
 import { gte } from 'semver'
-import WorkflowNodeIcon from './workflow-node-icon';
+import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 
 /**
  * 消息对象中的文件 item
@@ -95,25 +95,6 @@ interface IChatboxWrapperProps {
    * @param id 即将变更的对话 ID
    */
   onConversationIdChange: (id: string) => void;
-}
-
-interface IWorkflowNode {
-  /**
-   * 步骤 ID
-   */
-  id: string
-  /**
-   * 步骤标题
-   */
-  title: string
-  /**
-   * 运行状态
-   */
-  status: 'init' | 'running' | 'success' | 'error'
-  /**
-   * 节点类型 question-classifier/问题分类器
-   */
-  type: 'question-classifier'
 }
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
@@ -197,10 +178,15 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
             data: {
               // 工作流节点的数据
-              id: string
-              node_type: IWorkflowNode['type']
-              title: string
-            }
+              id: string;
+              node_type: IWorkflowNode['type'];
+              title: string;
+              inputs: string;
+              outputs: string;
+              process_data: string;
+              elapsed_time: number;
+              execution_metadata: IWorkflowNode['execution_metadata']
+            };
           };
           try {
             parsedData = JSON.parse(chunk.data);
@@ -245,7 +231,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                     status: 'running',
                     type: innerData.node_type,
                     title: innerData.title,
-                  }
+                  } as IWorkflowNode
                 ]
               }
             }
@@ -255,8 +241,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                 console.log('节点结束', item)
                 return {
                   ...item,
-                  status: 'success'
-                }
+                  status: 'success',
+                  inputs: innerData.inputs,
+                  outputs: innerData.outputs,
+                  process_data: innerData.process_data,
+                  elapsed_time: innerData.elapsed_time,
+                  execution_metadata: innerData.execution_metadata
+                };
               }
               return item
             })
@@ -409,43 +400,31 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       content: message,
       messageRender: (content: string) => {
         const workflowNodes = workflowLogsRef.current[(messageItem.id as string).split('-answer')[0]]?.nodes
-        return <>
-          {/* 工作流执行日志 */}
-          {
-            workflowNodes?.length ?
-              <div className='border border-solid border-blue-200 rounded-md p-2'>
-                {
-                  workflowNodes?.map((item) => {
-                    return (
-                      <div className='flex items-center justify-between w-full'>
-                        <div className='flex items-center'>
-                          <div className='mr-2'><WorkflowNodeIcon type={item.type} /></div>
-                          <div>{item.title}</div>
-                        </div>
-                        <div>{item.status === 'success' ? <CheckCircleOutlined />
-                          : item.status === 'error' ? <CloseCircleOutlined className='text-red-700' /> : item.status === 'running' ? <PlayCircleOutlined /> : <InfoOutlined />}</div>
-                      </div>
-                    )
-                  })
-                }
-              </div>
-              : null
-          }
-          {/* 用户发送的图片列表 */}
+        return (
           <>
-            {
-              message_files?.length ?
-                message_files.map((item: IMessageFileItem) => {
-                  return (
-                    <img src={item.url} key={item.id} alt={item.filename} className='max-w-full' />
-                  )
-                })
-                : null
-            }
+            {/* 工作流执行日志 */}
+            {workflowNodes?.length ? (
+              <WorkflowLogs items={workflowNodes} />
+            ) : null}
+            {/* 用户发送的图片列表 */}
+            <>
+              {message_files?.length
+                ? message_files.map((item: IMessageFileItem) => {
+                    return (
+                      <img
+                        src={item.url}
+                        key={item.id}
+                        alt={item.filename}
+                        className="max-w-full"
+                      />
+                    );
+                  })
+                : null}
+            </>
+            {/* 文本内容 */}
+            {renderMarkdown(content)}
           </>
-          {/* 文本内容 */}
-          {renderMarkdown(content)}
-        </>
+        );
       },
       // 用户发送消息时，status 为 local，需要展示为用户头像
       role: isQuery || status === 'local' ? 'user' : 'ai',
