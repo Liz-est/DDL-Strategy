@@ -2,12 +2,16 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   InfoOutlined,
-  PlayCircleOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 import WorkflowNodeIcon from './workflow-node-icon';
 import { Collapse } from 'antd';
 import WorkflowNodeDetail from './workflow-node-detail';
+import { IAgentMessage } from '../types';
 
+/**
+ * 工作流节点数据
+ */
 export interface IWorkflowNode {
   /**
    * 步骤 ID
@@ -61,16 +65,32 @@ export interface IWorkflowNode {
 }
 
 interface IWorkflowLogsProps {
+  status: NonNullable<IAgentMessage['workflows']>['status']
   items: IWorkflowNode[];
 }
 
 export default function WorkflowLogs(props: IWorkflowLogsProps) {
-  const { items } = props;
+  const { items, status } = props;
 
   const collapseItems = [
     {
       key: 'workflow',
-      label: '工作流',
+      label: <div className='flex items-center justify-between'>
+        <div>工作流</div>
+        {
+          status === 'running' ?
+              <LoadingOutlined />
+            :
+            status === 'finished' ?
+              <div className='text-green-700 flex items-center'>
+                <span className='mr-2'>
+                  成功
+                </span>
+                <CheckCircleOutlined className='text-green-700' />
+              </div>
+              : null
+        }
+      </div>,
       children: (
         <Collapse
           size="small"
@@ -87,18 +107,24 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
                     <div>{item.title}</div>
                   </div>
                   <div className="flex items-center">
-                    <div className="mr-3">
-                      {item.elapsed_time?.toFixed(3)} 秒
-                    </div>
-                    <div className="mr-3">
-                      {totalTokens ? `${totalTokens} tokens` : ''}
-                    </div>
+                    {
+                      item.status === 'success' ?
+                        <>
+                          <div className="mr-3">
+                            {item.elapsed_time?.toFixed(3)} 秒
+                          </div>
+                          <div className="mr-3">
+                            {totalTokens ? `${totalTokens} tokens` : ''}
+                          </div>
+                        </>
+                        : null
+                    }
                     {item.status === 'success' ? (
                       <CheckCircleOutlined className="text-green-700" />
                     ) : item.status === 'error' ? (
                       <CloseCircleOutlined className="text-red-700" />
                     ) : item.status === 'running' ? (
-                      <PlayCircleOutlined />
+                      <LoadingOutlined />
                     ) : (
                       <InfoOutlined />
                     )}
@@ -124,11 +150,15 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
             };
           })}
         >
-          {}
+          { }
         </Collapse>
       ),
     },
   ];
 
-  return <Collapse items={collapseItems} size="small" className="bg-white" />;
+  return (
+    <div className='min-w-96'>
+      <Collapse items={collapseItems} size="small" className="bg-white" />
+    </div>
+  )
 }
