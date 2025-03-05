@@ -64,7 +64,7 @@ export const Chatbox = ({
         }}>
           {/* 🌟 提示词 */}
           <Prompts
-            items={nextSuggestions.map((item, index)=>{
+            items={nextSuggestions?.map((item, index)=>{
 							return {
 								key: index.toString(),
 								description: item,
@@ -78,7 +78,7 @@ export const Chatbox = ({
             onChange={(value)=>setContent(value)}
             onSubmit={(content, files)=>{
               if (!content) {
-                return;	
+                return;
               }
               onSubmit(content, files)
               setContent('')
