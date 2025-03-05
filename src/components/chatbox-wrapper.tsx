@@ -45,7 +45,7 @@ import { DIFY_INFO } from '../utils/vars';
 import { gte } from 'semver'
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
-import { IAgentMessage, IMessageFileItem } from '../types';
+import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
 
 interface IConversationEntryFormItem extends FormItemProps {
   type: 'input' | 'select';
@@ -140,7 +140,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       let result = '';
       const files: IMessageFileItem[] = []
       const workflows: IAgentMessage['workflows'] = {}
-
+      const agentThoughts: IAgentThought[] = []
 
       for await (const chunk of XStream({
         readableStream: response.body as NonNullable<ReadableStream>,
@@ -148,10 +148,23 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         if (chunk.data) {
           console.log('chunk.data', chunk.data);
           let parsedData = {} as {
+            id: string
+            task_id: string
+            position: number
+            tool: string
+            tool_input: string
+            observation: string
+            message_files: string[]
+
             event: string;
             answer: string;
             conversation_id: string;
             message_id: string;
+
+            // 类型
+            type: 'image'
+            // 图片链接
+            url: string
 
             data: {
               // 工作流节点的数据
@@ -174,7 +187,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onSuccess({
               content: result,
               files,
-              workflows
+              workflows,
+              agentThoughts
             });
             // 如果开启了建议问题，获取下一轮问题建议
             if (appParameters?.suggested_questions_after_answer.enabled) {
@@ -188,7 +202,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onUpdate({
               content: result,
               files,
-              workflows
+              workflows,
+              agentThoughts
             })
           } else if (parsedData.event === 'workflow_finished') {
             console.log('工作流结束', parsedData)
@@ -196,7 +211,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onUpdate({
               content: result,
               files,
-              workflows
+              workflows,
+              agentThoughts
             })
           } else if (parsedData.event === 'node_started') {
             console.log('节点开始', parsedData)
@@ -212,7 +228,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onUpdate({
               content: result,
               files,
-              workflows
+              workflows,
+              agentThoughts
             })
           } else if (parsedData.event === 'node_finished') {
             workflows.nodes = workflows.nodes?.map((item) => {
@@ -232,12 +249,20 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onUpdate({
               content: result,
               files,
-              workflows
+              workflows,
+              agentThoughts
             })
           }
-          if (!parsedData.answer) {
-            console.log('没有数据', chunk);
-          } else {
+          if (parsedData.event === 'message_file') {
+            result += `<img src=""${parsedData.url} />`
+            onUpdate({
+              content: result,
+              files,
+              workflows,
+              agentThoughts,
+            })
+          }
+          if (parsedData.event === 'message' || parsedData.event === 'agent_message') {
             const text = parsedData.answer;
             const conversation_id = parsedData.conversation_id;
 
@@ -251,7 +276,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               content: result,
               files,
               workflows,
+              agentThoughts,
             });
+          }
+          if (parsedData.event === 'agent_thought') {
+            agentThoughts.push({
+              conversation_id: parsedData.conversation_id,
+              id: parsedData.id,
+              task_id: parsedData.task_id,
+              position: parsedData.position,
+              tool: parsedData.tool,
+              tool_input: parsedData.tool_input,
+              observation: parsedData.observation,
+              message_files: parsedData.message_files,
+              message_id: parsedData.message_id
+            })
+            onUpdate({
+              content: result,
+              files,
+              workflows,
+              agentThoughts
+            })
           }
         } else {
           console.log('没有数据', chunk);
