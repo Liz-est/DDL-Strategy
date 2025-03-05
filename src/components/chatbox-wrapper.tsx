@@ -1,5 +1,6 @@
 import {
-  CopyOutlined,
+	CheckCircleFilled,
+	CopyOutlined,
   DislikeOutlined,
   LikeOutlined,
   MessageOutlined,
@@ -9,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import {
   Button,
+  Collapse,
   Form,
   FormItemProps,
   GetProp,
@@ -33,6 +35,8 @@ import {
   Bubble,
   BubbleProps,
   Prompts,
+  ThoughtChain,
+  ThoughtChainItem,
   useXAgent,
   useXChat,
   XStream,
@@ -122,7 +126,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   };
 
   const [agent] = useXAgent<IAgentMessage>({
-    request: async ({ message }, { onSuccess, onUpdate }) => {
+    request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 
       // 发送消息
       const response = await latestProps.current.difyApi.sendMessage({
@@ -280,6 +284,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               agentThoughts,
             });
           }
+					if (parsedData.event === 'error') {
+						onError({
+              name: `${parsedData.status}: ${parsedData.code}`,
+							message: parsedData.message
+            });
+					}
           if (parsedData.event === 'agent_thought') {
             agentThoughts.push({
               conversation_id: parsedData.conversation_id,
@@ -337,7 +347,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           message: {
             content: item.query,
           },
-					status: 'success',
+          status: 'success',
           isHistory: true,
           message_files: item.message_files,
         },
@@ -350,6 +360,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           error: item.error,
           isHistory: true,
           feedback: item.feedback,
+          agentThoughts: item.agent_thoughts || [],
         },
       );
     })
@@ -361,7 +372,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     agent,
   });
 
-  console.log('messages in render', JSON.stringify(messages))
+  // console.log('messages in render', JSON.stringify(messages));
+  console.log('historyMessages in render', JSON.stringify(historyMessages));
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
@@ -430,6 +442,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     const isQuery = id.toString().endsWith('query');
     const isLiked = messageItem.feedback?.rating === 'like';
     const isDisLiked = messageItem.feedback?.rating === 'dislike';
+		const agentThoughts = messageItem.isHistory ? messageItem.agentThoughts : message.agentThoughts
     return {
       key: id,
       // 不要开启 loading 和 typing, 否则流式会无效
@@ -444,8 +457,45 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             </div>
           );
 				}
+				const thoughtChainItems = agentThoughts
+          ?.filter((item) => {
+            return item.tool && item.tool_input && item.observation;
+          })
+          .map((item) => {
+            return {
+              title: <div className="text-base">{item.tool}</div>,
+              status: 'success',
+              icon: <CheckCircleFilled />,
+              description: (
+                <Collapse
+									className='mt-3'
+                  size="small"
+                  items={[
+                    {
+                      key: `${messageItem.id}-tool_input`,
+                      label: '输入',
+                      children: <pre className="!m-0 !p-0 !bg-white !border-none">{item.tool_input}</pre>,
+                    },
+                    {
+                      key: `${messageItem.id}-observation`,
+                      label: '输出',
+                      children: <pre className="!m-0 !p-0 !bg-white !border-none">{item.observation}</pre>,
+                    },
+                  ]}
+                />
+              ),
+            };
+          }) as ThoughtChainItem[];
         return (
           <>
+						{/* 思维链 */}
+						{
+							thoughtChainItems?.length? (
+								<ThoughtChain
+									items={thoughtChainItems}
+								/>
+							) : null
+						}
             {/* 工作流执行日志 */}
             {message.workflows?.nodes?.length ? (
               <WorkflowLogs items={message.workflows.nodes} status={message.workflows.status} />

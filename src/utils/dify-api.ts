@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import XRequest from './base-request';
 import { getVars } from './vars';
+import { IAgentThought } from '../types';
 
 interface IUserInputForm {
   'text-input': {
@@ -51,6 +52,7 @@ interface IMessageItem {
   };
 	status: 'normal' | 'error'
 	error: string | null
+	agent_thoughts?: IAgentThought[]
 }
 
 interface IGetConversationHistoryResponse {
