@@ -1,12 +1,8 @@
 import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
   CopyOutlined,
   DislikeOutlined,
-  InfoOutlined,
   LikeOutlined,
   MessageOutlined,
-  PlayCircleOutlined,
   RobotOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
@@ -31,7 +27,7 @@ import {
   IGetAppInfoResponse,
   IGetAppParametersResponse,
 } from '../utils/dify-api';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Bubble,
   BubbleProps,
@@ -48,20 +44,8 @@ import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { DIFY_INFO } from '../utils/vars';
 import { gte } from 'semver'
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
-
-/**
- * 消息对象中的文件 item
- */
-interface IMessageFileItem {
-  id: string;
-  filename: string;
-  type: string;
-  url: string;
-  mime_type: string;
-  size: number;
-  transfer_method: string;
-  belongs_to: string;
-}
+import { useLatest } from '../hooks/use-latest';
+import { IAgentMessage, IMessageFileItem } from '../types';
 
 interface IConversationEntryFormItem extends FormItemProps {
   type: 'input' | 'select';
@@ -111,7 +95,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   } = props;
   const [initLoading, setInitLoading] = useState<boolean>(false);
   const [target, setTarget] = useState('');
-  const [historyMessages, setHistoryMessages] = useState<MessageInfo<string>[]>(
+  const [historyMessages, setHistoryMessages] = useState<MessageInfo<IAgentMessage>[]>(
     [],
   );
   const [userInputItems, setUserInputItems] = useState<
@@ -121,22 +105,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
   // 定义 ref, 用于获取最新的 conversationId
-  const conversationIdRef = useRef<string>();
-  const difyApiRef = useRef<DifyApi>(difyApi);
-  useEffect(() => {
-    conversationIdRef.current = conversationId; // 实时更新 ref
-    difyApiRef.current = difyApi; // 实时更新 ref
-  }, [conversationId]);
-  const filesRef = useRef<IFile[]>([]);
-  /**
-   * messageID 为 key，映射到工作流运行日志
-   */
-  const workflowLogsRef = useRef<Record<string, {
-    status: 'running' | 'finished'
-    nodes: IWorkflowNode[]
-  }>>({})
+  const latestProps = useLatest({
+    conversationId,
+    difyApi
+  })
 
-  console.log('workflowLogs', workflowLogsRef.current)
+  const filesRef = useRef<IFile[]>([]);
 
   /**
    * 获取下一轮问题建议
@@ -146,24 +120,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     setNextSuggestions(result.data);
   };
 
-  const [agent] = useXAgent({
+  const [agent] = useXAgent<IAgentMessage>({
     request: async ({ message }, { onSuccess, onUpdate }) => {
 
       // 发送消息
-      const response = await difyApiRef.current.sendMessage({
+      const response = await latestProps.current.difyApi.sendMessage({
         inputs: {
           target,
         },
-        conversation_id: !isTempId(conversationIdRef.current)
-          ? conversationIdRef.current
+        conversation_id: !isTempId(latestProps.current.conversationId)
+          ? latestProps.current.conversationId
           : undefined,
         files: filesRef.current || [],
         user: USER,
         response_mode: RESPONSE_MODE,
-        query: message!,
+        query: message?.content!,
       });
 
       let result = '';
+      const files: IMessageFileItem[] = []
+      const workflows: IAgentMessage['workflows'] = {}
+
 
       for await (const chunk of XStream({
         readableStream: response.body as NonNullable<ReadableStream>,
@@ -194,7 +171,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             console.error('解析 JSON 失败', error);
           }
           if (parsedData.event === 'message_end') {
-            onSuccess(result);
+            onSuccess({
+              content: result,
+              files,
+              workflows
+            });
             // 如果开启了建议问题，获取下一轮问题建议
             if (appParameters?.suggested_questions_after_answer.enabled) {
               getNextSuggestions(parsedData.message_id);
@@ -202,41 +183,39 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           }
           const innerData = parsedData.data
           if (parsedData.event === 'workflow_started') {
-            workflowLogsRef.current = {
-              ...workflowLogsRef.current,
-              [parsedData.message_id]: {
-                status: 'running',
-                nodes: []
-              }
-            }
+            workflows.status = 'running'
+            workflows.nodes = []
+            onUpdate({
+              content: result,
+              files,
+              workflows
+            })
           } else if (parsedData.event === 'workflow_finished') {
-            workflowLogsRef.current = {
-              ...workflowLogsRef.current,
-              [parsedData.message_id]: {
-                ...workflowLogsRef.current[parsedData.message_id],
-                status: 'finished',
-              }
-            }
+            console.log('工作流结束', parsedData)
+            workflows.status = 'finished'
+            onUpdate({
+              content: result,
+              files,
+              workflows
+            })
           } else if (parsedData.event === 'node_started') {
             console.log('节点开始', parsedData)
-            // 开始写入工作流数据
-            workflowLogsRef.current = {
-              ...workflowLogsRef.current,
-              [parsedData.message_id]: {
-                ...workflowLogsRef.current[parsedData.message_id],
-                nodes: [
-                  ...(workflowLogsRef.current[parsedData.message_id].nodes || []),
-                  {
-                    id: innerData.id,
-                    status: 'running',
-                    type: innerData.node_type,
-                    title: innerData.title,
-                  } as IWorkflowNode
-                ]
-              }
-            }
+            workflows.nodes = [
+              ...(workflows.nodes || []),
+              {
+                id: innerData.id,
+                status: 'running',
+                type: innerData.node_type,
+                title: innerData.title,
+              } as IWorkflowNode
+            ]
+            onUpdate({
+              content: result,
+              files,
+              workflows
+            })
           } else if (parsedData.event === 'node_finished') {
-            const newNodes: IWorkflowNode[] = [...workflowLogsRef.current[parsedData.message_id].nodes].map((item) => {
+            workflows.nodes = workflows.nodes?.map((item) => {
               if (item.id === innerData.id) {
                 return {
                   ...item,
@@ -250,13 +229,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               }
               return item
             })
-            workflowLogsRef.current = {
-              ...workflowLogsRef.current,
-              [parsedData.message_id]: {
-                ...workflowLogsRef.current[parsedData.message_id],
-                nodes: newNodes
-              }
-            }
+            onUpdate({
+              content: result,
+              files,
+              workflows
+            })
           }
           if (!parsedData.answer) {
             console.log('没有数据', chunk);
@@ -270,7 +247,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               onConversationIdChange(conversation_id);
             }
             result += text;
-            onUpdate(result);
+            onUpdate({
+              content: result,
+              files,
+              workflows,
+            });
           }
         } else {
           console.log('没有数据', chunk);
@@ -291,7 +272,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     const result = await difyApi.getConversationHistory(conversationId);
     console.log('对话历史', result);
 
-    const newMessages: MessageInfo<string>[] = [];
+    const newMessages: MessageInfo<IAgentMessage>[] = [];
 
     if (result.data.length) {
       setTarget(result.data[0]?.inputs?.target);
@@ -307,14 +288,18 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       newMessages.push(
         {
           id: `${item.id}-query`,
-          message: item.query,
+          message: {
+            content: item.query
+          },
           status: 'success',
           isHistory: true,
           message_files: item.message_files,
         },
         {
           id: `${item.id}-answer`,
-          message: item.answer,
+          message: {
+            content: item.answer
+          },
           status: 'success',
           isHistory: true,
           feedback: item.feedback,
@@ -328,6 +313,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const { onRequest, messages, setMessages } = useXChat({
     agent,
   });
+
+  console.log('messages in render', JSON.stringify(messages))
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
@@ -372,12 +359,16 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   }, [conversationId]);
 
   const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = (info) => {
-    onRequest(info.data.description as string);
+    onRequest({
+      content: info.data.description as string
+    });
   };
 
   const onSubmit = (nextContent: string, files?: IFile[]) => {
     filesRef.current = files || [];
-    onRequest(nextContent);
+    onRequest({
+      content: nextContent
+    });
   };
 
   const renderMarkdown: BubbleProps['messageRender'] = (content) => (
@@ -388,7 +379,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   );
 
   const items: GetProp<typeof Bubble.List, 'items'> = [...historyMessages, ...messages].map((messageItem) => {
-    const { id, message, status, message_files } = messageItem;
+    const { id, message, status } = messageItem;
     const isQuery = id.toString().endsWith('query');
     const isLiked = messageItem.feedback?.rating === 'like';
     const isDisLiked = messageItem.feedback?.rating === 'dislike';
@@ -396,28 +387,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       key: id,
       // 不要开启 loading 和 typing, 否则流式会无效
       // loading: status === 'loading',
-      content: message,
+      content: message.content,
       messageRender: (content: string) => {
-        const workflowNodes = workflowLogsRef.current[(messageItem.id as string).split('-answer')[0]]?.nodes
         return (
           <>
             {/* 工作流执行日志 */}
-            {workflowNodes?.length ? (
-              <WorkflowLogs items={workflowNodes} />
+            {message.workflows?.nodes?.length ? (
+              <WorkflowLogs items={message.workflows.nodes} status={message.workflows.status} />
             ) : null}
             {/* 用户发送的图片列表 */}
             <>
-              {message_files?.length
-                ? message_files.map((item: IMessageFileItem) => {
-                    return (
-                      <img
-                        src={item.url}
-                        key={item.id}
-                        alt={item.filename}
-                        className="max-w-full"
-                      />
-                    );
-                  })
+              {message.files?.length
+                ? message.files.map((item: IMessageFileItem) => {
+                  return (
+                    <img
+                      src={item.url}
+                      key={item.id}
+                      alt={item.filename}
+                      className="max-w-full"
+                    />
+                  );
+                })
                 : null}
             </>
             {/* 文本内容 */}
@@ -441,7 +431,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             size="small"
             icon={<CopyOutlined />}
             onClick={async () => {
-              await copyToClipboard(message);
+              await copyToClipboard(message.content);
               antdMessage.success('复制成功')
             }}
           />
