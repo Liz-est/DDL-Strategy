@@ -49,6 +49,8 @@ interface IMessageItem {
   feedback?: {
     rating: 'like' | 'dislike';
   };
+	status: 'normal' | 'error'
+	error: string | null
 }
 
 interface IGetConversationHistoryResponse {

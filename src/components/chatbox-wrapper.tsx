@@ -5,6 +5,7 @@ import {
   MessageOutlined,
   RobotOutlined,
   SyncOutlined,
+	WarningOutlined,
 } from '@ant-design/icons';
 import {
   Button,
@@ -134,7 +135,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         files: filesRef.current || [],
         user: USER,
         response_mode: RESPONSE_MODE,
-        query: message?.content!,
+        query: message?.content as string,
       });
 
       let result = '';
@@ -334,22 +335,23 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         {
           id: `${item.id}-query`,
           message: {
-            content: item.query
+            content: item.query,
           },
-          status: 'success',
+					status: 'success',
           isHistory: true,
           message_files: item.message_files,
         },
         {
           id: `${item.id}-answer`,
           message: {
-            content: item.answer
+            content: item.answer,
           },
-          status: 'success',
+          status: item.status,
+          error: item.error,
           isHistory: true,
           feedback: item.feedback,
         },
-      )
+      );
     })
 
     setHistoryMessages(newMessages);
@@ -434,6 +436,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       // loading: status === 'loading',
       content: message.content,
       messageRender: (content: string) => {
+				if (messageItem.status === 'error') {
+					return (
+            <div className="text-red-700">
+              <WarningOutlined className="mr-2" />
+              <span>{messageItem.error}</span>
+            </div>
+          );
+				}
         return (
           <>
             {/* 工作流执行日志 */}
@@ -600,7 +610,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                 {appInfo.description}
               </div>
               {appInfo.tags ? (
-                <div>
+                <div className='mt-3'>
                   {appInfo.tags.map((tag) => {
                     return <Tag key={tag}>{tag}</Tag>;
                   })}
