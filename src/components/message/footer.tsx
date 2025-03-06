@@ -60,7 +60,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
         color="default"
         variant="text"
         size="small"
-        icon={<LikeOutlined className={isLiked ? 'text-blue-700' : ''} />}
+        icon={<LikeOutlined className={isLiked ? 'text-primary' : ''} />}
         onClick={async () => {
           await difyApi.feedbackMessage({
             messageId: (messageId as string).replace('-answer', ''),
@@ -77,7 +77,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
         size="small"
         icon={
           <DislikeOutlined
-            className={isDisLiked ? 'text-blue-700' : ''}
+            className={isDisLiked ? 'text-primary' : ''}
           />
         }
         onClick={async () => {

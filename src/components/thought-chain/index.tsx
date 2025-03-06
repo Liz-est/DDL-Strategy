@@ -33,7 +33,7 @@ export default function ThoughtChain(props: IThoughtChainProps) {
       icon: <CheckCircleFilled />,
       description: (
         <Collapse
-          className='mt-3 min-w-96'
+          className='mt-3 min-w-chat-card'
           size="small"
           items={[
             {

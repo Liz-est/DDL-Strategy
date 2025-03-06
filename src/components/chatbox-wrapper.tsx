@@ -481,7 +481,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationName ? (
-        <div className="h-16 leading-[4rem] px-8 text-gray-800 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm">
+        <div className="h-16 leading-[4rem] px-8 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm">
           {conversationName}
         </div>
       ) : null}
@@ -495,7 +495,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         ) : formVisible ? (
           <div className="w-full h-full flex items-center justify-center -mt-5">
             <div className="w-96">
-              <div className="text-2xl font-bold text-black mb-5">
+              <div className="text-2xl font-bold text-default mb-5">
                 {appInfo?.name}
               </div>
               <Form form={entryForm}>

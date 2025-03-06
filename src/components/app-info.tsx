@@ -14,7 +14,7 @@ export default function AppInfo(props: IAppInfoProps) {
 
   const { token } = theme.useToken()
   return (
-    <div className="w-full h-full flex items-center justify-center text-black">
+    <div className="w-full h-full flex items-center justify-center text-default">
       <div className="flex items-center justify-center flex-col">
         <RobotOutlined
           className='text-2xl'
@@ -23,7 +23,7 @@ export default function AppInfo(props: IAppInfoProps) {
           }}
         />
         <div className="text-2xl font-bold mt-3">{info.name}</div>
-        <div className="text-gray-700 text-base max-w-44 mt-3">
+        <div className="text-desc text-base max-w-44 mt-3">
           {info.description}
         </div>
         {info.tags ? (

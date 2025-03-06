@@ -2,10 +2,8 @@ import XUI from './xui';
 
 export default function App() {
   return (
-    <>
-      <div>
-        <XUI />
-      </div>
-    </>
+    <div className="text-default">
+      <XUI />
+    </div>
   );
 }

@@ -161,7 +161,7 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
   ];
 
   return (
-    <div className='min-w-96'>
+    <div className='min-w-chat-card'>
       <Collapse items={collapseItems} size="small" className="bg-white" />
     </div>
   )
