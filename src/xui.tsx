@@ -14,6 +14,7 @@ import { USER } from './config';
 import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
 import ConversationList, { IConversationItem } from './components/conversation-list';
+import { useMap4Arr } from './hooks/use-map-4-arr';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -49,19 +50,13 @@ const XUI: React.FC = () => {
     IConversationItem[]
   >([]);
   // 优化会话列表查找逻辑（高频操作）
-  const [conversationMap] = useState<Map<string, IConversationItem>>(new Map());
+  const conversationMap = useMap4Arr<IConversationItem>(conversationsItems, 'key');
   const [conversationListLoading, setCoversationListLoading] =
     useState<boolean>(false);
   const [currentConversationId, setCurrentConversationId] = useState<string>();
   const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>();
   const [appParameters, setAppParameters] =
     useState<IGetAppParametersResponse>();
-
-  useEffect(() => {
-    const newMap = new Map(conversationsItems.map(item => [item.key, item]));
-    conversationMap.clear();
-    newMap.forEach((v, k) => conversationMap.set(k, v));
-  }, [conversationsItems]);
 
   const initAppInfo = async () => {
     if (!difyApi) {
