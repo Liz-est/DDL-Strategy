@@ -48,12 +48,20 @@ const XUI: React.FC = () => {
   const [conversationsItems, setConversationsItems] = useState<
     IConversationItem[]
   >([]);
+  // 优化会话列表查找逻辑（高频操作）
+  const [conversationMap] = useState<Map<string, IConversationItem>>(new Map());
   const [conversationListLoading, setCoversationListLoading] =
     useState<boolean>(false);
-  const [curentConversationId, setCurentConversationId] = useState<string>();
+  const [currentConversationId, setCurrentConversationId] = useState<string>();
   const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>();
   const [appParameters, setAppParameters] =
     useState<IGetAppParametersResponse>();
+
+  useEffect(() => {
+    const newMap = new Map(conversationsItems.map(item => [item.key, item]));
+    conversationMap.clear();
+    newMap.forEach((v, k) => conversationMap.set(k, v));
+  }, [conversationsItems]);
 
   const initAppInfo = async () => {
     if (!difyApi) {
@@ -74,7 +82,7 @@ const XUI: React.FC = () => {
   useEffect(() => {
     initAppInfo();
     getConversationItems();
-    setCurentConversationId(undefined);
+    setCurrentConversationId(undefined);
   }, [difyApi]);
 
   const getConversationItems = async () => {
@@ -107,14 +115,17 @@ const XUI: React.FC = () => {
   const onAddConversation = () => {
     // 创建新对话
     const newKey = `temp_${Math.random()}`;
-    setConversationsItems([
-      {
-        key: newKey,
-        label: `新对话`,
-      },
-      ...conversationsItems,
-    ]);
-    setCurentConversationId(newKey);
+    // 使用函数式更新保证状态一致性（修复潜在竞态条件）
+    setConversationsItems((prev)=>{
+      return [
+        {
+          key: newKey,
+          label: `新对话`,
+        },
+        ...prev,
+      ]
+    })
+    setCurrentConversationId(newKey);
   };
 
   const handleAddConversationBtnClick = async () => {
@@ -124,19 +135,19 @@ const XUI: React.FC = () => {
   const onConversationClick: GetProp<typeof Conversations, 'onActiveChange'> = (
     key,
   ) => {
-    setCurentConversationId(key);
+    setCurrentConversationId(key);
   };
 
   useEffect(() => {
     // 如果对话 ID 不在当前列表中，则刷新一下
     if (
       isInstanceReady &&
-      curentConversationId &&
-      !conversationsItems.some((item) => item.key === curentConversationId)
+      currentConversationId &&
+      !conversationMap.has(currentConversationId)
     ) {
       getConversationItems();
     }
-  }, [curentConversationId]);
+  }, [currentConversationId]);
 
   return (
     <XProvider theme={{ token: { colorPrimary: '#1689fe' } }}>
@@ -160,10 +171,10 @@ const XUI: React.FC = () => {
           {/* 🌟 会话管理 */}
           <div className="py-0 px-3 flex-1 overflow-y-auto">
             <Spin spinning={conversationListLoading}>
-              <ConversationList 
+              <ConversationList
                 difyApi={difyApi!}
                 items={conversationsItems}
-                activeKey={curentConversationId}
+                activeKey={currentConversationId}
                 onActiveChange={onConversationClick}
                 onItemsChange={setConversationsItems}
                 refreshItems={getConversationItems}
@@ -176,12 +187,11 @@ const XUI: React.FC = () => {
         <ChatboxWrapper
           appInfo={appInfo}
           difyApi={difyApi!}
-          conversationId={curentConversationId}
+          conversationId={currentConversationId}
           conversationName={
-            conversationsItems.find((item) => item.key === curentConversationId)
-              ?.label || ''
+            conversationMap.get(currentConversationId as string)?.label || ''
           }
-          onConversationIdChange={setCurentConversationId}
+          onConversationIdChange={setCurrentConversationId}
           appParameters={appParameters}
         />
       </div>

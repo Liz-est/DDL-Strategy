@@ -21,7 +21,7 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
     props;
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
-  const [fileIdMap, setFileIdMap] = useState<Record<string, string>>({});
+  const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map());
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const senderHeader = (
@@ -38,17 +38,12 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
       <Attachments
         // Mock not real upload file
         beforeUpload={async (file) => {
-          console.log('文件', file);
           const result = await difyApi.uploadFile(file);
-          const data = {
-            ...file,
-            fileId: result.id,
-          };
-          console.log('上传结果', data);
-          setFileIdMap({
-            ...fileIdMap,
-            [data.uid]: data.fileId,
-          });
+          setFileIdMap((prevMap)=>{
+            const nextMap = new Map(prevMap)
+            nextMap.set(file.uid, result.id)
+            return nextMap
+          })
           // 这里不要 return，否则预览区域的图片就展示不出来了
           // return data;
         }}
@@ -81,7 +76,7 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
           files?.map((file) => ({
             type: 'image',
             transfer_method: 'local_file',
-            upload_file_id: fileIdMap[file.uid],
+            upload_file_id: fileIdMap.get(file.uid) as string,
           })) || [],
         );
         setFiles([]);
