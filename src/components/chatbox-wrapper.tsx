@@ -1,27 +1,15 @@
 import {
-	CheckCircleFilled,
-	CopyOutlined,
-  DislikeOutlined,
-  LikeOutlined,
   MessageOutlined,
-  RobotOutlined,
-  SyncOutlined,
-	WarningOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Collapse,
   Form,
   FormItemProps,
   GetProp,
   Input,
   Select,
-  Space,
   Spin,
-  Tag,
-  Typography,
-  message as antdMessage,
-  theme,
 } from 'antd';
 import { Chatbox } from './chatbox';
 import {
@@ -33,30 +21,27 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import {
   Bubble,
-  BubbleProps,
   Prompts,
-  ThoughtChain,
-  ThoughtChainItem,
   useXAgent,
   useXChat,
   XStream,
 } from '@ant-design/x';
 import { RESPONSE_MODE, USER } from '../config';
 import { MessageInfo } from '@ant-design/x/es/use-x-chat';
-import MarkdownIt from 'markdown-it';
 import { isTempId } from '../utils/utils';
-import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { DIFY_INFO } from '../utils/vars';
 import { gte } from 'semver'
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
 import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
+import ThoughtChain from './thought-chain';
+import MdRender from './md-render';
+import AppInfo from './app-info';
+import MessageFooter from './message/footer';
 
 interface IConversationEntryFormItem extends FormItemProps {
   type: 'input' | 'select';
 }
-
-const md = MarkdownIt({ html: true, breaks: true });
 
 interface IChatboxWrapperProps {
   /**
@@ -88,7 +73,6 @@ interface IChatboxWrapperProps {
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [entryForm] = Form.useForm();
-  const { token } = theme.useToken()
 
   const {
     appInfo,
@@ -284,12 +268,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               agentThoughts,
             });
           }
-					if (parsedData.event === 'error') {
-						onError({
+          if (parsedData.event === 'error') {
+            onError({
               name: `${parsedData.status}: ${parsedData.code}`,
-							message: parsedData.message
+              message: parsedData.message
             });
-					}
+          }
           if (parsedData.event === 'agent_thought') {
             agentThoughts.push({
               conversation_id: parsedData.conversation_id,
@@ -430,76 +414,33 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   };
 
-  const renderMarkdown: BubbleProps['messageRender'] = (content) => (
-    <Typography>
-      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: used in demo */}
-      <div dangerouslySetInnerHTML={{ __html: md.render(content) }} />
-    </Typography>
-  );
-
   const items: GetProp<typeof Bubble.List, 'items'> = [...historyMessages, ...messages].map((messageItem) => {
     const { id, message, status } = messageItem;
     const isQuery = id.toString().endsWith('query');
-    const isLiked = messageItem.feedback?.rating === 'like';
-    const isDisLiked = messageItem.feedback?.rating === 'dislike';
-		const agentThoughts = messageItem.isHistory ? messageItem.agentThoughts : message.agentThoughts
+    const agentThoughts: IAgentThought[] = messageItem.isHistory ? messageItem.agentThoughts : message.agentThoughts
     return {
       key: id,
       // 不要开启 loading 和 typing, 否则流式会无效
       // loading: status === 'loading',
       content: message.content,
       messageRender: (content: string) => {
-				if (messageItem.status === 'error') {
-					return (
+        if (messageItem.status === 'error') {
+          return (
             <div className="text-red-700">
               <WarningOutlined className="mr-2" />
               <span>{messageItem.error}</span>
             </div>
           );
-				}
-				const thoughtChainItems = agentThoughts
-          ?.filter((item) => {
-            return item.tool && item.tool_input && item.observation;
-          })
-          .map((item) => {
-            return {
-              title: <div className="text-base">{item.tool}</div>,
-              status: 'success',
-              icon: <CheckCircleFilled />,
-              description: (
-                <Collapse
-									className='mt-3'
-                  size="small"
-                  items={[
-                    {
-                      key: `${messageItem.id}-tool_input`,
-                      label: '输入',
-                      children: <pre className="!m-0 !p-0 !bg-white !border-none">{item.tool_input}</pre>,
-                    },
-                    {
-                      key: `${messageItem.id}-observation`,
-                      label: '输出',
-                      children: <pre className="!m-0 !p-0 !bg-white !border-none">{item.observation}</pre>,
-                    },
-                  ]}
-                />
-              ),
-            };
-          }) as ThoughtChainItem[];
+        }
+
         return (
           <>
-						{/* 思维链 */}
-						{
-							thoughtChainItems?.length? (
-								<ThoughtChain
-									items={thoughtChainItems}
-								/>
-							) : null
-						}
+            {/* 思维链 */}
+            <ThoughtChain uniqueKey={messageItem.id as string} items={agentThoughts} />
+
             {/* 工作流执行日志 */}
-            {message.workflows?.nodes?.length ? (
-              <WorkflowLogs items={message.workflows.nodes} status={message.workflows.status} />
-            ) : null}
+            <WorkflowLogs items={message.workflows?.nodes || []} status={message.workflows?.status} />
+
             {/* 用户发送的图片列表 */}
             <>
               {message.files?.length
@@ -515,66 +456,24 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                 })
                 : null}
             </>
+
             {/* 文本内容 */}
-            {renderMarkdown(content)}
+            <MdRender markdownText={content} />
           </>
         );
       },
       // 用户发送消息时，status 为 local，需要展示为用户头像
       role: isQuery || status === 'local' ? 'user' : 'ai',
       footer: isQuery ? null : (
-        <Space>
-          <Button
-            color="default"
-            variant="text"
-            size="small"
-            icon={<SyncOutlined />}
-          />
-          <Button
-            color="default"
-            variant="text"
-            size="small"
-            icon={<CopyOutlined />}
-            onClick={async () => {
-              await copyToClipboard(message.content);
-              antdMessage.success('复制成功')
-            }}
-          />
-          <Button
-            color="default"
-            variant="text"
-            size="small"
-            icon={<LikeOutlined className={isLiked ? 'text-blue-700' : ''} />}
-            onClick={async () => {
-              await difyApi.feedbackMessage({
-                messageId: (id as string).replace('-answer', ''),
-                rating: isLiked ? null : 'like',
-                content: '',
-              });
-              antdMessage.success('操作成功');
-              getConversationMessages(conversationId!);
-            }}
-          />
-          <Button
-            color="default"
-            variant="text"
-            size="small"
-            icon={
-              <DislikeOutlined
-                className={isDisLiked ? 'text-blue-700' : ''}
-              />
-            }
-            onClick={async () => {
-              await difyApi.feedbackMessage({
-                messageId: (id as string).replace('-answer', ''),
-                rating: isDisLiked ? null : 'dislike',
-                content: '',
-              });
-              antdMessage.success('操作成功');
-              getConversationMessages(conversationId!);
-            }}
-          />
-        </Space>
+        <MessageFooter
+          difyApi={difyApi}
+          messageId={id as string}
+          messageContent={message.content}
+          feedback={{
+            rating: messageItem.feedback?.rating,
+            callback: () => getConversationMessages(conversationId!),
+          }}
+        />
       ),
     };
   }) as GetProp<typeof Bubble.List, 'items'>
@@ -625,10 +524,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                 type="primary"
                 icon={<MessageOutlined />}
                 onClick={async () => {
-                  const result = await entryForm.validateFields();
-                  const values = entryForm.getFieldsValue();
-                  console.log('表单值', values);
-                  console.log('result', result);
                   setTarget(entryForm.getFieldValue('target'));
                   setFormVisible(false);
                 }}
@@ -647,27 +542,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             difyApi={difyApi}
           />
         ) : appInfo ? (
-          <div className="w-full h-full flex items-center justify-center text-black">
-            <div className="flex items-center justify-center flex-col">
-              <RobotOutlined
-                className='text-2xl'
-                style={{
-                  color: token.colorPrimary,
-                }}
-              />
-              <div className="text-2xl font-bold mt-3">{appInfo.name}</div>
-              <div className="text-gray-700 text-base max-w-44 mt-3">
-                {appInfo.description}
-              </div>
-              {appInfo.tags ? (
-                <div className='mt-3'>
-                  {appInfo.tags.map((tag) => {
-                    return <Tag key={tag}>{tag}</Tag>;
-                  })}
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <AppInfo info={appInfo} />
         ) : null}
       </div>
     </div>
