@@ -79,7 +79,7 @@ export const Logo = (props: ILogoProps) => {
           draggable={false}
           alt="logo"
         />
-        <span className="inline-block my-0 mx-2 font-bold text-desc text-lg">
+        <span className="inline-block my-0 mx-2 font-bold text-lg">
           Dify Chat
         </span>
       </div>
@@ -88,7 +88,7 @@ export const Logo = (props: ILogoProps) => {
           type="link"
           onClick={openSettingModal}
         >
-          <SettingOutlined className="text-lg cursor-pointer" />
+          <SettingOutlined className="text-lg cursor-pointer text-default" />
         </Button>
         <Button
           type="link"
@@ -96,7 +96,7 @@ export const Logo = (props: ILogoProps) => {
           target="_blank"
           className="px-0"
         >
-          <GithubOutlined className="text-lg cursor-pointer text-[#333]" />
+          <GithubOutlined className="text-lg cursor-pointer text-default" />
         </Button>
       </div>
     </div>

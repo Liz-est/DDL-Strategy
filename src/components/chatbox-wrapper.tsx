@@ -481,7 +481,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationName ? (
-        <div className="h-16 leading-[4rem] px-8 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm">
+        <div className="h-16 leading-[4rem] px-8 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm font-semibold">
           {conversationName}
         </div>
       ) : null}
