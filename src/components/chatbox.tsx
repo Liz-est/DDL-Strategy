@@ -5,7 +5,7 @@ import {
   RobotOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useState } from 'react';
+import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import SenderWrapper from './sender';
 import { DifyApi, IFile } from '../utils/dify-api';
 import { isMobile } from '@toolkit-fe/where-am-i';
@@ -66,9 +66,22 @@ export const Chatbox = ({
 
   const [content, setContent] = useState('');
 
+  // 监听 items 更新，滚动到最底部
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // 延迟更新，优化性能
+  const deferredItems = useDeferredValue(items);
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        behavior: 'smooth',
+        top: scrollContainerRef.current.scrollHeight
+      })
+    }
+  }, [deferredItems]);
+
   return (
     <div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative bg-white">
-      <div className="w-full h-full overflow-auto pt-4 pb-48">
+      <div className="w-full h-full overflow-auto pt-4 pb-48" ref={scrollContainerRef}>
         {/* 🌟 欢迎占位 */}
         {!items?.length && isTempId(conversationId) && (
           <WelcomePlaceholder onPromptItemClick={onPromptsItemClick} />
