@@ -203,6 +203,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           } catch (error) {
             console.error('解析 JSON 失败', error);
           }
+          console.log('message', parsedData)
           if (parsedData.event === 'message_end') {
             onSuccess({
               content: result,
@@ -210,6 +211,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               workflows,
               agentThoughts
             });
+            const conversation_id = parsedData.conversation_id;
+            console.log('成功后的对话 iD', parsedData, conversationId)
+            // 如果有对话 ID，跟当前的对比一下
+            if (conversation_id && isTempId(conversationId)) {
+              // 通知外部组件，对话 ID 变更，外部组件需要更新对话列表
+              onConversationIdChange(conversation_id);
+            }
             // 如果开启了建议问题，获取下一轮问题建议
             if (appParameters?.suggested_questions_after_answer.enabled) {
               getNextSuggestions(parsedData.message_id);
@@ -284,13 +292,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           }
           if (parsedData.event === 'message' || parsedData.event === 'agent_message') {
             const text = parsedData.answer;
-            const conversation_id = parsedData.conversation_id;
-
-            // 如果有对话 ID，跟当前的对比一下
-            if (conversation_id) {
-              // 通知外部组件，对话 ID 变更，外部组件需要更新对话列表
-              onConversationIdChange(conversation_id);
-            }
             result += text;
             onUpdate({
               content: result,
@@ -388,7 +389,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   });
 
   // console.log('messages in render', JSON.stringify(messages));
-  console.log('historyMessages in render', JSON.stringify(historyMessages));
+  // console.log('historyMessages in render', JSON.stringify(historyMessages));
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
@@ -511,19 +512,37 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
-      {conversationName ? (
+      {conversationId ? (
         <div className="h-16 leading-[4rem] px-8 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm font-semibold">
-          {conversationName}
+          {conversationName || '新对话'}
         </div>
       ) : null}
 
-      <div className="flex-1 overflow-hidden">
-        {/* 有对话信息时，优先展示 */}
-        {initLoading ? (
-          <div className="w-full h-full flex items-center justify-center">
+      <div className="flex-1 overflow-hidden relative">
+        {
+          initLoading ?
+          <div className='absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center'>
             <Spin spinning />
           </div>
-        ) : formVisible ? (
+          : null
+        }
+        {
+          conversationId ?
+          <Chatbox
+            conversationId={conversationId}
+            nextSuggestions={nextSuggestions}
+            items={items}
+            isRequesting={agent.isRequesting()}
+            onPromptsItemClick={onPromptsItemClick}
+            onSubmit={onSubmit}
+            difyApi={difyApi}
+            onCancel={() => {
+              console.log('打断输出')
+              abortRef.current()
+            }}
+          />
+          :
+          formVisible ?
           <div className="w-full h-full flex items-center justify-center -mt-5">
             <div className="w-96">
               <div className="text-2xl font-bold text-default mb-5">
@@ -563,20 +582,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               </Button>
             </div>
           </div>
-        ) : conversationId ? (
-          <Chatbox
-            nextSuggestions={nextSuggestions}
-            items={items}
-            isRequesting={agent.isRequesting()}
-            onPromptsItemClick={onPromptsItemClick}
-            onSubmit={onSubmit}
-            difyApi={difyApi}
-            onCancel={() => {
-              console.log('打断输出')
-              abortRef.current()
-            }}
-          />
-        ) : appInfo ? (
+          :
+          appInfo ?
           <div className="w-full h-full flex flex-col items-center justify-center">
             <AppInfo info={appInfo} />
             <Button
@@ -588,7 +595,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               开始对话
             </Button>
           </div>
-        ) : null}
+          : null
+        }
       </div>
     </div>
   );

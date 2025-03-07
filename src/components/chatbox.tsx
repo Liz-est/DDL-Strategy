@@ -9,6 +9,7 @@ import { useState } from 'react';
 import SenderWrapper from './sender';
 import { DifyApi, IFile } from '../utils/dify-api';
 import { isMobile } from '@toolkit-fe/where-am-i';
+import { isTempId } from '../utils/utils';
 
 const roles: GetProp<typeof Bubble.List, 'roles'> = {
   ai: {
@@ -46,6 +47,7 @@ export interface ChatboxProps {
   onSubmit: (value: string, files?: IFile[]) => void;
   difyApi: DifyApi
   onCancel: () => void
+  conversationId: string
 }
 
 /**
@@ -59,6 +61,7 @@ export const Chatbox = ({
   onSubmit,
   difyApi,
   onCancel,
+  conversationId,
 }: ChatboxProps) => {
 
   const [content, setContent] = useState('');
@@ -67,7 +70,7 @@ export const Chatbox = ({
     <div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative bg-white">
       <div className="w-full h-full overflow-auto pt-4 pb-48">
         {/* 🌟 欢迎占位 */}
-        {!items?.length && (
+        {!items?.length && isTempId(conversationId) && (
           <WelcomePlaceholder onPromptItemClick={onPromptsItemClick} />
         )}
         {/* 🌟 消息列表 */}
