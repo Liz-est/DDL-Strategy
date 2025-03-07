@@ -11,13 +11,14 @@ interface ISenderWrapperProps {
   onChange: (value: string) => void;
   onSubmit: (value: string, files?: IFile[]) => void;
   className?: string;
+  onCancel: () => void
 }
 
 /**
  * 用户消息发送区
  */
 export default function SenderWrapper(props: ISenderWrapperProps) {
-  const { content, isRequesting, onChange, onSubmit, className, difyApi } =
+  const { content, isRequesting, onChange, onSubmit, className, difyApi, onCancel } =
     props;
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
@@ -70,6 +71,13 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
       header={senderHeader}
       value={content}
       onChange={onChange}
+      prefix={
+        <Badge dot={files.length > 0 && !open}>
+          <Button onClick={() => setOpen(!open)} icon={<LinkOutlined />} />
+        </Badge>
+      }
+      loading={isRequesting}
+      className={className}
       onSubmit={async(content) => {
         await onSubmit(
           content,
@@ -82,13 +90,7 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
         setFiles([]);
         setOpen(false)
       }}
-      prefix={
-        <Badge dot={files.length > 0 && !open}>
-          <Button onClick={() => setOpen(!open)} icon={<LinkOutlined />} />
-        </Badge>
-      }
-      loading={isRequesting}
-      className={className}
+      onCancel={onCancel}
     />
   );
 }

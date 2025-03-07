@@ -34,6 +34,7 @@ export interface ChatboxProps {
   onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'>;
   onSubmit: (value: string, files?: IFile[]) => void;
   difyApi: DifyApi
+  onCancel: () => void
 }
 
 /**
@@ -46,6 +47,7 @@ export const Chatbox = ({
   onPromptsItemClick,
   onSubmit,
   difyApi,
+  onCancel,
 }: ChatboxProps) => {
 
   const [content, setContent] = useState('');
@@ -86,6 +88,7 @@ export const Chatbox = ({
             isRequesting={isRequesting}
             className="shadow-2xl bg-white w-full mt-3"
             difyApi={difyApi}
+            onCancel={onCancel}
           />
         </div>
       </div>

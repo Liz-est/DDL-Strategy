@@ -109,6 +109,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     setNextSuggestions(result.data);
   };
 
+  const abortRef = useRef(() => {});
+
+  useEffect(() => {
+    return () => {
+      abortRef.current();
+    };
+  }, []);
+
   const [agent] = useXAgent<IAgentMessage>({
     request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 
@@ -131,9 +139,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       const workflows: IAgentMessage['workflows'] = {}
       const agentThoughts: IAgentThought[] = []
 
-      for await (const chunk of XStream({
+      const readableStream = XStream({
         readableStream: response.body as NonNullable<ReadableStream>,
-      })) {
+      })
+
+      const reader = readableStream.getReader()
+      abortRef.current = () => {
+        reader?.cancel();
+      };
+
+      while (reader) {
+        const { value: chunk, done } = await reader.read();
+        if (done) {
+          onSuccess({
+            content: result,
+            files,
+            workflows,
+            agentThoughts
+          });
+          break;
+        }
+        if (!chunk) continue;
         if (chunk.data) {
           console.log('chunk.data', chunk.data);
           let parsedData = {} as {
@@ -295,7 +321,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           }
         } else {
           console.log('没有数据', chunk);
-          // continue;
+          continue;
         }
       }
     },
@@ -540,6 +566,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onPromptsItemClick={onPromptsItemClick}
             onSubmit={onSubmit}
             difyApi={difyApi}
+            onCancel={()=>{
+              console.log('打断输出')
+              abortRef.current()
+            }}
           />
         ) : appInfo ? (
           <AppInfo info={appInfo} />
