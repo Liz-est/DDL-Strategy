@@ -30,7 +30,7 @@ import { RESPONSE_MODE, USER } from '../config';
 import { MessageInfo } from '@ant-design/x/es/use-x-chat';
 import { isTempId } from '../utils/utils';
 import { DIFY_INFO } from '../utils/vars';
-import { gte } from 'semver'
+import { gte, valid } from 'semver'
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
 import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
@@ -351,7 +351,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       setTarget(result.data[0]?.inputs?.target);
     }
 
-    const difyVersion = DIFY_INFO.version
+    // 如果不是合法版本 则默认为 1.0.0
+    const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0'
     let baseData = result.data
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
     if (gte(difyVersion, '1.0.0')) {
