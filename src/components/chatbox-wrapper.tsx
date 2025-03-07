@@ -69,6 +69,10 @@ interface IChatboxWrapperProps {
    * @param id 即将变更的对话 ID
    */
   onConversationIdChange: (id: string) => void;
+  /**
+   * 添加对话
+   */
+  onAddConversation: () => void;
 }
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
@@ -81,6 +85,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     conversationId,
     conversationName,
     onConversationIdChange,
+    onAddConversation,
   } = props;
   const [initLoading, setInitLoading] = useState<boolean>(false);
   const [target, setTarget] = useState('');
@@ -574,6 +579,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         ) : appInfo ? (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <AppInfo info={appInfo} />
+            <Button
+              className='mt-3'
+              type="primary"
+              icon={<MessageOutlined />}
+              onClick={onAddConversation}
+            >
+              开始对话
+            </Button>
           </div>
         ) : null}
       </div>

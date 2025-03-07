@@ -8,6 +8,7 @@ import {
   SmileOutlined,
 } from '@ant-design/icons';
 import { Prompts, Welcome } from '@ant-design/x';
+import { isMobile } from '@toolkit-fe/where-am-i';
 import { Button, GetProp, Space } from 'antd';
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
@@ -80,8 +81,8 @@ interface IWelcomePlaceholderProps {
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
   const { onPromptItemClick } = props;
   return (
-    <div className='flex-1 flex justify-center'>
-      <Space direction="vertical" className="pt-8 w-3/4">
+    <div className='flex justify-center w-full px-3 box-border mx-auto'>
+      <Space direction="vertical" className="pt-8 w-full md:w-3/4">
         <Welcome
           variant="borderless"
           icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
@@ -96,12 +97,15 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
         />
         <Prompts
           title="Do you want?"
-          items={placeholderPromptsItems}
+          vertical={isMobile()}
+          items={isMobile() ? placeholderPromptsItems.slice(0, 1) : placeholderPromptsItems}
           styles={{
             list: {
               width: '100%',
             },
-            item: {
+            item: isMobile() ? {
+              width: '100%',
+            } : {
               flex: 1,
             },
           }}

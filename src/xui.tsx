@@ -188,6 +188,7 @@ const XUI: React.FC = () => {
             }
             onConversationIdChange={setCurrentConversationId}
             appParameters={appParameters}
+            onAddConversation={onAddConversation}
           />
         </div>
       </div>
