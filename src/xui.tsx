@@ -20,7 +20,6 @@ const useStyle = createStyles(({ token, css }) => {
   return {
     layout: css`
       width: 100%;
-      min-width: 1000px;
       height: 100vh;
       display: flex;
       background: ${token.colorBgContainer};
@@ -147,8 +146,8 @@ const XUI: React.FC = () => {
   return (
     <XProvider theme={{ token: { colorPrimary: '#1689fe' } }}>
       <div className={styles.layout}>
-        {/* 左侧边栏 */}
-        <div className={`${styles.menu} w-72 h-full flex flex-col`}>
+        {/* 左侧边栏 - 小屏幕隐藏 */}
+        <div className={`${styles.menu} hidden md:flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
           <Logo
             onSettingUpdated={async () => {
@@ -178,17 +177,19 @@ const XUI: React.FC = () => {
           </div>
         </div>
 
-        {/* 右侧聊天窗口 */}
-        <ChatboxWrapper
-          appInfo={appInfo}
-          difyApi={difyApi!}
-          conversationId={currentConversationId}
-          conversationName={
-            conversationMap.get(currentConversationId as string)?.label || ''
-          }
-          onConversationIdChange={setCurrentConversationId}
-          appParameters={appParameters}
-        />
+        {/* 右侧聊天窗口 - 移动端全屏 */}
+        <div className="flex-1 min-w-0"> {/* 新增外层容器 */}
+          <ChatboxWrapper
+            appInfo={appInfo}
+            difyApi={difyApi!}
+            conversationId={currentConversationId}
+            conversationName={
+              conversationMap.get(currentConversationId as string)?.label || ''
+            }
+            onConversationIdChange={setCurrentConversationId}
+            appParameters={appParameters}
+          />
+        </div>
       </div>
     </XProvider>
   );

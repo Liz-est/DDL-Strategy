@@ -76,6 +76,9 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
           <Button onClick={() => setOpen(!open)} icon={<LinkOutlined />} />
         </Badge>
       }
+      style={{
+        boxShadow: '0px -2px 12px 4px #efefef'
+      }}
       loading={isRequesting}
       className={className}
       onSubmit={async(content) => {

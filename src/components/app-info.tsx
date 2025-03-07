@@ -14,7 +14,7 @@ export default function AppInfo(props: IAppInfoProps) {
 
   const { token } = theme.useToken()
   return (
-    <div className="w-full h-full flex items-center justify-center text-default">
+    <div className="text-default">
       <div className="flex items-center justify-center flex-col">
         <RobotOutlined
           className='text-2xl'

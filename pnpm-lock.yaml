@@ -14,6 +14,9 @@ dependencies:
   '@toolkit-fe/clipboard':
     specifier: ^0.1.22
     version: 0.1.22
+  '@toolkit-fe/where-am-i':
+    specifier: ^0.1.22
+    version: 0.1.22
   antd:
     specifier: ^5.22.2
     version: 5.22.2(react-dom@18.3.1)(react@18.3.1)
@@ -881,6 +884,10 @@ packages:
 
   /@toolkit-fe/clipboard@0.1.22:
     resolution: {integrity: sha512-mo4tVLUJLCmkVwJVjnDLIXRKIOEIBlwN3W17ekt2jYyJIUgihBmsVjxRAuS7kMpYGkBrCLvKCOHJHBdDvWUfmw==}
+    dev: false
+
+  /@toolkit-fe/where-am-i@0.1.22:
+    resolution: {integrity: sha512-yLouXvciSoYhuWd520sWzvHQ+p+6xuXMmdTcS8P8quAaF6bbNXoTJi3KhTngT75krJb+p5RRDJUdeXy/dd6gUg==}
     dev: false
 
   /@types/estree@1.0.6:

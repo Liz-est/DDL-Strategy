@@ -109,7 +109,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     setNextSuggestions(result.data);
   };
 
-  const abortRef = useRef(() => {});
+  const abortRef = useRef(() => { });
 
   useEffect(() => {
     return () => {
@@ -452,10 +452,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       messageRender: (content: string) => {
         if (messageItem.status === 'error') {
           return (
-            <div className="text-red-700">
+            <p className="text-red-700">
               <WarningOutlined className="mr-2" />
               <span>{messageItem.error}</span>
-            </div>
+            </p>
           );
         }
 
@@ -566,13 +566,15 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onPromptsItemClick={onPromptsItemClick}
             onSubmit={onSubmit}
             difyApi={difyApi}
-            onCancel={()=>{
+            onCancel={() => {
               console.log('打断输出')
               abortRef.current()
             }}
           />
         ) : appInfo ? (
-          <AppInfo info={appInfo} />
+          <div className="w-full h-full flex flex-col items-center justify-center">
+            <AppInfo info={appInfo} />
+          </div>
         ) : null}
       </div>
     </div>

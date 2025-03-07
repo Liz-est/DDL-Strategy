@@ -14,6 +14,7 @@
     "@ant-design/icons": "^5.5.1",
     "@ant-design/x": "^1.0.5",
     "@toolkit-fe/clipboard": "^0.1.22",
+    "@toolkit-fe/where-am-i": "^0.1.22",
     "antd": "^5.22.2",
     "antd-style": "^3.7.1",
     "markdown-it": "^14.1.0",

@@ -1,6 +1,48 @@
 @tailwind components;
 @tailwind utilities;
 
+.ant-bubble {
+  .ant-bubble-content {
+    padding-top: 0;
+    padding-bottom: 0;
+    min-height: auto;
+  }
+  
+  &[role=user] {
+    .ant-bubble-content {
+      background-color: #efeffd;
+      color: #fff;
+    }
+  }
+
+  p {
+    margin-top: 0.5rem!important;
+    margin-bottom: 0.5rem!important;
+  }
+}
+
+hr {
+  margin: 0.25rem auto;
+  color: #9CA3B3;
+  height: 0;
+  display: none;
+}
+
+details {
+  background-color: transparent!important;
+  padding: 0!important;
+  margin-top: 0.5rem;
+}
+
+h3 {
+  margin-top: 0.5rem!important;
+  margin-bottom: 0.5rem!important;
+}
+
+h3 {
+  font-size: 18px!important;
+}
+
 body {
   margin: 0;
   color: #333;
