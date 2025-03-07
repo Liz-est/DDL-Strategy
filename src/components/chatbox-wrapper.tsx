@@ -38,6 +38,7 @@ import ThoughtChain from './thought-chain';
 import MdRender from './md-render';
 import AppInfo from './app-info';
 import MessageFooter from './message/footer';
+import { isMobile } from '@toolkit-fe/where-am-i';
 
 interface IConversationEntryFormItem extends FormItemProps {
   type: 'input' | 'select';
@@ -513,7 +514,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationId ? (
-        <div className="h-16 leading-[4rem] px-8 text-base top-0 z-20 mr-4 bg-white w-full shadow-sm font-semibold">
+        <div className={`${isMobile() ? 'h-12 leading-[3rem] px-4' : 'h-16 leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}>
           {conversationName || '新对话'}
         </div>
       ) : null}
