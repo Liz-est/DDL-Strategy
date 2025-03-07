@@ -1,74 +1,13 @@
 import { GithubOutlined, SettingOutlined } from "@ant-design/icons";
-import { Button, Form, Input, message, Modal } from "antd";
-import { getVars, RUNTIME_VARS_KEY } from "../utils/vars";
-import { useEffect } from "react";
+import { Button } from "antd";
 
 interface ILogoProps {
-  onSettingUpdated: () => void;
+  openSettingModal: () => void;
 }
 
 export const Logo = (props: ILogoProps) => {
 
-  const { onSettingUpdated } = props;
-  const [settingForm] = Form.useForm();
-
-	useEffect(() => {
-		const vars = getVars();
-		const isInstanceReady = !!vars.DIFY_API_KEY && !!vars.DIFY_API_BASE;
-		if (!isInstanceReady) {
-      openSettingModal();
-    }
-	}, [])
-
-	const openSettingModal = async() => {
-		const initialValues = getVars();
-    Modal.confirm({
-      width: 600,
-      title: '配置',
-      content: (
-        <Form
-          form={settingForm}
-          labelAlign="left"
-          labelCol={{
-            span: 5,
-          }}
-          initialValues={initialValues}
-        >
-          <Form.Item
-            label="API BASE"
-            name="DIFY_API_BASE"
-            rules={[{ required: true }]}
-            required
-          >
-            <Input placeholder="请输入 API BASE" />
-          </Form.Item>
-          <Form.Item
-            label="API Version"
-            name="DIFY_API_VERSION"
-            rules={[{ required: true }]}
-            required
-          >
-            <Input placeholder="请输入 API Version" />
-          </Form.Item>
-          <Form.Item
-            label="API Key"
-            name="DIFY_API_KEY"
-            rules={[{ required: true }]}
-            required
-          >
-            <Input placeholder="请输入 API Key" />
-          </Form.Item>
-        </Form>
-      ),
-      onOk: async () => {
-        await settingForm.validateFields();
-        const values = settingForm.getFieldsValue();
-        localStorage.setItem(RUNTIME_VARS_KEY, JSON.stringify(values));
-        message.success('更新配置成功');
-        onSettingUpdated();
-      },
-    });
-	}
+  const { openSettingModal } = props;
 
 	return (
     <div className="flex h-16 items-center justify-start py-0 px-6 box-border">

@@ -1,4 +1,6 @@
+import { message } from "antd"
 import { DIFY_INFO } from "./vars"
+import { UnauthorizedError } from "./error"
 
 export class XRequest {
 
@@ -28,6 +30,10 @@ export class XRequest {
       if (newDifyVersion && newDifyVersion !== DIFY_INFO.version) {
         DIFY_INFO.version = newDifyVersion
       }
+    }
+    if (result.status === 401) {
+      message.error('未授权, 请检查你的配置')
+      throw new UnauthorizedError('Unauthorized')
     }
     return result
   }

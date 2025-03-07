@@ -13,6 +13,10 @@ interface IThoughtChainProps {
    * 原始思维链数据
    */
   items: IAgentThought[]
+  /**
+   * 自定义 className
+   */
+  className?: string
 }
 
 /**
@@ -20,7 +24,7 @@ interface IThoughtChainProps {
  */
 export default function ThoughtChain(props: IThoughtChainProps) {
 
-  const { uniqueKey, items } = props
+  const { uniqueKey, items, className } = props
 
   if (!items?.length) {
     return null
@@ -58,6 +62,7 @@ export default function ThoughtChain(props: IThoughtChainProps) {
 
   return (
     <XThoughtChain
+      className={className}
       items={thoughtChainItems}
     />
   )

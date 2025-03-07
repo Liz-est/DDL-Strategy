@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Spin, type GetProp } from 'antd';
+import { Button, Form, Input, message, Modal, Spin, type GetProp } from 'antd';
 import {
   IGetAppInfoResponse,
   IGetAppParametersResponse,
@@ -15,6 +15,8 @@ import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
 import ConversationList, { IConversationItem } from './components/conversation-list';
 import { useMap4Arr } from './hooks/use-map-4-arr';
+import { UnauthorizedError } from './utils/error';
+import { getVars, RUNTIME_VARS_KEY } from './utils/vars';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -62,20 +64,25 @@ const XUI: React.FC = () => {
       return;
     }
     // 获取应用信息
-    const [baseInfo, _meta, appParameters] = await Promise.all([
-      difyApi.getAppInfo(),
-      difyApi.getAppMeta(),
-      difyApi.getAppParameters(),
-    ]);
-    setAppInfo({
-      ...baseInfo,
-    });
+    try {
+      const baseInfo = await difyApi.getAppInfo()
+      setAppInfo({
+        ...baseInfo,
+      });
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        openSettingModal();
+        throw error;
+      }
+    }
+    const appParameters = await difyApi.getAppParameters()
     setAppParameters(appParameters);
   };
 
   useEffect(() => {
-    initAppInfo();
-    getConversationItems();
+    initAppInfo().then(()=>{
+      getConversationItems();
+    })
     setCurrentConversationId(undefined);
   }, [difyApi]);
 
@@ -143,6 +150,57 @@ const XUI: React.FC = () => {
     }
   }, [currentConversationId]);
 
+  const [settingForm] = Form.useForm();
+  const openSettingModal = async() => {
+		const initialValues = getVars();
+    Modal.confirm({
+      width: 600,
+      title: '配置',
+      content: (
+        <Form
+          form={settingForm}
+          labelAlign="left"
+          labelCol={{
+            span: 5,
+          }}
+          initialValues={initialValues}
+        >
+          <Form.Item
+            label="API BASE"
+            name="DIFY_API_BASE"
+            rules={[{ required: true }]}
+            required
+          >
+            <Input placeholder="请输入 API BASE" />
+          </Form.Item>
+          <Form.Item
+            label="API Version"
+            name="DIFY_API_VERSION"
+            rules={[{ required: true }]}
+            required
+          >
+            <Input placeholder="请输入 API Version" />
+          </Form.Item>
+          <Form.Item
+            label="API Key"
+            name="DIFY_API_KEY"
+            rules={[{ required: true }]}
+            required
+          >
+            <Input placeholder="请输入 API Key" />
+          </Form.Item>
+        </Form>
+      ),
+      onOk: async () => {
+        await settingForm.validateFields();
+        const values = settingForm.getFieldsValue();
+        localStorage.setItem(RUNTIME_VARS_KEY, JSON.stringify(values));
+        message.success('更新配置成功');
+        updateInstance();
+      },
+    });
+	}
+
   return (
     <XProvider theme={{ token: { colorPrimary: '#1689fe' } }}>
       <div className={styles.layout}>
@@ -150,9 +208,7 @@ const XUI: React.FC = () => {
         <div className={`${styles.menu} hidden md:flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
           <Logo
-            onSettingUpdated={async () => {
-              updateInstance();
-            }}
+            openSettingModal={openSettingModal}
           />
           {/* 🌟 添加会话 */}
           <Button
