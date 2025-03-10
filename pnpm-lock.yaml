@@ -102,6 +102,9 @@ importers:
 
   packages/components:
     dependencies:
+      '@dify-chat/helpers':
+        specifier: workspace:^
+        version: link:../helpers
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -169,6 +172,24 @@ importers:
       storybook-react-rsbuild:
         specifier: ^1.0.0
         version: 1.0.0(@rsbuild/core@1.2.15)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0)
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
+      vitest:
+        specifier: ^3.0.7
+        version: 3.0.8(@types/node@22.13.5)(jsdom@26.0.0)
+
+  packages/helpers:
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.9.4
+        version: 1.9.4
+      '@rslib/core':
+        specifier: ^0.5.3
+        version: 0.5.3(typescript@5.8.2)
+      '@types/node':
+        specifier: ^22.8.1
+        version: 22.13.5
       typescript:
         specifier: ^5.8.2
         version: 5.8.2

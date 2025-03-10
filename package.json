@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "build:pkgs": "pnpm --filter @dify-chat/components build",
+    "build:pkgs": "pnpm --filter @dify-chat/* build",
     "build": "pnpm build:pkgs && rsbuild build",
     "dev": "pnpm build:pkgs && rsbuild dev",
     "format": "prettier --write .",
