@@ -6,6 +6,10 @@ import CollapseItem from "./collapse-item";
 
 interface IThoughtChainProps {
   /**
+   * 类名
+   */
+  className?: string
+  /**
    * 思维链的唯一 Key
    */
   uniqueKey: string
@@ -20,7 +24,7 @@ interface IThoughtChainProps {
  */
 export default function ThoughtChain(props: IThoughtChainProps) {
 
-  const { uniqueKey, items } = props
+  const { uniqueKey, items, className } = props
 
   if (!items?.length) {
     return null
@@ -58,6 +62,7 @@ export default function ThoughtChain(props: IThoughtChainProps) {
 
   return (
     <XThoughtChain
+      className={className}
       items={thoughtChainItems}
     />
   )
