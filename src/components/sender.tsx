@@ -37,16 +37,14 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
       }}
     >
       <Attachments
-        // Mock not real upload file
         beforeUpload={async (file) => {
+          // 注意：此函数不要 return，否则预览区域的图片就展示不出来了
           const result = await difyApi.uploadFile(file);
           setFileIdMap((prevMap)=>{
             const nextMap = new Map(prevMap)
             nextMap.set(file.uid, result.id)
             return nextMap
           })
-          // 这里不要 return，否则预览区域的图片就展示不出来了
-          // return data;
         }}
         items={files}
         onChange={({ fileList }) => setFiles(fileList)}

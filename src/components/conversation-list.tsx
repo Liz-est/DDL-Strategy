@@ -64,7 +64,6 @@ export default function ConversationList(props: IConversationListProps) {
         ],
         onClick: async (menuInfo) => {
           menuInfo.domEvent.stopPropagation();
-          console.log('menuInfo', conversation);
 
           switch (menuInfo.key) {
             case 'delete':
@@ -87,7 +86,6 @@ export default function ConversationList(props: IConversationListProps) {
               }
               break;
             case 'rename':
-              console.log('当前名称', conversation.label)
               renameForm.setFieldsValue({
                 name: conversation.label,
               });

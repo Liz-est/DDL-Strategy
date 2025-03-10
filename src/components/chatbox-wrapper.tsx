@@ -167,7 +167,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         }
         if (!chunk) continue;
         if (chunk.data) {
-          console.log('chunk.data', chunk.data);
           let parsedData = {} as {
             id: string
             task_id: string
@@ -204,7 +203,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           } catch (error) {
             console.error('解析 JSON 失败', error);
           }
-          console.log('message', parsedData)
           if (parsedData.event === 'message_end') {
             onSuccess({
               content: result,
@@ -213,7 +211,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               agentThoughts
             });
             const conversation_id = parsedData.conversation_id;
-            console.log('成功后的对话 iD', parsedData, conversationId)
             // 如果有对话 ID，跟当前的对比一下
             if (conversation_id && isTempId(conversationId)) {
               // 通知外部组件，对话 ID 变更，外部组件需要更新对话列表
@@ -343,7 +340,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       return;
     }
     const result = await difyApi.getConversationHistory(conversationId);
-    console.log('对话历史', result);
 
     const newMessages: MessageInfo<IAgentMessage>[] = [];
 
@@ -389,9 +385,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const { onRequest, messages, setMessages } = useXChat({
     agent,
   });
-
-  // console.log('messages in render', JSON.stringify(messages));
-  // console.log('historyMessages in render', JSON.stringify(historyMessages));
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
