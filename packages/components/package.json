@@ -1,6 +1,12 @@
 {
   "name": "@dify-chat/components",
   "version": "0.0.1",
+  "description": "Dify Chat Components library",
+  "keywords": [
+    "dify",
+    "chat",
+    "components"
+  ],
   "type": "module",
   "exports": {
     ".": {
