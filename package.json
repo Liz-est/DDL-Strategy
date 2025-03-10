@@ -1,10 +1,10 @@
 {
   "name": "dify-chat-web",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "build": "rsbuild build",
-    "dev": "rsbuild dev",
+    "dev": "pnpm --filter @dify-chat/components build && rsbuild dev",
     "format": "prettier --write .",
     "lint": "eslint .",
     "preview": "rsbuild preview"
@@ -13,6 +13,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/x": "^1.0.5",
+    "@dify-chat/components": "workspace:^",
     "@toolkit-fe/clipboard": "^0.1.22",
     "@toolkit-fe/where-am-i": "^0.1.22",
     "antd": "^5.22.2",

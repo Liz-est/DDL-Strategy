@@ -35,7 +35,7 @@ import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
 import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
 import ThoughtChain from './thought-chain';
-import MdRender from './md-render';
+import { MarkdownRenderer } from '@dify-chat/components';
 import AppInfo from './app-info';
 import MessageFooter from './message/footer';
 import { isMobile } from '@toolkit-fe/where-am-i';
@@ -492,7 +492,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             </>
 
             {/* 文本内容 */}
-            <MdRender markdownText={content} />
+            <MarkdownRenderer markdownText={content} />
           </>
         );
       },
