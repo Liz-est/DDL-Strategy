@@ -14,7 +14,9 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
     "@ant-design/x": "^1.0.5",
+    "@dify-chat/api": "workspace:^",
     "@dify-chat/components": "workspace:^",
+    "@dify-chat/helpers": "workspace:^",
     "@toolkit-fe/clipboard": "^0.1.22",
     "@toolkit-fe/where-am-i": "^0.1.22",
     "antd": "^5.22.2",

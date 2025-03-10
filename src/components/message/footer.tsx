@@ -1,7 +1,7 @@
 import { CopyOutlined, DislikeOutlined, LikeOutlined, SyncOutlined } from "@ant-design/icons";
 import { copyToClipboard } from "@toolkit-fe/clipboard";
 import { Button, Space, message as antdMessage } from "antd";
-import { DifyApi } from "../../utils/dify-api";
+import { DifyApi } from "@dify-chat/api";
 
 interface IMessageFooterProps {
   /**

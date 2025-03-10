@@ -17,7 +17,7 @@ import {
   IFile,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
-} from '../utils/dify-api';
+} from '@dify-chat/api';
 import { useEffect, useRef, useState } from 'react';
 import {
   Bubble,
@@ -28,8 +28,7 @@ import {
 } from '@ant-design/x';
 import { RESPONSE_MODE, USER } from '../config';
 import { MessageInfo } from '@ant-design/x/es/use-x-chat';
-import { isTempId } from '../utils/utils';
-import { DIFY_INFO } from '../utils/vars';
+import { isTempId, DIFY_INFO } from '@dify-chat/helpers';
 import { gte, valid } from 'semver'
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';

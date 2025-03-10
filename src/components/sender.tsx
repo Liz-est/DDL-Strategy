@@ -2,7 +2,7 @@ import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { Badge, Button, GetProp, GetRef } from 'antd';
 import { useRef, useState } from 'react';
-import { DifyApi, IFile } from '../utils/dify-api';
+import { DifyApi, IFile } from '@dify-chat/api';
 
 interface ISenderWrapperProps {
   difyApi: DifyApi;

@@ -14,9 +14,15 @@ importers:
       '@ant-design/x':
         specifier: ^1.0.5
         version: 1.0.5(antd@5.22.2)(react-dom@18.3.1)(react@18.3.1)
+      '@dify-chat/api':
+        specifier: workspace:^
+        version: link:packages/api
       '@dify-chat/components':
         specifier: workspace:^
         version: link:packages/components
+      '@dify-chat/helpers':
+        specifier: workspace:^
+        version: link:packages/helpers
       '@toolkit-fe/clipboard':
         specifier: ^0.1.22
         version: 0.1.22
@@ -99,6 +105,28 @@ importers:
       typescript-eslint:
         specifier: ^8.26.0
         version: 8.26.0(eslint@9.21.0)(typescript@5.8.2)
+
+  packages/api:
+    dependencies:
+      '@dify-chat/helpers':
+        specifier: workspace:^
+        version: link:../helpers
+    devDependencies:
+      '@biomejs/biome':
+        specifier: ^1.9.4
+        version: 1.9.4
+      '@rslib/core':
+        specifier: ^0.5.3
+        version: 0.5.3(typescript@5.8.2)
+      '@types/node':
+        specifier: ^22.8.1
+        version: 22.13.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.8.2
+      vitest:
+        specifier: ^3.0.7
+        version: 3.0.8(@types/node@22.13.5)(jsdom@26.0.0)
 
   packages/components:
     dependencies:

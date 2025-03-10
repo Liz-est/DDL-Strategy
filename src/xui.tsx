@@ -9,7 +9,7 @@ import {
   IGetAppInfoResponse,
   IGetAppParametersResponse,
   useDifyApi,
-} from './utils/dify-api';
+} from '@dify-chat/api';
 import { USER } from './config';
 import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';

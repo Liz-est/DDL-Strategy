@@ -1,6 +1,6 @@
 import { GithubOutlined, SettingOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message, Modal } from "antd";
-import { getVars, RUNTIME_VARS_KEY } from "../utils/vars";
+import { getVars, RUNTIME_VARS_KEY } from "@dify-chat/helpers";
 import { useEffect } from "react";
 
 interface ILogoProps {

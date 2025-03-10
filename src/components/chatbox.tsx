@@ -7,9 +7,9 @@ import {
 } from '@ant-design/icons';
 import { useDeferredValue, useEffect, useRef, useState } from 'react';
 import SenderWrapper from './sender';
-import { DifyApi, IFile } from '../utils/dify-api';
+import { DifyApi, IFile } from '@dify-chat/api';
 import { isMobile } from '@toolkit-fe/where-am-i';
-import { isTempId } from '../utils/utils';
+import { isTempId } from '@dify-chat/helpers';
 
 const roles: GetProp<typeof Bubble.List, 'roles'> = {
   ai: {
