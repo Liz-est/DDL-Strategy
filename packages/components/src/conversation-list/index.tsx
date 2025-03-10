@@ -57,6 +57,57 @@ export const ConversationList = (props: IConversationListProps) => {
 
   const [renameForm] = Form.useForm();
 
+  /**
+   * 删除会话
+   * @param conversationId 会话 ID
+   */
+  const deleteConversation = async (conversationId: string) => {
+    if (isTempId(conversationId)) {
+      // 如果是临时对话，则直接删除
+      onItemsChange?.(
+        items.filter(
+          (item) => item.key !== conversationId,
+        ),
+      );
+    } else {
+      // 否则调用删除接口
+      await deleteConversationPromise(conversationId);
+      refreshItems();
+    }
+    message.success('删除成功');
+    if (activeKey === conversationId) {
+      onActiveChange?.('');
+    }
+  };
+
+  /**
+   * 重命名会话
+   * @param conversation 会话对象
+   */
+  const renameConversation = (conversation: IConversationItem) => {
+    renameForm.setFieldsValue({
+      name: conversation.label,
+    });
+    Modal.confirm({
+      destroyOnClose: true,
+      title: '会话重命名',
+      content: (
+        <Form form={renameForm} className="mt-3">
+          <Form.Item name='name'>
+            <Input placeholder='请输入' />
+          </Form.Item>
+        </Form>
+      ),
+      onOk: async () => {
+        await renameForm.validateFields()
+        const values = await renameForm.validateFields(); 
+        await renameConversationPromise(conversation.key, values.name);
+        message.success('会话重命名成功');
+        refreshItems();
+      }
+    })
+  }
+
   return (
     <Conversations
       className="p-0"
@@ -78,50 +129,14 @@ export const ConversationList = (props: IConversationListProps) => {
           },
         ],
         onClick: async (menuInfo) => {
+          // 阻止冒泡 防止点击更多按钮时触发 onActiveChange
           menuInfo.domEvent.stopPropagation();
-
           switch (menuInfo.key) {
             case 'delete':
-              if (isTempId(conversation.key)) {
-                // 如果是临时对话，则直接删除
-                onItemsChange?.(
-                  items.filter(
-                    (item) => item.key !== conversation.key,
-                  ),
-                );
-                message.success('删除成功');
-              } else {
-                // 否则调用删除接口
-                await deleteConversationPromise(conversation.key);
-                message.success('删除成功');
-                refreshItems();
-              }
-              if (activeKey === conversation.key) {
-                onActiveChange?.('');
-              }
+              await deleteConversation(conversation.key);
               break;
             case 'rename':
-              renameForm.setFieldsValue({
-                name: conversation.label,
-              });
-              Modal.confirm({
-                destroyOnClose: true,
-                title: '会话重命名',
-                content: (
-                  <Form form={renameForm} className="mt-3">
-                    <Form.Item name='name'>
-                      <Input placeholder='请输入' />
-                    </Form.Item>
-                  </Form>
-                ),
-                onOk: async () => {
-                  await renameForm.validateFields()
-                  const values = await renameForm.validateFields(); 
-                  await renameConversationPromise(conversation.key, values.name);
-                  message.success('会话重命名成功');
-                  refreshItems();
-                }
-              });
+              renameConversation(conversation as IConversationItem);
               break;
             default:
               break;
