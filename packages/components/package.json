@@ -7,16 +7,21 @@
     "chat",
     "components"
   ],
+  "author": {
+    "name": "lexmin0412",
+    "email": "zhangle_dev@outlook.com",
+    "url": "http://github.com/lexmin0412"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -62,6 +67,7 @@
     "react-dom": ">=16.9.0"
   },
   "dependencies": {
+    "@dify-chat/helpers": "workspace:^",
     "markdown-it": "^14.1.0"
   }
 }
