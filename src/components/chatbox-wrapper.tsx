@@ -470,7 +470,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         return (
           <>
             {/* 思维链 */}
-            <ThoughtChain uniqueKey={messageItem.id as string} items={agentThoughts} />
+            <ThoughtChain uniqueKey={messageItem.id as string} items={agentThoughts} className='mt-3' />
 
             {/* 工作流执行日志 */}
             <WorkflowLogs items={message.workflows?.nodes || []} status={message.workflows?.status} />
