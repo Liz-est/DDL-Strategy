@@ -49,6 +49,28 @@ interface IGetConversationListResponse {
 }
 
 /**
+ * 知识库引用对象
+ */
+export interface IRetrieverResource {
+  id: string;
+  message_id: string;
+  position: number;
+  dataset_id: string;
+  dataset_name: string;
+  document_id: string;
+  document_name: string;
+  data_source_type: string;
+  segment_id: string;
+  score: number;
+  hit_count: number;
+  word_count: number;
+  segment_position: number;
+  index_node_hash: null;
+  content: string;
+  created_at: number;
+}
+
+/**
  * 会话历史 Item 结构
  */
 interface IMessageItem {
@@ -64,6 +86,10 @@ interface IMessageItem {
 	status: 'normal' | 'error'
 	error: string | null
 	agent_thoughts?: IAgentThought[]
+  /**
+   * 知识库引用列表
+   */
+  retriever_resources?: IRetrieverResource[];
 }
 
 interface IGetConversationHistoryResponse {

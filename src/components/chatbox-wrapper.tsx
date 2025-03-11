@@ -1,7 +1,4 @@
-import {
-  MessageOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
+import { MessageOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Button,
   Form,
@@ -17,19 +14,14 @@ import {
   IFile,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
+  IRetrieverResource,
 } from '@dify-chat/api';
 import { useEffect, useRef, useState } from 'react';
-import {
-  Bubble,
-  Prompts,
-  useXAgent,
-  useXChat,
-  XStream,
-} from '@ant-design/x';
+import { Bubble, Prompts, useXAgent, useXChat, XStream } from '@ant-design/x';
 import { RESPONSE_MODE, USER } from '../config';
 import { MessageInfo } from '@ant-design/x/es/use-x-chat';
 import { isTempId, DIFY_INFO } from '@dify-chat/helpers';
-import { gte, valid } from 'semver'
+import { gte, valid } from 'semver';
 import WorkflowLogs, { IWorkflowNode } from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
 import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
@@ -89,9 +81,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   } = props;
   const [initLoading, setInitLoading] = useState<boolean>(false);
   const [target, setTarget] = useState('');
-  const [historyMessages, setHistoryMessages] = useState<MessageInfo<IAgentMessage>[]>(
-    [],
-  );
+  const [historyMessages, setHistoryMessages] = useState<
+    MessageInfo<IAgentMessage>[]
+  >([]);
   const [userInputItems, setUserInputItems] = useState<
     IConversationEntryFormItem[]
   >([]);
@@ -101,8 +93,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   // 定义 ref, 用于获取最新的 conversationId
   const latestProps = useLatest({
     conversationId,
-    difyApi
-  })
+    difyApi,
+  });
 
   const filesRef = useRef<IFile[]>([]);
 
@@ -114,7 +106,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     setNextSuggestions(result.data);
   };
 
-  const abortRef = useRef(() => { });
+  const abortRef = useRef(() => {});
 
   useEffect(() => {
     return () => {
@@ -124,7 +116,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   const [agent] = useXAgent<IAgentMessage>({
     request: async ({ message }, { onSuccess, onUpdate, onError }) => {
-
       // 发送消息
       const response = await latestProps.current.difyApi.sendMessage({
         inputs: {
@@ -140,15 +131,15 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       });
 
       let result = '';
-      const files: IMessageFileItem[] = []
-      const workflows: IAgentMessage['workflows'] = {}
-      const agentThoughts: IAgentThought[] = []
+      const files: IMessageFileItem[] = [];
+      const workflows: IAgentMessage['workflows'] = {};
+      const agentThoughts: IAgentThought[] = [];
 
       const readableStream = XStream({
         readableStream: response.body as NonNullable<ReadableStream>,
-      })
+      });
 
-      const reader = readableStream.getReader()
+      const reader = readableStream.getReader();
       abortRef.current = () => {
         reader?.cancel();
       };
@@ -160,20 +151,20 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             content: result,
             files,
             workflows,
-            agentThoughts
+            agentThoughts,
           });
           break;
         }
         if (!chunk) continue;
         if (chunk.data) {
           let parsedData = {} as {
-            id: string
-            task_id: string
-            position: number
-            tool: string
-            tool_input: string
-            observation: string
-            message_files: string[]
+            id: string;
+            task_id: string;
+            position: number;
+            tool: string;
+            tool_input: string;
+            observation: string;
+            message_files: string[];
 
             event: string;
             answer: string;
@@ -181,9 +172,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             message_id: string;
 
             // 类型
-            type: 'image'
+            type: 'image';
             // 图片链接
-            url: string
+            url: string;
 
             data: {
               // 工作流节点的数据
@@ -194,7 +185,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               outputs: string;
               process_data: string;
               elapsed_time: number;
-              execution_metadata: IWorkflowNode['execution_metadata']
+              execution_metadata: IWorkflowNode['execution_metadata'];
             };
           };
           try {
@@ -207,7 +198,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               content: result,
               files,
               workflows,
-              agentThoughts
+              agentThoughts,
             });
             const conversation_id = parsedData.conversation_id;
             // 如果有对话 ID，跟当前的对比一下
@@ -220,27 +211,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               getNextSuggestions(parsedData.message_id);
             }
           }
-          const innerData = parsedData.data
+          const innerData = parsedData.data;
           if (parsedData.event === 'workflow_started') {
-            workflows.status = 'running'
-            workflows.nodes = []
+            workflows.status = 'running';
+            workflows.nodes = [];
             onUpdate({
               content: result,
               files,
               workflows,
-              agentThoughts
-            })
+              agentThoughts,
+            });
           } else if (parsedData.event === 'workflow_finished') {
-            console.log('工作流结束', parsedData)
-            workflows.status = 'finished'
+            console.log('工作流结束', parsedData);
+            workflows.status = 'finished';
             onUpdate({
               content: result,
               files,
               workflows,
-              agentThoughts
-            })
+              agentThoughts,
+            });
           } else if (parsedData.event === 'node_started') {
-            console.log('节点开始', parsedData)
+            console.log('节点开始', parsedData);
             workflows.nodes = [
               ...(workflows.nodes || []),
               {
@@ -248,14 +239,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                 status: 'running',
                 type: innerData.node_type,
                 title: innerData.title,
-              } as IWorkflowNode
-            ]
+              } as IWorkflowNode,
+            ];
             onUpdate({
               content: result,
               files,
               workflows,
-              agentThoughts
-            })
+              agentThoughts,
+            });
           } else if (parsedData.event === 'node_finished') {
             workflows.nodes = workflows.nodes?.map((item) => {
               if (item.id === innerData.id) {
@@ -266,28 +257,31 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
                   outputs: innerData.outputs,
                   process_data: innerData.process_data,
                   elapsed_time: innerData.elapsed_time,
-                  execution_metadata: innerData.execution_metadata
+                  execution_metadata: innerData.execution_metadata,
                 };
               }
-              return item
-            })
-            onUpdate({
-              content: result,
-              files,
-              workflows,
-              agentThoughts
-            })
-          }
-          if (parsedData.event === 'message_file') {
-            result += `<img src=""${parsedData.url} />`
+              return item;
+            });
             onUpdate({
               content: result,
               files,
               workflows,
               agentThoughts,
-            })
+            });
           }
-          if (parsedData.event === 'message' || parsedData.event === 'agent_message') {
+          if (parsedData.event === 'message_file') {
+            result += `<img src=""${parsedData.url} />`;
+            onUpdate({
+              content: result,
+              files,
+              workflows,
+              agentThoughts,
+            });
+          }
+          if (
+            parsedData.event === 'message' ||
+            parsedData.event === 'agent_message'
+          ) {
             const text = parsedData.answer;
             result += text;
             onUpdate({
@@ -300,7 +294,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           if (parsedData.event === 'error') {
             onError({
               name: `${parsedData.status}: ${parsedData.code}`,
-              message: parsedData.message
+              message: parsedData.message,
             });
           }
           if (parsedData.event === 'agent_thought') {
@@ -313,14 +307,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               tool_input: parsedData.tool_input,
               observation: parsedData.observation,
               message_files: parsedData.message_files,
-              message_id: parsedData.message_id
-            })
+              message_id: parsedData.message_id,
+            });
             onUpdate({
               content: result,
               files,
               workflows,
-              agentThoughts
-            })
+              agentThoughts,
+            });
           }
         } else {
           console.log('没有数据', chunk);
@@ -347,11 +341,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     }
 
     // 如果不是合法版本 则默认为 1.0.0
-    const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0'
-    let baseData = result.data
+    const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0';
+    let baseData = result.data;
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
     if (gte(difyVersion, '1.0.0')) {
-      baseData = baseData.reverse()
+      baseData = baseData.reverse();
     }
     baseData.forEach((item) => {
       newMessages.push(
@@ -374,9 +368,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           isHistory: true,
           feedback: item.feedback,
           agentThoughts: item.agent_thoughts || [],
+          retriever_resources: item.retriever_resources || [],
         },
       );
-    })
+    });
 
     setHistoryMessages(newMessages);
   };
@@ -429,21 +424,26 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = (info) => {
     onRequest({
-      content: info.data.description as string
+      content: info.data.description as string,
     });
   };
 
   const onSubmit = (nextContent: string, files?: IFile[]) => {
     filesRef.current = files || [];
     onRequest({
-      content: nextContent
+      content: nextContent,
     });
   };
 
-  const items: GetProp<typeof Bubble.List, 'items'> = [...historyMessages, ...messages].map((messageItem) => {
+  const items: GetProp<typeof Bubble.List, 'items'> = [
+    ...historyMessages,
+    ...messages,
+  ].map((messageItem) => {
     const { id, message, status } = messageItem;
     const isQuery = id.toString().endsWith('query');
-    const agentThoughts: IAgentThought[] = messageItem.isHistory ? messageItem.agentThoughts : message.agentThoughts
+    const agentThoughts: IAgentThought[] = messageItem.isHistory
+      ? messageItem.agentThoughts
+      : message.agentThoughts;
     return {
       key: id,
       // 不要开启 loading 和 typing, 否则流式会无效
@@ -462,29 +462,63 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         return (
           <>
             {/* 思维链 */}
-            <ThoughtChain uniqueKey={messageItem.id as string} items={agentThoughts} className='mt-3' />
+            <ThoughtChain
+              uniqueKey={messageItem.id as string}
+              items={agentThoughts}
+              className="mt-3"
+            />
 
             {/* 工作流执行日志 */}
-            <WorkflowLogs items={message.workflows?.nodes || []} status={message.workflows?.status} />
+            <WorkflowLogs
+              items={message.workflows?.nodes || []}
+              status={message.workflows?.status}
+            />
 
             {/* 用户发送的图片列表 */}
             <>
               {message.files?.length
                 ? message.files.map((item: IMessageFileItem) => {
-                  return (
-                    <img
-                      src={item.url}
-                      key={item.id}
-                      alt={item.filename}
-                      className="max-w-full"
-                    />
-                  );
-                })
+                    return (
+                      <img
+                        src={item.url}
+                        key={item.id}
+                        alt={item.filename}
+                        className="max-w-full"
+                      />
+                    );
+                  })
                 : null}
             </>
 
             {/* 文本内容 */}
             <MarkdownRenderer markdownText={content} />
+
+            {/* 引用知识库链接 */}
+            {messageItem.retriever_resources?.length ? (
+              <div className="pb-3">
+                <div className="flex items-center text-gray-400">
+                  <span className="mr-3 text-sm">引用</span>
+                  <div className="flex-1 border-gray-400 border-dashed border-0 border-t h-0" />
+                </div>
+                {(messageItem.retriever_resources as IRetrieverResource[])?.map(
+                  (item) => {
+                    return (
+                      <div className="mt-2 truncate" key={item.id}>
+                        <a
+                          className="text-gray-600"
+                          target="_blank"
+                          rel="noreferrer"
+                          href={item.document_name}
+                          title={item.document_name}
+                        >
+                          {item.document_name}
+                        </a>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            ) : null}
           </>
         );
       },
@@ -502,26 +536,25 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         />
       ),
     };
-  }) as GetProp<typeof Bubble.List, 'items'>
+  }) as GetProp<typeof Bubble.List, 'items'>;
 
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationId ? (
-        <div className={`${isMobile() ? 'h-12 leading-[3rem] px-4' : 'h-16 leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}>
+        <div
+          className={`${isMobile() ? 'h-12 leading-[3rem] px-4' : 'h-16 leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
+        >
           {conversationName || '新对话'}
         </div>
       ) : null}
 
       <div className="flex-1 overflow-hidden relative">
-        {
-          initLoading ?
-          <div className='absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center'>
+        {initLoading ? (
+          <div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
             <Spin spinning />
           </div>
-          : null
-        }
-        {
-          conversationId ?
+        ) : null}
+        {conversationId ? (
           <Chatbox
             conversationId={conversationId}
             nextSuggestions={nextSuggestions}
@@ -531,12 +564,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onSubmit={onSubmit}
             difyApi={difyApi}
             onCancel={() => {
-              console.log('打断输出')
-              abortRef.current()
+              console.log('打断输出');
+              abortRef.current();
             }}
           />
-          :
-          formVisible ?
+        ) : formVisible ? (
           <div className="w-full h-full flex items-center justify-center -mt-5">
             <div className="w-96">
               <div className="text-2xl font-bold text-default mb-5">
@@ -576,12 +608,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               </Button>
             </div>
           </div>
-          :
-          appInfo ?
+        ) : appInfo ? (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <AppInfo info={appInfo} />
             <Button
-              className='mt-3'
+              className="mt-3"
               type="primary"
               icon={<MessageOutlined />}
               onClick={onAddConversation}
@@ -589,8 +620,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               开始对话
             </Button>
           </div>
-          : null
-        }
+        ) : null}
       </div>
     </div>
   );
