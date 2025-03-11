@@ -163,7 +163,7 @@ const XUI: React.FC = () => {
             New Conversation
           </Button>
           {/* 🌟 会话管理 */}
-          <div className="py-0 px-3 flex-1 overflow-y-auto">
+          <div className="py-0 flex-1 overflow-y-auto">
             <Spin spinning={conversationListLoading}>
               {
                 difyApi ?
