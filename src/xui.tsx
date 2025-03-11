@@ -16,7 +16,7 @@ import { Logo } from './components/logo';
 import { ConversationList, type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 import { UnauthorizedError } from './utils/error';
-import { getVars, RUNTIME_VARS_KEY } from './utils/vars';
+import { getVars, RUNTIME_VARS_KEY } from '@dify-chat/helpers';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
