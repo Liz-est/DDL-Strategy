@@ -6,6 +6,10 @@ import CollapseItem from "./collapse-item";
 
 interface IThoughtChainProps {
   /**
+   * 类名
+   */
+  className?: string
+  /**
    * 思维链的唯一 Key
    */
   uniqueKey: string

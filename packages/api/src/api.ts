@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
 import XRequest from './base-request';
-import { getVars } from './vars';
-import { IAgentThought } from '../types';
+import { getVars } from '@dify-chat/helpers';
+import { IAgentThought, IRetrieverResource } from './types';
 
 interface IUserInputForm {
   'text-input': {
@@ -12,6 +11,9 @@ interface IUserInputForm {
   };
 }
 
+/**
+ * 获取应用参数-响应体
+ */
 export interface IGetAppParametersResponse {
   user_input_form: IUserInputForm[];
   suggested_questions_after_answer: {
@@ -29,6 +31,9 @@ interface IConversationItem {
   updated_at: number;
 }
 
+/**
+ * 获取会话列表-参数
+ */
 interface IGetConversationListRequest {
   /**
    * 返回条数
@@ -36,10 +41,16 @@ interface IGetConversationListRequest {
   limit: number;
 }
 
+/**
+ * 获取会话列表-响应体
+ */
 interface IGetConversationListResponse {
   data: IConversationItem[];
 }
 
+/**
+ * 会话历史 Item 结构
+ */
 interface IMessageItem {
   id: string;
   conversation_id: string;
@@ -53,13 +64,17 @@ interface IMessageItem {
 	status: 'normal' | 'error'
 	error: string | null
 	agent_thoughts?: IAgentThought[]
+  /**
+   * 知识库引用列表
+   */
+  retriever_resources?: IRetrieverResource[];
 }
 
 interface IGetConversationHistoryResponse {
   data: IMessageItem[];
 }
 
-interface IDifyApiOptions {
+export interface IDifyApiOptions {
   /**
    * 用户
    */
@@ -139,22 +154,22 @@ export class DifyApi {
   /**
    * 获取应用基本信息
    */
-  async getAppInfo(): Promise<IGetAppInfoResponse> {
-    return this.baseRequest.get('/info');
+  async getAppInfo() {
+    return this.baseRequest.get('/info') as Promise<IGetAppInfoResponse>
   }
 
   /**
    * 获取应用 Meta 信息
    */
-  async getAppMeta(): Promise<IGetAppMetaResponse> {
-    return this.baseRequest.get('/meta');
+  async getAppMeta() {
+    return this.baseRequest.get('/meta') as Promise<IGetAppMetaResponse>;
   }
 
   /**
    * 获取应用参数
    */
-  getAppParameters = (): Promise<IGetAppParametersResponse> => {
-    return this.baseRequest.get('/parameters');
+  getAppParameters = () => {
+    return this.baseRequest.get('/parameters') as Promise<IGetAppParametersResponse>;
   };
 
   /**
@@ -162,11 +177,11 @@ export class DifyApi {
    */
   getConversationList(
     params?: IGetConversationListRequest,
-  ): Promise<IGetConversationListResponse> {
+  ) {
     return this.baseRequest.get('/conversations', {
       user: this.options.user,
-      limit: params?.limit || 100,
-    });
+      limit: (params?.limit || 100).toString(),
+    }) as Promise<IGetConversationListResponse>
   }
 
   /**
@@ -207,11 +222,11 @@ export class DifyApi {
    */
   getConversationHistory = (
     conversation_id: string,
-  ): Promise<IGetConversationHistoryResponse> => {
+  ) => {
     return this.baseRequest.get(`/messages`, {
       user: this.options.user,
       conversation_id,
-    });
+    }) as Promise<IGetConversationHistoryResponse>
   };
 
   /**
@@ -276,7 +291,9 @@ export class DifyApi {
   }) {
     return this.baseRequest.get(`/messages/${params.message_id}/suggested`, {
       user: this.options.user,
-    });
+    }) as Promise<{
+      data: string[]
+    }>
   }
 
   /**
@@ -309,30 +326,4 @@ export class DifyApi {
  */
 export const createDifyApiInstance = (options: IDifyApiOptions) => {
   return new DifyApi(options);
-};
-
-const isInstanceReady = () => {
-  const vars = getVars();
-  return !!vars.DIFY_API_KEY && !!vars.DIFY_API_BASE;
-};
-
-/**
- * 创建 Dify API 实例 hook
- */
-export const useDifyApi = (options: IDifyApiOptions) => {
-  const [instance, setInstance] = useState<DifyApi>();
-
-  useEffect(() => {
-    if (options && isInstanceReady()) {
-      setInstance(createDifyApiInstance(options));
-    }
-  }, [options]);
-
-  return {
-    instance,
-    isInstanceReady: isInstanceReady() && instance,
-    updateInstance: () => {
-      setInstance(createDifyApiInstance(options));
-    },
-  };
 };

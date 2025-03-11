@@ -1,7 +1,7 @@
 import { Typography } from "antd"
 import MarkdownIt from 'markdown-it';
 
-interface IMdRenderProps {
+interface IMarkdownRendererProps {
   /**
    * 原始 Markdown 文本
    */
@@ -13,7 +13,7 @@ const md = MarkdownIt({ html: true, breaks: true });
 /**
  * Markdown 渲染组件
  */
-export default function MdRender(props: IMdRenderProps) {
+export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
   const { markdownText } = props
 
   return (
@@ -21,4 +21,4 @@ export default function MdRender(props: IMdRenderProps) {
       <div dangerouslySetInnerHTML={{ __html: md.render(markdownText) }} />
     </Typography>
   )
-}
+};

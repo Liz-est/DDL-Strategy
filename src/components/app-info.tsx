@@ -23,7 +23,7 @@ export default function AppInfo(props: IAppInfoProps) {
           }}
         />
         <div className="text-2xl font-bold mt-3">{info.name}</div>
-        <div className="text-desc text-base max-w-44 mt-3">
+        <div className="text-desc text-base max-w-96 px-8 mt-3">
           {info.description}
         </div>
         {info.tags ? (

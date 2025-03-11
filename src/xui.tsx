@@ -9,11 +9,11 @@ import {
   IGetAppInfoResponse,
   IGetAppParametersResponse,
   useDifyApi,
-} from './utils/dify-api';
+} from '@dify-chat/api';
 import { USER } from './config';
 import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
-import ConversationList, { IConversationItem } from './components/conversation-list';
+import { ConversationList, type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 import { UnauthorizedError } from './utils/error';
 import { getVars, RUNTIME_VARS_KEY } from './utils/vars';
@@ -219,16 +219,24 @@ const XUI: React.FC = () => {
             New Conversation
           </Button>
           {/* 🌟 会话管理 */}
-          <div className="py-0 px-3 flex-1 overflow-y-auto">
+          <div className="py-0 flex-1 overflow-y-auto">
             <Spin spinning={conversationListLoading}>
-              <ConversationList
-                difyApi={difyApi!}
-                items={conversationsItems}
-                activeKey={currentConversationId}
-                onActiveChange={onConversationClick}
-                onItemsChange={setConversationsItems}
-                refreshItems={getConversationItems}
-              />
+              {
+                difyApi ?
+                <ConversationList
+                  renameConversationPromise={(conversationId: string, name: string)=>difyApi?.renameConversation({
+                    conversation_id: conversationId,
+                    name,
+                  })}
+                  deleteConversationPromise={difyApi?.deleteConversation}
+                  items={conversationsItems}
+                  activeKey={currentConversationId}
+                  onActiveChange={onConversationClick}
+                  onItemsChange={setConversationsItems}
+                  refreshItems={getConversationItems}
+                />
+                : null
+              }
             </Spin>
           </div>
         </div>
