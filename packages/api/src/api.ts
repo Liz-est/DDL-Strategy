@@ -1,6 +1,6 @@
 import XRequest from './base-request';
 import { getVars } from '@dify-chat/helpers';
-import { IAgentThought } from './types';
+import { IAgentThought, IRetrieverResource } from './types';
 
 interface IUserInputForm {
   'text-input': {
@@ -46,28 +46,6 @@ interface IGetConversationListRequest {
  */
 interface IGetConversationListResponse {
   data: IConversationItem[];
-}
-
-/**
- * 知识库引用对象
- */
-export interface IRetrieverResource {
-  id: string;
-  message_id: string;
-  position: number;
-  dataset_id: string;
-  dataset_name: string;
-  document_id: string;
-  document_name: string;
-  data_source_type: string;
-  segment_id: string;
-  score: number;
-  hit_count: number;
-  word_count: number;
-  segment_position: number;
-  index_node_hash: null;
-  content: string;
-  created_at: number;
 }
 
 /**
@@ -313,7 +291,9 @@ export class DifyApi {
   }) {
     return this.baseRequest.get(`/messages/${params.message_id}/suggested`, {
       user: this.options.user,
-    });
+    }) as Promise<{
+      data: string[]
+    }>
   }
 
   /**

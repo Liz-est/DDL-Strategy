@@ -11,6 +11,9 @@ import {
 import { Chatbox } from './chatbox';
 import {
   DifyApi,
+  EventEnum,
+  IChunkChatCompletionResponse,
+  IErrorEvent,
   IFile,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
@@ -166,7 +169,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             observation: string;
             message_files: string[];
 
-            event: string;
+            event: IChunkChatCompletionResponse['event'];
             answer: string;
             conversation_id: string;
             message_id: string;
@@ -193,7 +196,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           } catch (error) {
             console.error('解析 JSON 失败', error);
           }
-          if (parsedData.event === 'message_end') {
+          if (parsedData.event === EventEnum.MESSAGE_END) {
             onSuccess({
               content: result,
               files,
@@ -212,7 +215,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             }
           }
           const innerData = parsedData.data;
-          if (parsedData.event === 'workflow_started') {
+          if (parsedData.event === EventEnum.WORKFLOW_STARTED) {
             workflows.status = 'running';
             workflows.nodes = [];
             onUpdate({
@@ -221,7 +224,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               workflows,
               agentThoughts,
             });
-          } else if (parsedData.event === 'workflow_finished') {
+          } else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
             console.log('工作流结束', parsedData);
             workflows.status = 'finished';
             onUpdate({
@@ -230,7 +233,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               workflows,
               agentThoughts,
             });
-          } else if (parsedData.event === 'node_started') {
+          } else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
             console.log('节点开始', parsedData);
             workflows.nodes = [
               ...(workflows.nodes || []),
@@ -247,7 +250,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               workflows,
               agentThoughts,
             });
-          } else if (parsedData.event === 'node_finished') {
+          } else if (parsedData.event === EventEnum.WORKFLOW_NODE_FINISHED) {
             workflows.nodes = workflows.nodes?.map((item) => {
               if (item.id === innerData.id) {
                 return {
@@ -269,7 +272,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               agentThoughts,
             });
           }
-          if (parsedData.event === 'message_file') {
+          if (parsedData.event === EventEnum.MESSAGE_FILE) {
             result += `<img src=""${parsedData.url} />`;
             onUpdate({
               content: result,
@@ -279,8 +282,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             });
           }
           if (
-            parsedData.event === 'message' ||
-            parsedData.event === 'agent_message'
+            parsedData.event === EventEnum.MESSAGE ||
+            parsedData.event === EventEnum.AGENT_MESSAGE
           ) {
             const text = parsedData.answer;
             result += text;
@@ -291,13 +294,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               agentThoughts,
             });
           }
-          if (parsedData.event === 'error') {
+          if (parsedData.event === EventEnum.ERROR) {
             onError({
-              name: `${parsedData.status}: ${parsedData.code}`,
-              message: parsedData.message,
+              name: `${(parsedData as unknown as IErrorEvent).status}: ${(parsedData as unknown as IErrorEvent).code}`,
+              message: (parsedData as unknown as IErrorEvent).message,
             });
           }
-          if (parsedData.event === 'agent_thought') {
+          if (parsedData.event === EventEnum.AGENT_THOUGHT) {
             agentThoughts.push({
               conversation_id: parsedData.conversation_id,
               id: parsedData.id,
