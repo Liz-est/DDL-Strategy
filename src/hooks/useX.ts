@@ -8,7 +8,7 @@ import {message as antdMessage} from 'antd'
 
 export const useX = (options: {
 	latestProps: any
-	target: string,
+	latestState: any
 	getNextSuggestions: (messageId: string) => void,
 	appParameters: IGetAppParametersResponse,
 	filesRef: any,
@@ -16,15 +16,13 @@ export const useX = (options: {
 	getConversationMessages: (conversationId: string) => void,
   onConversationIdChange: (id: string) => void;
 }) => {
-	const { latestProps, target, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange } = options
+	const { latestProps, latestState, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange } = options
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 			// 发送消息
 			const response = await latestProps.current.difyApi.sendMessage({
-				inputs: {
-					target,
-				},
+				inputs: latestState.current.inputParams,
 				conversation_id: !isTempId(latestProps.current.conversationId)
 					? latestProps.current.conversationId
 					: undefined,

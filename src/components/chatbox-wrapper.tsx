@@ -1,11 +1,6 @@
-import { MessageOutlined } from '@ant-design/icons';
 import {
-  Button,
-  Form,
-  FormItemProps,
   GetProp,
-  Input,
-  Select,
+  message,
   Spin,
 } from 'antd';
 import { Chatbox } from './chatbox';
@@ -19,15 +14,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bubble, Prompts } from '@ant-design/x';
 import { isTempId } from '@dify-chat/helpers';
 import { useLatest } from '../hooks/use-latest';
-import AppInfo from './app-info';
 import MessageFooter from './message/footer';
 import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
 import MessageContent, { IMessageItem4Render } from './message/content';
-
-interface IConversationEntryFormItem extends FormItemProps {
-  type: 'input' | 'select';
-}
+import { ChatPlaceholder } from './chat-placeholder';
 
 interface IChatboxWrapperProps {
   /**
@@ -62,8 +53,6 @@ interface IChatboxWrapperProps {
 }
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
-  const [entryForm] = Form.useForm();
-
   const {
     appInfo,
     appParameters,
@@ -73,19 +62,17 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     onConversationIdChange,
     onAddConversation,
   } = props;
-  const abortRef = useRef(() => { });
+  const abortRef = useRef(() => {});
   useEffect(() => {
-		return () => {
-			abortRef.current();
-		};
-	}, []);
+    return () => {
+      abortRef.current();
+    };
+  }, []);
   const [initLoading, setInitLoading] = useState<boolean>(false);
-  const [target, setTarget] = useState('');
-  const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([]);
-  const [userInputItems, setUserInputItems] = useState<
-    IConversationEntryFormItem[]
-  >([]);
-  const [formVisible, setFormVisible] = useState<boolean>(false);
+  const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>(
+    [],
+  );
+  const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>({});
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
   // 定义 ref, 用于获取最新的 conversationId
@@ -93,6 +80,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     conversationId,
     difyApi,
   });
+  const latestState = useLatest({
+    inputParams
+  })
 
   const filesRef = useRef<IFile[]>([]);
 
@@ -112,12 +102,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     if (isTempId(conversationId)) {
       return;
     }
-    const result = await latestProps.current.difyApi.getConversationHistory(conversationId);
+    const result =
+      await latestProps.current.difyApi.getConversationHistory(conversationId);
 
     const newMessages: IMessageItem4Render[] = [];
 
-    if (result.data.length) {
-      setTarget(result.data[0]?.inputs?.target);
+    // 只有当历史消息中的参数不为空时才更新
+    if (result.data.length && Object.values(result.data[0]?.inputs)?.length) {
+      setInputParams(result.data[0]?.inputs || {});
     }
 
     // 如果不是合法版本 则默认为 1.0.0
@@ -146,25 +138,25 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           feedback: item.feedback,
           agentThoughts: item.agent_thoughts || [],
           retrieverResources: item.retriever_resources || [],
-          role: 'ai'
+          role: 'ai',
         },
       );
     });
 
-    setMessages([])
+    setMessages([]);
     setHistoryMessages(newMessages);
   };
 
   const { agent, onRequest, messages, setMessages } = useX({
     latestProps,
-    target,
+    latestState,
     filesRef,
     getNextSuggestions,
     appParameters,
     abortRef,
     getConversationMessages,
     onConversationIdChange,
-  })
+  });
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
@@ -172,29 +164,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       await getConversationMessages(conversationId);
       setInitLoading(false);
     } else {
-      // 判断是否有参数 有参数则展示表单
-      if (appParameters?.user_input_form?.length) {
-        setFormVisible(true);
-        // 有参数则展示表单
-        const formItems =
-          appParameters.user_input_form?.map((item) => {
-            if (item['text-input']) {
-              const originalProps = item['text-input'];
-              const baseProps: IConversationEntryFormItem = {
-                type: 'input',
-                label: originalProps.label,
-                name: originalProps.variable,
-              };
-              if (originalProps.required) {
-                baseProps.required = true;
-                baseProps.rules = [{ required: true, message: '请输入' }];
-              }
-              return baseProps;
-            }
-            return {} as IConversationEntryFormItem;
-          }) || [];
-        setUserInputItems(formItems);
-      }
       // 不管有没有参数，都结束 loading，开始展示内容
       setInitLoading(false);
     }
@@ -202,7 +171,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   useEffect(() => {
     setInitLoading(true);
-    setFormVisible(false);
     setMessages([]);
     setHistoryMessages([]);
     initConversationInfo();
@@ -214,17 +182,34 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   };
 
+  const isFormFilled = useMemo(()=>{
+    return appParameters?.user_input_form.every((item) => {
+      const field = item['text-input']
+      return !!inputParams[field.variable] || !field.required;
+    }) || false
+  }, [appParameters, inputParams])
+
   const onSubmit = (nextContent: string, files?: IFile[]) => {
+
+    // 先校验表单是否填写完毕
+    if (!isFormFilled) {
+      // 过滤出没有填写的字段
+      const unFilledFields = appParameters?.user_input_form.filter((item) => {
+        const field = item['text-input']
+        return !inputParams[field.variable] && field.required
+      }).map((item)=>item['text-input'].label) || [];
+      message.error(`${unFilledFields.join('、')}不能为空`)
+      return
+    }
+
     filesRef.current = files || [];
     onRequest({
       content: nextContent,
     });
   };
 
-  
-  const unStoredMessages4Render = useMemo(()=>{
-    console.log('临时消息', messages)
-    return messages.map((item)=>{
+  const unStoredMessages4Render = useMemo(() => {
+    return messages.map((item) => {
       return {
         id: item.id,
         status: item.status,
@@ -234,10 +219,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         retrieverResources: item.message.retrieverResources,
         files: item.message.files,
         content: item.message.content,
-        role: item.status === 'local' ? 'user' : 'ai'
-      } as IMessageItem4Render
-    })
-  }, [messages])
+        role: item.status === 'local' ? 'user' : 'ai',
+      } as IMessageItem4Render;
+    });
+  }, [messages]);
 
   const items: GetProp<typeof Bubble.List, 'items'> = [
     ...historyMessages,
@@ -247,13 +232,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       key: `${messageItem.id}-${messageItem.role}`,
       // 不要开启 loading 和 typing, 否则流式会无效
       // loading: status === 'loading',
-      content: messageItem.content || ' ',
+      content: messageItem.content,
       messageRender: () => {
-        return (
-          <MessageContent 
-            messageItem={messageItem}
-          />
-        )
+        return <MessageContent messageItem={messageItem} />;
       },
       // 用户发送消息时，status 为 local，需要展示为用户头像
       role: messageItem.role === 'local' ? 'user' : messageItem.role,
@@ -265,13 +246,25 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           feedback={{
             rating: messageItem.feedback?.rating,
             callback: () => {
-              getConversationMessages(conversationId!)
+              getConversationMessages(conversationId!);
             },
           }}
         />
       ),
     };
   }) as GetProp<typeof Bubble.List, 'items'>;
+
+  const chatReady = useMemo(()=>{
+    if (!appParameters?.user_input_form?.length) {
+      return true
+    }
+    if (isFormFilled) {
+      return true
+    }
+    return false
+  }, [appParameters, isFormFilled])
+
+  console.log('chatReady', isFormFilled, chatReady, conversationId)
 
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
@@ -289,7 +282,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             <Spin spinning />
           </div>
         ) : null}
-        {conversationId ? (
+
+        {chatReady && conversationId ? (
           <Chatbox
             conversationId={conversationId}
             nextSuggestions={nextSuggestions}
@@ -303,59 +297,19 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               abortRef.current();
             }}
           />
-        ) : formVisible ? (
-          <div className="w-full h-full flex items-center justify-center -mt-5">
-            <div className="w-96">
-              <div className="text-2xl font-bold text-default mb-5">
-                {appInfo?.name}
-              </div>
-              <Form form={entryForm}>
-                {userInputItems.map((item) => {
-                  return (
-                    <Form.Item
-                      key={item.name}
-                      name={item.name}
-                      label={item.label}
-                      required={item.required}
-                      rules={item.rules}
-                    >
-                      {item.type === 'input' ? (
-                        <Input placeholder="请输入" />
-                      ) : item.type === 'select' ? (
-                        <Select placeholder="请选择" />
-                      ) : (
-                        '不支持的控件类型'
-                      )}
-                    </Form.Item>
-                  );
-                })}
-              </Form>
-              <Button
-                block
-                type="primary"
-                icon={<MessageOutlined />}
-                onClick={async () => {
-                  setTarget(entryForm.getFieldValue('target'));
-                  setFormVisible(false);
-                }}
-              >
-                开始对话
-              </Button>
-            </div>
-          </div>
-        ) : appInfo ? (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <AppInfo info={appInfo} />
-            <Button
-              className="mt-3"
-              type="primary"
-              icon={<MessageOutlined />}
-              onClick={onAddConversation}
-            >
-              开始对话
-            </Button>
-          </div>
-        ) : null}
+        ) : (
+          <ChatPlaceholder
+            formFilled={isFormFilled}
+            onStartConversation={(formValues) => {
+              setInputParams(formValues);
+              if (!conversationId) {
+                onAddConversation()
+              }
+            }}
+            appInfo={appInfo}
+            user_input_form={appParameters?.user_input_form}
+          />
+        )}
       </div>
     </div>
   );
