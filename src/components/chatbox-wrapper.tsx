@@ -224,36 +224,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   }, [messages]);
 
-  const items: GetProp<typeof Bubble.List, 'items'> = [
-    ...historyMessages,
-    ...unStoredMessages4Render,
-  ].map((messageItem) => {
-    return {
-      key: `${messageItem.id}-${messageItem.role}`,
-      // 不要开启 loading 和 typing, 否则流式会无效
-      // loading: status === 'loading',
-      content: messageItem.content,
-      messageRender: () => {
-        return <MessageContent messageItem={messageItem} />;
-      },
-      // 用户发送消息时，status 为 local，需要展示为用户头像
-      role: messageItem.role === 'local' ? 'user' : messageItem.role,
-      footer: messageItem.role === 'ai' && (
-        <MessageFooter
-          difyApi={difyApi}
-          messageId={messageItem.id}
-          messageContent={messageItem.content}
-          feedback={{
-            rating: messageItem.feedback?.rating,
-            callback: () => {
-              getConversationMessages(conversationId!);
-            },
-          }}
-        />
-      ),
-    };
-  }) as GetProp<typeof Bubble.List, 'items'>;
-
   const chatReady = useMemo(()=>{
     if (!appParameters?.user_input_form?.length) {
       return true
@@ -285,15 +255,19 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           <Chatbox
             conversationId={conversationId}
             nextSuggestions={nextSuggestions}
-            items={items}
+            messageItems={[
+              ...historyMessages,
+             ...unStoredMessages4Render,
+            ]}
             isRequesting={agent.isRequesting()}
             onPromptsItemClick={onPromptsItemClick}
             onSubmit={onSubmit}
-            difyApi={difyApi}
             onCancel={() => {
               console.log('打断输出');
               abortRef.current();
             }}
+            uploadFileApi={difyApi.uploadFile}
+            feedbackApi={difyApi.feedbackMessage}
           />
         ) : (
           <ChatPlaceholder
