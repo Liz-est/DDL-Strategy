@@ -56,39 +56,46 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
     );
   }, [user_input_form]);
 
-  if (!formFilled && user_input_form?.length) {
-    return (
-      <div className="w-full h-full flex items-center justify-center -mt-5">
-        <div className="w-96">
-          <div className="text-2xl text-center font-bold text-default mb-5">
-            {appInfo?.name}
-          </div>
-          <Form form={entryForm}>
-            {userInputItems.map((item) => {
-              return (
-                <Form.Item
-                  key={item.name}
-                  name={item.name}
-                  label={item.label}
-                  required={item.required}
-                  rules={item.rules}
-                >
-                  {item.type === 'input' ? (
-                    <Input placeholder="请输入" />
-                  ) : item.type === 'select' ? (
-                    <Select placeholder="请选择" />
-                  ) : (
-                    '不支持的控件类型'
-                  )}
-                </Form.Item>
-              );
-            })}
-          </Form>
+  return (
+    <div className="w-full h-full flex items-center justify-center -mt-5">
+      <div className="w-96 py-6 px-10 rounded-3xl bg-gray-100">
+        {
+          appInfo ?
+            <AppInfo info={appInfo} />
+            : null
+        }
+        {
+          !formFilled && user_input_form?.length ?
+            <Form form={entryForm} className='mt-6' labelCol={{span: 5}}>
+              {userInputItems.map((item) => {
+                return (
+                  <Form.Item
+                    key={item.name}
+                    name={item.name}
+                    label={item.label}
+                    required={item.required}
+                    rules={item.rules}
+                  >
+                    {item.type === 'input' ? (
+                      <Input placeholder="请输入" />
+                    ) : item.type === 'select' ? (
+                      <Select placeholder="请选择" />
+                    ) : (
+                      '不支持的控件类型'
+                    )}
+                  </Form.Item>
+                );
+              })}
+            </Form>
+            : null
+        }
+        <div
+          className='mt-3 w-full flex justify-center'>
           <Button
-            block
             type="primary"
             icon={<MessageOutlined />}
             onClick={async () => {
+              await entryForm.validateFields();
               onStartConversation(entryForm.getFieldsValue());
             }}
           >
@@ -96,26 +103,6 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
           </Button>
         </div>
       </div>
-    );
-  }
-
-  if (appInfo) {
-    return (
-      <div className="w-full h-full flex items-center justify-center flex-col px-48 box-border">
-        <AppInfo info={appInfo} />
-        <Button
-          className='mt-3'
-          type="primary"
-          icon={<MessageOutlined />}
-          onClick={async () => {
-            onStartConversation(entryForm.getFieldsValue());
-          }}
-        >
-          开始对话
-        </Button>
-      </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 };
