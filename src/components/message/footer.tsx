@@ -10,7 +10,7 @@ import { DifyApi } from '@dify-chat/api';
 import { useRequest, useSetState } from 'ahooks';
 import ActionButton from './action-btn';
 
-type IRating = 'like' | 'dislike' | null;
+export type IRating = 'like' | 'dislike' | null;
 
 interface IMessageFooterProps {
   /**
@@ -32,7 +32,7 @@ interface IMessageFooterProps {
     /**
      * 用户对消息的点赞/点踩/撤销操作
      */
-    rating: IRating;
+    rating?: IRating;
     /**
      * 操作回调
      */
@@ -40,6 +40,9 @@ interface IMessageFooterProps {
   };
 }
 
+/**
+ * 消息底部操作区
+ */
 export default function MessageFooter(props: IMessageFooterProps) {
   const {
     messageId,

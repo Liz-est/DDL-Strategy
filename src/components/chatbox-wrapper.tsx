@@ -1,4 +1,4 @@
-import { MessageOutlined, WarningOutlined } from '@ant-design/icons';
+import { MessageOutlined } from '@ant-design/icons';
 import {
   Button,
   Form,
@@ -14,21 +14,16 @@ import {
   IFile,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
-  IRetrieverResource,
 } from '@dify-chat/api';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bubble, Prompts } from '@ant-design/x';
-import { MessageInfo } from '@ant-design/x/es/use-x-chat';
 import { isTempId } from '@dify-chat/helpers';
-import WorkflowLogs from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
-import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
-import ThoughtChain from './thought-chain';
-import { MarkdownRenderer } from '@dify-chat/components';
 import AppInfo from './app-info';
 import MessageFooter from './message/footer';
 import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
+import MessageContent, { IMessageItem4Render } from './message/content';
 
 interface IConversationEntryFormItem extends FormItemProps {
   type: 'input' | 'select';
@@ -86,9 +81,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}, []);
   const [initLoading, setInitLoading] = useState<boolean>(false);
   const [target, setTarget] = useState('');
-  const [historyMessages, setHistoryMessages] = useState<
-    MessageInfo<IAgentMessage>[]
-  >([]);
+  const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([]);
   const [userInputItems, setUserInputItems] = useState<
     IConversationEntryFormItem[]
   >([]);
@@ -121,7 +114,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     }
     const result = await latestProps.current.difyApi.getConversationHistory(conversationId);
 
-    const newMessages: MessageInfo<IAgentMessage>[] = [];
+    const newMessages: IMessageItem4Render[] = [];
 
     if (result.data.length) {
       setTarget(result.data[0]?.inputs?.target);
@@ -129,33 +122,31 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
     // 如果不是合法版本 则默认为 1.0.0
     // const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0';
-    const baseData = result.data;
+    // const baseData = result.data;
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
     // if (gte(difyVersion, '1.0.0')) {
     //   baseData = baseData.reverse();
     // }
-    baseData.forEach((item) => {
+    result.data.forEach((item) => {
       newMessages.push(
         {
-          id: `${item.id}-query`,
-          message: {
-            content: item.query,
-          },
+          id: item.id,
+          content: item.query,
           status: 'success',
           isHistory: true,
-          message_files: item.message_files,
+          files: item.message_files,
+          role: 'user',
         },
         {
-          id: `${item.id}-answer`,
-          message: {
-            content: item.answer,
-          },
-          status: item.status,
-          error: item.error,
+          id: item.id,
+          content: item.answer,
+          status: item.status === 'error' ? 'error' : 'success',
+          error: item.error || '',
           isHistory: true,
           feedback: item.feedback,
           agentThoughts: item.agent_thoughts || [],
-          retriever_resources: item.retriever_resources || [],
+          retrieverResources: item.retriever_resources || [],
+          role: 'ai'
         },
       );
     });
@@ -230,101 +221,47 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   };
 
+  
+  const unStoredMessages4Render = useMemo(()=>{
+    console.log('临时消息', messages)
+    return messages.map((item)=>{
+      return {
+        id: item.id,
+        status: item.status,
+        error: item.message.error || '',
+        workflows: item.message.workflows,
+        agentThoughts: item.message.agentThoughts,
+        retrieverResources: item.message.retrieverResources,
+        files: item.message.files,
+        content: item.message.content,
+        role: item.status === 'local' ? 'user' : 'ai'
+      } as IMessageItem4Render
+    })
+  }, [messages])
+
   const items: GetProp<typeof Bubble.List, 'items'> = [
     ...historyMessages,
-    ...messages,
+    ...unStoredMessages4Render,
   ].map((messageItem) => {
-    const { id, message, status } = messageItem;
-    const isQuery = id.toString().endsWith('query');
-    const isAnswer = id.toString().endsWith('answer');
-    const agentThoughts: IAgentThought[] = messageItem.isHistory
-      ? messageItem.agentThoughts
-      : message.agentThoughts;
     return {
-      key: id,
+      key: `${messageItem.id}-${messageItem.role}`,
       // 不要开启 loading 和 typing, 否则流式会无效
       // loading: status === 'loading',
-      content: message.content,
-      messageRender: (content: string) => {
-        if (messageItem.status === 'error') {
-          return (
-            <p className="text-red-700">
-              <WarningOutlined className="mr-2" />
-              <span>{messageItem.error}</span>
-            </p>
-          );
-        }
-
+      content: messageItem.content || ' ',
+      messageRender: () => {
         return (
-          <>
-            {/* 思维链 */}
-            <ThoughtChain
-              uniqueKey={messageItem.id as string}
-              items={agentThoughts}
-              className="mt-3"
-            />
-
-            {/* 工作流执行日志 */}
-            <WorkflowLogs
-              items={message.workflows?.nodes || []}
-              status={message.workflows?.status}
-            />
-
-            {/* 用户发送的图片列表 */}
-            <>
-              {message.files?.length
-                ? message.files.map((item: IMessageFileItem) => {
-                    return (
-                      <img
-                        src={item.url}
-                        key={item.id}
-                        alt={item.filename}
-                        className="max-w-full"
-                      />
-                    );
-                  })
-                : null}
-            </>
-
-            {/* 文本内容 */}
-            <MarkdownRenderer markdownText={content} />
-
-            {/* 引用知识库链接 */}
-            {messageItem.retriever_resources?.length ? (
-              <div className="pb-3">
-                <div className="flex items-center text-gray-400">
-                  <span className="mr-3 text-sm">引用</span>
-                  <div className="flex-1 border-gray-400 border-dashed border-0 border-t h-0" />
-                </div>
-                {(messageItem.retriever_resources as IRetrieverResource[])?.map(
-                  (item) => {
-                    return (
-                      <div className="mt-2 truncate" key={item.id}>
-                        <a
-                          className="text-gray-600"
-                          target="_blank"
-                          rel="noreferrer"
-                          href={item.document_name}
-                          title={item.document_name}
-                        >
-                          {item.document_name}
-                        </a>
-                      </div>
-                    );
-                  },
-                )}
-              </div>
-            ) : null}
-          </>
-        );
+          <MessageContent 
+            messageItem={messageItem}
+          />
+        )
       },
       // 用户发送消息时，status 为 local，需要展示为用户头像
-      role: isQuery || status === 'local' ? 'user' : 'ai',
-      footer: isAnswer && (
+      role: messageItem.role === 'local' ? 'user' : messageItem.role,
+      footer: messageItem.role === 'ai' && (
         <MessageFooter
           difyApi={difyApi}
-          messageId={id as string}
-          messageContent={message.content}
+          messageId={messageItem.id}
+          messageContent={messageItem.content}
           feedback={{
             rating: messageItem.feedback?.rating,
             callback: () => {

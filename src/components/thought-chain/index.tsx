@@ -16,11 +16,7 @@ interface IThoughtChainProps {
   /**
    * 原始思维链数据
    */
-  items: IAgentThought[]
-  /**
-   * 自定义 className
-   */
-  className?: string
+  items?: IAgentThought[]
 }
 
 /**
