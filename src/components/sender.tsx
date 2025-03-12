@@ -2,15 +2,36 @@ import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
 import { Badge, Button, GetProp, GetRef } from 'antd';
 import { useRef, useState } from 'react';
-import { DifyApi, IFile } from '@dify-chat/api';
+import { IFile, IUploadFileResponse } from '@dify-chat/api';
 
 interface ISenderWrapperProps {
-  difyApi: DifyApi;
-  content: string;
-  isRequesting: boolean;
-  onChange: (value: string) => void;
-  onSubmit: (value: string, files?: IFile[]) => void;
+  /**
+   * 类名
+   */
   className?: string;
+  /**
+   * 当前输出的文字
+   */
+  content: string;
+  /**
+   * 是否正在请求
+   */
+  isRequesting: boolean;
+  /**
+   * 上传文件 Api
+   */
+  uploadFileApi: (file: File) => Promise<IUploadFileResponse>
+  /**
+   * 输入框 change 事件
+   */
+  onChange: (value: string) => void;
+  /**
+   * 提交事件
+   */
+  onSubmit: (value: string, files?: IFile[]) => void;
+  /**
+   * 取消事件
+   */
   onCancel: () => void
 }
 
@@ -18,7 +39,7 @@ interface ISenderWrapperProps {
  * 用户消息发送区
  */
 export default function SenderWrapper(props: ISenderWrapperProps) {
-  const { content, isRequesting, onChange, onSubmit, className, difyApi, onCancel } =
+  const { content, isRequesting, onChange, onSubmit, className, onCancel, uploadFileApi } =
     props;
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
@@ -39,7 +60,7 @@ export default function SenderWrapper(props: ISenderWrapperProps) {
       <Attachments
         beforeUpload={async (file) => {
           // 注意：此函数不要 return，否则预览区域的图片就展示不出来了
-          const result = await difyApi.uploadFile(file);
+          const result = await uploadFileApi(file);
           setFileIdMap((prevMap)=>{
             const nextMap = new Map(prevMap)
             nextMap.set(file.uid, result.id)

@@ -6,7 +6,6 @@ import {
 } from '@ant-design/icons';
 import { copyToClipboard } from '@toolkit-fe/clipboard';
 import { Space, message as antdMessage } from 'antd';
-import { DifyApi } from '@dify-chat/api';
 import { useRequest, useSetState } from 'ahooks';
 import ActionButton from './action-btn';
 
@@ -14,9 +13,22 @@ export type IRating = 'like' | 'dislike' | null;
 
 interface IMessageFooterProps {
   /**
-   * Dify API 实例
+   * 反馈 API
    */
-  difyApi: DifyApi;
+  feedbackApi: (params: {
+    /**
+     * 反馈的消息 ID
+     */
+    messageId: string
+    /**
+     * 反馈操作类型
+     */
+    rating: IRating,
+    /**
+     * 反馈文本内容
+     */
+    content: string,
+  }) => Promise<unknown>
   /**
    * 消息 ID
    */
@@ -48,7 +60,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
     messageId,
     messageContent,
     feedback: { rating, callback },
-    difyApi,
+    feedbackApi,
   } = props;
 
   const isLiked = rating === 'like';
@@ -63,7 +75,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
    */
   const { runAsync } = useRequest(
     (rating: IRating) => {
-      return difyApi.feedbackMessage({
+      return feedbackApi({
         messageId: (messageId as string).replace('-answer', ''),
         rating: rating,
         content: '',

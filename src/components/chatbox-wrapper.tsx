@@ -264,8 +264,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     return false
   }, [appParameters, isFormFilled])
 
-  console.log('chatReady', isFormFilled, chatReady, conversationId)
-
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationId ? (
