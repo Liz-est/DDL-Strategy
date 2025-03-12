@@ -19,8 +19,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { Bubble, Prompts } from '@ant-design/x';
 import { MessageInfo } from '@ant-design/x/es/use-x-chat';
-import { isTempId, DIFY_INFO } from '@dify-chat/helpers';
-import { gte, valid } from 'semver';
+import { isTempId } from '@dify-chat/helpers';
 import WorkflowLogs from './workflow-logs';
 import { useLatest } from '../hooks/use-latest';
 import { IAgentMessage, IAgentThought, IMessageFileItem } from '../types';
