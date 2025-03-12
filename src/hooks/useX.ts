@@ -1,10 +1,9 @@
 import { useXAgent, useXChat, XStream } from "@ant-design/x";
 import { IAgentMessage, IMessageFileItem } from "../types";
-import { DifyApi, EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IGetAppParametersResponse } from "@dify-chat/api";
+import { EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IGetAppParametersResponse } from "@dify-chat/api";
 import { isTempId } from "@dify-chat/helpers";
 import { IWorkflowNode } from "../components/workflow-logs";
 import { RESPONSE_MODE, USER } from "../config";
-import { useEffect, useRef } from "react";
 
 export const useX = (options: {
 	latestProps: any
@@ -12,9 +11,11 @@ export const useX = (options: {
 	getNextSuggestions: (messageId: string) => void,
 	appParameters: IGetAppParametersResponse,
 	filesRef: any,
-	abortRef: any
+	abortRef: any,
+	getConversationMessages: (conversationId: string) => void,
+  onConversationIdChange: (id: string) => void;
 }) => {
-	const { latestProps, target, appParameters, getNextSuggestions, filesRef, abortRef } = options
+	const { latestProps, target, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange } = options
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
@@ -102,6 +103,9 @@ export const useX = (options: {
 							workflows,
 							agentThoughts,
 						});
+						// 刷新消息列表
+						getConversationMessages(parsedData.conversation_id)
+						onConversationIdChange(parsedData.conversation_id)
 						// const conversation_id = parsedData.conversation_id;
 						// 如果有对话 ID，跟当前的对比一下
 						// if (conversation_id && isTempId(conversationId)) {

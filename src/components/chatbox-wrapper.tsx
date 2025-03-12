@@ -112,15 +112,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     setNextSuggestions(result.data);
   };
 
-  const { agent, onRequest, messages, setMessages } = useX({
-    latestProps,
-    target,
-    filesRef,
-    getNextSuggestions,
-    appParameters,
-    abortRef,
-  })
-
   /**
    * 获取对话的历史消息
    */
@@ -129,7 +120,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     if (isTempId(conversationId)) {
       return;
     }
-    const result = await difyApi.getConversationHistory(conversationId);
+    const result = await latestProps.current.difyApi.getConversationHistory(conversationId);
 
     const newMessages: MessageInfo<IAgentMessage>[] = [];
 
@@ -138,12 +129,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     }
 
     // 如果不是合法版本 则默认为 1.0.0
-    const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0';
-    let baseData = result.data;
+    // const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0';
+    const baseData = result.data;
     // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
-    if (gte(difyVersion, '1.0.0')) {
-      baseData = baseData.reverse();
-    }
+    // if (gte(difyVersion, '1.0.0')) {
+    //   baseData = baseData.reverse();
+    // }
     baseData.forEach((item) => {
       newMessages.push(
         {
@@ -170,8 +161,20 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       );
     });
 
+    setMessages([])
     setHistoryMessages(newMessages);
   };
+
+  const { agent, onRequest, messages, setMessages } = useX({
+    latestProps,
+    target,
+    filesRef,
+    getNextSuggestions,
+    appParameters,
+    abortRef,
+    getConversationMessages,
+    onConversationIdChange,
+  })
 
   const initConversationInfo = async () => {
     // 有对话 ID 且非临时 ID 时，获取历史消息
@@ -234,6 +237,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   ].map((messageItem) => {
     const { id, message, status } = messageItem;
     const isQuery = id.toString().endsWith('query');
+    const isAnswer = id.toString().endsWith('answer');
     const agentThoughts: IAgentThought[] = messageItem.isHistory
       ? messageItem.agentThoughts
       : message.agentThoughts;
@@ -317,14 +321,16 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       },
       // 用户发送消息时，status 为 local，需要展示为用户头像
       role: isQuery || status === 'local' ? 'user' : 'ai',
-      footer: !isQuery && (
+      footer: isAnswer && (
         <MessageFooter
           difyApi={difyApi}
           messageId={id as string}
           messageContent={message.content}
           feedback={{
             rating: messageItem.feedback?.rating,
-            callback: () => getConversationMessages(conversationId!),
+            callback: () => {
+              getConversationMessages(conversationId!)
+            },
           }}
         />
       ),
