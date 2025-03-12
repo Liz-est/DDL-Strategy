@@ -67,6 +67,7 @@
     "react-dom": ">=16.9.0"
   },
   "dependencies": {
+    "@dify-chat/api": "workspace:^",
     "@dify-chat/helpers": "workspace:^",
     "markdown-it": "^14.1.0"
   }
