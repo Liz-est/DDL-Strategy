@@ -4,6 +4,7 @@ import { EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IG
 import { isTempId } from "@dify-chat/helpers";
 import { IWorkflowNode } from "../components/workflow-logs";
 import { RESPONSE_MODE, USER } from "../config";
+import {message as antdMessage} from 'antd'
 
 export const useX = (options: {
 	latestProps: any
@@ -37,6 +38,22 @@ export const useX = (options: {
 			const files: IMessageFileItem[] = [];
 			const workflows: IAgentMessage['workflows'] = {};
 			const agentThoughts: IAgentThought[] = [];
+
+			// 异常 => 结束
+			if (response.status !== 200) {
+				const errText = response.statusText || '请求对话接口失败'
+				antdMessage.error(errText)
+				// 打断输出
+				abortRef.current = () => {
+					// onError 是为了结束 agent 的 isRequesting 以更新 Sender 的发送按钮状态
+					onError({
+						name: response.status,
+						message: errText
+					})
+				}
+				abortRef.current()
+				return
+			}
 
 			const readableStream = XStream({
 				readableStream: response.body as NonNullable<ReadableStream>,
@@ -202,6 +219,7 @@ export const useX = (options: {
 							name: `${(parsedData as unknown as IErrorEvent).status}: ${(parsedData as unknown as IErrorEvent).code}`,
 							message: (parsedData as unknown as IErrorEvent).message,
 						});
+						getConversationMessages(parsedData.conversation_id)
 					}
 					if (parsedData.event === EventEnum.AGENT_THOUGHT) {
 						agentThoughts.push({
