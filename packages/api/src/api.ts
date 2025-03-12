@@ -133,6 +133,19 @@ export interface IFileLocal extends IFileBase  {
 export type IFile = IFileRemote | IFileLocal;
 
 /**
+ * 上传文件接口详情
+ */
+export interface IUploadFileResponse {
+  id: string;
+  name: string;
+  size: number;
+  extension: string;
+  mime_type: string;
+  created_by: number;
+  created_at: number;
+}
+
+/**
  * Dify API 类
  */
 export class DifyApi {
@@ -277,7 +290,7 @@ export class DifyApi {
     return this.baseRequest.baseRequest('/files/upload', {
       method: 'POST',
       body: formData,
-    }).then(res=>res.json())
+    }).then(res=>res.json()) as Promise<IUploadFileResponse>
   }
 
   /**
@@ -317,7 +330,10 @@ export class DifyApi {
     return this.baseRequest.post(`/messages/${messageId}/feedbacks`, {
       ...restParams,
       user: this.options.user,
-    });
+    }) as Promise<{
+      // 固定返回 success
+      result: 'success'
+    }>
   }
 }
 
