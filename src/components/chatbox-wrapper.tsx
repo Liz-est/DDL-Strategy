@@ -15,7 +15,7 @@ import { isTempId } from '@dify-chat/helpers';
 import { useLatest } from '../hooks/use-latest';
 import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
-import { IMessageItem4Render } from './message/content';
+import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
 import { Chatbox } from '@dify-chat/components';
 
