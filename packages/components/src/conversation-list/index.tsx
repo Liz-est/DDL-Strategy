@@ -21,11 +21,11 @@ interface IConversationListProps {
   /**
    * 删除会话异步函数
    */
-  deleteConversationPromise: (conversationId: string) => Promise<void>;
+  deleteConversationPromise: (conversationId: string) => Promise<unknown>;
   /**
    * 重命名会话异步函数
    */
-  renameConversationPromise: (conversationId: string, name: string) => Promise<void>
+  renameConversationPromise: (conversationId: string, name: string) => Promise<unknown>
   /**
    * 会话列表
    */
