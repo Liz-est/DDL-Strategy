@@ -1,6 +1,6 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
-import { Badge, Button, GetProp, GetRef } from 'antd';
+import { Badge, Button, GetProp, GetRef, message } from 'antd';
 import { useRef, useState } from 'react';
 import { IFile, IUploadFileResponse } from '@dify-chat/api';
 
@@ -59,8 +59,18 @@ export const MessageSender = (props: IMessageSenderProps) => {
     >
       <Attachments
         beforeUpload={async (file) => {
+          console.log('before upload', file)
           // 注意：此函数不要 return，否则预览区域的图片就展示不出来了
-          const result = await uploadFileApi(file);
+          let result: IUploadFileResponse | undefined
+          try {
+            result = await uploadFileApi(file);
+          } catch (error) {
+            console.log('upload error', error)
+            message.error(`图片上传失败: ${error}`)
+          }
+          if (!result) {
+            return 
+          }
           setFileIdMap((prevMap)=>{
             const nextMap = new Map(prevMap)
             nextMap.set(file.uid, result.id)
