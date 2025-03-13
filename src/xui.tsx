@@ -15,7 +15,7 @@ import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
 import { ConversationList, type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
-import { UnauthorizedError } from './utils/error';
+import { UnauthorizedError } from '@dify-chat/api';
 import { getVars, RUNTIME_VARS_KEY } from '@dify-chat/helpers';
 
 const useStyle = createStyles(({ token, css }) => {

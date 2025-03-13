@@ -7,66 +7,13 @@ import {
 import WorkflowNodeIcon from './workflow-node-icon';
 import { Collapse } from 'antd';
 import WorkflowNodeDetail from './workflow-node-detail';
-import { IAgentMessage } from '../types';
+import { IAgentMessage, IWorkflowNode } from '@dify-chat/api';
 
-/**
- * 工作流节点数据
- */
-export interface IWorkflowNode {
-  /**
-   * 步骤 ID
-   */
-  id: string;
-  /**
-   * 步骤标题
-   */
-  title: string;
-  /**
-   * 运行状态
-   */
-  status: 'init' | 'running' | 'success' | 'error';
-  /**
-   * 节点类型 question-classifier/问题分类器
-   */
-  type: 'question-classifier';
-  /**
-   * 节点输入 序列化的 JSON 数据
-   */
-  inputs: string;
-  /**
-   * 处理过程 序列化的 JSON 数据
-   */
-  process_data: string;
-  /**
-   * 节点输出 序列化的 JSON 数据
-   */
-  outputs: string;
-  /**
-   * 耗时 单位秒
-   */
-  elapsed_time: number;
-  /**
-   * 执行元数据
-   */
-  execution_metadata: {
-    /**
-     * 总共消耗 tokens
-     */
-    total_tokens: number;
-    /**
-     * 总共消耗金额
-     */
-    total_price: number;
-    /**
-     * 货币单位
-     */
-    currency: string;
-  };
-}
+
 
 interface IWorkflowLogsProps {
   status: NonNullable<IAgentMessage['workflows']>['status']
-  items: IWorkflowNode[];
+  items: IWorkflowNode[]
 }
 
 export default function WorkflowLogs(props: IWorkflowLogsProps) {

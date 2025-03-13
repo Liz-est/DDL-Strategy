@@ -1,7 +1,7 @@
 import { CheckCircleFilled } from "@ant-design/icons";
 import { ThoughtChain as XThoughtChain, ThoughtChainItem } from "@ant-design/x"
 import { Collapse } from "antd";
-import { IAgentThought } from "../../types";
+import { IAgentThought } from '@dify-chat/api'
 import CollapseItem from "./collapse-item";
 
 interface IThoughtChainProps {

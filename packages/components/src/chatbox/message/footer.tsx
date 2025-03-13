@@ -8,8 +8,7 @@ import { copyToClipboard } from '@toolkit-fe/clipboard';
 import { Space, message as antdMessage } from 'antd';
 import { useRequest, useSetState } from 'ahooks';
 import ActionButton from './action-btn';
-
-export type IRating = 'like' | 'dislike' | null;
+import { IRating } from '@dify-chat/api';
 
 interface IMessageFooterProps {
   /**

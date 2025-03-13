@@ -1,4 +1,4 @@
-import { IMessageFileItem } from '../../types';
+import { IMessageFileItem } from "@dify-chat/api";
 
 interface IMessageFileListProps {
   /**

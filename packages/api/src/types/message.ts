@@ -1,3 +1,4 @@
+import { MessageStatus } from '@ant-design/x/es/use-x-chat';
 import { IAgentThought, IRetrieverResource } from "./event";
 
 /**
@@ -99,4 +100,44 @@ export interface IAgentMessage {
    * 知识库引用列表
    */
   retrieverResources?: IRetrieverResource[]
+}
+
+/**
+ * 反馈操作类型 like-点赞, dislike-点踩 null-取消
+ */
+export type IRating = 'like' | 'dislike' | null;
+
+/**
+ * 用于渲染的消息数据对象
+ */
+export interface IMessageItem4Render extends IAgentMessage {
+  /**
+   * 消息 ID
+   */
+  id: string;
+  /**
+   * 消息状态
+   */
+  status: MessageStatus;
+  /**
+   * 当 status 为 error 时, 返回的错误信息
+   */
+  error?: string
+  /**
+   * 角色
+   */
+  role: 'local' | 'user' | 'ai'
+  /**
+   * 是否为历史消息
+   */
+  isHistory?: boolean
+  /**
+   * 用户对消息的反馈
+   */
+  feedback?: {
+    /**
+     * 操作类型
+     */
+    rating: IRating
+  }
 }

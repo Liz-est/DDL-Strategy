@@ -1,47 +1,10 @@
 import { WarningOutlined } from '@ant-design/icons';
-import { MessageStatus } from '@ant-design/x/es/use-x-chat';
-import { IAgentMessage } from '../../types';
+import { IMessageItem4Render } from '@dify-chat/api';
 import ThoughtChain from '../thought-chain';
-import WorkflowLogs from '../workflow-logs';
+import WorkflowLogs from './workflow-logs';
 import MessageFileList from './file-list';
-import { MarkdownRenderer } from '@dify-chat/components';
+import { MarkdownRenderer } from '../../markdown-renderer'
 import MessageReferrence from './referrence';
-import { IRating } from './footer';
-
-/**
- * 用于渲染的消息数据对象
- */
-export interface IMessageItem4Render extends IAgentMessage {
-  /**
-   * 消息 ID
-   */
-  id: string;
-  /**
-   * 消息状态
-   */
-  status: MessageStatus;
-  /**
-   * 当 status 为 error 时, 返回的错误信息
-   */
-  error?: string
-  /**
-   * 角色
-   */
-  role: 'local' | 'user' | 'ai'
-  /**
-   * 是否为历史消息
-   */
-  isHistory?: boolean
-  /**
-   * 用户对消息的反馈
-   */
-  feedback?: {
-    /**
-     * 操作类型
-     */
-    rating: IRating
-  }
-}
 
 interface IMessageContentProps {
   /**

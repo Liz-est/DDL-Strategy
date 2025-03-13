@@ -4,7 +4,7 @@ import { Badge, Button, GetProp, GetRef } from 'antd';
 import { useRef, useState } from 'react';
 import { IFile, IUploadFileResponse } from '@dify-chat/api';
 
-interface ISenderWrapperProps {
+interface IMessageSenderProps {
   /**
    * 类名
    */
@@ -38,7 +38,7 @@ interface ISenderWrapperProps {
 /**
  * 用户消息发送区
  */
-export default function SenderWrapper(props: ISenderWrapperProps) {
+export const MessageSender = (props: IMessageSenderProps) => {
   const { content, isRequesting, onChange, onSubmit, className, onCancel, uploadFileApi } =
     props;
   const [open, setOpen] = useState(false);

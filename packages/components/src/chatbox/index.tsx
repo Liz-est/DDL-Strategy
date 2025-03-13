@@ -3,11 +3,11 @@ import { WelcomePlaceholder } from './welcome-placeholder';
 import { GetProp } from 'antd';
 import { RobotOutlined, UserOutlined } from '@ant-design/icons';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
-import SenderWrapper from './sender';
-import { DifyApi, IFile } from '@dify-chat/api';
+import { MessageSender } from '../message-sender';
+import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api';
 import { isMobile } from '@toolkit-fe/where-am-i';
 import { isTempId } from '@dify-chat/helpers';
-import MessageContent, { IMessageItem4Render } from './message/content';
+import MessageContent from './message/content';
 import MessageFooter from './message/footer';
 
 const roles: GetProp<typeof Bubble.List, 'roles'> = {
@@ -182,7 +182,7 @@ export const Chatbox = (props: ChatboxProps) => {
           />
           {/* 🌟 输入框 */}
           <div className="px-3">
-            <SenderWrapper
+            <MessageSender
               content={content}
               onChange={(value) => setContent(value)}
               onSubmit={(content, files) => {
