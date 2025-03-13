@@ -1,18 +1,25 @@
 import { useXAgent, useXChat, XStream } from "@ant-design/x";
 import { IAgentMessage, IMessageFileItem } from "../types";
-import { EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IGetAppParametersResponse } from "@dify-chat/api";
+import { DifyApi, EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IFile, IGetAppParametersResponse } from "@dify-chat/api";
 import { isTempId } from "@dify-chat/helpers";
 import { IWorkflowNode } from "@dify-chat/api";
 import { RESPONSE_MODE, USER } from "../config";
 import {message as antdMessage} from 'antd'
 
 export const useX = (options: {
-	latestProps: any
-	latestState: any
+	latestProps: React.MutableRefObject<{
+    conversationId: string | undefined;
+    difyApi: DifyApi;
+}>
+	latestState: React.MutableRefObject<{
+    inputParams: {
+        [key: string]: unknown;
+    };
+}>
 	getNextSuggestions: (messageId: string) => void,
-	appParameters: IGetAppParametersResponse,
-	filesRef: any,
-	abortRef: any,
+	appParameters?: IGetAppParametersResponse,
+	filesRef: React.MutableRefObject<IFile[]>,
+	abortRef: React.MutableRefObject<() => void>,
 	getConversationMessages: (conversationId: string) => void,
   onConversationIdChange: (id: string) => void;
 }) => {
@@ -45,7 +52,7 @@ export const useX = (options: {
 				abortRef.current = () => {
 					// onError 是为了结束 agent 的 isRequesting 以更新 Sender 的发送按钮状态
 					onError({
-						name: response.status,
+						name: response.status.toString(),
 						message: errText
 					})
 				}
