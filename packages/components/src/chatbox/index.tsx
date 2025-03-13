@@ -79,6 +79,10 @@ export interface ChatboxProps {
    */
   feedbackCallback?: (conversationId: string) => void;
   /**
+   * Dify API 实例
+   */
+  difyApi: DifyApi
+  /**
    * 反馈 API
    */
   feedbackApi: DifyApi['feedbackMessage'];
@@ -98,11 +102,10 @@ export const Chatbox = (props: ChatboxProps) => {
     nextSuggestions,
     onPromptsItemClick,
     onSubmit,
-    feedbackApi,
-    uploadFileApi,
     onCancel,
     conversationId,
     feedbackCallback,
+    difyApi
   } = props
   const [content, setContent] = useState('');
 
@@ -120,7 +123,7 @@ export const Chatbox = (props: ChatboxProps) => {
         role: messageItem.role === 'local' ? 'user' : messageItem.role,
         footer: messageItem.role === 'ai' && (
           <MessageFooter
-            feedbackApi={feedbackApi}
+            feedbackApi={(params)=>difyApi.feedbackMessage(params)}
             messageId={messageItem.id}
             messageContent={messageItem.content}
             feedback={{
@@ -133,7 +136,7 @@ export const Chatbox = (props: ChatboxProps) => {
         ),
       };
     }) as GetProp<typeof Bubble.List, 'items'>;
-  }, [messageItems, conversationId]);
+  }, [messageItems, conversationId, difyApi, feedbackCallback]);
 
   // 监听 items 更新，滚动到最底部
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -194,7 +197,9 @@ export const Chatbox = (props: ChatboxProps) => {
               }}
               isRequesting={isRequesting}
               className="w-full"
-              uploadFileApi={uploadFileApi}
+              uploadFileApi={(...params)=>{
+                return difyApi.uploadFile(...params)
+              }}
               onCancel={onCancel}
             />
           </div>

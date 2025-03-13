@@ -265,8 +265,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               console.log('打断输出');
               abortRef.current();
             }}
-            feedbackApi={difyApi.feedbackMessage}
-            uploadFileApi={difyApi.uploadFile}
+            feedbackApi={latestProps.current.difyApi.feedbackMessage}
+            feedbackCallback={(conversationId: string) => {
+              // 反馈成功后，重新获取历史消息
+              getConversationMessages(conversationId);
+            }}
+            uploadFileApi={latestProps.current.difyApi.uploadFile}
+            difyApi={difyApi}
           />
         ) : (
           <ChatPlaceholder
