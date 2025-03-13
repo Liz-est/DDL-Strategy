@@ -46,7 +46,7 @@ export const Primary: Story = {
     const [messages, setMessages] = useState(messageItems)
     const [isRequesting, setIsRequesting] = useState(false)
     return (
-      <div className='relative'>
+      <div className='relative w-[800px]'>
         <Chatbox messageItems={messageItems} isRequesting={isRequesting}
           nextSuggestions={[]} onPromptsItemClick={() => void 0} feedbackApi={() => Promise.resolve({ result: 'success' })}
           onSubmit={(content) => {

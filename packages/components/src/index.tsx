@@ -1,3 +1,5 @@
+import './index.css'
+
 export { Button } from './Button';
 export { Chatbox } from './chatbox'
 export { MarkdownRenderer } from './markdown-renderer';

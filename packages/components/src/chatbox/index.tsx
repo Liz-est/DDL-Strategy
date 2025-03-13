@@ -107,7 +107,7 @@ export const Chatbox = (props: ChatboxProps) => {
   const [content, setContent] = useState('');
 
   const items: GetProp<typeof Bubble.List, 'items'> = useMemo(() => {
-    return messageItems.map((messageItem) => {
+    return messageItems?.map((messageItem) => {
       return {
         key: `${messageItem.id}-${messageItem.role}`,
         // 不要开启 loading 和 typing, 否则流式会无效
