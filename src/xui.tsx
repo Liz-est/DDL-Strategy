@@ -205,7 +205,7 @@ const XUI: React.FC = () => {
     <XProvider theme={{ token: { colorPrimary: '#1689fe' } }}>
       <div className={styles.layout}>
         {/* 左侧边栏 - 小屏幕隐藏 */}
-        <div className={`${styles.menu} hidden md:flex w-72 h-full flex-col`}>
+        <div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
           <Logo
             openSettingModal={openSettingModal}
@@ -219,7 +219,7 @@ const XUI: React.FC = () => {
             New Conversation
           </Button>
           {/* 🌟 会话管理 */}
-          <div className="py-0 flex-1 overflow-y-auto">
+          <div className="py-0 px-3 flex-1 overflow-y-auto">
             <Spin spinning={conversationListLoading}>
               {
                 difyApi ?
