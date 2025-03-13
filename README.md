@@ -12,6 +12,10 @@ Chatflow 工作流：
 
 ![Screen Shot](./docs/sample_chatflow.jpg)
 
+知识库引用链接：
+
+![Screen Shot](./docs/sample_knowledge_base_link.jpg)
+
 ## 特性
 
 - 💃 灵活部署：支持接入 Dify Cloud 及私有化部署的 API 服务，满足不同环境需求
