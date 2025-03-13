@@ -2,7 +2,7 @@ import { useXAgent, useXChat, XStream } from "@ant-design/x";
 import { IAgentMessage, IMessageFileItem } from "../types";
 import { EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IGetAppParametersResponse } from "@dify-chat/api";
 import { isTempId } from "@dify-chat/helpers";
-import { IWorkflowNode } from "../components/workflow-logs";
+import { IWorkflowNode } from "@dify-chat/api";
 import { RESPONSE_MODE, USER } from "../config";
 import {message as antdMessage} from 'antd'
 
