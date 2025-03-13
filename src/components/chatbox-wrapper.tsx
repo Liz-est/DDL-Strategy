@@ -18,6 +18,7 @@ import { useX } from '../hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
 import { Chatbox } from '@dify-chat/components';
+import { DEFAULT_CONVERSATION_NAME } from '../constants';
 
 interface IChatboxWrapperProps {
   /**
@@ -239,7 +240,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         <div
           className={`${isMobile() ? 'h-12 leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
         >
-          {conversationName || '新对话'}
+          {conversationName || DEFAULT_CONVERSATION_NAME}
         </div>
       ) : null}
 
