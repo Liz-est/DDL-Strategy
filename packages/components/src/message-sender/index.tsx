@@ -1,8 +1,9 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
-import { Badge, Button, GetProp, GetRef, message } from 'antd';
+import { Badge, Button, GetProp, GetRef } from 'antd';
 import { useRef, useState } from 'react';
 import { IFile, IUploadFileResponse } from '@dify-chat/api';
+import { RcFile } from 'antd/es/upload';
 
 interface IMessageSenderProps {
   /**
@@ -45,6 +46,56 @@ export const MessageSender = (props: IMessageSenderProps) => {
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
   const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map());
 
+  const handleUpload = async (file: RcFile) => {
+    const prevFiles = [...files]
+
+    const fileBaseInfo: GetProp<AttachmentsProps, 'items'>[number] = {
+      uid: file.uid,
+      name: file.name,
+      status: 'uploading',
+      size: file.size,
+      type: file.type,
+      originFileObj: file
+    }
+
+    // 模拟上传进度
+    const mockLoadingProgress = () => {
+      let percent = 0;
+      setFiles([...prevFiles, {
+        ...fileBaseInfo,
+        percent: percent,
+      }]);
+      const interval = setInterval(() => {
+        if (percent >= 99) {
+          clearInterval(interval)
+          return
+        }
+        percent = percent + 1;
+        setFiles([...prevFiles, {
+          ...fileBaseInfo,
+          percent,
+        }]);
+      }, 100);
+      return {
+        clear: () => clearInterval(interval),
+      }
+    }
+    const { clear } = mockLoadingProgress()
+
+    const result = await uploadFileApi(file);
+    clear()
+    setFiles([...prevFiles, {
+      ...fileBaseInfo,
+      percent: 100,
+      status: 'done',
+    }])
+    setFileIdMap((prevMap) => {
+      const nextMap = new Map(prevMap)
+      nextMap.set(file.uid, result.id)
+      return nextMap
+    })
+  }
+
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const senderHeader = (
     <Sender.Header
@@ -59,36 +110,21 @@ export const MessageSender = (props: IMessageSenderProps) => {
     >
       <Attachments
         beforeUpload={async (file) => {
-          console.log('before upload', file)
-          // 注意：此函数不要 return，否则预览区域的图片就展示不出来了
-          let result: IUploadFileResponse | undefined
-          try {
-            result = await uploadFileApi(file);
-          } catch (error) {
-            console.log('upload error', error)
-            message.error(`图片上传失败: ${error}`)
-          }
-          if (!result) {
-            return 
-          }
-          setFileIdMap((prevMap)=>{
-            const nextMap = new Map(prevMap)
-            nextMap.set(file.uid, result.id)
-            return nextMap
-          })
+          // 自定义上传
+          handleUpload(file)
+          return false
         }}
         items={files}
-        onChange={({ fileList }) => setFiles(fileList)}
         placeholder={(type) =>
           type === 'drop'
             ? {
-                title: 'Drop file here',
-              }
+              title: 'Drop file here',
+            }
             : {
-                icon: <CloudUploadOutlined />,
-                title: 'Upload files',
-                description: 'Click or drag files to this area to upload',
-              }
+              icon: <CloudUploadOutlined />,
+              title: 'Upload files',
+              description: 'Click or drag files to this area to upload',
+            }
         }
         getDropContainer={() => senderRef.current?.nativeElement}
       />
@@ -110,7 +146,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
       }}
       loading={isRequesting}
       className={className}
-      onSubmit={async(content) => {
+      onSubmit={async (content) => {
         await onSubmit(
           content,
           files?.map((file) => ({
