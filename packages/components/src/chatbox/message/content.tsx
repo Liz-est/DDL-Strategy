@@ -27,6 +27,7 @@ export default function MessageContent(props: IMessageContentProps) {
       files,
       content,
       retrieverResources,
+      role
     },
   } = props;
 
@@ -56,7 +57,9 @@ export default function MessageContent(props: IMessageContentProps) {
       <MessageFileList files={files} />
 
       {/* 消息主体文本内容 */}
-      <MarkdownRenderer markdownText={content} />
+      <div className={role === 'local' || role === 'user' ? '' : 'min-w-chat-card'}>
+        <MarkdownRenderer markdownText={content} />
+      </div>
 
       {/* 引用链接列表 */}
       <MessageReferrence items={retrieverResources} />
