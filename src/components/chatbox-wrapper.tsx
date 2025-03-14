@@ -238,7 +238,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     <div className="flex h-screen flex-col overflow-hidden flex-1">
       {conversationId ? (
         <div
-          className={`${isMobile() ? 'h-12 leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
+          className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
         >
           {conversationName || DEFAULT_CONVERSATION_NAME}
         </div>

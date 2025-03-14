@@ -58,7 +58,7 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
 
   return (
     <div className="w-full h-full flex items-center justify-center -mt-5">
-      <div className="w-96 py-6 px-10 rounded-3xl bg-gray-100">
+      <div className="w-96 max-w-[80vw] py-6 px-10 rounded-3xl bg-gray-100 box-border">
         {
           appInfo ?
             <AppInfo info={appInfo} />
