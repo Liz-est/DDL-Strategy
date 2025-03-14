@@ -1,4 +1,5 @@
-/** @type {import('tailwindcss').Config.theme.extend.colors} */
+import type { Config } from 'tailwindcss'
+
 const colors = {
   default: '#333',
 	desc: '#9CA3B3',
@@ -7,7 +8,6 @@ const colors = {
 	primary: '#4C84FF'
 }
 
-/** @type {import('tailwindcss').Config.theme.extend.minWidth} */
 const minWidth = {
   /**
    * 聊天卡片最小宽度
@@ -15,8 +15,7 @@ const minWidth = {
   'chat-card': '28rem',
 }
 
-/** @type {import('tailwindcss').Config} */
-export default {
+const config: Config = {
   content: ['./src/**/*.{html,js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -25,4 +24,6 @@ export default {
     },
   },
   plugins: [],
-};
+}
+
+export default config
