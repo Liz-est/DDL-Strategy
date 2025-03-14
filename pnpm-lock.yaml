@@ -67,8 +67,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(@rsbuild/core@1.2.15)
       '@rsbuild/plugin-react':
-        specifier: ^1.0.7
-        version: 1.0.7(@rsbuild/core@1.2.15)
+        specifier: ^1.1.1
+        version: 1.1.1(@rsbuild/core@1.2.15)
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -1731,16 +1731,6 @@ packages:
       reduce-configs: 1.1.0
     dev: true
 
-  /@rsbuild/plugin-react@1.0.7(@rsbuild/core@1.2.15):
-    resolution: {integrity: sha512-t7T/GqDwodusTAnxGpqVRnQ/G+HYh98zk71qIg19WkjVJJGv57AC1Ppx0/6zzbZAbxU60bfK8TeEEXjhXCdSxA==}
-    peerDependencies:
-      '@rsbuild/core': 1.x
-    dependencies:
-      '@rsbuild/core': 1.2.15
-      '@rspack/plugin-react-refresh': 1.0.0(react-refresh@0.14.2)
-      react-refresh: 0.14.2
-    dev: true
-
   /@rsbuild/plugin-react@1.1.1(@rsbuild/core@1.2.15):
     resolution: {integrity: sha512-gkATKrOQauXMMtrYA5jbTQkhmYTE0VXoknPLtVpiXtwDbBUwgX23LFf1XJ51YOwqYpP7g5SfPEMgD2FENtCq0A==}
     peerDependencies:
@@ -1902,19 +1892,6 @@ packages:
   /@rspack/lite-tapable@1.0.1:
     resolution: {integrity: sha512-VynGOEsVw2s8TAlLf/uESfrgfrq2+rcXB1muPJYBWbsm1Oa6r5qVQhjA5ggM6z/coYPrsVMgovl3Ff7Q7OCp1w==}
     engines: {node: '>=16.0.0'}
-    dev: true
-
-  /@rspack/plugin-react-refresh@1.0.0(react-refresh@0.14.2):
-    resolution: {integrity: sha512-WvXkLewW5G0Mlo5H1b251yDh5FFiH4NDAbYlFpvFjcuXX2AchZRf9zdw57BDE/ADyWsJgA8kixN/zZWBTN3iYA==}
-    peerDependencies:
-      react-refresh: '>=0.10.0 <1.0.0'
-    peerDependenciesMeta:
-      react-refresh:
-        optional: true
-    dependencies:
-      error-stack-parser: 2.1.4
-      html-entities: 2.5.2
-      react-refresh: 0.14.2
     dev: true
 
   /@rspack/plugin-react-refresh@1.0.1(react-refresh@0.16.0):
@@ -6155,11 +6132,6 @@ packages:
   /react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
     dev: false
-
-  /react-refresh@0.14.2:
-    resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
-    engines: {node: '>=0.10.0'}
-    dev: true
 
   /react-refresh@0.16.0:
     resolution: {integrity: sha512-FPvF2XxTSikpJxcr+bHut2H4gJ17+18Uy20D5/F+SKzFap62R3cM5wH6b8WN3LyGSYeQilLEcJcR1fjBSI2S1A==}
