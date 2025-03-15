@@ -61,14 +61,14 @@ importers:
         specifier: ^9.22.0
         version: 9.22.0
       '@rsbuild/core':
-        specifier: ^1.2.15
-        version: 1.2.15
+        specifier: ^1.2.19
+        version: 1.2.19
       '@rsbuild/plugin-less':
         specifier: ^1.1.1
-        version: 1.1.1(@rsbuild/core@1.2.15)
+        version: 1.1.1(@rsbuild/core@1.2.19)
       '@rsbuild/plugin-react':
         specifier: ^1.1.1
-        version: 1.1.1(@rsbuild/core@1.2.15)
+        version: 1.1.1(@rsbuild/core@1.2.19)
       '@types/markdown-it':
         specifier: ^14.1.2
         version: 14.1.2
@@ -151,6 +151,9 @@ importers:
       '@dify-chat/helpers':
         specifier: workspace:^
         version: link:../helpers
+      echarts:
+        specifier: ^5.6.0
+        version: 5.6.0
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -159,11 +162,11 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
       '@rsbuild/core':
-        specifier: ~1.2.13
-        version: 1.2.15
+        specifier: ~1.2.19
+        version: 1.2.19
       '@rsbuild/plugin-react':
         specifier: ^1.1.1
-        version: 1.1.1(@rsbuild/core@1.2.15)
+        version: 1.1.1(@rsbuild/core@1.2.19)
       '@rslib/core':
         specifier: ^0.5.4
         version: 0.5.4(typescript@5.8.2)
@@ -214,10 +217,10 @@ importers:
         version: 8.6.4(prettier@3.5.3)
       storybook-addon-rslib:
         specifier: ^1.0.0
-        version: 1.0.0(@rsbuild/core@1.2.15)(@rslib/core@0.5.4)(storybook-builder-rsbuild@1.0.0)(typescript@5.8.2)
+        version: 1.0.0(@rsbuild/core@1.2.19)(@rslib/core@0.5.4)(storybook-builder-rsbuild@1.0.0)(typescript@5.8.2)
       storybook-react-rsbuild:
         specifier: ^1.0.0
-        version: 1.0.0(@rsbuild/core@1.2.15)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0)
+        version: 1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0)
       tailwindcss:
         specifier: ^3
         version: 3.4.17
@@ -447,6 +450,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -456,6 +460,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -465,6 +470,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -474,6 +480,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -1752,20 +1759,6 @@ packages:
     dev: true
     optional: true
 
-  /@rsbuild/core@1.2.15:
-    resolution: {integrity: sha512-f17C4q3MoQ1G9CXzGkiZKZj3MHnV9oSovBjjQQ5bXVBICfGVyRHlHHCa5b9b40F67lbez2K6eLkLP9wU1j1Udw==}
-    engines: {node: '>=16.7.0'}
-    hasBin: true
-    dependencies:
-      '@rspack/core': 1.2.7(@swc/helpers@0.5.15)
-      '@rspack/lite-tapable': 1.0.1
-      '@swc/helpers': 0.5.15
-      core-js: 3.41.0
-      jiti: 2.4.2
-    transitivePeerDependencies:
-      - '@rspack/tracing'
-    dev: true
-
   /@rsbuild/core@1.2.19:
     resolution: {integrity: sha512-k76is4HygmbYYMLG2V1d1yQeurHHC+ZEtGs/nwE11y6HmwSndoFhmjOeQbQ2Ul0b2B8HErksqSMtlCxd37YPPQ==}
     engines: {node: '>=16.7.0'}
@@ -1780,27 +1773,27 @@ packages:
       - '@rspack/tracing'
     dev: true
 
-  /@rsbuild/plugin-less@1.1.1(@rsbuild/core@1.2.15):
+  /@rsbuild/plugin-less@1.1.1(@rsbuild/core@1.2.19):
     resolution: {integrity: sha512-Gkp73c9p4CQs2dB4BVCmw/cJ6JpIaWbsKcmZqyr+tlsKqZvZn9aYU+Zx4qWSqPR8I5zatiV2Lh15ObL9CCnlXw==}
     peerDependencies:
       '@rsbuild/core': 1.x
     dependencies:
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       deepmerge: 4.3.1
       reduce-configs: 1.1.0
     dev: true
 
-  /@rsbuild/plugin-react@1.1.1(@rsbuild/core@1.2.15):
+  /@rsbuild/plugin-react@1.1.1(@rsbuild/core@1.2.19):
     resolution: {integrity: sha512-gkATKrOQauXMMtrYA5jbTQkhmYTE0VXoknPLtVpiXtwDbBUwgX23LFf1XJ51YOwqYpP7g5SfPEMgD2FENtCq0A==}
     peerDependencies:
       '@rsbuild/core': 1.x
     dependencies:
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       '@rspack/plugin-react-refresh': 1.0.1(react-refresh@0.16.0)
       react-refresh: 0.16.0
     dev: true
 
-  /@rsbuild/plugin-type-check@1.2.1(@rsbuild/core@1.2.15)(typescript@5.8.2):
+  /@rsbuild/plugin-type-check@1.2.1(@rsbuild/core@1.2.19)(typescript@5.8.2):
     resolution: {integrity: sha512-PtbjeMqDQy8IiPDTuaj8ZmvR42b0AsRq6RUF6wxa8dDsOzD0Dl1GcvemVGCto+/Dh8frLUmnlWF+T8riBw5rtA==}
     peerDependencies:
       '@rsbuild/core': 1.x
@@ -1808,7 +1801,7 @@ packages:
       '@rsbuild/core':
         optional: true
     dependencies:
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       deepmerge: 4.3.1
       json5: 2.2.3
       reduce-configs: 1.1.0
@@ -1839,25 +1832,9 @@ packages:
       - '@rspack/tracing'
     dev: true
 
-  /@rspack/binding-darwin-arm64@1.2.7:
-    resolution: {integrity: sha512-dT5eSMTknZaI8Djmz8KnaWM68rjZuBZwsKyF144o+ZSJM55vgiNXyL0lQYB8mX9nR3Gck+jKuGUAT2W/EF/t5Q==}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@rspack/binding-darwin-arm64@1.2.8:
     resolution: {integrity: sha512-bDlrlroY3iMlzna/3i1gD6eRmhJW2zRyC3Ov6aR1micshVQ9RteigYZWkjZuQfyC5Z8dCcLUQJVojz+pqp0JXg==}
     cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-darwin-x64@1.2.7:
-    resolution: {integrity: sha512-5n8IhKBxH71d4BUIvyzTwSOAOKNneLPJwLIphSPNIbCMGjLI59/EVpxSQ/AAUfyMkqOs635NNCn0eGQVuzpI/w==}
-    cpu: [x64]
     os: [darwin]
     requiresBuild: true
     dev: true
@@ -1871,26 +1848,11 @@ packages:
     dev: true
     optional: true
 
-  /@rspack/binding-linux-arm64-gnu@1.2.7:
-    resolution: {integrity: sha512-DTtFBJmgQQrVWjbklpgJDr3kE9Uf1fHsPh+1GVslsBuyn+o4O7JslrnjuVsQCYKoiEg0Lg4ZPQmwnhJLHssZ5A==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@rspack/binding-linux-arm64-gnu@1.2.8:
     resolution: {integrity: sha512-En/SMl45s19iUVb1/ZDFQvFDxIjnlfk7yqV3drMWWAL5HSgksNejaTIFTO52aoohIBbmwuk5wSGcbU0G0IFiPg==}
     cpu: [arm64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-linux-arm64-musl@1.2.7:
-    resolution: {integrity: sha512-01/OoQQF9eyDvRKkxj4DzCznfGZIvnzI8qOsrv+M7VBm8FLoKpb3hygXixaGQOXmNL42XTh61qjgm++fBu6aUA==}
-    cpu: [arm64]
-    os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -1899,14 +1861,7 @@ packages:
     resolution: {integrity: sha512-N1oZsXfJ9VLLcK7p1PS65cxLYQCZ7iqHW2OP6Ew2+hlz/d1hzngxgzrtZMCXFOHXDvTzVu5ff6jGS2v7+zv2tA==}
     cpu: [arm64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-linux-x64-gnu@1.2.7:
-    resolution: {integrity: sha512-lUOAUq0YSsofCXsP6XnlgfH0ZRDZ2X2XqXLXYjqf4xkSxCl5eBmE0EQYjAHF4zjUvU5rVx4a4bDLWv7+t3bOHg==}
-    cpu: [x64]
-    os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -1915,14 +1870,7 @@ packages:
     resolution: {integrity: sha512-BdPaepoLKuaVwip4QK/nGqNi1xpbCWSxiycPbKRrGqKgt/QGihxxFgiqr4EpWQVIJNIMy4nCsg4arO0+H1KWGQ==}
     cpu: [x64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-linux-x64-musl@1.2.7:
-    resolution: {integrity: sha512-ZrPXfgT30p4DlydYavaTHiluxHkWvZHt7K4q7qNyTfYYowG6jRGwWi/PATdugNICGv027Wsh5nzEO4o27Iuhwg==}
-    cpu: [x64]
-    os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -1931,14 +1879,7 @@ packages:
     resolution: {integrity: sha512-GFv0Bod268OcXIcjeLoPlK0oz8rClEIxIRFkz+ejhbvfCwRJ+Fd+EKaaKQTBfZQujPqc0h2GctIF25nN5pFTmA==}
     cpu: [x64]
     os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-win32-arm64-msvc@1.2.7:
-    resolution: {integrity: sha512-1OzzM+OUSWX39XYcDfxJ8bGX5vNNrRejCMGotBEdP+uQ3KMWCPz0G4KRc3QIjghaLIYk3ofd83hcfUxyk/2Xog==}
-    cpu: [arm64]
-    os: [win32]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -1946,14 +1887,6 @@ packages:
   /@rspack/binding-win32-arm64-msvc@1.2.8:
     resolution: {integrity: sha512-aEU+uJdbvJJGrzzAsjbjrPeNbG/bcG8JoXK2kSsUB+/sWHTIkHX0AQ3oX3aV/lcLKgZWrUxLAfLoCXEnIHMEyQ==}
     cpu: [arm64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rspack/binding-win32-ia32-msvc@1.2.7:
-    resolution: {integrity: sha512-VWlDCV9kDtijk9GK6ZtBQmYoVzKGpnrJB0iI3d2gIEa/2NwikJ89bLMFE4dFx8UNH3p/sSyb5pmPOQnbudFK7Q==}
-    cpu: [ia32]
     os: [win32]
     requiresBuild: true
     dev: true
@@ -1967,14 +1900,6 @@ packages:
     dev: true
     optional: true
 
-  /@rspack/binding-win32-x64-msvc@1.2.7:
-    resolution: {integrity: sha512-l/sTdeMsQF1a1aB79cWykDNRZG6nkUA0biJo2/sEARP3ijdr8TuwUdirp2JRDmZfQJkoJnQ2un9y9qyW+TIZzA==}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /@rspack/binding-win32-x64-msvc@1.2.8:
     resolution: {integrity: sha512-EigKLhKLH1kfv1e/ZgXuSKlIjkbyneJtiLbNDz7EeEVFGV1XMM6bsCea1sb2WOxsPYiOX4Q5JmR1j1KGrZS/LA==}
     cpu: [x64]
@@ -1982,20 +1907,6 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
-
-  /@rspack/binding@1.2.7:
-    resolution: {integrity: sha512-QH+kxkG0I9C6lmlwgBUDFsy24ihXMGG5lfiNtQilk4CyBN+AgSWFENcYrnkUaBioZAvMBznQLiccV3X0JeH9iQ==}
-    optionalDependencies:
-      '@rspack/binding-darwin-arm64': 1.2.7
-      '@rspack/binding-darwin-x64': 1.2.7
-      '@rspack/binding-linux-arm64-gnu': 1.2.7
-      '@rspack/binding-linux-arm64-musl': 1.2.7
-      '@rspack/binding-linux-x64-gnu': 1.2.7
-      '@rspack/binding-linux-x64-musl': 1.2.7
-      '@rspack/binding-win32-arm64-msvc': 1.2.7
-      '@rspack/binding-win32-ia32-msvc': 1.2.7
-      '@rspack/binding-win32-x64-msvc': 1.2.7
-    dev: true
 
   /@rspack/binding@1.2.8:
     resolution: {integrity: sha512-T3FMB3N9P1AbSAryfkSRJkPtmeSYs/Gj9zUZoPz1ckPEIcWZmpUOQbJylldjbw5waxtCL1haHNbi0pcSvxiaJw==}
@@ -2009,25 +1920,6 @@ packages:
       '@rspack/binding-win32-arm64-msvc': 1.2.8
       '@rspack/binding-win32-ia32-msvc': 1.2.8
       '@rspack/binding-win32-x64-msvc': 1.2.8
-    dev: true
-
-  /@rspack/core@1.2.7(@swc/helpers@0.5.15):
-    resolution: {integrity: sha512-Vg7ySflnqI1nNOBPd6VJkQozWADssxn3einbxa9OqDVAB+dGSj8qihTs6rlaTSewidoaYTGIAiTMHO2y+61qqQ==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@rspack/tracing': ^1.x
-      '@swc/helpers': '>=0.5.1'
-    peerDependenciesMeta:
-      '@rspack/tracing':
-        optional: true
-      '@swc/helpers':
-        optional: true
-    dependencies:
-      '@module-federation/runtime-tools': 0.8.4
-      '@rspack/binding': 1.2.7
-      '@rspack/lite-tapable': 1.0.1
-      '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001702
     dev: true
 
   /@rspack/core@1.2.8(@swc/helpers@0.5.15):
@@ -3411,10 +3303,6 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001702:
-    resolution: {integrity: sha512-LoPe/D7zioC0REI5W73PeR1e1MLCipRGq/VkovJnd6Df+QVqT+vT33OXCp8QUd7kA7RZrHWxb1B36OQKI/0gOA==}
-    dev: true
-
   /caniuse-lite@1.0.30001704:
     resolution: {integrity: sha512-+L2IgBbV6gXB4ETf0keSvLr7JUrRVbIaB/lrQ1+z8mRcQiisG5k+lG6O4n6Y5q6f5EuNfaYXKgymucphlEXQew==}
     dev: true
@@ -3754,6 +3642,13 @@ packages:
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
+
+  /echarts@5.6.0:
+    resolution: {integrity: sha512-oTbVTsXfKuEhxftHqL5xprgLoc0k7uScAwtryCgWF6hPYFLRwOUHiFmHGCBKP5NPFNkDVopOieyUqYGH8Fa3kA==}
+    dependencies:
+      tslib: 2.3.0
+      zrender: 5.6.1
+    dev: false
 
   /electron-to-chromium@1.5.113:
     resolution: {integrity: sha512-wjT2O4hX+wdWPJ76gWSkMhcHAV2PTMX+QetUCPYEdCIe+cxmgzzSSiGRCKW8nuh4mwKZlpv0xvoW7OF2X+wmHg==}
@@ -6480,7 +6375,7 @@ packages:
       typescript: 5.8.2
     dev: true
 
-  /rsbuild-plugin-html-minifier-terser@1.1.1(@rsbuild/core@1.2.15):
+  /rsbuild-plugin-html-minifier-terser@1.1.1(@rsbuild/core@1.2.19):
     resolution: {integrity: sha512-rbDLv+XmGeSQo9JWKSwBst3Qwx1opLqtQCnQ3t9Z0F0ZTxKOC1S/ypPv5tSn/S3GMHct5Yb76mMgh6p80hjOAQ==}
     peerDependencies:
       '@rsbuild/core': 1.x || ^1.0.1-beta.0
@@ -6488,7 +6383,7 @@ packages:
       '@rsbuild/core':
         optional: true
     dependencies:
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       '@types/html-minifier-terser': 7.0.2
       html-minifier-terser: 7.2.0
     dev: true
@@ -6719,7 +6614,7 @@ packages:
     resolution: {integrity: sha512-vj5lIj3Mwf9D79hBkltk5qmkFI+biIKWS2IBxEyEU3AX1tUf7AoL8nSazCOiiqQsGKIq01SClsKEzweu34uwvA==}
     dev: true
 
-  /storybook-addon-rslib@1.0.0(@rsbuild/core@1.2.15)(@rslib/core@0.5.4)(storybook-builder-rsbuild@1.0.0)(typescript@5.8.2):
+  /storybook-addon-rslib@1.0.0(@rsbuild/core@1.2.19)(@rslib/core@0.5.4)(storybook-builder-rsbuild@1.0.0)(typescript@5.8.2):
     resolution: {integrity: sha512-piqMN+HDHMdmzAqdNqMVH8i6f62JOOP4omS0mjP81lgRnWO7w8FBU0//MvVpeneDdVVTuoGi/v2rOVRe+3ZXkg==}
     peerDependencies:
       '@rsbuild/core': ^1.0.1
@@ -6730,13 +6625,13 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       '@rslib/core': 0.5.4(typescript@5.8.2)
-      storybook-builder-rsbuild: 1.0.0(@rsbuild/core@1.2.15)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2)
+      storybook-builder-rsbuild: 1.0.0(@rsbuild/core@1.2.19)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2)
       typescript: 5.8.2
     dev: true
 
-  /storybook-builder-rsbuild@1.0.0(@rsbuild/core@1.2.15)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2):
+  /storybook-builder-rsbuild@1.0.0(@rsbuild/core@1.2.19)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2):
     resolution: {integrity: sha512-ECRjXUOQCsuWEe4P2gjsMdh5olEf/nudUpwZ7yWepl4QLYULuMvOY7tN8yxCXImO4AuhgKjQgw59V/ZoO0pyOw==}
     peerDependencies:
       '@rsbuild/core': ^1.0.1
@@ -6746,8 +6641,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@rsbuild/core': 1.2.15
-      '@rsbuild/plugin-type-check': 1.2.1(@rsbuild/core@1.2.15)(typescript@5.8.2)
+      '@rsbuild/core': 1.2.19
+      '@rsbuild/plugin-type-check': 1.2.1(@rsbuild/core@1.2.19)(typescript@5.8.2)
       '@storybook/addon-docs': 8.6.4(@types/react@18.3.12)(storybook@8.6.4)
       '@storybook/core-webpack': 8.6.4(storybook@8.6.4)
       browser-assert: 1.2.1
@@ -6760,7 +6655,7 @@ packages:
       magic-string: 0.30.17
       path-browserify: 1.0.1
       process: 0.11.10
-      rsbuild-plugin-html-minifier-terser: 1.1.1(@rsbuild/core@1.2.15)
+      rsbuild-plugin-html-minifier-terser: 1.1.1(@rsbuild/core@1.2.19)
       sirv: 2.0.4
       storybook: 8.6.4(prettier@3.5.3)
       ts-dedent: 2.2.0
@@ -6773,7 +6668,7 @@ packages:
       - '@types/react'
     dev: true
 
-  /storybook-react-rsbuild@1.0.0(@rsbuild/core@1.2.15)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0):
+  /storybook-react-rsbuild@1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0):
     resolution: {integrity: sha512-rPxLZkfQaWEwbEROAhor7A2r3GNpXJIBIGnouOmpN1Qj/dvFmm0C6RUNXFfegXWk/kEP7zZzwNVG+tF3EuFMnw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
@@ -6787,7 +6682,7 @@ packages:
         optional: true
     dependencies:
       '@rollup/pluginutils': 5.1.4
-      '@rsbuild/core': 1.2.15
+      '@rsbuild/core': 1.2.19
       '@storybook/react': 8.6.4(@storybook/test@8.6.4)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
       '@storybook/react-docgen-typescript-plugin': 1.0.1(typescript@5.8.2)(webpack@5.98.0)
       '@types/node': 18.19.80
@@ -6799,7 +6694,7 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
       resolve: 1.22.10
       storybook: 8.6.4(prettier@3.5.3)
-      storybook-builder-rsbuild: 1.0.0(@rsbuild/core@1.2.15)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2)
+      storybook-builder-rsbuild: 1.0.0(@rsbuild/core@1.2.19)(@types/react@18.3.12)(storybook@8.6.4)(typescript@5.8.2)
       tsconfig-paths: 4.2.0
       typescript: 5.8.2
     transitivePeerDependencies:
@@ -7228,6 +7123,10 @@ packages:
       minimist: 1.2.8
       strip-bom: 3.0.0
     dev: true
+
+  /tslib@2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+    dev: false
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
@@ -7775,3 +7674,9 @@ packages:
     resolution: {integrity: sha512-KHBC7z61OJeaMGnF3wqNZj+GGNXOyypZviiKpQeiHirG5Ib1ImwcLBH70rbMSkKfSmUNBsdf2PwaEJtKvgmkNw==}
     engines: {node: '>=12.20'}
     dev: true
+
+  /zrender@5.6.1:
+    resolution: {integrity: sha512-OFXkDJKcrlx5su2XbzJvj/34Q3m6PvyCZkVPHGYpcCJ52ek4U/ymZyfuV1nKE23AyBJ51E/6Yr0mhZ7xGTO4ag==}
+    dependencies:
+      tslib: 2.3.0
+    dev: false

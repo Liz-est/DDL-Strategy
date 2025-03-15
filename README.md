@@ -16,6 +16,10 @@ Chatflow 工作流：
 
 ![Screen Shot](./docs/sample_knowledge_base_link.jpg)
 
+`Echarts` 图表：
+
+![Screen Shot](./docs/sample_echarts.jpg)   
+
 ## 特性
 
 - 💃 灵活部署：无缝接入 Dify Cloud 及私有化部署的 API 服务，全面满足多样化环境需求

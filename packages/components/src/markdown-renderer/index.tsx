@@ -1,5 +1,6 @@
 import { Typography } from "antd"
 import MarkdownIt from 'markdown-it';
+import MarkdownItPluginEcharts from './echarts-plugin'
 
 interface IMarkdownRendererProps {
   /**
@@ -8,7 +9,7 @@ interface IMarkdownRendererProps {
   markdownText: string
 }
 
-const md = MarkdownIt({ html: true, breaks: true });
+const md = MarkdownIt({ html: true, breaks: true }).use(MarkdownItPluginEcharts)
 
 /**
  * Markdown 渲染组件
