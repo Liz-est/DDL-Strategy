@@ -1,6 +1,7 @@
 import { Typography } from "antd"
 import MarkdownIt from 'markdown-it';
 import MarkdownItPluginEcharts from './echarts-plugin'
+import { useMemo } from "react";
 
 interface IMarkdownRendererProps {
   /**
@@ -17,9 +18,13 @@ const md = MarkdownIt({ html: true, breaks: true }).use(MarkdownItPluginEcharts)
 export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
   const { markdownText } = props
 
+  const dangerousHTML = useMemo(()=>{
+    return md.render(markdownText)
+  }, [markdownText])
+
   return (
     <Typography>
-      <div dangerouslySetInnerHTML={{ __html: md.render(markdownText) }} />
+      <div dangerouslySetInnerHTML={{ __html: dangerousHTML }} />
     </Typography>
   )
 };
