@@ -151,9 +151,9 @@ importers:
       '@dify-chat/helpers':
         specifier: workspace:^
         version: link:../helpers
-      echarts:
-        specifier: ^5.6.0
-        version: 5.6.0
+      '@lexmin0412/markdown-it-echarts':
+        specifier: ^0.1.2
+        version: 0.1.2
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -1393,6 +1393,13 @@ packages:
     dependencies:
       tslib: 2.8.1
     dev: true
+
+  /@lexmin0412/markdown-it-echarts@0.1.2:
+    resolution: {integrity: sha512-uIUKuUNVpHC0l2aAZZA7M34IfqY2j02VVvmyvoabouKwbCHSkOOTn76aROWj/Y/Hq9hH3eLJ1wYpxHR/kkgfjQ==}
+    dependencies:
+      echarts: 5.6.0
+      markdown-it: 14.1.0
+    dev: false
 
   /@mdx-js/react@3.1.0(@types/react@18.3.12)(react@18.3.1):
     resolution: {integrity: sha512-QjHtSaoameoalGnKDT3FoIl4+9RwyTmo9ZJGBdLOks/YOiWHoRDI3PUwEzOE7kEmGcV3AFcp9K6dYu9rEuKLAQ==}

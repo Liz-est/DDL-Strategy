@@ -1,6 +1,6 @@
 import { Typography } from "antd"
 import MarkdownIt from 'markdown-it';
-import MarkdownItPluginEcharts from './echarts-plugin'
+import MarkdownItPluginEcharts from '@lexmin0412/markdown-it-echarts'
 import { useMemo } from "react";
 
 interface IMarkdownRendererProps {
