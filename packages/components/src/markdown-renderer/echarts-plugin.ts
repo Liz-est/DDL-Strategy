@@ -31,7 +31,7 @@ const markdownItEcharts = (md: MarkdownIt) => {
 
         // 检查是否已经创建过该图表
         const existingChartId = Array.from(chartInstances.keys()).find(id => {
-          const existingOption = parsedOptions.get(id);
+          const existingOption = parsedOptions.get(chartInstances.get(id)!.getOption() as any);
           // 修改比较逻辑，使用 isEqual 函数
           return isEqual(existingOption, option);
         });
