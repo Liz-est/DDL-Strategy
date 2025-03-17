@@ -129,6 +129,9 @@ const DifyChatWrapper: React.FC = () => {
     setCurrentConversationId(undefined);
   }, [difyApi]);
 
+  /**
+   * 获取对话列表
+   */
   const getConversationItems = async () => {
     setCoversationListLoading(true);
     try {
@@ -150,6 +153,9 @@ const DifyChatWrapper: React.FC = () => {
     }
   };
 
+  /**
+   * 添加临时新对话(要到第一次服务器响应有效的对话 ID 时才真正地创建完成)
+   */
   const onAddConversation = () => {
     // 创建新对话
     const newKey = `temp_${Math.random()}`;
@@ -158,7 +164,7 @@ const DifyChatWrapper: React.FC = () => {
       return [
         {
           key: newKey,
-          label: `新对话`,
+          label: DEFAULT_CONVERSATION_NAME,
         },
         ...prev,
       ];
@@ -177,6 +183,10 @@ const DifyChatWrapper: React.FC = () => {
   }, [currentConversationId]);
 
   const [settingForm] = Form.useForm();
+
+  /**
+   * 开启应用配置弹窗, 支持添加/更新场景
+   */
   const openSettingModal = async (
     updatingItem?: IDifyAppItem,
   ): Promise<void> => {
