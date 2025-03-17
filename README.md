@@ -6,19 +6,19 @@
 
 `<think>` 标签（DeepSeek 深度思考）：
 
-![Screen Shot](./docs/running_sample.png)
+![Screen Shot](./docs/sample_think_tag.png)
 
 Chatflow 工作流：
 
-![Screen Shot](./docs/sample_chatflow.jpg)
+![Screen Shot](./docs/sample_workflow.png)
 
 知识库引用链接：
 
-![Screen Shot](./docs/sample_knowledge_base_link.jpg)
+![Screen Shot](./docs/sample_knowledge_base_link.png)
 
 `Echarts` 图表：
 
-![Screen Shot](./docs/sample_echarts.jpg)   
+![Screen Shot](./docs/sample_echarts.png)   
 
 ## 特性
 
