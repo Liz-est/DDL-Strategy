@@ -1,6 +1,6 @@
 import { Conversations, XProvider } from '@ant-design/x';
 import { createStyles } from 'antd-style';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 
 import { PlusOutlined } from '@ant-design/icons';
@@ -15,11 +15,12 @@ import {
 import { USER } from './config';
 import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
-import { ConversationList, type IConversationItem } from '@dify-chat/components';
+import { type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 import { UnauthorizedError } from '@dify-chat/api';
-import { getVars, IDifyAppItem, LocalStorageConfigStorage, RUNTIME_VARS_KEY } from '@dify-chat/helpers';
+import { IDifyAppItem, LocalStorageConfigStorage } from '@dify-chat/helpers';
 import AppList from './components/app-list';
+import { DEFAULT_CONVERSATION_NAME } from './constants';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -40,16 +41,13 @@ const useStyle = createStyles(({ token, css }) => {
   };
 });
 
-const DEFAULT_DIFY_API_OPTIONS: IDifyApiOptions = { user: USER, apiBase: 'https://api.dify.ai/v1', apiKey: '' };
-
 const appStore = new LocalStorageConfigStorage()
 
 const App: React.FC = () => {
-  const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>(DEFAULT_DIFY_API_OPTIONS);
+  const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>();
   // 创建 Dify API 实例
   const {
     instance: difyApi,
-    updateInstance,
     isInstanceReady,
   } = useDifyApi(difyApiOptions);
   const { styles } = useStyle();
@@ -78,6 +76,9 @@ const App: React.FC = () => {
       const result = await appStore.getApps()
       console.log('应用列表', result)
       setAppList(result || [])
+      if (!selectedAppId && result.length) {
+        setSelectedAppId(result[0]?.id || '')
+      }
     } catch (error) {
       message.error(`获取应用列表失败: ${error}`)
       console.error(error)
@@ -90,6 +91,17 @@ const App: React.FC = () => {
   useEffect(()=>{
     getAppList()
   }, [])
+
+  useEffect(()=>{
+    const appItem = appList.find((item) => item.id === selectedAppId)
+    if (!appItem) {
+      return;
+    }
+    setDifyApiOptions({
+      user: USER,
+      ...appItem.requestConfig
+    })
+  }, [selectedAppId])
   
   const initAppInfo = async () => {
     if (!difyApi) {
@@ -185,7 +197,8 @@ const App: React.FC = () => {
 
   const [settingForm] = Form.useForm();
   const openSettingModal = async() => {
-		const initialValues = getVars();
+    settingForm.resetFields()
+		// const initialValues = getVars();
     Modal.confirm({
       width: 600,
       centered: true,
@@ -198,12 +211,13 @@ const App: React.FC = () => {
           labelCol={{
             span: 5,
           }}
-          initialValues={initialValues}
+          // initialValues={initialValues}
         >
           <Form.Item
             label="API BASE"
             name="DIFY_API_BASE"
             rules={[{ required: true }]}
+            tooltip='Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1'
             required
           >
             <Input placeholder="请输入 API BASE" />
@@ -211,6 +225,7 @@ const App: React.FC = () => {
           <Form.Item
             label="API Key"
             name="DIFY_API_KEY"
+            tooltip='Dify App 的 API Key (以 app- 开头)'
             rules={[{ required: true }]}
             required
           >
@@ -242,6 +257,10 @@ const App: React.FC = () => {
     });
 	}
 
+  const conversationName = useMemo(()=>{
+    return conversationsItems.find(item=>item.key === currentConversationId)?.label || DEFAULT_CONVERSATION_NAME
+  }, [conversationsItems, currentConversationId])
+
   return (
     <XProvider theme={{ token: { colorPrimary: '#1689fe', colorText: '#333' } }}>
       <div className={styles.layout}>
@@ -270,12 +289,8 @@ const App: React.FC = () => {
           {/* 🌟 会话管理 */}
           <div className="px-3 flex-1 overflow-y-auto">
             <Spin spinning={appListLoading}>
-              <AppList selectedId={selectedAppId} onSelectedChange={(id, appItem)=>{
+              <AppList selectedId={selectedAppId} onSelectedChange={(id)=>{
                 setSelectedAppId(id)
-                setDifyApiOptions({
-                  user: USER,
-                  ...appItem.requestConfig
-                })
               }} list={appList} />
             </Spin>
             {/* <Spin spinning={conversationListLoading}>
@@ -305,13 +320,13 @@ const App: React.FC = () => {
             appInfo={appInfo}
             difyApi={difyApi!}
             conversationId={currentConversationId}
-            conversationName={
-              conversationMap.get(currentConversationId as string)?.label || ''
-            }
+            conversationName={conversationName}
             conversationItems={conversationsItems}
             onConversationIdChange={setCurrentConversationId}
             appParameters={appParameters}
             onAddConversation={onAddConversation}
+            onItemsChange={setConversationsItems}
+            conversationItemsChangeCallback={getConversationItems}
           />
         </div>
       </div>

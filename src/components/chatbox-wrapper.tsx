@@ -1,10 +1,4 @@
-import {
-  Button,
-  Dropdown,
-  GetProp,
-  message,
-  Spin,
-} from 'antd';
+import { Button, Empty, GetProp, message, Popover, Spin } from 'antd';
 import {
   DifyApi,
   IFile,
@@ -19,9 +13,13 @@ import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
-import { Chatbox, IConversationItem } from '@dify-chat/components';
+import {
+  Chatbox,
+  ConversationList,
+  IConversationItem,
+} from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '../constants';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 interface IChatboxWrapperProps {
   /**
@@ -47,12 +45,20 @@ interface IChatboxWrapperProps {
   /**
    * 对话列表
    */
-  conversationItems: IConversationItem[]
+  conversationItems: IConversationItem[];
   /**
    * 对话 ID 变更时触发的回调函数
    * @param id 即将变更的对话 ID
    */
   onConversationIdChange: (id: string) => void;
+  /**
+   * 对话列表变更时触发的回调函数
+   */
+  onItemsChange: (items: IConversationItem[]) => void;
+  /**
+   * 内部处理对话列表变更的函数
+   */
+  conversationItemsChangeCallback: () => void;
   /**
    * 添加对话
    */
@@ -69,8 +75,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     conversationName,
     onConversationIdChange,
     onAddConversation,
+    onItemsChange,
+    conversationItemsChangeCallback,
   } = props;
-  const abortRef = useRef(() => { });
+  const abortRef = useRef(() => {});
   useEffect(() => {
     return () => {
       abortRef.current();
@@ -80,7 +88,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>(
     [],
   );
-  const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>({});
+  const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>(
+    {},
+  );
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
   // 定义 ref, 用于获取最新的 conversationId
@@ -89,8 +99,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     difyApi,
   });
   const latestState = useLatest({
-    inputParams
-  })
+    inputParams,
+  });
 
   const filesRef = useRef<IFile[]>([]);
 
@@ -191,23 +201,27 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   };
 
   const isFormFilled = useMemo(() => {
-    return appParameters?.user_input_form.every((item) => {
-      const field = item['text-input']
-      return !!inputParams[field.variable] || !field.required;
-    }) || false
-  }, [appParameters, inputParams])
+    return (
+      appParameters?.user_input_form.every((item) => {
+        const field = item['text-input'];
+        return !!inputParams[field.variable] || !field.required;
+      }) || false
+    );
+  }, [appParameters, inputParams]);
 
   const onSubmit = (nextContent: string, files?: IFile[]) => {
-
     // 先校验表单是否填写完毕
     if (!isFormFilled) {
       // 过滤出没有填写的字段
-      const unFilledFields = appParameters?.user_input_form.filter((item) => {
-        const field = item['text-input']
-        return !inputParams[field.variable] && field.required
-      }).map((item) => item['text-input'].label) || [];
-      message.error(`${unFilledFields.join('、')}不能为空`)
-      return
+      const unFilledFields =
+        appParameters?.user_input_form
+          .filter((item) => {
+            const field = item['text-input'];
+            return !inputParams[field.variable] && field.required;
+          })
+          .map((item) => item['text-input'].label) || [];
+      message.error(`${unFilledFields.join('、')}不能为空`);
+      return;
     }
 
     filesRef.current = files || [];
@@ -234,40 +248,69 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   const chatReady = useMemo(() => {
     if (!appParameters?.user_input_form?.length) {
-      return true
+      return true;
     }
     if (isFormFilled) {
-      return true
+      return true;
     }
-    return false
-  }, [appParameters, isFormFilled])
+    return false;
+  }, [appParameters, isFormFilled]);
 
-  console.log('conversationItems', conversationItems)
+  console.log('conversationItems', conversationItems);
 
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
-
       <div
-        className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
+        className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border`}
       >
-        <Dropdown trigger={['click']} menu={{ activeKey: conversationId, items: conversationItems.map((conversation)=>{
-          return {
-            ...conversation,
-            onClick: () => {
-              onConversationIdChange(conversation.key)
-            },
+        <Popover
+          trigger={['click']}
+          // menu={{ activeKey: conversationId, items: conversationItems.map((conversation)=>{
+          //   return {
+          //     ...conversation,
+          //     onClick: () => {
+          //       onConversationIdChange(conversation.key)
+          //     },
+          //   }
+          // }) }}
+          content={
+            <div className="w-60">
+              <div className="text-base font-semibold">对话列表</div>
+              {conversationItems?.length ? (
+                <ConversationList
+                  renameConversationPromise={(
+                    conversationId: string,
+                    name: string,
+                  ) =>
+                    difyApi?.renameConversation({
+                      conversation_id: conversationId,
+                      name,
+                    })
+                  }
+                  deleteConversationPromise={difyApi?.deleteConversation}
+                  items={conversationItems}
+                  activeKey={conversationId}
+                  onActiveChange={onConversationIdChange}
+                  onItemsChange={onItemsChange}
+                  refreshItems={conversationItemsChangeCallback}
+                />
+              ) : (
+                <Empty description="当前应用下暂无会话" />
+              )}
+            </div>
           }
-        }) }} placement="bottomLeft">
-          <div className='inline-flex items-center'>
-          <span>
-          {conversationName || DEFAULT_CONVERSATION_NAME}
-          </span>
-          <DownOutlined className='ml-3 cursor-pointer' />
+          placement="bottomLeft"
+        >
+          <div className="inline-flex items-center">
+            <span>{conversationName || DEFAULT_CONVERSATION_NAME}</span>
+            <DownOutlined className="ml-3 cursor-pointer" />
           </div>
-        </Dropdown>
-      </div>
+        </Popover>
 
-      
+        <Button icon={<PlusCircleOutlined />}
+          onClick={onAddConversation}
+        >新增对话</Button>
+      </div>
 
       {/* {conversationId ? (
         <div
@@ -288,10 +331,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           <Chatbox
             conversationId={conversationId}
             nextSuggestions={nextSuggestions}
-            messageItems={[
-              ...historyMessages,
-              ...unStoredMessages4Render,
-            ]}
+            messageItems={[...historyMessages, ...unStoredMessages4Render]}
             isRequesting={agent.isRequesting()}
             onPromptsItemClick={onPromptsItemClick}
             onSubmit={onSubmit}
@@ -313,7 +353,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
             onStartConversation={(formValues) => {
               setInputParams(formValues);
               if (!conversationId) {
-                onAddConversation()
+                onAddConversation();
               }
             }}
             appInfo={appInfo}

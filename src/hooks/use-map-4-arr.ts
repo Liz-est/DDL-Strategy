@@ -15,7 +15,7 @@ export const useMap4Arr = <Item>(arrState: Item[], key: keyof Item) => {
     );
     mapState.clear();
     newMap.forEach((v, k) => mapState.set(k, v));
-  }, [arrState]);
+  }, [arrState, key, mapState]);
 
   return mapState;
 };
