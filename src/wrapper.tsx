@@ -276,7 +276,7 @@ const DifyChatWrapper: React.FC = () => {
 
   return (
     <XProvider
-      theme={{ token: { colorPrimary: '#1689fe', colorText: '#333' } }}
+      theme={{ token: { colorPrimary: '#4C84FF', colorText: '#333' } }}
     >
       <div className={styles.layout}>
         {/* 左侧边栏 - 小屏幕隐藏 */}
@@ -286,7 +286,7 @@ const DifyChatWrapper: React.FC = () => {
           {/* 添加应用 */}
           <Button
             onClick={() => openSettingModal()}
-            className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default hover:text-[#1689fe]"
+            className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default"
             icon={<PlusOutlined />}
           >
             添加 Dify 应用
