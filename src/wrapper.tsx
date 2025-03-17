@@ -291,8 +291,8 @@ const DifyChatWrapper: React.FC = () => {
           >
             添加 Dify 应用
           </Button>
-          {/* 🌟 会话管理 */}
-          <div className="px-3 flex-1 overflow-y-auto">
+          {/* 🌟 应用管理 */}
+          <div className="px-3 pb-3 flex-1 overflow-y-auto">
             <Spin spinning={appListLoading}>
               <AppList
                 selectedId={selectedAppId}
