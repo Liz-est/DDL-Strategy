@@ -186,8 +186,8 @@ importers:
         specifier: ^8.6.0
         version: 8.6.4(storybook@8.6.4)
       '@storybook/blocks':
-        specifier: ^8.6.0
-        version: 8.6.4(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)
+        specifier: ^8.6.7
+        version: 8.6.7(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)
       '@storybook/react':
         specifier: ^8.6.0
         version: 8.6.4(@storybook/test@8.6.4)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
@@ -2153,6 +2153,25 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       storybook: ^8.6.4
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      '@storybook/icons': 1.4.0(react-dom@18.3.1)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      storybook: 8.6.4(prettier@3.5.3)
+      ts-dedent: 2.2.0
+    dev: true
+
+  /@storybook/blocks@8.6.7(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4):
+    resolution: {integrity: sha512-IFhIKO7R1UPpnoG/5tZH0FgC79oYgXNf+7aGUwq29M/CQWy6p/Pvp0y4P962btY1UZRol+SsU//33nH8o6yNRw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      storybook: ^8.6.7
     peerDependenciesMeta:
       react:
         optional: true
