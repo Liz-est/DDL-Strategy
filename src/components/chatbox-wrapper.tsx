@@ -19,7 +19,7 @@ import {
   IConversationItem,
 } from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '../constants';
-import { DownOutlined, OrderedListOutlined, PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 interface IChatboxWrapperProps {
   /**
