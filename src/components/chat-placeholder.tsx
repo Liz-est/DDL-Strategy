@@ -1,6 +1,6 @@
 import { MessageOutlined } from '@ant-design/icons';
 import { IGetAppInfoResponse, IGetAppParametersResponse } from '@dify-chat/api';
-import { Button, Form, FormItemProps, Input, Select } from 'antd';
+import { Button, Empty, Form, FormItemProps, Input, Select } from 'antd';
 import { useMemo } from 'react';
 import AppInfo from './app-info';
 
@@ -61,47 +61,49 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
       <div className="w-96 max-w-[80vw] py-6 px-10 rounded-3xl bg-gray-100 box-border">
         {
           appInfo ?
-            <AppInfo info={appInfo} />
-            : null
+            <>
+              <AppInfo info={appInfo} />
+              {
+                !formFilled && user_input_form?.length ?
+                  <Form form={entryForm} className='mt-6' labelCol={{ span: 5 }}>
+                    {userInputItems.map((item) => {
+                      return (
+                        <Form.Item
+                          key={item.name}
+                          name={item.name}
+                          label={item.label}
+                          required={item.required}
+                          rules={item.rules}
+                        >
+                          {item.type === 'input' ? (
+                            <Input placeholder="请输入" />
+                          ) : item.type === 'select' ? (
+                            <Select placeholder="请选择" />
+                          ) : (
+                            '不支持的控件类型'
+                          )}
+                        </Form.Item>
+                      );
+                    })}
+                  </Form>
+                  : null
+              }
+              <div
+                className='mt-3 w-full flex justify-center'>
+                <Button
+                  type="primary"
+                  icon={<MessageOutlined />}
+                  onClick={async () => {
+                    await entryForm.validateFields();
+                    onStartConversation(entryForm.getFieldsValue());
+                  }}
+                >
+                  开始对话
+                </Button>
+              </div>
+            </>
+            : <Empty description='请先配置 Dify 应用' />
         }
-        {
-          !formFilled && user_input_form?.length ?
-            <Form form={entryForm} className='mt-6' labelCol={{span: 5}}>
-              {userInputItems.map((item) => {
-                return (
-                  <Form.Item
-                    key={item.name}
-                    name={item.name}
-                    label={item.label}
-                    required={item.required}
-                    rules={item.rules}
-                  >
-                    {item.type === 'input' ? (
-                      <Input placeholder="请输入" />
-                    ) : item.type === 'select' ? (
-                      <Select placeholder="请选择" />
-                    ) : (
-                      '不支持的控件类型'
-                    )}
-                  </Form.Item>
-                );
-              })}
-            </Form>
-            : null
-        }
-        <div
-          className='mt-3 w-full flex justify-center'>
-          <Button
-            type="primary"
-            icon={<MessageOutlined />}
-            onClick={async () => {
-              await entryForm.validateFields();
-              onStartConversation(entryForm.getFieldsValue());
-            }}
-          >
-            开始对话
-          </Button>
-        </div>
       </div>
     </div>
   );

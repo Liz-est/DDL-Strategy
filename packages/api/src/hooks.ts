@@ -10,11 +10,11 @@ const isInstanceReady = () => {
 /**
  * 创建 Dify API 实例 hook
  */
-export const useDifyApi = (options: IDifyApiOptions) => {
+export const useDifyApi = (options?: IDifyApiOptions) => {
   const [instance, setInstance] = useState<DifyApi>();
 
   useEffect(() => {
-    if (options && isInstanceReady()) {
+    if (options) {
       setInstance(createDifyApiInstance(options));
     }
   }, [options]);
@@ -22,8 +22,8 @@ export const useDifyApi = (options: IDifyApiOptions) => {
   return {
     instance,
     isInstanceReady: isInstanceReady() && instance,
-    updateInstance: () => {
-      setInstance(createDifyApiInstance(options));
-    },
+    // updateInstance: () => {
+    //   setInstance(createDifyApiInstance(options));
+    // },
   };
 };

@@ -6,19 +6,19 @@
 
 `<think>` 标签（DeepSeek 深度思考）：
 
-![Screen Shot](./docs/running_sample.png)
+![Screen Shot](./docs/sample_think_tag.png)
 
 Chatflow 工作流：
 
-![Screen Shot](./docs/sample_chatflow.jpg)
+![Screen Shot](./docs/sample_workflow.png)
 
 知识库引用链接：
 
-![Screen Shot](./docs/sample_knowledge_base_link.jpg)
+![Screen Shot](./docs/sample_knowledge_base_link.png)
 
 `Echarts` 图表：
 
-![Screen Shot](./docs/sample_echarts.jpg)   
+![Screen Shot](./docs/sample_echarts.png)   
 
 ## 特性
 
@@ -36,25 +36,31 @@ Chatflow 工作流：
 - Tailwind CSS v3
 - TypeScript v5
 
-## 开始
+## 运行环境
 
-### 1. 确定配置方式
+开发/生产构建环境要求：
 
-我们支持让用户在运行时手动配置 Dify 相关信息（ API 服务器域名和 API Key），也支持开发者通过指定环境变量的方式，统一指定配置。
+- Node.js v18.17.1+
+- pnpm v8.x
 
-#### 1.1 获取配置
+> 注意：本应用使用了 pnpm workspace 来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
 
-无论采取哪种配置方式，你都需要在 Dify 控制台获取几个关键变量：
+## 开始使用
 
-- API 服务器域名
-- API 版本，固定为 `/v1`
-- API Key
+### 1. 获取 Dify 应用配置
+
+为了在此应用对接 Dify API，你需要在 Dify 控制台获取几个关键变量：
+
+|变量|说明|
+|---|---|
+|API Base|Dify API 请求前缀, 如果你使用的是 Dify 官方提供的云服务，则为 `https://api.dify.ai/v1`|
+|Api Key|Dify API 密钥，用于访问对应应用的 API, Dify 应用和 API 密钥是一对多的关系|
 
 进入 Dify 的应用详情，点击左侧的 `访问 API`：
 
 ![获取域名和前缀](./docs/get_api_base.jpg)
 
-`API 服务器` 后展示的域名即为 API 服务器域名，域名后即为 API 版本，固定为 `/v1`。
+`API 服务器` 后展示的域名即为 `API Base` 变量的值。
 
 点击右侧的 `API 密钥` 按钮，即可看到 API Key 的管理弹窗：
 
@@ -66,43 +72,24 @@ Chatflow 工作流：
 
 完成以上步骤后，我们将会得到如下信息：
 
-- API 服务器域名: `https://api.dify.ai` OR 私有化部署后的 API 域名
-- API 版本: `/v1`
+- API Base: `https://api.dify.ai` OR 私有化部署后的 API 域名 + `/v1`
 - API Key: `app-YOUR_API_KEY`
 
-#### 1.2 运行时配置
+### 1.2 在界面上添加 Dify 应用配置
 
-点击页面左上角的配置按钮，即可进入运行时配置页面：
+点击页面左上角 "添加 Dify 应用配置" 按钮：
 
-![运行时配置](./docs/config-button.jpg)
+![添加应用配置按钮](./docs/guide__add_dify_config.png)
 
-依次填入我们在上一步中获取的信息：
+即可看到添加配置弹窗，依次填入我们在上一步中获取的信息：
 
-![运行时配置](./docs/config_form.jpg)
+![添加应用配置弹窗](./docs/guide_add_dify_config_modal.png)
 
-点击确定按钮，提示 “更新配置成功”，将会重新加载应用信息：
+点击确定按钮，提示 “添加配置成功”，即可在左侧的应用列表中多出了一条数据：
 
-![运行时配置](./docs/config_success.jpg)
+![添加应用配置成功](./docs/guide__sample_app_config.png)
 
-#### 1.3. 编译时配置
-
-如果你想在编译时注入配置，所有访问者都使用同一个身份，并且在本地开发时模拟相似的环境，可以在根目录创建一个 `.env.local` 文件，并添加以下环境变量（仍然是依次填入上一步获取到的信息）:
-
-```bash
-# .env.local
-DIFY_API_BASE=https://api.dify.ai
-DIFY_API_VERSION=/v1
-DIFY_API_KEY=app-YOUR_API_KEY
-```
-
-Rsbuild 在编译时会自动读取这些环境变量，并将其注入到代码中，你可以在代码中使用 `process.env.DIFY_API_BASE` 来访问它们。
-
-### 2. 本地开发
-
-推荐开发环境：
-
-- Node.js v18.17.1+
-- pnpm v8.x
+## 本地开发
 
 安装依赖:
 
@@ -146,7 +133,7 @@ pnpm preview
 - [x] 支持知识库引用列表展示 
 - [x] 拆分独立组件库，方便二次开发
 - [x] 支持 `Echarts` 渲染
-- [ ] 支持多 Dify 应用管理
+- [x] 支持多 Dify 应用管理
 - [ ] 国际化
 - [ ] 支持单个会话视图
 - [ ] 支持消息触顶/触底自动分页加载
