@@ -17,6 +17,7 @@
     "@ant-design/x": "^1.0.5",
     "@dify-chat/api": "workspace:^",
     "@dify-chat/components": "workspace:^",
+    "@dify-chat/core": "workspace:^",
     "@dify-chat/helpers": "workspace:^",
     "@toolkit-fe/clipboard": "^0.1.22",
     "@toolkit-fe/where-am-i": "^0.1.22",

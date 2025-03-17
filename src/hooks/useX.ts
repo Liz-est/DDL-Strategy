@@ -3,8 +3,9 @@ import { IAgentMessage, IMessageFileItem } from "../types";
 import { DifyApi, EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IFile, IGetAppParametersResponse } from "@dify-chat/api";
 import { isTempId } from "@dify-chat/helpers";
 import { IWorkflowNode } from "@dify-chat/api";
-import { RESPONSE_MODE, USER } from "../config";
+import { RESPONSE_MODE } from "../config";
 import {message as antdMessage} from 'antd'
+import { useDifyChat } from "@dify-chat/core";
 
 export const useX = (options: {
 	latestProps: React.MutableRefObject<{
@@ -24,6 +25,7 @@ export const useX = (options: {
   onConversationIdChange: (id: string) => void;
 }) => {
 	const { latestProps, latestState, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange } = options
+	const { user } = useDifyChat()
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
@@ -34,7 +36,7 @@ export const useX = (options: {
 					? latestProps.current.conversationId
 					: undefined,
 				files: filesRef.current || [],
-				user: USER,
+				user,
 				response_mode: RESPONSE_MODE,
 				query: message?.content as string,
 			});
