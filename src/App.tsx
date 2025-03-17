@@ -17,7 +17,6 @@ import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
 import { type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
-import { UnauthorizedError } from '@dify-chat/api';
 import { IDifyAppItem, LocalStorageConfigStorage } from '@dify-chat/helpers';
 import AppList from './components/app-list';
 import { DEFAULT_CONVERSATION_NAME } from './constants';
@@ -46,7 +45,7 @@ const appStore = new LocalStorageConfigStorage();
 const App: React.FC = () => {
   const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>();
   // 创建 Dify API 实例
-  const { instance: difyApi, isInstanceReady } = useDifyApi(difyApiOptions);
+  const { instance: difyApi } = useDifyApi(difyApiOptions);
   const { styles } = useStyle();
   const [appList, setAppList] = useState<IDifyAppItem[]>([]);
   const [conversationsItems, setConversationsItems] = useState<
@@ -147,13 +146,6 @@ const App: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (!isInstanceReady || !difyApi) {
-      return;
-    }
-    getConversationItems();
-  }, []);
-
   const onAddConversation = () => {
     // 创建新对话
     const newKey = `temp_${Math.random()}`;
@@ -173,7 +165,6 @@ const App: React.FC = () => {
   useEffect(() => {
     // 如果对话 ID 不在当前列表中，则刷新一下
     if (
-      isInstanceReady &&
       currentConversationId &&
       !conversationMap.has(currentConversationId)
     ) {
@@ -324,6 +315,7 @@ const App: React.FC = () => {
             conversationItems={conversationsItems}
             onConversationIdChange={setCurrentConversationId}
             appParameters={appParameters}
+            conversationListLoading={conversationListLoading}
             onAddConversation={onAddConversation}
             onItemsChange={setConversationsItems}
             conversationItemsChangeCallback={getConversationItems}

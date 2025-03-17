@@ -39,6 +39,10 @@ interface IChatboxWrapperProps {
    */
   conversationId?: string;
   /**
+   * 对话列表 loading
+   */
+  conversationListLoading?: boolean
+  /**
    * 当前对话名称
    */
   conversationName: string;
@@ -74,6 +78,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     conversationItems,
     conversationName,
     onConversationIdChange,
+    conversationListLoading,
     onAddConversation,
     onItemsChange,
     conversationItemsChangeCallback,
@@ -276,27 +281,29 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           content={
             <div className="w-60">
               <div className="text-base font-semibold">对话列表</div>
-              {conversationItems?.length ? (
-                <ConversationList
-                  renameConversationPromise={(
-                    conversationId: string,
-                    name: string,
-                  ) =>
-                    difyApi?.renameConversation({
-                      conversation_id: conversationId,
-                      name,
-                    })
-                  }
-                  deleteConversationPromise={difyApi?.deleteConversation}
-                  items={conversationItems}
-                  activeKey={conversationId}
-                  onActiveChange={onConversationIdChange}
-                  onItemsChange={onItemsChange}
-                  refreshItems={conversationItemsChangeCallback}
-                />
-              ) : (
-                <Empty description="当前应用下暂无会话" />
-              )}
+              <Spin spinning={conversationListLoading}>
+                {conversationItems?.length ? (
+                  <ConversationList
+                    renameConversationPromise={(
+                      conversationId: string,
+                      name: string,
+                    ) =>
+                      difyApi?.renameConversation({
+                        conversation_id: conversationId,
+                        name,
+                      })
+                    }
+                    deleteConversationPromise={difyApi?.deleteConversation}
+                    items={conversationItems}
+                    activeKey={conversationId}
+                    onActiveChange={onConversationIdChange}
+                    onItemsChange={onItemsChange}
+                    refreshItems={conversationItemsChangeCallback}
+                  />
+                ) : (
+                  <Empty description="当前应用下暂无会话" />
+                )}
+              </Spin>
             </div>
           }
           placement="bottomLeft"
