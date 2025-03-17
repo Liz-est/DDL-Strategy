@@ -1,5 +1,5 @@
 import { MoreOutlined } from "@ant-design/icons";
-import { IDifyAppItem } from "@dify-chat/helpers"
+import { IDifyAppItem } from "@dify-chat/core";
 import { Dropdown, message, Tag } from "antd";
 
 interface IAppListProps {

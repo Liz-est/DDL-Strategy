@@ -1,5 +1,5 @@
 import { IAgentThought, IRetrieverResource } from "@dify-chat/api";
-import { IWorkflowNode } from "../components/workflow-logs"
+import { IWorkflowNode } from "@dify-chat/api";
 
 /**
  * 消息对象中的文件 item

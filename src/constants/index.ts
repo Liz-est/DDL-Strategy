@@ -1,3 +1,5 @@
+export * from './storage'
+
 /**
  * 默认对话名称
  */
