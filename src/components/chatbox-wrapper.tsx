@@ -135,13 +135,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       setInputParams(result.data[0]?.inputs || {});
     }
 
-    // 如果不是合法版本 则默认为 1.0.0
-    // const difyVersion = valid(DIFY_INFO.version) ? DIFY_INFO.version : '1.0.0';
-    // const baseData = result.data;
-    // Dify 1.0 以上版本的消息列表是按从新到旧的顺序返回的，需要倒序一下
-    // if (gte(difyVersion, '1.0.0')) {
-    //   baseData = baseData.reverse();
-    // }
     result.data.forEach((item) => {
       newMessages.push(
         {
@@ -270,14 +263,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       >
         <Popover
           trigger={['click']}
-          // menu={{ activeKey: conversationId, items: conversationItems.map((conversation)=>{
-          //   return {
-          //     ...conversation,
-          //     onClick: () => {
-          //       onConversationIdChange(conversation.key)
-          //     },
-          //   }
-          // }) }}
           content={
             <div className="w-60">
               <div className="text-base font-semibold">对话列表</div>
@@ -318,14 +303,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           onClick={onAddConversation}
         >新增对话</Button>
       </div>
-
-      {/* {conversationId ? (
-        <div
-          className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
-        >
-          {conversationName || DEFAULT_CONVERSATION_NAME}
-        </div>
-      ) : null} */}
 
       <div className="flex-1 overflow-hidden relative">
         {initLoading ? (
