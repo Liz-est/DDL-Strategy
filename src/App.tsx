@@ -41,22 +41,22 @@ const useStyle = createStyles(({ token, css }) => {
   };
 });
 
-const appStore = new LocalStorageConfigStorage()
+const appStore = new LocalStorageConfigStorage();
 
 const App: React.FC = () => {
   const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>();
   // 创建 Dify API 实例
-  const {
-    instance: difyApi,
-    isInstanceReady,
-  } = useDifyApi(difyApiOptions);
+  const { instance: difyApi, isInstanceReady } = useDifyApi(difyApiOptions);
   const { styles } = useStyle();
-  const [appList, setAppList] = useState<IDifyAppItem[]>([])
+  const [appList, setAppList] = useState<IDifyAppItem[]>([]);
   const [conversationsItems, setConversationsItems] = useState<
     IConversationItem[]
   >([]);
   // 优化会话列表查找逻辑（高频操作）
-  const conversationMap = useMap4Arr<IConversationItem>(conversationsItems, 'key');
+  const conversationMap = useMap4Arr<IConversationItem>(
+    conversationsItems,
+    'key',
+  );
   const [conversationListLoading, setCoversationListLoading] =
     useState<boolean>(false);
   const [currentConversationId, setCurrentConversationId] = useState<string>();
@@ -64,69 +64,65 @@ const App: React.FC = () => {
   const [appParameters, setAppParameters] =
     useState<IGetAppParametersResponse>();
 
-  const [selectedAppId, setSelectedAppId] = useState<string>(appList[0]?.id || '' )
-  const [appListLoading, setAppListLoading] = useState<boolean>(false)
+  const [selectedAppId, setSelectedAppId] = useState<string>(
+    appList[0]?.id || '',
+  );
+  const [appListLoading, setAppListLoading] = useState<boolean>(false);
 
   /**
    * 获取应用列表
    */
-  const getAppList = async() => {
-    setAppListLoading(true)
+  const getAppList = async () => {
+    setAppListLoading(true);
     try {
-      const result = await appStore.getApps()
-      console.log('应用列表', result)
-      setAppList(result || [])
+      const result = await appStore.getApps();
+      console.log('应用列表', result);
+      setAppList(result || []);
       if (!selectedAppId && result.length) {
-        setSelectedAppId(result[0]?.id || '')
+        setSelectedAppId(result[0]?.id || '');
       }
     } catch (error) {
-      message.error(`获取应用列表失败: ${error}`)
-      console.error(error)
+      message.error(`获取应用列表失败: ${error}`);
+      console.error(error);
     } finally {
-      setAppListLoading(false)
+      setAppListLoading(false);
     }
-  }
-  
-  // 初始化获取应用列表
-  useEffect(()=>{
-    getAppList()
-  }, [])
+  };
 
-  useEffect(()=>{
-    const appItem = appList.find((item) => item.id === selectedAppId)
+  // 初始化获取应用列表
+  useEffect(() => {
+    getAppList();
+  }, []);
+
+  useEffect(() => {
+    const appItem = appList.find((item) => item.id === selectedAppId);
     if (!appItem) {
       return;
     }
     setDifyApiOptions({
       user: USER,
-      ...appItem.requestConfig
-    })
-  }, [selectedAppId])
-  
+      ...appItem.requestConfig,
+    });
+  }, [selectedAppId]);
+
   const initAppInfo = async () => {
+    setAppInfo(undefined)
     if (!difyApi) {
       return;
     }
     // 获取应用信息
-    try {
-      const baseInfo = await difyApi.getAppInfo()
-      setAppInfo({
-        ...baseInfo,
-      });
-    } catch (error) {
-      if (error instanceof UnauthorizedError) {
-        openSettingModal();
-        throw error;
-      }
-    }
-    const appParameters = await difyApi.getAppParameters()
+    const baseInfo = await difyApi.getAppInfo();
+    setAppInfo({
+      ...baseInfo,
+    });
+    const appParameters = await difyApi.getAppParameters();
     setAppParameters(appParameters);
   };
 
   useEffect(() => {
-    initAppInfo().then(()=>{
+    initAppInfo().then(() => {
       getConversationItems();
-    })
+    });
     setCurrentConversationId(undefined);
   }, [difyApi]);
 
@@ -162,15 +158,15 @@ const App: React.FC = () => {
     // 创建新对话
     const newKey = `temp_${Math.random()}`;
     // 使用函数式更新保证状态一致性（修复潜在竞态条件）
-    setConversationsItems((prev)=>{
+    setConversationsItems((prev) => {
       return [
         {
           key: newKey,
           label: `新对话`,
         },
         ...prev,
-      ]
-    })
+      ];
+    });
     setCurrentConversationId(newKey);
   };
 
@@ -186,83 +182,105 @@ const App: React.FC = () => {
   }, [currentConversationId]);
 
   const [settingForm] = Form.useForm();
-  const openSettingModal = async() => {
-    settingForm.resetFields()
-		// const initialValues = getVars();
-    Modal.confirm({
-      width: 600,
-      centered: true,
-      title: '添加 Dify 应用',
-      content: (
-        <Form
-          form={settingForm}
-          labelAlign="left"
-          className='mt-4'
-          labelCol={{
-            span: 5,
-          }}
-          // initialValues={initialValues}
-        >
-          <Form.Item
-            label="API BASE"
-            name="DIFY_API_BASE"
-            rules={[{ required: true }]}
-            tooltip='Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1'
-            required
+  const openSettingModal = async (
+    updatingItem?: IDifyAppItem,
+  ): Promise<void> => {
+    settingForm.resetFields();
+    if (updatingItem) {
+      settingForm.setFieldsValue({
+        apiBase: updatingItem.requestConfig.apiBase,
+        apiKey: updatingItem.requestConfig.apiKey,
+      });
+    }
+    return new Promise((resolve) => {
+      Modal.confirm({
+        width: 600,
+        centered: true,
+        title: `${updatingItem ? '更新' : '添加'} Dify 应用配置`,
+        content: (
+          <Form
+            form={settingForm}
+            labelAlign="left"
+            className="mt-4"
+            labelCol={{
+              span: 5,
+            }}
           >
-            <Input placeholder="请输入 API BASE" />
-          </Form.Item>
-          <Form.Item
-            label="API Key"
-            name="DIFY_API_KEY"
-            tooltip='Dify App 的 API Key (以 app- 开头)'
-            rules={[{ required: true }]}
-            required
-          >
-            <Input placeholder="请输入 API Key" />
-          </Form.Item>
-        </Form>
-      ),
-      onOk: async () => {
-        await settingForm.validateFields();
-        const values = settingForm.getFieldsValue();
+            <Form.Item
+              label="API Base"
+              name="apiBase"
+              rules={[{ required: true }]}
+              tooltip="Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1"
+              required
+            >
+              <Input placeholder="请输入 API BASE" />
+            </Form.Item>
+            <Form.Item
+              label="API Key"
+              name="apiKey"
+              tooltip="Dify App 的 API Key (以 app- 开头)"
+              rules={[{ required: true }]}
+              required
+            >
+              <Input placeholder="请输入 API Key" />
+            </Form.Item>
+          </Form>
+        ),
+        onOk: async () => {
+          await settingForm.validateFields();
+          const values = settingForm.getFieldsValue();
 
-        // 获取 Dify 应用信息
-        const newDifyApiInstance = new DifyApi({
-          user: USER,
-          apiBase: values.DIFY_API_BASE,
-          apiKey: values.DIFY_API_KEY
-        })
-        const difyAppInfo = await newDifyApiInstance.getAppInfo()
-        await appStore.addApp({
-          id: Math.random().toString(),
-          info: difyAppInfo,
-          requestConfig: {
-            apiBase: values.DIFY_API_BASE,
-            apiKey: values.DIFY_API_KEY
-          },
-        })
-        getAppList()
-      },
+          // 获取 Dify 应用信息
+          const newDifyApiInstance = new DifyApi({
+            user: USER,
+            apiBase: values.apiBase,
+            apiKey: values.apiKey,
+          });
+          const difyAppInfo = await newDifyApiInstance.getAppInfo();
+          if (updatingItem) {
+            await appStore.updateApp({
+              ...updatingItem,
+              requestConfig: {
+                apiBase: values.apiBase,
+                apiKey: values.apiKey,
+              },
+            })
+          } else {
+            await appStore.addApp({
+              id: Math.random().toString(),
+              info: difyAppInfo,
+              requestConfig: {
+                apiBase: values.apiBase,
+                apiKey: values.apiKey,
+              },
+            });
+          }
+          getAppList();
+          resolve();
+        },
+      });
     });
-	}
+  };
 
-  const conversationName = useMemo(()=>{
-    return conversationsItems.find(item=>item.key === currentConversationId)?.label || DEFAULT_CONVERSATION_NAME
-  }, [conversationsItems, currentConversationId])
+  const conversationName = useMemo(() => {
+    return (
+      conversationsItems.find((item) => item.key === currentConversationId)
+        ?.label || DEFAULT_CONVERSATION_NAME
+    );
+  }, [conversationsItems, currentConversationId]);
 
   return (
-    <XProvider theme={{ token: { colorPrimary: '#1689fe', colorText: '#333' } }}>
+    <XProvider
+      theme={{ token: { colorPrimary: '#1689fe', colorText: '#333' } }}
+    >
       <div className={styles.layout}>
         {/* 左侧边栏 - 小屏幕隐藏 */}
         <div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
-          <Logo
-            openSettingModal={openSettingModal}
-          />
+          <Logo openSettingModal={openSettingModal} />
           {/* 添加应用 */}
           <Button
-            onClick={()=>openSettingModal()}
+            onClick={() => openSettingModal()}
             className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default hover:text-[#1689fe]"
             icon={<PlusOutlined />}
           >
@@ -271,15 +289,33 @@ const App: React.FC = () => {
           {/* 🌟 会话管理 */}
           <div className="px-3 flex-1 overflow-y-auto">
             <Spin spinning={appListLoading}>
-              <AppList selectedId={selectedAppId} onSelectedChange={(id)=>{
-                setSelectedAppId(id)
-              }} list={appList} />
+              <AppList
+                selectedId={selectedAppId}
+                onSelectedChange={(id) => {
+                  setSelectedAppId(id);
+                }}
+                list={appList}
+                onUpdate={async (id: string, item) => {
+                  const currentItem = appList.find((item) => item.id === id);
+                  if (!currentItem) {
+                    message.error('应用不存在');
+                    return;
+                  }
+                  return openSettingModal(item);
+                }}
+                onDelete={async (id: string) => {
+                  await appStore.deleteApp(id);
+                  getAppList();
+                }}
+              />
             </Spin>
           </div>
         </div>
 
         {/* 右侧聊天窗口 - 移动端全屏 */}
-        <div className="flex-1 min-w-0"> {/* 新增外层容器 */}
+        <div className="flex-1 min-w-0">
+          {' '}
+          {/* 新增外层容器 */}
           <ChatboxWrapper
             appInfo={appInfo}
             difyApi={difyApi!}
