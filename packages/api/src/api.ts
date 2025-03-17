@@ -1,5 +1,4 @@
 import XRequest from './base-request';
-import { getVars } from '@dify-chat/helpers';
 import { IAgentThought, IRetrieverResource } from './types';
 
 interface IUserInputForm {
@@ -74,11 +73,19 @@ interface IGetConversationHistoryResponse {
   data: IMessageItem[];
 }
 
-export interface IDifyApiOptions {
+export interface IDifyApiOptions  {
   /**
    * 用户
    */
   user: string;
+  /**
+   * API 前缀，默认 https://api.dify.ai/v1
+   */
+  apiBase: string
+  /**
+   * Dify APP API 密钥
+   */
+  apiKey: string
 }
 
 export interface IGetAppInfoResponse {
@@ -151,13 +158,9 @@ export interface IUploadFileResponse {
 export class DifyApi {
   constructor(options: IDifyApiOptions) {
     this.options = options;
-    const runtimeVars = getVars();
     this.baseRequest = new XRequest({
-      baseURL:
-        process.env.NODE_ENV === 'development'
-          ? runtimeVars.DIFY_API_VERSION
-          : `${runtimeVars.DIFY_API_BASE || ''}${runtimeVars.DIFY_API_VERSION}`,
-      apiKey: runtimeVars.DIFY_API_KEY,
+      baseURL: options.apiBase,
+      apiKey: options.apiKey,
     });
   }
 

@@ -1,4 +1,6 @@
 import {
+  Button,
+  Dropdown,
   GetProp,
   message,
   Spin,
@@ -17,8 +19,9 @@ import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
-import { Chatbox } from '@dify-chat/components';
+import { Chatbox, IConversationItem } from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '../constants';
+import { DownOutlined } from '@ant-design/icons';
 
 interface IChatboxWrapperProps {
   /**
@@ -42,6 +45,10 @@ interface IChatboxWrapperProps {
    */
   conversationName: string;
   /**
+   * 对话列表
+   */
+  conversationItems: IConversationItem[]
+  /**
    * 对话 ID 变更时触发的回调函数
    * @param id 即将变更的对话 ID
    */
@@ -58,11 +65,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     appParameters,
     difyApi,
     conversationId,
+    conversationItems,
     conversationName,
     onConversationIdChange,
     onAddConversation,
   } = props;
-  const abortRef = useRef(() => {});
+  const abortRef = useRef(() => { });
   useEffect(() => {
     return () => {
       abortRef.current();
@@ -182,7 +190,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   };
 
-  const isFormFilled = useMemo(()=>{
+  const isFormFilled = useMemo(() => {
     return appParameters?.user_input_form.every((item) => {
       const field = item['text-input']
       return !!inputParams[field.variable] || !field.required;
@@ -197,7 +205,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       const unFilledFields = appParameters?.user_input_form.filter((item) => {
         const field = item['text-input']
         return !inputParams[field.variable] && field.required
-      }).map((item)=>item['text-input'].label) || [];
+      }).map((item) => item['text-input'].label) || [];
       message.error(`${unFilledFields.join('、')}不能为空`)
       return
     }
@@ -224,7 +232,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     });
   }, [messages]);
 
-  const chatReady = useMemo(()=>{
+  const chatReady = useMemo(() => {
     if (!appParameters?.user_input_form?.length) {
       return true
     }
@@ -234,15 +242,40 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     return false
   }, [appParameters, isFormFilled])
 
+  console.log('conversationItems', conversationItems)
+
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
-      {conversationId ? (
+
+      <div
+        className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
+      >
+        <Dropdown trigger={['click']} menu={{ activeKey: conversationId, items: conversationItems.map((conversation)=>{
+          return {
+            ...conversation,
+            onClick: () => {
+              onConversationIdChange(conversation.key)
+            },
+          }
+        }) }} placement="bottomLeft">
+          <div className='inline-flex items-center'>
+          <span>
+          {conversationName || DEFAULT_CONVERSATION_NAME}
+          </span>
+          <DownOutlined className='ml-3 cursor-pointer' />
+          </div>
+        </Dropdown>
+      </div>
+
+      
+
+      {/* {conversationId ? (
         <div
           className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold`}
         >
           {conversationName || DEFAULT_CONVERSATION_NAME}
         </div>
-      ) : null}
+      ) : null} */}
 
       <div className="flex-1 overflow-hidden relative">
         {initLoading ? (

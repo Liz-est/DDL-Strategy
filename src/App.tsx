@@ -6,6 +6,8 @@ import './App.css';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Modal, Spin, type GetProp } from 'antd';
 import {
+  DifyApi,
+  IDifyApiOptions,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
   useDifyApi,
@@ -16,7 +18,8 @@ import { Logo } from './components/logo';
 import { ConversationList, type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 import { UnauthorizedError } from '@dify-chat/api';
-import { getVars, RUNTIME_VARS_KEY } from '@dify-chat/helpers';
+import { getVars, IDifyAppItem, LocalStorageConfigStorage, RUNTIME_VARS_KEY } from '@dify-chat/helpers';
+import AppList from './components/app-list';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -37,9 +40,12 @@ const useStyle = createStyles(({ token, css }) => {
   };
 });
 
-const difyApiOptions = { user: USER };
+const DEFAULT_DIFY_API_OPTIONS: IDifyApiOptions = { user: USER, apiBase: 'https://api.dify.ai/v1', apiKey: '' };
+
+const appStore = new LocalStorageConfigStorage()
 
 const App: React.FC = () => {
+  const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>(DEFAULT_DIFY_API_OPTIONS);
   // 创建 Dify API 实例
   const {
     instance: difyApi,
@@ -47,6 +53,7 @@ const App: React.FC = () => {
     isInstanceReady,
   } = useDifyApi(difyApiOptions);
   const { styles } = useStyle();
+  const [appList, setAppList] = useState<IDifyAppItem[]>([])
   const [conversationsItems, setConversationsItems] = useState<
     IConversationItem[]
   >([]);
@@ -59,6 +66,31 @@ const App: React.FC = () => {
   const [appParameters, setAppParameters] =
     useState<IGetAppParametersResponse>();
 
+  const [selectedAppId, setSelectedAppId] = useState<string>(appList[0]?.id || '' )
+  const [appListLoading, setAppListLoading] = useState<boolean>(false)
+
+  /**
+   * 获取应用列表
+   */
+  const getAppList = async() => {
+    setAppListLoading(true)
+    try {
+      const result = await appStore.getApps()
+      console.log('应用列表', result)
+      setAppList(result || [])
+    } catch (error) {
+      message.error(`获取应用列表失败: ${error}`)
+      console.error(error)
+    } finally {
+      setAppListLoading(false)
+    }
+  }
+  
+  // 初始化获取应用列表
+  useEffect(()=>{
+    getAppList()
+  }, [])
+  
   const initAppInfo = async () => {
     if (!difyApi) {
       return;
@@ -98,6 +130,7 @@ const App: React.FC = () => {
           };
         }) || [];
       setConversationsItems(newItems);
+      setCurrentConversationId(newItems[0]?.key);
     } catch (error) {
       console.error(error);
       message.error(`获取会话列表失败: ${error}`);
@@ -155,11 +188,13 @@ const App: React.FC = () => {
 		const initialValues = getVars();
     Modal.confirm({
       width: 600,
-      title: '配置',
+      centered: true,
+      title: '添加 Dify 应用',
       content: (
         <Form
           form={settingForm}
           labelAlign="left"
+          className='mt-4'
           labelCol={{
             span: 5,
           }}
@@ -174,14 +209,6 @@ const App: React.FC = () => {
             <Input placeholder="请输入 API BASE" />
           </Form.Item>
           <Form.Item
-            label="API Version"
-            name="DIFY_API_VERSION"
-            rules={[{ required: true }]}
-            required
-          >
-            <Input placeholder="请输入 API Version" />
-          </Form.Item>
-          <Form.Item
             label="API Key"
             name="DIFY_API_KEY"
             rules={[{ required: true }]}
@@ -194,9 +221,23 @@ const App: React.FC = () => {
       onOk: async () => {
         await settingForm.validateFields();
         const values = settingForm.getFieldsValue();
-        localStorage.setItem(RUNTIME_VARS_KEY, JSON.stringify(values));
-        message.success('更新配置成功');
-        updateInstance();
+
+        // 获取 Dify 应用信息
+        const newDifyApiInstance = new DifyApi({
+          user: USER,
+          apiBase: values.DIFY_API_BASE,
+          apiKey: values.DIFY_API_KEY
+        })
+        const difyAppInfo = await newDifyApiInstance.getAppInfo()
+        await appStore.addApp({
+          id: Math.random().toString(),
+          info: difyAppInfo,
+          requestConfig: {
+            apiBase: values.DIFY_API_BASE,
+            apiKey: values.DIFY_API_KEY
+          },
+        })
+        getAppList()
       },
     });
 	}
@@ -210,17 +251,34 @@ const App: React.FC = () => {
           <Logo
             openSettingModal={openSettingModal}
           />
-          {/* 🌟 添加会话 */}
+          {/* 添加应用 */}
           <Button
+            onClick={()=>openSettingModal()}
+            className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default hover:text-[#1689fe]"
+            icon={<PlusOutlined />}
+          >
+            添加 Dify 应用
+          </Button>
+          {/* 🌟 添加会话 */}
+          {/* <Button
             onClick={handleAddConversationBtnClick}
             className="border border-solid border-[#1689fe] w-[calc(100%-24px)] mt-0 mx-3 text-[#1689fe]"
             icon={<PlusOutlined />}
           >
             New Conversation
-          </Button>
+          </Button> */}
           {/* 🌟 会话管理 */}
-          <div className="py-0 px-3 flex-1 overflow-y-auto">
-            <Spin spinning={conversationListLoading}>
+          <div className="px-3 flex-1 overflow-y-auto">
+            <Spin spinning={appListLoading}>
+              <AppList selectedId={selectedAppId} onSelectedChange={(id, appItem)=>{
+                setSelectedAppId(id)
+                setDifyApiOptions({
+                  user: USER,
+                  ...appItem.requestConfig
+                })
+              }} list={appList} />
+            </Spin>
+            {/* <Spin spinning={conversationListLoading}>
               {
                 difyApi ?
                 <ConversationList
@@ -237,7 +295,7 @@ const App: React.FC = () => {
                 />
                 : null
               }
-            </Spin>
+            </Spin> */}
           </div>
         </div>
 
@@ -250,6 +308,7 @@ const App: React.FC = () => {
             conversationName={
               conversationMap.get(currentConversationId as string)?.label || ''
             }
+            conversationItems={conversationsItems}
             onConversationIdChange={setCurrentConversationId}
             appParameters={appParameters}
             onAddConversation={onAddConversation}
