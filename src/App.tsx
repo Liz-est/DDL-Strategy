@@ -1,10 +1,10 @@
-import { Conversations, XProvider } from '@ant-design/x';
+import { XProvider } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Modal, Spin, type GetProp } from 'antd';
+import { Button, Form, Input, message, Modal, Spin } from 'antd';
 import {
   DifyApi,
   IDifyApiOptions,
@@ -174,16 +174,6 @@ const App: React.FC = () => {
     setCurrentConversationId(newKey);
   };
 
-  const handleAddConversationBtnClick = async () => {
-    onAddConversation();
-  };
-
-  const onConversationClick: GetProp<typeof Conversations, 'onActiveChange'> = (
-    key,
-  ) => {
-    setCurrentConversationId(key);
-  };
-
   useEffect(() => {
     // 如果对话 ID 不在当前列表中，则刷新一下
     if (
@@ -278,14 +268,6 @@ const App: React.FC = () => {
           >
             添加 Dify 应用
           </Button>
-          {/* 🌟 添加会话 */}
-          {/* <Button
-            onClick={handleAddConversationBtnClick}
-            className="border border-solid border-[#1689fe] w-[calc(100%-24px)] mt-0 mx-3 text-[#1689fe]"
-            icon={<PlusOutlined />}
-          >
-            New Conversation
-          </Button> */}
           {/* 🌟 会话管理 */}
           <div className="px-3 flex-1 overflow-y-auto">
             <Spin spinning={appListLoading}>
@@ -293,24 +275,6 @@ const App: React.FC = () => {
                 setSelectedAppId(id)
               }} list={appList} />
             </Spin>
-            {/* <Spin spinning={conversationListLoading}>
-              {
-                difyApi ?
-                <ConversationList
-                  renameConversationPromise={(conversationId: string, name: string)=>difyApi?.renameConversation({
-                    conversation_id: conversationId,
-                    name,
-                  })}
-                  deleteConversationPromise={difyApi?.deleteConversation}
-                  items={conversationsItems}
-                  activeKey={currentConversationId}
-                  onActiveChange={onConversationClick}
-                  onItemsChange={setConversationsItems}
-                  refreshItems={getConversationItems}
-                />
-                : null
-              }
-            </Spin> */}
           </div>
         </div>
 
