@@ -1,6 +1,6 @@
 import { MoreOutlined } from "@ant-design/icons";
 import { IDifyAppItem } from "@dify-chat/helpers"
-import { Tag } from "antd";
+import { Dropdown, message, Tag } from "antd";
 
 interface IAppListProps {
   /**
@@ -15,26 +15,32 @@ interface IAppListProps {
    * 应用列表
    */
   list: IDifyAppItem[]
+  /**
+   * 删除应用
+   */
+  onDelete: (id: string)=>Promise<unknown>
+  /**
+   * 更新应用配置
+   */
+  onUpdate?: (id: string, item: IDifyAppItem)=>Promise<unknown>
 }
 
 /**
  * Dify 应用列表
  */
 export default function AppList(props: IAppListProps) {
-  const { selectedId, onSelectedChange, list } = props;
+  const { selectedId, onSelectedChange, list, onDelete, onUpdate } = props;
 
   return <div>
     {
       list.map((item)=>{
         const isSelected = selectedId === item.id
         return (
-          <div key={item.id} className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary ${isSelected ? 'text-primary border-primary' : ''}`}
-            onClick={()=>{
-              onSelectedChange?.(item.id, item)
-            }}
-          >
+          <div key={item.id} className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary ${isSelected ? 'text-primary border-primary bg-gradient-to-r from-cyan-50 to-blue-50' : ''}`}>
             <div className="w-full flex items-center">
-              <div className="flex-1 overflow-hidden flex items-center">
+              <div className="flex-1 overflow-hidden flex items-center" onClick={()=>{
+              onSelectedChange?.(item.id, item)
+            }}>
                 <span className="font-semibold">
                   {item.info.name}
                 </span>
@@ -50,9 +56,37 @@ export default function AppList(props: IAppListProps) {
                   : null
                 }
               </div>
-              <MoreOutlined />
+              <Dropdown trigger={['click']} menu={{
+                items: [
+                  {
+                    key: 'update',
+                    label: '更新配置',
+                    onClick: async(event)=>{
+                      event.domEvent.stopPropagation()
+                      // TODO: 更新应用配置
+                      await onUpdate?.(item.id, item)
+                      message.success('更新应用配置成功')
+                    }
+                  },
+                  {
+                    key: 'delete',
+                    label: '删除',
+                    danger: true,
+                    onClick: async(event)=>{
+                      event.domEvent.stopPropagation()
+                      // TODO: 删除应用
+                      await onDelete(item.id)
+                      message.success('删除应用成功')
+                    }
+                  }
+                ]
+              }}>
+                <MoreOutlined className="hover:text-primary" />
+              </Dropdown>
             </div>
-            <div className="truncate text-sm mt-2">
+            <div className="truncate text-sm mt-2" onClick={()=>{
+              onSelectedChange?.(item.id, item)
+            }}>
               {item.info.description}
             </div>
           </div>
