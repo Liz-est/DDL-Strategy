@@ -72,7 +72,7 @@ Chatflow 工作流：
 
 完成以上步骤后，我们将会得到如下信息：
 
-- API Base: `https://api.dify.ai` OR 私有化部署后的 API 域名 + `/v1`
+- API Base: `https://api.dify.ai/v1` OR `${SELF_HOSTED_API_DOMAIN}/v1`
 - API Key: `app-YOUR_API_KEY`
 
 ### 1.2 在界面上添加 Dify 应用配置
@@ -88,6 +88,44 @@ Chatflow 工作流：
 点击确定按钮，提示 “添加配置成功”，即可在左侧的应用列表中多出了一条数据：
 
 ![添加应用配置成功](./docs/guide__sample_app_config.png)
+
+### 1.3 跨域处理
+
+Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
+
+#### 1.3.1 生产构建模式(pnpm build)
+
+在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-chat 应用的部署域名访问，以 nginx 为例：
+
+```bash
+# nginx.conf
+server {
+  listen 443;
+  server_name dify-chat.com # 这里换成你的前端部署域名
+
+  location / {
+    add_header Access-Control-Allow-Origin https://dify-chat.com; # 这里换成你的前端部署协议+域名
+    add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
+  }
+}
+```
+
+#### 1.3.2 本地开发模式(pnpm dev)
+
+在项目根目录新建 `.env.local` 文件，添加以下内容：
+
+```bash
+# .env.local
+DIFY_API_DOMAIN=https://api.dify.ai # 换成你的 API 部署域名
+DIFY_API_PREFIX=/v1 # API 访问前缀，如果你没有对 Dify 进行魔改的话，一般就是 /v1
+```
+
+然后，你需要在界面上修改上一步中 API Base 的配置：
+
+- 修改前: `${SELF_HOSTED_API_DOMAIN}/v1`
+- 修改后: `/v1`
+
+在运行 `pnpm dev` 时，Rsbuild 会自动读取 `.env.local` 文件中的环境变量，设置正确的 `server.proxy` 实现本地代理，可以访问 `rsbuild.config.ts` 文件查看详情。
 
 ## 本地开发
 
