@@ -22,6 +22,8 @@ import DifyAppLocalStorageStore from './storage/app';
 import AppList from './components/app-list';
 import { DEFAULT_CONVERSATION_NAME } from './constants';
 import { useDifyChat } from '@dify-chat/core';
+import { useSearchParams } from 'pure-react-router';
+import { useMount, useUpdateEffect } from 'ahooks';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -46,6 +48,7 @@ const useStyle = createStyles(({ token, css }) => {
 const appStore = new DifyAppLocalStorageStore();
 
 const DifyChatWrapper: React.FC = () => {
+  const searchParams = useSearchParams()
   const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>();
   // 创建 Dify API 实例
   const { instance: difyApi } = useDifyApi(difyApiOptions);
@@ -66,9 +69,7 @@ const DifyChatWrapper: React.FC = () => {
   const [appParameters, setAppParameters] =
     useState<IGetAppParametersResponse>();
 
-  const [selectedAppId, setSelectedAppId] = useState<string>(
-    appList[0]?.id || '',
-  );
+  const [selectedAppId, setSelectedAppId] = useState<string>('');
   const [appListLoading, setAppListLoading] = useState<boolean>(false);
   const { user } = useDifyChat()
 
@@ -81,9 +82,7 @@ const DifyChatWrapper: React.FC = () => {
       const result = await appStore.getApps();
       console.log('应用列表', result);
       setAppList(result || []);
-      if (!selectedAppId && result.length) {
-        setSelectedAppId(result[0]?.id || '');
-      }
+      return result
     } catch (error) {
       message.error(`获取应用列表失败: ${error}`);
       console.error(error);
@@ -93,11 +92,18 @@ const DifyChatWrapper: React.FC = () => {
   };
 
   // 初始化获取应用列表
-  useEffect(() => {
-    getAppList();
-  }, []);
+  useMount(() => {
+    getAppList().then((result) => {
+      const idInQuery = searchParams.get('id')
+      if (idInQuery) {
+        setSelectedAppId(idInQuery as string)
+      } else if (!selectedAppId && result?.length) {
+        setSelectedAppId(result[0]?.id || '');
+      }
+    })
+  });
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     const appItem = appList.find((item) => item.id === selectedAppId);
     if (!appItem) {
       return;
