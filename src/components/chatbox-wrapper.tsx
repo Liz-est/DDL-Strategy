@@ -19,7 +19,7 @@ import {
   IConversationItem,
 } from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '../constants';
-import { DownOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
 
 interface IChatboxWrapperProps {
   /**
@@ -294,8 +294,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
           placement="bottomLeft"
         >
           <div className="inline-flex items-center">
+            <UnorderedListOutlined className="mr-3 cursor-pointer" />
             <span>{conversationName || DEFAULT_CONVERSATION_NAME}</span>
-            <DownOutlined className="ml-3 cursor-pointer" />
           </div>
         </Popover>
 
