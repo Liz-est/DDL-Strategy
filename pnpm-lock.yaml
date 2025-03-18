@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ant-design/icons':
-        specifier: ^5.5.1
-        version: 5.5.1(react-dom@18.3.1)(react@18.3.1)
+        specifier: ^5.6.1
+        version: 5.6.1(react-dom@18.3.1)(react@18.3.1)
       '@ant-design/x':
         specifier: ^1.0.6
         version: 1.0.6(antd@5.24.4)(react-dom@18.3.1)(react@18.3.1)
@@ -298,12 +298,6 @@ packages:
       '@jridgewell/trace-mapping': 0.3.25
     dev: true
 
-  /@ant-design/colors@7.1.0:
-    resolution: {integrity: sha512-MMoDGWn1y9LdQJQSHiCC20x3uZ3CwQnv9QMz6pCmJOrqdgM9YxsoVVY0wtrdXbmfSgnV0KNk6zi09NAhMR2jvg==}
-    dependencies:
-      '@ctrl/tinycolor': 3.6.1
-    dev: false
-
   /@ant-design/colors@7.2.0:
     resolution: {integrity: sha512-bjTObSnZ9C/O8MB/B4OUtd/q9COomuJAR2SYfhxLyHvCKn4EKwCN3e+fWGMo7H5InAyV0wL17jdE9ALrdOW/6A==}
     dependencies:
@@ -366,22 +360,6 @@ packages:
 
   /@ant-design/icons-svg@4.4.2:
     resolution: {integrity: sha512-vHbT+zJEVzllwP+CM+ul7reTEfBR0vgxFe7+lREAsAA7YGsYpboiq2sQNeQeRvh09GfQgs/GyFEvZpJ9cLXpXA==}
-    dev: false
-
-  /@ant-design/icons@5.5.1(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-0UrM02MA2iDIgvLatWrj6YTCYe0F/cwXvVE0E2SqGrL7PZireQwgEKTKBisWpZyal5eXZLvuM98kju6YtYne8w==}
-    engines: {node: '>=8'}
-    peerDependencies:
-      react: '>=16.0.0'
-      react-dom: '>=16.0.0'
-    dependencies:
-      '@ant-design/colors': 7.1.0
-      '@ant-design/icons-svg': 4.4.2
-      '@babel/runtime': 7.26.0
-      classnames: 2.5.1
-      rc-util: 5.43.0(react-dom@18.3.1)(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /@ant-design/icons@5.6.1(react-dom@18.3.1)(react@18.3.1):
@@ -878,11 +856,6 @@ packages:
     resolution: {integrity: sha512-UJnjoFsmxfKUdNYdWgOB0mWUypuLvAfQPH1+pyvRJs6euowbFkFC6P13w1l8mJyi3vxYMxc9kld5jZEGRQs6bw==}
     engines: {node: '>=18'}
     dev: true
-
-  /@ctrl/tinycolor@3.6.1:
-    resolution: {integrity: sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==}
-    engines: {node: '>=10'}
-    dev: false
 
   /@emotion/babel-plugin@11.13.5:
     resolution: {integrity: sha512-pxHCpT2ex+0q+HH91/zsdHkw/lXd468DIN2zvfvLtPKLLMo6gQj7oLObq8PhkrxOZb/gGCq03S3Z7PDhS8pduQ==}
@@ -6120,18 +6093,6 @@ packages:
       rc-util: 5.44.4(react-dom@18.3.1)(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-    dev: false
-
-  /rc-util@5.43.0(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-AzC7KKOXFqAdIBqdGWepL9Xn7cm3vnAmjlHqUnoQaTMZYhM4VlXGLkkHHxj/BZ7Td0+SOPKB4RGPboBVKT9htw==}
-    peerDependencies:
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-    dependencies:
-      '@babel/runtime': 7.26.10
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-is: 18.3.1
     dev: false
 
   /rc-util@5.44.4(react-dom@18.3.1)(react@18.3.1):
