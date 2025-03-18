@@ -193,10 +193,10 @@ importers:
         version: 8.6.7(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)
       '@storybook/react':
         specifier: ^8.6.7
-        version: 8.6.7(@storybook/test@8.6.4)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
+        version: 8.6.7(@storybook/test@8.6.7)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
       '@storybook/test':
-        specifier: ^8.6.0
-        version: 8.6.4(storybook@8.6.4)
+        specifier: ^8.6.7
+        version: 8.6.7(storybook@8.6.4)
       '@testing-library/jest-dom':
         specifier: ^6.6.3
         version: 6.6.3
@@ -226,7 +226,7 @@ importers:
         version: 1.0.0(@rsbuild/core@1.2.19)(@rslib/core@0.5.4)(storybook-builder-rsbuild@1.0.0)(typescript@5.8.2)
       storybook-react-rsbuild:
         specifier: ^1.0.0
-        version: 1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0)
+        version: 1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.7)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0)
       tailwindcss:
         specifier: ^3
         version: 3.4.17
@@ -2236,16 +2236,6 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
     dev: true
 
-  /@storybook/instrumenter@8.6.4(storybook@8.6.4):
-    resolution: {integrity: sha512-8OtIWLhayTUdqJEeXiPm6l3LTdSkWgQzzV2l2HIe4Adedeot+Rkwu6XHmyRDpnb0+Ish6zmMDqtJBxC2PQsy6Q==}
-    peerDependencies:
-      storybook: ^8.6.4
-    dependencies:
-      '@storybook/global': 5.0.0
-      '@vitest/utils': 2.1.9
-      storybook: 8.6.4(prettier@3.5.3)
-    dev: true
-
   /@storybook/instrumenter@8.6.7(storybook@8.6.4):
     resolution: {integrity: sha512-FeQiV0g5crCWs0P1wKY4xZzb4PxAYNcrm2+9LLGVqwnC7qzrSCPf0p10MlveVfwsen1m6Wbqfe+wl21c31Hfmg==}
     peerDependencies:
@@ -2303,7 +2293,7 @@ packages:
       storybook: 8.6.4(prettier@3.5.3)
     dev: true
 
-  /@storybook/react@8.6.7(@storybook/test@8.6.4)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2):
+  /@storybook/react@8.6.7(@storybook/test@8.6.7)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2):
     resolution: {integrity: sha512-6R8znSm7kzsoAJyRbEiDWE+5xjeAIzwEcfT60fqx+uMdd0vDFM7f2uT4fYy+CijWas1oFWcNV/LMd3EqSkBGsQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
@@ -2323,27 +2313,12 @@ packages:
       '@storybook/manager-api': 8.6.7(storybook@8.6.4)
       '@storybook/preview-api': 8.6.7(storybook@8.6.4)
       '@storybook/react-dom-shim': 8.6.7(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)
-      '@storybook/test': 8.6.4(storybook@8.6.4)
+      '@storybook/test': 8.6.7(storybook@8.6.4)
       '@storybook/theming': 8.6.7(storybook@8.6.4)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.6.4(prettier@3.5.3)
       typescript: 5.8.2
-    dev: true
-
-  /@storybook/test@8.6.4(storybook@8.6.4):
-    resolution: {integrity: sha512-JPjfbaMMuCBT47pg3/MDD9vYFF5OGPAOWEB9nJWJ9IjYAb2Nd8OYJQIDoYJQNT+aLkTVLtvzGnVNwdxpouAJcQ==}
-    peerDependencies:
-      storybook: ^8.6.4
-    dependencies:
-      '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.6.4(storybook@8.6.4)
-      '@testing-library/dom': 10.4.0
-      '@testing-library/jest-dom': 6.5.0
-      '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/expect': 2.0.5
-      '@vitest/spy': 2.0.5
-      storybook: 8.6.4(prettier@3.5.3)
     dev: true
 
   /@storybook/test@8.6.7(storybook@8.6.4):
@@ -6745,7 +6720,7 @@ packages:
       - '@types/react'
     dev: true
 
-  /storybook-react-rsbuild@1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.4)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0):
+  /storybook-react-rsbuild@1.0.0(@rsbuild/core@1.2.19)(@storybook/test@8.6.7)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)(webpack@5.98.0):
     resolution: {integrity: sha512-rPxLZkfQaWEwbEROAhor7A2r3GNpXJIBIGnouOmpN1Qj/dvFmm0C6RUNXFfegXWk/kEP7zZzwNVG+tF3EuFMnw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
@@ -6760,7 +6735,7 @@ packages:
     dependencies:
       '@rollup/pluginutils': 5.1.4
       '@rsbuild/core': 1.2.19
-      '@storybook/react': 8.6.7(@storybook/test@8.6.4)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
+      '@storybook/react': 8.6.7(@storybook/test@8.6.7)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.4)(typescript@5.8.2)
       '@storybook/react-docgen-typescript-plugin': 1.0.1(typescript@5.8.2)(webpack@5.98.0)
       '@types/node': 18.19.80
       find-up: 5.0.0
