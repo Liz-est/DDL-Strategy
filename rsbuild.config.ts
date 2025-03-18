@@ -5,13 +5,6 @@ import path from 'path';
 import tailwindcss from 'tailwindcss';
 
 export default defineConfig({
-  source: {
-    define: {
-      'process.env.DIFY_API_KEY': JSON.stringify(process.env.DIFY_API_KEY),
-      'process.env.DIFY_API_BASE': JSON.stringify(process.env.DIFY_API_BASE),
-      'process.env.DIFY_API_VERSION': JSON.stringify(process.env.DIFY_API_VERSION),
-    }
-  },
   html: {
     template: path.resolve(__dirname, './public/template.html'),
   },
@@ -33,9 +26,9 @@ export default defineConfig({
     proxy: [
       {
 				// 代理 Dify API
-				target: process.env.DIFY_API_BASE || 'https://api.dify.ai',
+				target: process.env.DIFY_API_DOMAIN || 'https://api.dify.ai',
         changeOrigin: true,
-        context: process.env.DIFY_API_VERSION || '/v1',
+        context: process.env.DIFY_API_PREFIX || '/v1',
       },
     ],
   },
