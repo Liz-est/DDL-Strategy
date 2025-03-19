@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { IDifyAppItem } from "@dify-chat/core";
 import DifyAppLocalStorageStore from "../../storage/app";
 import { useHistory } from "pure-react-router";
+import { MobileHeader } from "../../components/mobile/header";
 
 const appStore = new DifyAppLocalStorageStore()
 
@@ -21,7 +22,9 @@ export default function AppListPage() {
 	}, [])
 
 	return (
-		<div className="px-3">
+		<div>
+			<MobileHeader centerChildren={<>Dify Chat</>} />
+			<div className="px-3">
 			{
 				list.map((item) => {
 					return (
@@ -55,6 +58,7 @@ export default function AppListPage() {
 					)
 				})
 			}
+		</div>
 		</div>
 	)
 }

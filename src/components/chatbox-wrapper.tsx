@@ -9,7 +9,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Prompts } from '@ant-design/x';
 import { isTempId } from '@dify-chat/helpers';
 import { useLatest } from '../hooks/use-latest';
-import { isMobile } from '@toolkit-fe/where-am-i';
 import { useX } from '../hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
@@ -19,7 +18,12 @@ import {
   IConversationItem,
 } from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '../constants';
-import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import {
+  PlusCircleOutlined,
+  UnorderedListOutlined,
+} from '@ant-design/icons';
+import { MobileHeader } from './mobile/header';
+import { useResponsive } from 'ahooks';
 
 interface IChatboxWrapperProps {
   /**
@@ -41,7 +45,7 @@ interface IChatboxWrapperProps {
   /**
    * 对话列表 loading
    */
-  conversationListLoading?: boolean
+  conversationListLoading?: boolean;
   /**
    * 当前对话名称
    */
@@ -96,6 +100,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>(
     {},
   );
+
+  const { sm, md } = useResponsive()
+
+  const isMobile = sm && !md
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
   // 定义 ref, 用于获取最新的 conversationId
@@ -256,53 +264,61 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   console.log('conversationItems', conversationItems);
 
+  const conversationTitle = (
+    <Popover
+      trigger={['click']}
+      content={
+        <div className="w-60">
+          <div className="text-base font-semibold">对话列表</div>
+          <Spin spinning={conversationListLoading}>
+            {conversationItems?.length ? (
+              <ConversationList
+                renameConversationPromise={(
+                  conversationId: string,
+                  name: string,
+                ) =>
+                  difyApi?.renameConversation({
+                    conversation_id: conversationId,
+                    name,
+                  })
+                }
+                deleteConversationPromise={difyApi?.deleteConversation}
+                items={conversationItems}
+                activeKey={conversationId}
+                onActiveChange={onConversationIdChange}
+                onItemsChange={onItemsChange}
+                refreshItems={conversationItemsChangeCallback}
+              />
+            ) : (
+              <Empty description="当前应用下暂无会话" />
+            )}
+          </Spin>
+        </div>
+      }
+      placement={isMobile ? 'bottom' : 'bottomLeft'}
+    >
+      <div className="inline-flex items-center">
+        <UnorderedListOutlined className="mr-3 cursor-pointer" />
+        <span>{conversationName || DEFAULT_CONVERSATION_NAME}</span>
+      </div>
+    </Popover>
+  );
+
   return (
     <div className="flex h-screen flex-col overflow-hidden flex-1">
-      <div
-        className={`${isMobile() ? 'h-12 !leading-[3rem] px-4' : 'h-16 !leading-[4rem] px-8'} text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border`}
-      >
-        <Popover
-          trigger={['click']}
-          content={
-            <div className="w-60">
-              <div className="text-base font-semibold">对话列表</div>
-              <Spin spinning={conversationListLoading}>
-                {conversationItems?.length ? (
-                  <ConversationList
-                    renameConversationPromise={(
-                      conversationId: string,
-                      name: string,
-                    ) =>
-                      difyApi?.renameConversation({
-                        conversation_id: conversationId,
-                        name,
-                      })
-                    }
-                    deleteConversationPromise={difyApi?.deleteConversation}
-                    items={conversationItems}
-                    activeKey={conversationId}
-                    onActiveChange={onConversationIdChange}
-                    onItemsChange={onItemsChange}
-                    refreshItems={conversationItemsChangeCallback}
-                  />
-                ) : (
-                  <Empty description="当前应用下暂无会话" />
-                )}
-              </Spin>
-            </div>
-          }
-          placement="bottomLeft"
-        >
-          <div className="inline-flex items-center">
-            <UnorderedListOutlined className="mr-3 cursor-pointer" />
-            <span>{conversationName || DEFAULT_CONVERSATION_NAME}</span>
-          </div>
-        </Popover>
+      {isMobile ? (
+        <MobileHeader centerChildren={conversationTitle} />
+      ) : (
+        <div className="h-16 !leading-[4rem] px-8 text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border">
+          {/* 对话标题及切换 */}
+          {conversationTitle}
 
-        <Button icon={<PlusCircleOutlined />}
-          onClick={onAddConversation}
-        >新增对话</Button>
-      </div>
+          {/* 大屏幕下的新增对话按钮 */}
+          <Button icon={<PlusCircleOutlined />} onClick={onAddConversation}>
+            新增对话
+          </Button>
+        </div>
+      )}
 
       <div className="flex-1 overflow-hidden relative">
         {initLoading ? (
