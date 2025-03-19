@@ -1,12 +1,5 @@
 import type { Config } from 'tailwindcss'
-
-const colors = {
-  default: '#333',
-	desc: '#9CA3B3',
-  eb: '#ebebeb',
-  warning: '#FF5A07',
-	primary: '#4C84FF'
-}
+import { colors } from './src/theme/config'
 
 const minWidth = {
   /**

@@ -16,7 +16,6 @@ import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
 import { type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
-// import { IDifyAppItem, LocalStorageConfigStorage } from '@dify-chat/helpers';
 import { type IDifyAppItem } from '@dify-chat/core';
 import DifyAppService from './services/app';
 import AppList from './components/app-list';
@@ -24,6 +23,7 @@ import { DEFAULT_CONVERSATION_NAME } from './constants';
 import { useDifyChat } from '@dify-chat/core';
 import { useSearchParams } from 'pure-react-router';
 import { useMount, useUpdateEffect } from 'ahooks';
+import { colors } from './theme/config';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -282,7 +282,7 @@ const DifyChatWrapper: React.FC = () => {
 
   return (
     <XProvider
-      theme={{ token: { colorPrimary: '#4C84FF', colorText: '#333' } }}
+      theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}
     >
       <div className={styles.layout}>
         {/* 左侧边栏 - 小屏幕隐藏 */}
