@@ -153,7 +153,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         {
           id: item.id,
           content: item.answer,
-          status: item.status === 'error' ? 'error' : 'success',
+          status: item.status === 'error' ? item.status : 'success',
           error: item.error || '',
           isHistory: true,
           feedback: item.feedback,

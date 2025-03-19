@@ -2,6 +2,9 @@ import { Link } from "pure-react-router"
 import { GithubIcon, LogoIcon } from "../logo"
 
 interface IMobileHeaderProps {
+  /**
+   * 自定义中间部分内容
+   */
   centerChildren: JSX.Element
 }
 
