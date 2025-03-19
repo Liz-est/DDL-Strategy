@@ -288,7 +288,7 @@ const DifyChatWrapper: React.FC = () => {
         {/* 左侧边栏 - 小屏幕隐藏 */}
         <div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
-          <Logo openSettingModal={openSettingModal} />
+          <Logo />
           {/* 添加应用 */}
           <Button
             onClick={() => openSettingModal()}
