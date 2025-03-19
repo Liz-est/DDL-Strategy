@@ -175,6 +175,7 @@ export const Chatbox = (props: ChatboxProps) => {
         >
           {/* 🌟 提示词 */}
           <Prompts
+            className='text-default'
             items={nextSuggestions?.map((item, index) => {
               return {
                 key: index.toString(),

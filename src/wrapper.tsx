@@ -28,15 +28,8 @@ import { colors } from './theme/config';
 const useStyle = createStyles(({ token, css }) => {
   return {
     layout: css`
-      width: 100%;
-      height: 100vh;
-      display: flex;
       background: ${token.colorBgContainer};
       font-family: AlibabaPuHuiTi, ${token.fontFamily}, sans-serif;
-
-      .ant-prompts {
-        color: ${token.colorText};
-      }
     `,
     menu: css`
       background: ${token.colorBgLayout}80;
@@ -284,7 +277,7 @@ const DifyChatWrapper: React.FC = () => {
     <XProvider
       theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}
     >
-      <div className={styles.layout}>
+      <div className='w-full h-screen flex'>
         {/* 左侧边栏 - 小屏幕隐藏 */}
         <div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
