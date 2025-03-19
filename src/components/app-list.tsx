@@ -63,7 +63,6 @@ export default function AppList(props: IAppListProps) {
                     label: '更新配置',
                     onClick: async(event)=>{
                       event.domEvent.stopPropagation()
-                      // TODO: 更新应用配置
                       await onUpdate?.(item.id, item)
                       message.success('更新应用配置成功')
                     }
@@ -74,7 +73,6 @@ export default function AppList(props: IAppListProps) {
                     danger: true,
                     onClick: async(event)=>{
                       event.domEvent.stopPropagation()
-                      // TODO: 删除应用
                       await onDelete(item.id)
                       message.success('删除应用成功')
                     }
