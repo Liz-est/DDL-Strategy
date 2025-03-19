@@ -8,7 +8,7 @@ import {
   SmileOutlined,
 } from '@ant-design/icons';
 import { Prompts, Welcome } from '@ant-design/x';
-import { isMobile } from '@toolkit-fe/where-am-i';
+import { useIsMobile } from '@dify-chat/helpers';
 import { Button, GetProp, Space } from 'antd';
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
@@ -80,6 +80,7 @@ interface IWelcomePlaceholderProps {
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
   const { onPromptItemClick } = props;
+  const isMobile = useIsMobile()
   return (
     <div className='flex justify-center w-full px-3 box-border mx-auto'>
       <Space direction="vertical" className="pt-8 w-full md:w-3/4">
@@ -97,13 +98,13 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
         />
         <Prompts
           title="Do you want?"
-          vertical={isMobile()}
-          items={isMobile() ? placeholderPromptsItems.slice(0, 1) : placeholderPromptsItems}
+          vertical={isMobile}
+          items={isMobile ? placeholderPromptsItems.slice(0, 1) : placeholderPromptsItems}
           styles={{
             list: {
               width: '100%',
             },
-            item: isMobile() ? {
+            item: isMobile ? {
               width: '100%',
             } : {
               flex: 1,

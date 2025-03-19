@@ -5,43 +5,9 @@ import { RobotOutlined, UserOutlined } from '@ant-design/icons';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { MessageSender } from '../message-sender';
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api';
-import { isMobile } from '@toolkit-fe/where-am-i';
-import { isTempId } from '@dify-chat/helpers';
+import { isTempId, useIsMobile } from '@dify-chat/helpers';
 import MessageContent from './message/content';
 import MessageFooter from './message/footer';
-
-const roles: GetProp<typeof Bubble.List, 'roles'> = {
-  ai: {
-    placement: 'start',
-    avatar: !isMobile()
-      ? { icon: <RobotOutlined />, style: { background: '#fde3cf' } }
-      : undefined,
-    style: isMobile()
-      ? undefined
-      : {
-          // 减去一个头像的宽度
-          maxWidth: 'calc(100% - 44px)',
-        },
-  },
-  user: {
-    placement: 'end',
-    avatar: !isMobile()
-      ? {
-          icon: <UserOutlined />,
-          style: {
-            background: '#87d068',
-          },
-        }
-      : undefined,
-    style: isMobile()
-      ? undefined
-      : {
-          // 减去一个头像的宽度
-          maxWidth: 'calc(100% - 44px)',
-          marginLeft: '44px',
-        },
-  },
-};
 
 export interface ChatboxProps {
   /**
@@ -108,6 +74,40 @@ export const Chatbox = (props: ChatboxProps) => {
     difyApi
   } = props
   const [content, setContent] = useState('');
+  const isMobile = useIsMobile()
+
+  const roles: GetProp<typeof Bubble.List, 'roles'> = {
+    ai: {
+      placement: 'start',
+      avatar: !isMobile
+        ? { icon: <RobotOutlined />, style: { background: '#fde3cf' } }
+        : undefined,
+      style: isMobile
+        ? undefined
+        : {
+            // 减去一个头像的宽度
+            maxWidth: 'calc(100% - 44px)',
+          },
+    },
+    user: {
+      placement: 'end',
+      avatar: !isMobile
+        ? {
+            icon: <UserOutlined />,
+            style: {
+              background: '#87d068',
+            },
+          }
+        : undefined,
+      style: isMobile
+        ? undefined
+        : {
+            // 减去一个头像的宽度
+            maxWidth: 'calc(100% - 44px)',
+            marginLeft: '44px',
+          },
+    },
+  };
 
   const items: GetProp<typeof Bubble.List, 'items'> = useMemo(() => {
     return messageItems?.map((messageItem) => {

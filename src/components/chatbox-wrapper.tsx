@@ -7,7 +7,7 @@ import {
 } from '@dify-chat/api';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Prompts } from '@ant-design/x';
-import { isTempId } from '@dify-chat/helpers';
+import { isTempId, useIsMobile } from '@dify-chat/helpers';
 import { useLatest } from '../hooks/use-latest';
 import { useX } from '../hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
@@ -23,7 +23,6 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { MobileHeader } from './mobile/header';
-import { useResponsive } from 'ahooks';
 
 interface IChatboxWrapperProps {
   /**
@@ -87,6 +86,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     onItemsChange,
     conversationItemsChangeCallback,
   } = props;
+
+  const isMobile = useIsMobile()
   const abortRef = useRef(() => {});
   useEffect(() => {
     return () => {
@@ -100,10 +101,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>(
     {},
   );
-
-  const { sm, md } = useResponsive()
-
-  const isMobile = sm && !md
 
   const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
   // 定义 ref, 用于获取最新的 conversationId

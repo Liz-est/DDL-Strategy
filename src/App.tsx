@@ -3,14 +3,10 @@ import { DifyChatProvider } from "@dify-chat/core";
 import { BrowserRouter, Route, type IRoute } from "pure-react-router";
 import ChatPage from "./pages/chat";
 import AppListPage from "./pages/app-list";
-import { configResponsive } from "ahooks";
+import { initResponsiveConfig } from "@dify-chat/helpers";
 
-// 响应式配置, 供 useResponsive 使用，与 tailwindCSS 响应式配置保持一致
-configResponsive({
-  sm: 0,
-  md: 768,
-  lg: 1024,
-});
+// 初始化响应式配置
+initResponsiveConfig()
 
 const routes: IRoute[] = [
   { path: "/chat", component: ()  => <ChatPage /> },
