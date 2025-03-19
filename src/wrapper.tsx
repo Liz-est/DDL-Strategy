@@ -277,7 +277,7 @@ const DifyChatWrapper: React.FC = () => {
     <XProvider
       theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}
     >
-      <div className='w-full h-screen flex'>
+      <div className={`w-full h-screen flex ${styles.layout}`}>
         {/* 左侧边栏 - 小屏幕隐藏 */}
         <div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
           {/* 🌟 Logo */}
