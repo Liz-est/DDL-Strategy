@@ -18,7 +18,7 @@ import { type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 // import { IDifyAppItem, LocalStorageConfigStorage } from '@dify-chat/helpers';
 import { type IDifyAppItem } from '@dify-chat/core';
-import DifyAppLocalStorageStore from './storage/app';
+import DifyAppService from './services/app';
 import AppList from './components/app-list';
 import { DEFAULT_CONVERSATION_NAME } from './constants';
 import { useDifyChat } from '@dify-chat/core';
@@ -45,7 +45,7 @@ const useStyle = createStyles(({ token, css }) => {
 });
 
 // 创建 app 的 CRUD 操作实例
-const appStore = new DifyAppLocalStorageStore();
+const appStore = new DifyAppService();
 
 const DifyChatWrapper: React.FC = () => {
   const searchParams = useSearchParams()

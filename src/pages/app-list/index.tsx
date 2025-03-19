@@ -1,11 +1,11 @@
 import { Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import { IDifyAppItem } from '@dify-chat/core';
-import DifyAppLocalStorageStore from '../../storage/app';
+import DifyAppService from '../../services/app';
 import { useHistory } from 'pure-react-router';
 import { MobileHeader } from '../../components/mobile/header';
 
-const appStore = new DifyAppLocalStorageStore();
+const appStore = new DifyAppService();
 
 export default function AppListPage() {
   const history = useHistory();
