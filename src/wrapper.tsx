@@ -101,6 +101,7 @@ const DifyChatWrapper: React.FC = () => {
     if (!appItem) {
       return;
     }
+    setCoversationListLoading(true)
     setDifyApiOptions({
       user,
       ...appItem.requestConfig,
@@ -320,19 +321,26 @@ const DifyChatWrapper: React.FC = () => {
         <div className="flex-1 min-w-0">
           {' '}
           {/* 新增外层容器 */}
-          <ChatboxWrapper
-            appInfo={appInfo}
-            difyApi={difyApi!}
-            conversationId={currentConversationId}
-            conversationName={conversationName}
-            conversationItems={conversationsItems}
-            onConversationIdChange={setCurrentConversationId}
-            appParameters={appParameters}
-            conversationListLoading={conversationListLoading}
-            onAddConversation={onAddConversation}
-            onItemsChange={setConversationsItems}
-            conversationItemsChangeCallback={getConversationItems}
-          />
+          {
+            conversationListLoading ?
+            <div className='w-full h-full flex items-center justify-center'>
+              <Spin spinning />
+            </div>
+            :
+            <ChatboxWrapper
+              appInfo={appInfo}
+              difyApi={difyApi!}
+              conversationId={currentConversationId}
+              conversationName={conversationName}
+              conversationItems={conversationsItems}
+              onConversationIdChange={setCurrentConversationId}
+              appParameters={appParameters}
+              conversationListLoading={conversationListLoading}
+              onAddConversation={onAddConversation}
+              onItemsChange={setConversationsItems}
+              conversationItemsChangeCallback={getConversationItems}
+            />
+          }
         </div>
       </div>
     </XProvider>
