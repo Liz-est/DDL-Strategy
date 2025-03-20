@@ -14,8 +14,25 @@ interface IUserInputForm {
  * 获取应用参数-响应体
  */
 export interface IGetAppParametersResponse {
+  /**
+   * 开场白
+   */
+  opening_statement?: string
+  /**
+   * 用户输入表单
+   */
   user_input_form: IUserInputForm[];
+  /**
+   * 开场建议问题
+   */
+  suggested_questions?: string[]
+  /**
+   * 下一轮问题建议
+   */
   suggested_questions_after_answer: {
+    /**
+     * 是否启用
+     */
     enabled: boolean;
   };
 }
