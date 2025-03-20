@@ -8,8 +8,8 @@ import {
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Prompts } from '@ant-design/x';
 import { isTempId, useIsMobile } from '@dify-chat/helpers';
-import { useLatest } from '../hooks/use-latest';
-import { useX } from '../hooks/useX';
+import { useLatest } from '@/hooks/use-latest';
+import { useX } from '@/hooks/useX';
 import { IMessageItem4Render } from '@dify-chat/api';
 import { ChatPlaceholder } from './chat-placeholder';
 import {
@@ -17,7 +17,7 @@ import {
   ConversationList,
   IConversationItem,
 } from '@dify-chat/components';
-import { DEFAULT_CONVERSATION_NAME } from '../constants';
+import { DEFAULT_CONVERSATION_NAME } from '@/constants';
 import {
   PlusCircleOutlined,
   UnorderedListOutlined,

@@ -1,9 +1,9 @@
 import { Empty, Tag } from 'antd';
 import { useEffect, useState } from 'react';
 import { IDifyAppItem } from '@dify-chat/core';
-import DifyAppService from '../../services/app';
+import DifyAppService from '@/services/app';
 import { useHistory } from 'pure-react-router';
-import { MobileHeader } from '../../components/mobile/header';
+import { MobileHeader } from '@/components/mobile/header';
 import { useIsMobile } from '@dify-chat/helpers';
 
 const appService = new DifyAppService();

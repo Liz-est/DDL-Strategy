@@ -1,5 +1,5 @@
 import { Link } from "pure-react-router"
-import { GithubIcon, LogoIcon } from "../logo"
+import { GithubIcon, LogoIcon } from "@/logo"
 
 interface IMobileHeaderProps {
   /**

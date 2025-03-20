@@ -1,5 +1,5 @@
 import { DifyAppStore, type IDifyAppItem } from '@dify-chat/core';
-import { APP_LIST_KEY } from '../../constants';
+import { APP_LIST_KEY } from '@/constants';
 
 /**
  * 应用列表 CRUD 的 localStorage 实现

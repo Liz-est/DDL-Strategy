@@ -1,9 +1,9 @@
 import { useXAgent, useXChat, XStream } from "@ant-design/x";
-import { IAgentMessage, IMessageFileItem } from "../types";
+import { IAgentMessage, IMessageFileItem } from "@/types";
 import { DifyApi, EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IFile, IGetAppParametersResponse } from "@dify-chat/api";
 import { isTempId } from "@dify-chat/helpers";
 import { IWorkflowNode } from "@dify-chat/api";
-import { RESPONSE_MODE } from "../config";
+import { RESPONSE_MODE } from "@/config";
 import {message as antdMessage} from 'antd'
 import { useDifyChat } from "@dify-chat/core";
 
