@@ -56,7 +56,7 @@
     "jsdom": "^26.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "storybook": "^8.6.0",
+    "storybook": "^8.6.7",
     "storybook-addon-rslib": "^1.0.0",
     "storybook-react-rsbuild": "^1.0.0",
     "tailwindcss": "^3",
