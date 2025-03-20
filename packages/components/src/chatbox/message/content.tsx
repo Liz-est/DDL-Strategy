@@ -59,7 +59,7 @@ export default function MessageContent(props: IMessageContentProps) {
       </div>
 
       {/* 消息主体文本内容 */}
-      <div className={role === 'local' || role === 'user' ? '' : 'min-w-chat-card'}>
+      <div className={role === 'local' || role === 'user' ? '' : 'md:min-w-chat-card'}>
         <MarkdownRenderer markdownText={content} />
       </div>
 
