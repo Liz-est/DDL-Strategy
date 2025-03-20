@@ -38,7 +38,7 @@ const useStyle = createStyles(({ token, css }) => {
 });
 
 // 创建 app 的 CRUD 操作实例
-const appStore = new DifyAppService();
+const appService = new DifyAppService();
 
 const DifyChatWrapper: React.FC = () => {
   const searchParams = useSearchParams()
@@ -72,7 +72,7 @@ const DifyChatWrapper: React.FC = () => {
   const getAppList = async () => {
     setAppListLoading(true);
     try {
-      const result = await appStore.getApps();
+      const result = await appService.getApps();
       console.log('应用列表', result);
       setAppList(result || []);
       return result
@@ -243,7 +243,7 @@ const DifyChatWrapper: React.FC = () => {
           });
           const difyAppInfo = await newDifyApiInstance.getAppInfo();
           if (updatingItem) {
-            await appStore.updateApp({
+            await appService.updateApp({
               ...updatingItem,
               requestConfig: {
                 apiBase: values.apiBase,
@@ -251,7 +251,7 @@ const DifyChatWrapper: React.FC = () => {
               },
             })
           } else {
-            await appStore.addApp({
+            await appService.addApp({
               id: Math.random().toString(),
               info: difyAppInfo,
               requestConfig: {
@@ -309,7 +309,7 @@ const DifyChatWrapper: React.FC = () => {
                   return openSettingModal(item);
                 }}
                 onDelete={async (id: string) => {
-                  await appStore.deleteApp(id);
+                  await appService.deleteApp(id);
                   getAppList();
                 }}
               />

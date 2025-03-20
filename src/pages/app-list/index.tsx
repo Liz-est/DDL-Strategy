@@ -6,7 +6,7 @@ import { useHistory } from 'pure-react-router';
 import { MobileHeader } from '../../components/mobile/header';
 import { useIsMobile } from '@dify-chat/helpers';
 
-const appStore = new DifyAppService();
+const appService = new DifyAppService();
 
 export default function AppListPage() {
 	const history = useHistory();
@@ -21,7 +21,7 @@ export default function AppListPage() {
 	}, [isMobile]);
 
 	const getAppList = async () => {
-		const result = await appStore.getApps();
+		const result = await appService.getApps();
 		setList(result);
 	};
 
