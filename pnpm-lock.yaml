@@ -48,8 +48,8 @@ importers:
         specifier: ^4.87.4
         version: 4.87.4
       pure-react-router:
-        specifier: ^0.1.0
-        version: 0.1.0(react@18.3.1)
+        specifier: ^0.2.3
+        version: 0.2.3(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -5591,12 +5591,16 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /pure-react-router@0.1.0(react@18.3.1):
-    resolution: {integrity: sha512-fTIONgh1MEB6cnRqBwswEJg+JGtU4cwB0Ca/9xIGjQAG4bbzODnFbe9dGi47Qi4jUyuBko7Bo/yk3H7kgurfTg==}
+  /pure-react-router@0.2.3(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-Ce3A0/zzwbXR36wK2j1HGe8OWMuL2Fb7gCUFt4AEDX2ck64TCAppRSHFXnIobgP07frsvCLaLup3FkFYVG4oQg==}
     peerDependencies:
-      react: ^18.0.0
+      '@types/react': ^18.0.0
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
     dependencies:
+      '@types/react': 18.3.12
       react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /qs@6.14.0:
