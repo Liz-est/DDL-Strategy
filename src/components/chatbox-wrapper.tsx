@@ -327,6 +327,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
         {chatReady && conversationId ? (
           <Chatbox
             conversationId={conversationId}
+            appParameters={appParameters}
             nextSuggestions={nextSuggestions}
             messageItems={[...historyMessages, ...unStoredMessages4Render]}
             isRequesting={agent.isRequesting()}

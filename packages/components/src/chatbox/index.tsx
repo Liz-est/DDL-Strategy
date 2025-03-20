@@ -4,12 +4,16 @@ import { GetProp } from 'antd';
 import { RobotOutlined, UserOutlined } from '@ant-design/icons';
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { MessageSender } from '../message-sender';
-import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api';
+import { DifyApi, IFile, IGetAppParametersResponse, IMessageItem4Render } from '@dify-chat/api';
 import { isTempId, useIsMobile } from '@dify-chat/helpers';
 import MessageContent from './message/content';
 import MessageFooter from './message/footer';
 
 export interface ChatboxProps {
+  /**
+   * 应用参数
+   */
+  appParameters?: IGetAppParametersResponse
   /**
    * 消息列表
    */
@@ -71,7 +75,8 @@ export const Chatbox = (props: ChatboxProps) => {
     onCancel,
     conversationId,
     feedbackCallback,
-    difyApi
+    difyApi,
+    appParameters
   } = props
   const [content, setContent] = useState('');
   const isMobile = useIsMobile()
@@ -159,7 +164,7 @@ export const Chatbox = (props: ChatboxProps) => {
       >
         {/* 🌟 欢迎占位 */}
         {!items?.length && isTempId(conversationId) && (
-          <WelcomePlaceholder onPromptItemClick={onPromptsItemClick} />
+          <WelcomePlaceholder appParameters={appParameters} onPromptItemClick={onPromptsItemClick} />
         )}
         {/* 🌟 消息列表 */}
         <Bubble.List
