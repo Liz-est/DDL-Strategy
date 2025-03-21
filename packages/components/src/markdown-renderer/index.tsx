@@ -24,7 +24,7 @@ export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
 
   return (
     <Typography>
-      <div dangerouslySetInnerHTML={{ __html: dangerousHTML }} />
+      <div className="w-full overflow-hidden" dangerouslySetInnerHTML={{ __html: dangerousHTML }} />
     </Typography>
   )
 };
