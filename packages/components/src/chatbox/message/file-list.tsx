@@ -1,4 +1,6 @@
 import { IMessageFileItem } from "@dify-chat/api";
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import 'react-photo-view/dist/react-photo-view.css';
 
 interface IMessageFileListProps {
   /**
@@ -21,12 +23,16 @@ export default function MessageFileList(props: IMessageFileListProps) {
     <>
       {files.map((item: IMessageFileItem) => {
         return (
-          <img
-            src={item.url}
-            key={item.id}
-            alt={item.filename}
-            className="max-w-full"
-          />
+          <PhotoProvider>
+            <PhotoView src={item.url}>
+              <img
+                src={item.url}
+                key={item.id}
+                alt={item.filename}
+                className="max-w-full cursor-zoom-in"
+              />
+            </PhotoView>
+          </PhotoProvider>
         );
       })}
     </>
