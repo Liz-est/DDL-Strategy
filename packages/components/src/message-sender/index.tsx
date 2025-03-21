@@ -127,6 +127,13 @@ export const MessageSender = (props: IMessageSenderProps) => {
             }
         }
         getDropContainer={() => senderRef.current?.nativeElement}
+        onRemove={(file)=>{
+          setFiles((prev)=>{
+            return prev.filter((item)=>{
+              return item.uid !== file.uid
+            })
+          })
+        }}
       />
     </Sender.Header>
   );
