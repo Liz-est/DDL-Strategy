@@ -54,9 +54,13 @@ export default function MessageContent(props: IMessageContentProps) {
       <WorkflowLogs items={workflows?.nodes || []} status={workflows?.status} />
 
       {/* 消息附件列表 */}
-      <div className='mt-3'>
-        <MessageFileList files={files} />
-      </div>
+      {
+        files?.length ?
+        <div className='mt-3'>
+          <MessageFileList files={files} />
+        </div>
+        : null
+      }
 
       {/* 消息主体文本内容 */}
       <div className={role === 'local' || role === 'user' ? '' : 'md:min-w-chat-card'}>
