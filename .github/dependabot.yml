@@ -5,7 +5,38 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # node_modules 依赖更新 ▼
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/' # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: 'daily'
+    # 提交信息规范
+    commit-message:
+      prefix: 'chore(deps)'
+    ignore:
+      # 定义忽略 main 版本更新
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-main']
+      - dependency-name: 'tailwindcss'
+        update-types: ['version-update:semver-main']
+      - dependency-name: 'antd'
+        update-types: ['version-update:semver-main']
+      - dependency-name: '@ant-design/icons'
+        update-types: ['version-update:semver-main']
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-main']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-main']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-main']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-main']
+
+  # GitHub Actions 依赖更新 ▼
+  - package-ecosystem: 'github-actions'
+    directory: '/.github'
+    schedule:
+      interval: 'weekly'
+    # 提交信息规范
+    commit-message:
+      prefix: 'chore(deps)'
