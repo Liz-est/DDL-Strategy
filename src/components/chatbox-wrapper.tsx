@@ -205,7 +205,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
   const isFormFilled = useMemo(() => {
     return (
-      appParameters?.user_input_form.every((item) => {
+      appParameters?.user_input_form?.every((item) => {
         const field = item['text-input'];
         return !!inputParams[field.variable] || !field.required;
       }) || false
