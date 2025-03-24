@@ -16,21 +16,21 @@ updates:
     ignore:
       # 定义忽略 main 版本更新
       - dependency-name: '@types/node'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: 'tailwindcss'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: 'antd'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: '@ant-design/icons'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: 'react'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: 'react-dom'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: '@types/react'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
       - dependency-name: '@types/react-dom'
-        update-types: ['version-update:semver-main']
+        update-types: ['version-update:semver-major']
 
   # GitHub Actions 依赖更新 ▼
   - package-ecosystem: 'github-actions'
