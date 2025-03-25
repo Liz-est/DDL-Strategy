@@ -17,7 +17,6 @@ import { Logo } from './components/logo';
 import { type IConversationItem } from '@dify-chat/components';
 import { useMap4Arr } from './hooks/use-map-4-arr';
 import { type IDifyAppItem } from '@dify-chat/core';
-import DifyAppService from './services/app';
 import AppList from './components/app-list';
 import { DEFAULT_CONVERSATION_NAME } from './constants';
 import { useDifyChat } from '@dify-chat/core';
@@ -36,9 +35,6 @@ const useStyle = createStyles(({ token, css }) => {
     `,
   };
 });
-
-// 创建 app 的 CRUD 操作实例
-const appService = new DifyAppService();
 
 const DifyChatWrapper: React.FC = () => {
   const searchParams = useSearchParams()
@@ -64,7 +60,7 @@ const DifyChatWrapper: React.FC = () => {
 
   const [selectedAppId, setSelectedAppId] = useState<string>('');
   const [appListLoading, setAppListLoading] = useState<boolean>(false);
-  const { user } = useDifyChat()
+  const { user, appService } = useDifyChat()
 
   /**
    * 获取应用列表
@@ -72,7 +68,7 @@ const DifyChatWrapper: React.FC = () => {
   const getAppList = async () => {
     setAppListLoading(true);
     try {
-      const result = await appService.getApps();
+      const result = await appService?.getApps();
       console.log('应用列表', result);
       setAppList(result || []);
       return result
@@ -242,22 +238,22 @@ const DifyChatWrapper: React.FC = () => {
             apiKey: values.apiKey,
           });
           const difyAppInfo = await newDifyApiInstance.getAppInfo();
+          const commonInfo = {
+            info: difyAppInfo,
+            requestConfig: {
+              apiBase: values.apiBase,
+              apiKey: values.apiKey,
+            },
+          }
           if (updatingItem) {
-            await appService.updateApp({
-              ...updatingItem,
-              requestConfig: {
-                apiBase: values.apiBase,
-                apiKey: values.apiKey,
-              },
+            await appService?.updateApp({
+              id: updatingItem.id,
+              ...commonInfo
             })
           } else {
-            await appService.addApp({
+            await appService?.addApp({
               id: Math.random().toString(),
-              info: difyAppInfo,
-              requestConfig: {
-                apiBase: values.apiBase,
-                apiKey: values.apiKey,
-              },
+              ...commonInfo
             });
           }
           getAppList();
@@ -309,7 +305,7 @@ const DifyChatWrapper: React.FC = () => {
                   return openSettingModal(item);
                 }}
                 onDelete={async (id: string) => {
-                  await appService.deleteApp(id);
+                  await appService?.deleteApp(id);
                   getAppList();
                 }}
               />

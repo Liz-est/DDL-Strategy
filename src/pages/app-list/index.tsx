@@ -1,16 +1,14 @@
 import { Empty, Tag } from 'antd';
 import { useEffect, useState } from 'react';
-import { IDifyAppItem } from '@dify-chat/core';
-import DifyAppService from '@/services/app';
+import { IDifyAppItem, useDifyChat } from '@dify-chat/core';
 import { useHistory } from 'pure-react-router';
 import { MobileHeader } from '@/components/mobile/header';
 import { useIsMobile } from '@dify-chat/helpers';
 
-const appService = new DifyAppService();
-
 export default function AppListPage() {
 	const history = useHistory();
 	const [list, setList] = useState<IDifyAppItem[]>([]);
+	const { appService } = useDifyChat()
 
 	const isMobile = useIsMobile()
 
@@ -21,8 +19,8 @@ export default function AppListPage() {
 	}, [isMobile]);
 
 	const getAppList = async () => {
-		const result = await appService.getApps();
-		setList(result);
+		const result = await appService?.getApps();
+		setList(result!);
 	};
 
 	useEffect(() => {
