@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",
-    "@eslint/js": "^9.22.0",
+    "@eslint/js": "^9.23.0",
     "@rsbuild/core": "^1.2.19",
     "@rsbuild/plugin-less": "^1.1.1",
     "@rsbuild/plugin-react": "^1.1.1",
