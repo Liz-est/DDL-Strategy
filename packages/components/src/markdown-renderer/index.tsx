@@ -1,7 +1,6 @@
 import { Typography } from 'antd';
 import MarkdownIt from 'markdown-it';
 import MarkdownItPluginEcharts from '@lexmin0412/markdown-it-echarts';
-// @ts-expect-error 此库未提供类型定义
 import markdownItPluginKatex from 'markdown-it-katex-gpt';
 import { useMemo } from 'react';
 

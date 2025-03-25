@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  markdown-it-katex-gpt@1.1.0:
+    hash: n2eg2dfcjs5uqdzupjztycgh6m
+    path: patches/markdown-it-katex-gpt@1.1.0.patch
+
 importers:
 
   .:
@@ -164,8 +169,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       markdown-it-katex-gpt:
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: 1.1.0
+        version: 1.1.0(patch_hash=n2eg2dfcjs5uqdzupjztycgh6m)
       react-photo-view:
         specifier: ^1.2.7
         version: 1.2.7(react-dom@18.3.1)(react@18.3.1)
@@ -5098,11 +5103,12 @@ packages:
     resolution: {integrity: sha512-0aF7ZmVon1igznGI4VS30yugpduQW3y3GkcgGJOp7d8x8QrizhigUxjI/m2UojsXXto+jLAH3KSz+xOJTiORjg==}
     dev: true
 
-  /markdown-it-katex-gpt@1.1.0:
+  /markdown-it-katex-gpt@1.1.0(patch_hash=n2eg2dfcjs5uqdzupjztycgh6m):
     resolution: {integrity: sha512-jEuoIFXoVqIXFWUH6nT4LFGKRI24tNNZV07I9mozC5adDRKE6obTtSwtuSACfHwZtqLwpsBB6gHSHH8VyZjW9w==}
     dependencies:
       katex: 0.16.21
     dev: false
+    patched: true
 
   /markdown-it@14.1.0:
     resolution: {integrity: sha512-a54IwgWPaeBCAAsv13YgmALOF1elABB08FxO9i+r4VFk5Vl4pKokRPeX8u5TCgSsPi6ec1otfLjdOpVcgbpshg==}
