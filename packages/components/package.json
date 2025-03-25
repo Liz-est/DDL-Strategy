@@ -72,7 +72,7 @@
     "@dify-chat/helpers": "workspace:^",
     "@lexmin0412/markdown-it-echarts": "^0.1.4",
     "markdown-it": "^14.1.0",
-    "markdown-it-katex-gpt": "1.1.0",
+    "markdown-it-katex-gpt": "^1.1.1",
     "react-photo-view": "^1.2.7"
   }
 }
