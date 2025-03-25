@@ -93,7 +93,58 @@ Chatflow 工作流：
 
 ![添加应用配置成功](./docs/guide__sample_app_config.png)
 
-### 1.3 跨域处理
+### 1.3 自定义应用配置管理 (按需)
+
+#### 1.3.1 默认实现说明
+
+为方便演示, 本项目默认使用 Localstorage 进行应用配置管理。
+
+但实际在生产环境中，我们会将应用数据存储在服务端，此时就需要接入后端服务来实现应用配置管理。
+
+为方便使用方自定义, 应用配置管理的服务是通过 `src/App.tsx` 中的 `DifyChatProvider` 组件注入的:
+
+```tsx
+// src/App.tsx
+import { DifyChatProvider } from "@dify-chat/core";
+import DifyAppService from "./services/app/localstorage";
+
+export default function App() {
+  return (
+    <DifyChatProvider value={{
+        appService: new DifyAppService()
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
+}
+```
+
+在子组件中，会使用 `useDifyChat` 钩子获取 `appService` 实例并调用相关方法进行应用配置的管理。
+
+#### 1.3.2 自定义后端服务示例
+
+在 `"./services/app/restful.ts"` 文件有一个 Restful API 的最简实现, 你可以根据下面的步骤来进行体验：
+
+1. 运行 `pnpm --filter dify-chat-app-server start` 启动后端服务
+2. 将上面的 `DifyAppService` 导入路径换成 `"./services/app/restful"` 
+3. 运行 `pnpm dev` 启动前端应用, 访问 `http://localhost:5200/dify-chat` 
+
+#### 1.3.3 自定义后端服务实现
+
+如果需要自定义你的后端服务，请遵循以下步骤：
+
+首先，参考 `packages/server`，实现以下接口：
+
+- 获取 App 配置列表
+- 获取 App 配置详情
+- 添加 App 配置
+- 更新 App 配置
+- 删除 App 配置
+
+然后在 `src/services/app` 中新建一个文件，只需要继承抽象类 `DifyAppStore` 并实现它的所有方法, 调用在上述服务中对应的接口即可。
+
+### 1.4 跨域处理
 
 Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
 
