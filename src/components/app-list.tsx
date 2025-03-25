@@ -41,7 +41,7 @@ export default function AppList(props: IAppListProps) {
               <div className="flex-1 overflow-hidden flex items-center" onClick={()=>{
               onSelectedChange?.(item.id, item)
             }}>
-                <span className="font-semibold">
+                <span className="font-semibold truncate">
                   {item.info.name}
                 </span>
                 {
