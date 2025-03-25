@@ -133,6 +133,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     const result =
       await latestProps.current.difyApi.getConversationHistory(conversationId);
 
+    if (!result.data.length) {
+      return
+    }
+
     const newMessages: IMessageItem4Render[] = [];
 
     // 只有当历史消息中的参数不为空时才更新
