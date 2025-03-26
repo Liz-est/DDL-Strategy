@@ -4,6 +4,7 @@ import { Badge, Button, GetProp, GetRef } from 'antd';
 import { useRef, useState } from 'react';
 import { IFile, IUploadFileResponse } from '@dify-chat/api';
 import { RcFile } from 'antd/es/upload';
+import { getFileTypeByName } from './utils';
 
 interface IMessageSenderProps {
   /**
@@ -156,11 +157,14 @@ export const MessageSender = (props: IMessageSenderProps) => {
       onSubmit={async (content) => {
         await onSubmit(
           content,
-          files?.map((file) => ({
-            type: 'image',
-            transfer_method: 'local_file',
-            upload_file_id: fileIdMap.get(file.uid) as string,
-          })) || [],
+          files?.map((file) => {
+            const fileType = getFileTypeByName(file.name)
+            return {
+              type: fileType || 'document',
+              transfer_method: 'local_file',
+              upload_file_id: fileIdMap.get(file.uid) as string,
+            }
+          }) || [],
         );
         setFiles([]);
         setOpen(false)
