@@ -239,6 +239,11 @@ pnpm preview
   - [x] Localstorage 实现
   - [x] Restful API 实现
   - [x] 支持自定义后端服务
+- [ ] 子包发布
+  - [ ] 发布 `@dify-chat/core` 包
+  - [ ] 发布 `@dify-chat/helpers` 包
+  - [ ] 发布 `@dify-chat/api` 包
+  - [ ] 发布 `@dify-chat/components` 包
 - [ ] 国际化
 - [ ] 支持单个会话视图
 - [ ] 支持消息触顶/触底自动分页加载
@@ -246,6 +251,7 @@ pnpm preview
 - [ ] 支持夜间模式
 - [ ] 支持自定义主题
 - [ ] 补充不同类型应用场景的最佳实践
+- [ ] 容器化部署支持
 
 ## License
 
