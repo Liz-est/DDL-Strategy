@@ -82,7 +82,7 @@ export default function AppList(props: IAppListProps) {
                 <MoreOutlined className="hover:text-primary" />
               </Dropdown>
             </div>
-            <div className="truncate text-sm mt-2" onClick={()=>{
+            <div className="truncate text-sm mt-2 text-desc" onClick={()=>{
               onSelectedChange?.(item.id, item)
             }}>
               {item.info.description}

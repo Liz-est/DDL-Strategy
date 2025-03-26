@@ -56,7 +56,7 @@ export default function AppListPage() {
 												: null}
 										</div>
 									</div>
-									<div className="truncate text-sm mt-2">
+									<div className="truncate text-sm mt-2 text-desc">
 										{item.info.description}
 									</div>
 								</div>
