@@ -6,11 +6,10 @@ import './App.css';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Modal, Spin } from 'antd';
 import {
+  createDifyApiInstance,
   DifyApi,
-  IDifyApiOptions,
   IGetAppInfoResponse,
   IGetAppParametersResponse,
-  useDifyApi,
 } from '@dify-chat/api';
 import ChatboxWrapper from './components/chatbox-wrapper';
 import { Logo } from './components/logo';
@@ -38,10 +37,14 @@ const useStyle = createStyles(({ token, css }) => {
 
 const DifyChatWrapper: React.FC = () => {
   const searchParams = useSearchParams()
-  const [difyApiOptions, setDifyApiOptions] = useState<IDifyApiOptions>();
+  const { user, appService } = useDifyChat()
   // 创建 Dify API 实例
-  const { instance: difyApi } = useDifyApi(difyApiOptions);
   const { styles } = useStyle();
+  const [difyApi] = useState(createDifyApiInstance({
+    user,
+    apiBase: '',
+    apiKey: '',
+  }))
   const [appList, setAppList] = useState<IDifyAppItem[]>([]);
   const [conversationsItems, setConversationsItems] = useState<
     IConversationItem[]
@@ -60,7 +63,6 @@ const DifyChatWrapper: React.FC = () => {
 
   const [selectedAppId, setSelectedAppId] = useState<string>('');
   const [appListLoading, setAppListLoading] = useState<boolean>(false);
-  const { user, appService } = useDifyChat()
 
   /**
    * 获取应用列表
@@ -92,18 +94,6 @@ const DifyChatWrapper: React.FC = () => {
     })
   });
 
-  useUpdateEffect(() => {
-    const appItem = appList.find((item) => item.id === selectedAppId);
-    if (!appItem) {
-      return;
-    }
-    setCoversationListLoading(true)
-    setDifyApiOptions({
-      user,
-      ...appItem.requestConfig,
-    });
-  }, [selectedAppId]);
-
   const initAppInfo = async () => {
     setAppInfo(undefined)
     if (!difyApi) {
@@ -118,12 +108,25 @@ const DifyChatWrapper: React.FC = () => {
     setAppParameters(appParameters);
   };
 
-  useEffect(() => {
+  const initApp = () => {
     initAppInfo().then(() => {
       getConversationItems();
     });
     setCurrentConversationId(undefined);
-  }, [difyApi]);
+  }
+
+  useUpdateEffect(() => {
+    const appItem = appList.find((item) => item.id === selectedAppId);
+    if (!appItem) {
+      return;
+    }
+    setCoversationListLoading(true)
+    difyApi.updateOptions({
+      user,
+    ...appItem.requestConfig, 
+    })
+    initApp()
+  }, [selectedAppId]);
 
   /**
    * 获取对话列表
@@ -325,7 +328,7 @@ const DifyChatWrapper: React.FC = () => {
             :
             <ChatboxWrapper
               appInfo={appInfo}
-              difyApi={difyApi!}
+              difyApi={difyApi}
               conversationId={currentConversationId}
               conversationName={conversationName}
               conversationItems={conversationsItems}

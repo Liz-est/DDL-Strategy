@@ -106,7 +106,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   // 定义 ref, 用于获取最新的 conversationId
   const latestProps = useLatest({
     conversationId,
-    difyApi,
   });
   const latestState = useLatest({
     inputParams,
@@ -131,7 +130,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       return;
     }
     const result =
-      await latestProps.current.difyApi.getConversationHistory(conversationId);
+      await difyApi.getConversationHistory(conversationId);
 
     if (!result.data.length) {
       return
@@ -181,6 +180,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     abortRef,
     getConversationMessages,
     onConversationIdChange,
+    difyApi,
   });
 
   const initConversationInfo = async () => {
@@ -341,12 +341,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
               console.log('打断输出');
               abortRef.current();
             }}
-            feedbackApi={latestProps.current.difyApi.feedbackMessage}
+            feedbackApi={difyApi.feedbackMessage}
             feedbackCallback={(conversationId: string) => {
               // 反馈成功后，重新获取历史消息
               getConversationMessages(conversationId);
             }}
-            uploadFileApi={latestProps.current.difyApi.uploadFile}
+            uploadFileApi={difyApi.uploadFile}
             difyApi={difyApi}
           />
         ) : (

@@ -8,9 +8,9 @@ import {message as antdMessage} from 'antd'
 import { useDifyChat } from "@dify-chat/core";
 
 export const useX = (options: {
+	difyApi: DifyApi;
 	latestProps: React.MutableRefObject<{
     conversationId: string | undefined;
-    difyApi: DifyApi;
 }>
 	latestState: React.MutableRefObject<{
     inputParams: {
@@ -24,13 +24,13 @@ export const useX = (options: {
 	getConversationMessages: (conversationId: string) => void,
   onConversationIdChange: (id: string) => void;
 }) => {
-	const { latestProps, latestState, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange } = options
+	const { latestProps, latestState, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange, difyApi } = options
 	const { user } = useDifyChat()
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 			// 发送消息
-			const response = await latestProps.current.difyApi.sendMessage({
+			const response = await difyApi.sendMessage({
 				inputs: latestState.current.inputParams,
 				conversation_id: !isTempId(latestProps.current.conversationId)
 					? latestProps.current.conversationId

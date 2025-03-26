@@ -182,6 +182,17 @@ export class DifyApi {
   baseRequest: XRequest;
 
   /**
+   * 更新 API 配置, 一般在切换应用时调用
+   */
+  updateOptions(options: IDifyApiOptions) {
+    this.options = options;
+    this.baseRequest = new XRequest({
+      baseURL: options.apiBase,
+      apiKey: options.apiKey,
+    });
+  }
+
+  /**
    * 获取应用基本信息
    */
   async getAppInfo() {
