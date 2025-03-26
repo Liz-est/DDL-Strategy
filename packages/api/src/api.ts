@@ -1,5 +1,6 @@
 import XRequest from './base-request';
 import { IAgentThought, IRetrieverResource } from './types';
+import { IFileType } from './types/file';
 
 interface IUserInputForm {
   'text-input': {
@@ -123,16 +124,12 @@ export interface IGetAppMetaResponse {
 
 export interface IFileBase {
   /**
-   * 支持类型：图片 image（目前仅支持图片格式）
+   * 文件类型
    */
-  type: 'image';
+  type: IFileType;
 }
 
 export interface IFileRemote extends IFileBase  {
-  /**
-   * 支持类型：图片 image（目前仅支持图片格式）
-   */
-  type: 'image';
   /**
    * 传递方式 remote_url-远程地址 local_file-本地文件
    */

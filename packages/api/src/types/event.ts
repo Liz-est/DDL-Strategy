@@ -1,4 +1,5 @@
 import { EventEnum } from "../enums";
+import { IFileType } from "./file";
 
 /**
  * 模型使用的Token信息及费用相关数据
@@ -181,8 +182,8 @@ export type IMessageFileEvent = {
   event: EventEnum.MESSAGE_FILE;
   // 事件的 ID
   id: string;
-  // 文件的类型，固定为图像
-  type: 'image';
+  // 文件的类型
+  type: IFileType;
   // 文件所属的对象，用户或助手
   belongs_to: 'user' | 'assistant';
   // 文件的 URL 地址
