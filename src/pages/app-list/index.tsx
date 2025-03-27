@@ -1,6 +1,6 @@
 import { Empty, Tag } from 'antd';
 import { useEffect, useState } from 'react';
-import { IDifyAppItem, useDifyChat } from '@dify-chat/core';
+import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core';
 import { useHistory } from 'pure-react-router';
 import { MobileHeader } from '@/components/mobile/header';
 import { useIsMobile } from '@dify-chat/helpers';
@@ -8,7 +8,7 @@ import { useIsMobile } from '@dify-chat/helpers';
 export default function AppListPage() {
 	const history = useHistory();
 	const [list, setList] = useState<IDifyAppItem[]>([]);
-	const { appService } = useDifyChat()
+	const { appService } = useDifyChat() as IDifyChatContextMultiApp
 
 	const isMobile = useIsMobile()
 

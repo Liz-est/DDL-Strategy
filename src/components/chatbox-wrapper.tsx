@@ -18,11 +18,9 @@ import {
   IConversationItem,
 } from '@dify-chat/components';
 import { DEFAULT_CONVERSATION_NAME } from '@/constants';
-import {
-  PlusCircleOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
+import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { MobileHeader } from './mobile/header';
+import { useDifyChat } from 'packages/core/dist';
 
 interface IChatboxWrapperProps {
   /**
@@ -73,6 +71,7 @@ interface IChatboxWrapperProps {
 }
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
+  const { mode } = useDifyChat();
   const {
     appInfo,
     appParameters,
@@ -87,8 +86,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     conversationItemsChangeCallback,
   } = props;
 
-  const isMobile = useIsMobile()
-  const abortRef = useRef(() => {});
+  const isMobile = useIsMobile();
+  const abortRef = useRef(() => { });
   useEffect(() => {
     return () => {
       abortRef.current();
@@ -129,11 +128,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
     if (isTempId(conversationId)) {
       return;
     }
-    const result =
-      await difyApi.getConversationHistory(conversationId);
+    const result = await difyApi.getConversationHistory(conversationId);
 
     if (!result.data.length) {
-      return
+      return;
     }
 
     const newMessages: IMessageItem4Render[] = [];
@@ -208,6 +206,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
   };
 
   const isFormFilled = useMemo(() => {
+    if (!appParameters?.user_input_form.length) {
+      return true;
+    }
     return (
       appParameters?.user_input_form?.every((item) => {
         const field = item['text-input'];
@@ -312,12 +313,16 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
       ) : (
         <div className="h-16 !leading-[4rem] px-8 text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border">
           {/* 对话标题及切换 */}
-          {conversationTitle}
+          {
+            mode === 'multiApp' ? conversationTitle :
+              conversationName || DEFAULT_CONVERSATION_NAME}
 
           {/* 大屏幕下的新增对话按钮 */}
-          <Button icon={<PlusCircleOutlined />} onClick={onAddConversation}>
-            新增对话
-          </Button>
+          {mode === 'singleApp' ? null : (
+            <Button icon={<PlusCircleOutlined />} onClick={onAddConversation}>
+              新增对话
+            </Button>
+          )}
         </div>
       )}
 

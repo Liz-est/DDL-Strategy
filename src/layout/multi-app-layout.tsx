@@ -1,7 +1,7 @@
 import { XProvider } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import React, { useEffect, useMemo, useState } from 'react';
-import './App.css';
+import './../App.css';
 
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, Modal, Spin } from 'antd';
@@ -11,17 +11,17 @@ import {
   IGetAppInfoResponse,
   IGetAppParametersResponse,
 } from '@dify-chat/api';
-import ChatboxWrapper from './components/chatbox-wrapper';
-import { Logo } from './components/logo';
+import ChatboxWrapper from '@/components/chatbox-wrapper';
+import { Logo } from '@/components/logo';
 import { type IConversationItem } from '@dify-chat/components';
-import { useMap4Arr } from './hooks/use-map-4-arr';
-import { type IDifyAppItem } from '@dify-chat/core';
-import AppList from './components/app-list';
-import { DEFAULT_CONVERSATION_NAME } from './constants';
+import { useMap4Arr } from '@/hooks/use-map-4-arr';
+import { IDifyChatContextMultiApp, IDifyChatContextSingleApp, type IDifyAppItem } from '@dify-chat/core';
+import AppList from '@/components/app-list';
+import { DEFAULT_CONVERSATION_NAME } from '@/constants';
 import { useDifyChat } from '@dify-chat/core';
 import { useSearchParams } from 'pure-react-router';
 import { useMount, useUpdateEffect } from 'ahooks';
-import { colors } from './theme/config';
+import { colors } from '@/theme/config';
 
 const useStyle = createStyles(({ token, css }) => {
   return {
@@ -35,9 +35,10 @@ const useStyle = createStyles(({ token, css }) => {
   };
 });
 
-const DifyChatWrapper: React.FC = () => {
+const MultiAppLayout: React.FC = () => {
   const searchParams = useSearchParams()
-  const { user, appService } = useDifyChat()
+  const difyChatContext = useDifyChat()
+  const { user, mode } = difyChatContext
   // 创建 Dify API 实例
   const { styles } = useStyle();
   const [difyApi] = useState(createDifyApiInstance({
@@ -70,7 +71,7 @@ const DifyChatWrapper: React.FC = () => {
   const getAppList = async () => {
     setAppListLoading(true);
     try {
-      const result = await appService?.getApps();
+      const result = await (difyChatContext as IDifyChatContextMultiApp).appService.getApps();
       console.log('应用列表', result);
       setAppList(result || []);
       return result
@@ -82,16 +83,33 @@ const DifyChatWrapper: React.FC = () => {
     }
   };
 
+  const initInSingleMode = async() => {
+    difyApi.updateOptions({
+      user,
+      apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.apiBase,
+      apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig.apiKey,
+    })
+    const appInfo = await difyApi.getAppInfo()
+    setAppInfo(appInfo)
+    // 设置一个随机 ID 即可，不是多应用就不关心 ID 具体是什么
+    setSelectedAppId(Math.random().toString()) // 直接设置应用 ID，避免重复获取
+  }
+
   // 初始化获取应用列表
   useMount(() => {
-    getAppList().then((result) => {
-      const idInQuery = searchParams.get('id')
-      if (idInQuery) {
-        setSelectedAppId(idInQuery as string)
-      } else if (!selectedAppId && result?.length) {
-        setSelectedAppId(result[0]?.id || '');
-      }
-    })
+    if (mode === 'singleApp') {
+      // 如果是单应用模式，直接获取应用信息
+      initInSingleMode()
+    } else if (mode === 'multiApp') {
+      getAppList().then((result) => {
+        const idInQuery = searchParams.get('id')
+        if (idInQuery) {
+          setSelectedAppId(idInQuery as string)
+        } else if (!selectedAppId && result?.length) {
+          setSelectedAppId(result[0]?.id || '');
+        }
+      })
+    }
   });
 
   const initAppInfo = async () => {
@@ -249,12 +267,12 @@ const DifyChatWrapper: React.FC = () => {
             },
           }
           if (updatingItem) {
-            await appService?.updateApp({
+            await (difyChatContext as IDifyChatContextMultiApp).appService.updateApp({
               id: updatingItem.id,
               ...commonInfo
             })
           } else {
-            await appService?.addApp({
+            await (difyChatContext as IDifyChatContextMultiApp).appService.addApp({
               id: Math.random().toString(),
               ...commonInfo
             });
@@ -308,7 +326,7 @@ const DifyChatWrapper: React.FC = () => {
                   return openSettingModal(item);
                 }}
                 onDelete={async (id: string) => {
-                  await appService?.deleteApp(id);
+                  await (difyChatContext as IDifyChatContextMultiApp).appService.deleteApp(id);
                   getAppList();
                 }}
               />
@@ -346,4 +364,4 @@ const DifyChatWrapper: React.FC = () => {
   );
 };
 
-export default DifyChatWrapper;
+export default MultiAppLayout;
