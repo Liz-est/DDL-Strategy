@@ -1,12 +1,20 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons';
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x';
-import { Badge, Button, GetProp, GetRef } from 'antd';
-import { useRef, useState } from 'react';
-import { IFile, IUploadFileResponse } from '@dify-chat/api';
+import { Badge, Button, GetProp, GetRef, message } from 'antd';
+import { useMemo, useRef, useState } from 'react';
+import {
+  IFile,
+  IGetAppParametersResponse,
+  IUploadFileResponse,
+} from '@dify-chat/api';
 import { RcFile } from 'antd/es/upload';
-import { getFileTypeByName } from './utils';
+import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils';
 
 interface IMessageSenderProps {
+  /**
+   * Dify 应用参数
+   */
+  appParameters?: IGetAppParametersResponse;
   /**
    * 类名
    */
@@ -22,7 +30,7 @@ interface IMessageSenderProps {
   /**
    * 上传文件 Api
    */
-  uploadFileApi: (file: File) => Promise<IUploadFileResponse>
+  uploadFileApi: (file: File) => Promise<IUploadFileResponse>;
   /**
    * 输入框 change 事件
    */
@@ -34,21 +42,42 @@ interface IMessageSenderProps {
   /**
    * 取消事件
    */
-  onCancel: () => void
+  onCancel: () => void;
 }
 
 /**
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-  const { content, isRequesting, onChange, onSubmit, className, onCancel, uploadFileApi } =
-    props;
+  const {
+    content,
+    isRequesting,
+    onChange,
+    onSubmit,
+    className,
+    onCancel,
+    uploadFileApi,
+    appParameters,
+  } = props;
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([]);
   const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map());
 
+  const allowedFileTypes = useMemo(() => {
+    if (!appParameters?.file_upload) {
+      return [];
+    }
+    const result: string[] = [];
+    appParameters.file_upload.allowed_file_types.forEach((item) => {
+      if (FileTypeMap.get(item)) {
+        result.push(...((FileTypeMap.get(item) as string[]) || []));
+      }
+    });
+    return result;
+  }, [appParameters?.file_upload]);
+
   const handleUpload = async (file: RcFile) => {
-    const prevFiles = [...files]
+    const prevFiles = [...files];
 
     const fileBaseInfo: GetProp<AttachmentsProps, 'items'>[number] = {
       uid: file.uid,
@@ -56,51 +85,60 @@ export const MessageSender = (props: IMessageSenderProps) => {
       status: 'uploading',
       size: file.size,
       type: file.type,
-      originFileObj: file
-    }
+      originFileObj: file,
+    };
 
     // 模拟上传进度
     const mockLoadingProgress = () => {
       let percent = 0;
-      setFiles([...prevFiles, {
-        ...fileBaseInfo,
-        percent: percent,
-      }]);
+      setFiles([
+        ...prevFiles,
+        {
+          ...fileBaseInfo,
+          percent: percent,
+        },
+      ]);
       const interval = setInterval(() => {
         if (percent >= 99) {
-          clearInterval(interval)
-          return
+          clearInterval(interval);
+          return;
         }
         percent = percent + 1;
-        setFiles([...prevFiles, {
-          ...fileBaseInfo,
-          percent,
-        }]);
+        setFiles([
+          ...prevFiles,
+          {
+            ...fileBaseInfo,
+            percent,
+          },
+        ]);
       }, 100);
       return {
         clear: () => clearInterval(interval),
-      }
-    }
-    const { clear } = mockLoadingProgress()
+      };
+    };
+    const { clear } = mockLoadingProgress();
 
     const result = await uploadFileApi(file);
-    clear()
-    setFiles([...prevFiles, {
-      ...fileBaseInfo,
-      percent: 100,
-      status: 'done',
-    }])
+    clear();
+    setFiles([
+      ...prevFiles,
+      {
+        ...fileBaseInfo,
+        percent: 100,
+        status: 'done',
+      },
+    ]);
     setFileIdMap((prevMap) => {
-      const nextMap = new Map(prevMap)
-      nextMap.set(file.uid, result.id)
-      return nextMap
-    })
-  }
+      const nextMap = new Map(prevMap);
+      nextMap.set(file.uid, result.id);
+      return nextMap;
+    });
+  };
 
   const senderRef = useRef<GetRef<typeof Sender>>(null);
   const senderHeader = (
     <Sender.Header
-      title="Attachments"
+      title="上传文件"
       open={open}
       onOpenChange={setOpen}
       styles={{
@@ -111,29 +149,43 @@ export const MessageSender = (props: IMessageSenderProps) => {
     >
       <Attachments
         beforeUpload={async (file) => {
+          // 校验文件类型
           // 自定义上传
-          handleUpload(file)
-          return false
+
+          const ext = getFileExtByName(file.name);
+          // 校验文件类型
+          if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
+            message.error(`不支持的文件类型: ${ext}`);
+            return false;
+          }
+
+          handleUpload(file);
+          return false;
         }}
         items={files}
         placeholder={(type) =>
           type === 'drop'
             ? {
-              title: 'Drop file here',
-            }
+                title: 'Drop file here',
+              }
             : {
-              icon: <CloudUploadOutlined />,
-              title: 'Upload files',
-              description: 'Click or drag files to this area to upload',
-            }
+                icon: <CloudUploadOutlined />,
+                title: '点击或拖拽文件到此区域上传',
+                description: (
+                  <div>
+                    支持的文件类型：
+                    {allowedFileTypes.join(', ')}
+                  </div>
+                ),
+              }
         }
         getDropContainer={() => senderRef.current?.nativeElement}
-        onRemove={(file)=>{
-          setFiles((prev)=>{
-            return prev.filter((item)=>{
-              return item.uid !== file.uid
-            })
-          })
+        onRemove={(file) => {
+          setFiles((prev) => {
+            return prev.filter((item) => {
+              return item.uid !== file.uid;
+            });
+          });
         }}
       />
     </Sender.Header>
@@ -150,7 +202,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
         </Badge>
       }
       style={{
-        boxShadow: '0px -2px 12px 4px #efefef'
+        boxShadow: '0px -2px 12px 4px #efefef',
       }}
       loading={isRequesting}
       className={className}
@@ -158,18 +210,18 @@ export const MessageSender = (props: IMessageSenderProps) => {
         await onSubmit(
           content,
           files?.map((file) => {
-            const fileType = getFileTypeByName(file.name)
+            const fileType = getFileTypeByName(file.name);
             return {
               type: fileType || 'document',
               transfer_method: 'local_file',
               upload_file_id: fileIdMap.get(file.uid) as string,
-            }
+            };
           }) || [],
         );
         setFiles([]);
-        setOpen(false)
+        setOpen(false);
       }}
       onCancel={onCancel}
     />
   );
-}
+};
