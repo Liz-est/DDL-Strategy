@@ -228,8 +228,8 @@ importers:
         specifier: ^8.6.7
         version: 8.6.7(prettier@3.5.3)
       storybook-addon-rslib:
-        specifier: ^1.0.0
-        version: 1.0.0(@rsbuild/core@1.2.19)(@rslib/core@0.5.5)(storybook-builder-rsbuild@1.0.1)(typescript@5.8.2)
+        specifier: ^1.0.1
+        version: 1.0.1(@rsbuild/core@1.2.19)(@rslib/core@0.5.5)(storybook-builder-rsbuild@1.0.1)(typescript@5.8.2)
       storybook-react-rsbuild:
         specifier: ^1.0.1
         version: 1.0.1(@rsbuild/core@1.2.19)(@storybook/test@8.6.10)(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.7)(typescript@5.8.2)(webpack@5.98.0)
@@ -6974,8 +6974,8 @@ packages:
     resolution: {integrity: sha512-vj5lIj3Mwf9D79hBkltk5qmkFI+biIKWS2IBxEyEU3AX1tUf7AoL8nSazCOiiqQsGKIq01SClsKEzweu34uwvA==}
     dev: true
 
-  /storybook-addon-rslib@1.0.0(@rsbuild/core@1.2.19)(@rslib/core@0.5.5)(storybook-builder-rsbuild@1.0.1)(typescript@5.8.2):
-    resolution: {integrity: sha512-piqMN+HDHMdmzAqdNqMVH8i6f62JOOP4omS0mjP81lgRnWO7w8FBU0//MvVpeneDdVVTuoGi/v2rOVRe+3ZXkg==}
+  /storybook-addon-rslib@1.0.1(@rsbuild/core@1.2.19)(@rslib/core@0.5.5)(storybook-builder-rsbuild@1.0.1)(typescript@5.8.2):
+    resolution: {integrity: sha512-8V2rH61GCi9QGLoV+RwdWZ1IY4mdWMsLDp5bflbs5MyAaYd+jA+Bz3GAngv05lBjb+KnJHhZ6jWvunxUTUkiCQ==}
     peerDependencies:
       '@rsbuild/core': ^1.0.1
       '@rslib/core': '>= 0.1.1 || >= 0.2'
