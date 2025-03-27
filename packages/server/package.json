@@ -1,19 +1,19 @@
 {
-    "name": "dify-chat-app-server",
-    "version": "0.0.1",
-    "description": "应用管理的后端最简实现",
-    "main": "index.js",
-    "private": true,
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "koa": "^2.14.2",
-        "koa-bodyparser": "^4.4.1",
-        "koa-cors": "^0.0.16",
-        "koa-router": "^12.0.0"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+	"name": "dify-chat-app-server",
+	"version": "0.0.1",
+	"description": "应用管理的后端最简实现",
+	"main": "index.js",
+	"private": true,
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"koa": "^2.14.2",
+		"koa-bodyparser": "^4.4.1",
+		"koa-cors": "^0.0.16",
+		"koa-router": "^12.0.0"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC"
 }

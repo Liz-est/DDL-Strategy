@@ -1,78 +1,78 @@
 {
-  "name": "@dify-chat/components",
-  "version": "0.0.1",
-  "description": "Dify Chat Components library",
-  "keywords": [
-    "dify",
-    "chat",
-    "components"
-  ],
-  "author": {
-    "name": "lexmin0412",
-    "email": "zhangle_dev@outlook.com",
-    "url": "http://github.com/lexmin0412"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
-  },
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
-  },
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "rslib build",
-    "build:storybook": "storybook build",
-    "check": "biome check --write",
-    "dev": "rslib build --watch",
-    "format": "biome format --write",
-    "storybook": "storybook dev",
-    "test": "vitest run"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@rsbuild/core": "~1.2.19",
-    "@rsbuild/plugin-react": "^1.1.1",
-    "@rslib/core": "^0.5.5",
-    "@storybook/addon-essentials": "^8.6.10",
-    "@storybook/addon-interactions": "^8.6.7",
-    "@storybook/addon-links": "^8.6.9",
-    "@storybook/addon-onboarding": "^8.6.9",
-    "@storybook/blocks": "^8.6.9",
-    "@storybook/react": "^8.6.7",
-    "@storybook/test": "^8.6.10",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "jsdom": "^26.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "storybook": "^8.6.7",
-    "storybook-addon-rslib": "^1.0.1",
-    "storybook-react-rsbuild": "^1.0.1",
-    "tailwindcss": "^3",
-    "typescript": "^5.8.2",
-    "vitest": "^3.0.9"
-  },
-  "peerDependencies": {
-    "react": ">=16.9.0",
-    "react-dom": ">=16.9.0"
-  },
-  "dependencies": {
-    "@dify-chat/api": "workspace:^",
-    "@dify-chat/helpers": "workspace:^",
-    "@lexmin0412/markdown-it-echarts": "^0.1.4",
-    "markdown-it": "^14.1.0",
-    "markdown-it-katex-gpt": "^1.1.1",
-    "react-photo-view": "^1.2.7"
-  }
+	"name": "@dify-chat/components",
+	"version": "0.0.1",
+	"description": "Dify Chat Components library",
+	"keywords": [
+		"dify",
+		"chat",
+		"components"
+	],
+	"author": {
+		"name": "lexmin0412",
+		"email": "zhangle_dev@outlook.com",
+		"url": "http://github.com/lexmin0412"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "rslib build",
+		"build:storybook": "storybook build",
+		"check": "biome check --write",
+		"dev": "rslib build --watch",
+		"format": "biome format --write",
+		"storybook": "storybook dev",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@rsbuild/core": "~1.2.19",
+		"@rsbuild/plugin-react": "^1.1.1",
+		"@rslib/core": "^0.5.5",
+		"@storybook/addon-essentials": "^8.6.10",
+		"@storybook/addon-interactions": "^8.6.7",
+		"@storybook/addon-links": "^8.6.9",
+		"@storybook/addon-onboarding": "^8.6.9",
+		"@storybook/blocks": "^8.6.9",
+		"@storybook/react": "^8.6.7",
+		"@storybook/test": "^8.6.10",
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.2.0",
+		"@types/react": "^18.3.12",
+		"@types/react-dom": "^18.3.1",
+		"jsdom": "^26.0.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"storybook": "^8.6.7",
+		"storybook-addon-rslib": "^1.0.1",
+		"storybook-react-rsbuild": "^1.0.1",
+		"tailwindcss": "^3",
+		"typescript": "^5.8.2",
+		"vitest": "^3.0.9"
+	},
+	"peerDependencies": {
+		"react": ">=16.9.0",
+		"react-dom": ">=16.9.0"
+	},
+	"dependencies": {
+		"@dify-chat/api": "workspace:^",
+		"@dify-chat/helpers": "workspace:^",
+		"@lexmin0412/markdown-it-echarts": "^0.1.4",
+		"markdown-it": "^14.1.0",
+		"markdown-it-katex-gpt": "^1.1.1",
+		"react-photo-view": "^1.2.7"
+	}
 }

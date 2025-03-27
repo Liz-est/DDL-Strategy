@@ -64,10 +64,10 @@ Chatflow 工作流：
 
 无论使用哪种模式，我们都需要对接 Dify API，你需要在 Dify 控制台获取几个关键变量：
 
-|变量|说明|
-|---|---|
-|API Base|Dify API 请求前缀, 如果你使用的是 Dify 官方提供的云服务，则为 `https://api.dify.ai/v1`|
-|Api Key|Dify API 密钥，用于访问对应应用的 API, Dify 应用和 API 密钥是一对多的关系|
+| 变量 | 说明 |
+| --- | --- |
+| API Base | Dify API 请求前缀, 如果你使用的是 Dify 官方提供的云服务，则为 `https://api.dify.ai/v1` |
+| Api Key | Dify API 密钥，用于访问对应应用的 API, Dify 应用和 API 密钥是一对多的关系 |
 
 进入 Dify 的应用详情，点击左侧的 `访问 API`：
 
@@ -98,21 +98,23 @@ Chatflow 工作流：
 
 ```tsx
 export default function App() {
-  return (
-    <DifyChatProvider value={{
-      // 修改为单应用模式
-      mode: 'singleApp',
-      // 用户id，可以获取业务系统的用户 ID，动态传入
-      user: USER,
-      // 单应用模式下，需要传入 appConfig 配置
-      appConfig: {
-        apiBase: '上一步中获取到的 API Base',
-        apiKey: '上一步中获取到的 API Key',
-      }
-    }}>
-     子组件
-    </DifyChatProvider>
-  )
+	return (
+		<DifyChatProvider
+			value={{
+				// 修改为单应用模式
+				mode: 'singleApp',
+				// 用户id，可以获取业务系统的用户 ID，动态传入
+				user: USER,
+				// 单应用模式下，需要传入 appConfig 配置
+				appConfig: {
+					apiBase: '上一步中获取到的 API Base',
+					apiKey: '上一步中获取到的 API Key',
+				},
+			}}
+		>
+			子组件
+		</DifyChatProvider>
+	)
 }
 ```
 
@@ -146,18 +148,20 @@ export default function App() {
 
 ```tsx
 // src/App.tsx
-import { DifyChatProvider } from "@dify-chat/core";
-import DifyAppService from "./services/app/localstorage";
+import { DifyChatProvider } from '@dify-chat/core'
+
+import DifyAppService from './services/app/localstorage'
 
 export default function App() {
-  return (
-    <DifyChatProvider value={{
-        appService: new DifyAppService()
-      }}
-    >
-      子组件
-    </DifyChatProvider>
-  )
+	return (
+		<DifyChatProvider
+			value={{
+				appService: new DifyAppService(),
+			}}
+		>
+			子组件
+		</DifyChatProvider>
+	)
 }
 ```
 
@@ -168,8 +172,8 @@ export default function App() {
 在 `"./services/app/restful.ts"` 文件有一个 Restful API 的最简实现, 你可以根据下面的步骤来进行体验：
 
 1. 运行 `pnpm --filter dify-chat-app-server start` 启动后端服务
-2. 将上面的 `DifyAppService` 导入路径换成 `"./services/app/restful"` 
-3. 运行 `pnpm dev` 启动前端应用, 访问 `http://localhost:5200/dify-chat` 
+2. 将上面的 `DifyAppService` 导入路径换成 `"./services/app/restful"`
+3. 运行 `pnpm dev` 启动前端应用, 访问 `http://localhost:5200/dify-chat`
 
 **自定义后端服务实现**
 
@@ -266,7 +270,7 @@ pnpm preview
   - [x] 支持深度思考标签展示（如 DeepSeek-R1 的输出）
   - [x] 支持工作流信息展示
   - [x] 支持思维链展示
-  - [x] 支持知识库引用列表展示 
+  - [x] 支持知识库引用列表展示
   - [x] 支持图片展示
   - [x] 支持图片放大查看
   - [x] 支持 `Echarts` 渲染

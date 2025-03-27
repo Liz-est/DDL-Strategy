@@ -9,24 +9,26 @@ export type ITailwindCompatibleResponsiveConfig = Record<'sm' | 'md' | 'lg' | 'x
  * 默认的响应式配置
  */
 export const DEFAULT_RESPONSIVE_CONFIG: ITailwindCompatibleResponsiveConfig = {
-  sm: 0,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
-  '2xl': 1536,
+	sm: 0,
+	md: 768,
+	lg: 1024,
+	xl: 1280,
+	'2xl': 1536,
 }
 
 /**
  * 初始化响应式配置
  */
-export const initResponsiveConfig = (config: ITailwindCompatibleResponsiveConfig = DEFAULT_RESPONSIVE_CONFIG) => {
-  return configResponsive(config)
+export const initResponsiveConfig = (
+	config: ITailwindCompatibleResponsiveConfig = DEFAULT_RESPONSIVE_CONFIG,
+) => {
+	return configResponsive(config)
 }
 
 /**
  * 是否是移动端
  */
 export const useIsMobile = () => {
-  const { sm, md } = useResponsive() as unknown as ITailwindCompatibleResponsiveConfig
-  return !!sm && !md
+	const { sm, md } = useResponsive() as unknown as ITailwindCompatibleResponsiveConfig
+	return !!sm && !md
 }

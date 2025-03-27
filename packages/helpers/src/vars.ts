@@ -5,10 +5,10 @@ const DIFY_VERSION_KEY = 'DIFY_CHAT__DIFY_VERSION'
  */
 export const DIFY_INFO = {
 	get version() {
-		return localStorage.getItem(DIFY_VERSION_KEY)	|| ''
+		return localStorage.getItem(DIFY_VERSION_KEY) || ''
 	},
 
 	set version(version: string) {
-		localStorage.setItem(DIFY_VERSION_KEY, version)	
-	}
+		localStorage.setItem(DIFY_VERSION_KEY, version)
+	},
 }

@@ -1,13 +1,14 @@
-import SingleAppLayout from '@/layout/single-app-layout';
-import MultiAppLayout from '@/layout/multi-app-layout';
-import { useDifyChat } from 'packages/core/dist';
+import { useDifyChat } from 'packages/core/dist'
+
+import MultiAppLayout from '@/layout/multi-app-layout'
+import SingleAppLayout from '@/layout/single-app-layout'
 
 export default function ChatPage() {
-  const { mode } = useDifyChat();
+	const { mode } = useDifyChat()
 
-  if (mode === 'singleApp') {
-    return <SingleAppLayout />;
-  }
+	if (mode === 'singleApp') {
+		return <SingleAppLayout />
+	}
 
-  return <MultiAppLayout />;
+	return <MultiAppLayout />
 }

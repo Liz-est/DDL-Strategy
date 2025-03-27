@@ -5,5 +5,5 @@ export const isTempId = (id: string | undefined) => {
 	if (!id) {
 		return false
 	}
-	return id.startsWith('temp');
-};
+	return id.startsWith('temp')
+}

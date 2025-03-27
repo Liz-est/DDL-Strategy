@@ -1,30 +1,49 @@
-import { useXAgent, useXChat, XStream } from "@ant-design/x";
-import { IAgentMessage, IMessageFileItem } from "@/types";
-import { DifyApi, EventEnum, IAgentThought, IChunkChatCompletionResponse, IErrorEvent, IFile, IGetAppParametersResponse } from "@dify-chat/api";
-import { isTempId } from "@dify-chat/helpers";
-import { IWorkflowNode } from "@dify-chat/api";
-import { RESPONSE_MODE } from "@/config";
-import {message as antdMessage} from 'antd'
-import { useDifyChat } from "@dify-chat/core";
+import { useXAgent, useXChat, XStream } from '@ant-design/x'
+import {
+	DifyApi,
+	EventEnum,
+	IAgentThought,
+	IChunkChatCompletionResponse,
+	IErrorEvent,
+	IFile,
+	IGetAppParametersResponse,
+} from '@dify-chat/api'
+import { IWorkflowNode } from '@dify-chat/api'
+import { useDifyChat } from '@dify-chat/core'
+import { isTempId } from '@dify-chat/helpers'
+import { message as antdMessage } from 'antd'
+
+import { RESPONSE_MODE } from '@/config'
+import { IAgentMessage, IMessageFileItem } from '@/types'
 
 export const useX = (options: {
-	difyApi: DifyApi;
+	difyApi: DifyApi
 	latestProps: React.MutableRefObject<{
-    conversationId: string | undefined;
-}>
+		conversationId: string | undefined
+	}>
 	latestState: React.MutableRefObject<{
-    inputParams: {
-        [key: string]: unknown;
-    };
-}>
-	getNextSuggestions: (messageId: string) => void,
-	appParameters?: IGetAppParametersResponse,
-	filesRef: React.MutableRefObject<IFile[]>,
-	abortRef: React.MutableRefObject<() => void>,
-	getConversationMessages: (conversationId: string) => void,
-  onConversationIdChange: (id: string) => void;
+		inputParams: {
+			[key: string]: unknown
+		}
+	}>
+	getNextSuggestions: (messageId: string) => void
+	appParameters?: IGetAppParametersResponse
+	filesRef: React.MutableRefObject<IFile[]>
+	abortRef: React.MutableRefObject<() => void>
+	getConversationMessages: (conversationId: string) => void
+	onConversationIdChange: (id: string) => void
 }) => {
-	const { latestProps, latestState, appParameters, getNextSuggestions, filesRef, abortRef, getConversationMessages, onConversationIdChange, difyApi } = options
+	const {
+		latestProps,
+		latestState,
+		appParameters,
+		getNextSuggestions,
+		filesRef,
+		abortRef,
+		getConversationMessages,
+		onConversationIdChange,
+		difyApi,
+	} = options
 	const { user } = useDifyChat()
 
 	const [agent] = useXAgent<IAgentMessage>({
@@ -39,12 +58,12 @@ export const useX = (options: {
 				user,
 				response_mode: RESPONSE_MODE,
 				query: message?.content as string,
-			});
+			})
 
-			let result = '';
-			const files: IMessageFileItem[] = [];
-			const workflows: IAgentMessage['workflows'] = {};
-			const agentThoughts: IAgentThought[] = [];
+			let result = ''
+			const files: IMessageFileItem[] = []
+			const workflows: IAgentMessage['workflows'] = {}
+			const agentThoughts: IAgentThought[] = []
 
 			// 异常 => 结束
 			if (response.status !== 200) {
@@ -55,7 +74,7 @@ export const useX = (options: {
 					// onError 是为了结束 agent 的 isRequesting 以更新 Sender 的发送按钮状态
 					onError({
 						name: response.status.toString(),
-						message: errText
+						message: errText,
 					})
 				}
 				abortRef.current()
@@ -64,61 +83,61 @@ export const useX = (options: {
 
 			const readableStream = XStream({
 				readableStream: response.body as NonNullable<ReadableStream>,
-			});
+			})
 
-			const reader = readableStream.getReader();
+			const reader = readableStream.getReader()
 			abortRef.current = () => {
-				reader?.cancel();
-			};
+				reader?.cancel()
+			}
 
 			while (reader) {
-				const { value: chunk, done } = await reader.read();
+				const { value: chunk, done } = await reader.read()
 				if (done) {
 					onSuccess({
 						content: result,
 						files,
 						workflows,
 						agentThoughts,
-					});
-					break;
+					})
+					break
 				}
-				if (!chunk) continue;
+				if (!chunk) continue
 				if (chunk.data) {
 					let parsedData = {} as {
-						id: string;
-						task_id: string;
-						position: number;
-						tool: string;
-						tool_input: string;
-						observation: string;
-						message_files: string[];
+						id: string
+						task_id: string
+						position: number
+						tool: string
+						tool_input: string
+						observation: string
+						message_files: string[]
 
-						event: IChunkChatCompletionResponse['event'];
-						answer: string;
-						conversation_id: string;
-						message_id: string;
+						event: IChunkChatCompletionResponse['event']
+						answer: string
+						conversation_id: string
+						message_id: string
 
 						// 类型
-						type: 'image';
+						type: 'image'
 						// 图片链接
-						url: string;
+						url: string
 
 						data: {
 							// 工作流节点的数据
-							id: string;
-							node_type: IWorkflowNode['type'];
-							title: string;
-							inputs: string;
-							outputs: string;
-							process_data: string;
-							elapsed_time: number;
-							execution_metadata: IWorkflowNode['execution_metadata'];
-						};
-					};
+							id: string
+							node_type: IWorkflowNode['type']
+							title: string
+							inputs: string
+							outputs: string
+							process_data: string
+							elapsed_time: number
+							execution_metadata: IWorkflowNode['execution_metadata']
+						}
+					}
 					try {
-						parsedData = JSON.parse(chunk.data);
+						parsedData = JSON.parse(chunk.data)
 					} catch (error) {
-						console.error('解析 JSON 失败', error);
+						console.error('解析 JSON 失败', error)
 					}
 					if (parsedData.event === EventEnum.MESSAGE_END) {
 						onSuccess({
@@ -126,7 +145,7 @@ export const useX = (options: {
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 						// 刷新消息列表
 						getConversationMessages(parsedData.conversation_id)
 						onConversationIdChange(parsedData.conversation_id)
@@ -138,30 +157,30 @@ export const useX = (options: {
 						// }
 						// 如果开启了建议问题，获取下一轮问题建议
 						if (appParameters?.suggested_questions_after_answer.enabled) {
-							getNextSuggestions(parsedData.message_id);
+							getNextSuggestions(parsedData.message_id)
 						}
 					}
-					const innerData = parsedData.data;
+					const innerData = parsedData.data
 					if (parsedData.event === EventEnum.WORKFLOW_STARTED) {
-						workflows.status = 'running';
-						workflows.nodes = [];
+						workflows.status = 'running'
+						workflows.nodes = []
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
-						console.log('工作流结束', parsedData);
-						workflows.status = 'finished';
+						console.log('工作流结束', parsedData)
+						workflows.status = 'finished'
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
-						console.log('节点开始', parsedData);
+						console.log('节点开始', parsedData)
 						workflows.nodes = [
 							...(workflows.nodes || []),
 							{
@@ -170,15 +189,15 @@ export const useX = (options: {
 								type: innerData.node_type,
 								title: innerData.title,
 							} as IWorkflowNode,
-						];
+						]
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					} else if (parsedData.event === EventEnum.WORKFLOW_NODE_FINISHED) {
-						workflows.nodes = workflows.nodes?.map((item) => {
+						workflows.nodes = workflows.nodes?.map(item => {
 							if (item.id === innerData.id) {
 								return {
 									...item,
@@ -188,44 +207,44 @@ export const useX = (options: {
 									process_data: innerData.process_data,
 									elapsed_time: innerData.elapsed_time,
 									execution_metadata: innerData.execution_metadata,
-								};
+								}
 							}
-							return item;
-						});
+							return item
+						})
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					}
 					if (parsedData.event === EventEnum.MESSAGE_FILE) {
-						result += `<img src=""${parsedData.url} />`;
+						result += `<img src=""${parsedData.url} />`
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					}
 					if (
 						parsedData.event === EventEnum.MESSAGE ||
 						parsedData.event === EventEnum.AGENT_MESSAGE
 					) {
-						const text = parsedData.answer;
-						result += text;
+						const text = parsedData.answer
+						result += text
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					}
 					if (parsedData.event === EventEnum.ERROR) {
 						onError({
 							name: `${(parsedData as unknown as IErrorEvent).status}: ${(parsedData as unknown as IErrorEvent).code}`,
 							message: (parsedData as unknown as IErrorEvent).message,
-						});
+						})
 						getConversationMessages(parsedData.conversation_id)
 					}
 					if (parsedData.event === EventEnum.AGENT_THOUGHT) {
@@ -239,25 +258,25 @@ export const useX = (options: {
 							observation: parsedData.observation,
 							message_files: parsedData.message_files,
 							message_id: parsedData.message_id,
-						});
+						})
 						onUpdate({
 							content: result,
 							files,
 							workflows,
 							agentThoughts,
-						});
+						})
 					}
 				} else {
-					console.log('没有数据', chunk);
-					continue;
+					console.log('没有数据', chunk)
+					continue
 				}
 			}
 		},
-	});
+	})
 
 	const { onRequest, messages, setMessages } = useXChat({
 		agent,
-	});
+	})
 
 	return { agent, onRequest, messages, setMessages }
 }
