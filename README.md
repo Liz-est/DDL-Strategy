@@ -18,7 +18,11 @@ Chatflow 工作流：
 
 `Echarts` 图表：
 
-![Screen Shot](./docs/sample_echarts.png)   
+![Screen Shot](./docs/sample_echarts.png)
+
+单应用模式：
+
+![单应用模式](./docs/sample_single-app-mode.png)
 
 移动端支持：
 
@@ -51,9 +55,14 @@ Chatflow 工作流：
 
 ## 开始使用
 
-### 1. 获取 Dify 应用配置
+本项目支持两种开箱即用的使用方式：
 
-为了在此应用对接 Dify API，你需要在 Dify 控制台获取几个关键变量：
+- 单应用模式: 全局只需要一个 Dify 应用
+- 多应用模式: 支持用户在界面上添加多个 Dify 应用
+
+## 0. 获取 Dify 应用配置
+
+无论使用哪种模式，我们都需要对接 Dify API，你需要在 Dify 控制台获取几个关键变量：
 
 |变量|说明|
 |---|---|
@@ -79,7 +88,39 @@ Chatflow 工作流：
 - API Base: `https://api.dify.ai/v1` OR `${SELF_HOSTED_API_DOMAIN}/v1`
 - API Key: `app-YOUR_API_KEY`
 
-### 1.2 在界面上添加 Dify 应用配置
+### 1. 单应用模式
+
+如果你全局只需要一个 Dify 应用, 不想让用户手动修改，可以使用单应用模式。
+
+![单应用模式](./docs/sample_single-app-mode.png)
+
+只需简单修改 `src/App.tsx` 中 `DifyChatProvider` 的属性即可：
+
+```tsx
+export default function App() {
+  return (
+    <DifyChatProvider value={{
+      // 修改为单应用模式
+      mode: 'singleApp',
+      // 用户id，可以获取业务系统的用户 ID，动态传入
+      user: USER,
+      // 单应用模式下，需要传入 appConfig 配置
+      appConfig: {
+        apiBase: '上一步中获取到的 API Base',
+        apiKey: '上一步中获取到的 API Key',
+      }
+    }}>
+     子组件
+    </DifyChatProvider>
+  )
+}
+```
+
+### 2. 多应用模式
+
+如果你需要支持用户在界面上添加多个 Dify 应用，多应用模式也是开箱即用的。
+
+#### 2.1. 在界面上添加 Dify 应用配置
 
 点击页面左上角 "添加 Dify 应用配置" 按钮：
 
@@ -93,9 +134,9 @@ Chatflow 工作流：
 
 ![添加应用配置成功](./docs/guide__sample_app_config.png)
 
-### 1.3 自定义应用配置管理 (按需)
+#### 2.2. 自定义应用配置管理 (按需)
 
-#### 1.3.1 默认实现说明
+**默认实现说明**
 
 为方便演示, 本项目默认使用 Localstorage 进行应用配置管理。
 
@@ -122,7 +163,7 @@ export default function App() {
 
 在子组件中，会使用 `useDifyChat` 钩子获取 `appService` 实例并调用相关方法进行应用配置的管理。
 
-#### 1.3.2 自定义后端服务示例
+**自定义后端服务示例**
 
 在 `"./services/app/restful.ts"` 文件有一个 Restful API 的最简实现, 你可以根据下面的步骤来进行体验：
 
@@ -130,7 +171,7 @@ export default function App() {
 2. 将上面的 `DifyAppService` 导入路径换成 `"./services/app/restful"` 
 3. 运行 `pnpm dev` 启动前端应用, 访问 `http://localhost:5200/dify-chat` 
 
-#### 1.3.3 自定义后端服务实现
+**自定义后端服务实现**
 
 如果需要自定义你的后端服务，请遵循以下步骤：
 
@@ -144,11 +185,11 @@ export default function App() {
 
 然后在 `src/services/app` 中新建一个文件，只需要继承抽象类 `DifyAppStore` 并实现它的所有方法, 调用在上述服务中对应的接口即可。
 
-### 1.4 跨域处理
+### 3. 跨域处理
 
 Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
 
-#### 1.3.1 生产构建模式(pnpm build)
+#### 3.1. 生产构建模式(pnpm build)
 
 在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-chat 应用的部署域名访问，以 nginx 为例：
 
@@ -165,7 +206,7 @@ server {
 }
 ```
 
-#### 1.3.2 本地开发模式(pnpm dev)
+#### 3.2 本地开发模式(pnpm dev)
 
 在项目根目录新建 `.env.local` 文件，添加以下内容：
 
