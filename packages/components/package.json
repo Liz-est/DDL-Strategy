@@ -43,7 +43,7 @@
 		"@rsbuild/plugin-react": "^1.1.1",
 		"@rslib/core": "^0.5.5",
 		"@storybook/addon-essentials": "^8.6.10",
-		"@storybook/addon-interactions": "^8.6.7",
+		"@storybook/addon-interactions": "^8.6.10",
 		"@storybook/addon-links": "^8.6.9",
 		"@storybook/addon-onboarding": "^8.6.9",
 		"@storybook/blocks": "^8.6.9",

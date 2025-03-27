@@ -1,13 +1,17 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
-import { IFile, IUploadFileResponse } from '@dify-chat/api'
-import { Badge, Button, GetProp, GetRef } from 'antd'
+import { IFile, IGetAppParametersResponse, IUploadFileResponse } from '@dify-chat/api'
+import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
-import { getFileTypeByName } from './utils'
+import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils'
 
 interface IMessageSenderProps {
+	/**
+	 * Dify 应用参数
+	 */
+	appParameters?: IGetAppParametersResponse
 	/**
 	 * 类名
 	 */
@@ -42,10 +46,32 @@ interface IMessageSenderProps {
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-	const { content, isRequesting, onChange, onSubmit, className, onCancel, uploadFileApi } = props
+	const {
+		content,
+		isRequesting,
+		onChange,
+		onSubmit,
+		className,
+		onCancel,
+		uploadFileApi,
+		appParameters,
+	} = props
 	const [open, setOpen] = useState(false)
 	const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([])
 	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
+
+	const allowedFileTypes = useMemo(() => {
+		if (!appParameters?.file_upload) {
+			return []
+		}
+		const result: string[] = []
+		appParameters.file_upload.allowed_file_types.forEach(item => {
+			if (FileTypeMap.get(item)) {
+				result.push(...((FileTypeMap.get(item) as string[]) || []))
+			}
+		})
+		return result
+	}, [appParameters?.file_upload])
 
 	const handleUpload = async (file: RcFile) => {
 		const prevFiles = [...files]
@@ -109,7 +135,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const senderRef = useRef<GetRef<typeof Sender>>(null)
 	const senderHeader = (
 		<Sender.Header
-			title="Attachments"
+			title="上传文件"
 			open={open}
 			onOpenChange={setOpen}
 			styles={{
@@ -120,7 +146,16 @@ export const MessageSender = (props: IMessageSenderProps) => {
 		>
 			<Attachments
 				beforeUpload={async file => {
+					// 校验文件类型
 					// 自定义上传
+
+					const ext = getFileExtByName(file.name)
+					// 校验文件类型
+					if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
+						message.error(`不支持的文件类型: ${ext}`)
+						return false
+					}
+
 					handleUpload(file)
 					return false
 				}}
@@ -132,8 +167,13 @@ export const MessageSender = (props: IMessageSenderProps) => {
 							}
 						: {
 								icon: <CloudUploadOutlined />,
-								title: 'Upload files',
-								description: 'Click or drag files to this area to upload',
+								title: '点击或拖拽文件到此区域上传',
+								description: (
+									<div>
+										支持的文件类型：
+										{allowedFileTypes.join(', ')}
+									</div>
+								),
 							}
 				}
 				getDropContainer={() => senderRef.current?.nativeElement}

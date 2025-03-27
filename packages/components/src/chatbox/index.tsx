@@ -194,6 +194,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					{/* 🌟 输入框 */}
 					<div className="px-3">
 						<MessageSender
+							appParameters={appParameters}
 							content={content}
 							onChange={value => setContent(value)}
 							onSubmit={(content, files) => {
