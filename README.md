@@ -276,10 +276,11 @@ pnpm preview
   - [x] 支持内容复制
   - [x] 支持点赞/点踩
   - [x] 支持消息文件点击下载
-- [x] 支持多 Dify 应用管理
+- [x] 支持多应用模式
   - [x] Localstorage 实现
   - [x] Restful API 实现
   - [x] 支持自定义后端服务
+- [x] 支持单应用模式
 - [ ] 子包发布
   - [ ] 发布 `@dify-chat/core` 包
   - [ ] 发布 `@dify-chat/helpers` 包
