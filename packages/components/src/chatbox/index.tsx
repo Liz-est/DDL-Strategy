@@ -172,10 +172,10 @@ export const Chatbox = (props: ChatboxProps) => {
 				<Bubble.List
 					items={items}
 					roles={roles}
-					className="flex-1 w-full md:w-3/4 mx-auto px-3 md:px-0 box-border"
+					className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border"
 				/>
 				<div
-					className="absolute bottom-0 bg-white w-full md:w-3/4 left-1/2"
+					className="absolute bottom-0 bg-white w-full md:!w-3/4 left-1/2"
 					style={{
 						transform: 'translateX(-50%)',
 					}}

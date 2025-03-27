@@ -107,7 +107,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 		<div className="flex justify-center w-full px-3 box-border mx-auto">
 			<Space
 				direction="vertical"
-				className="pt-8 w-full md:w-3/4"
+				className="pt-8 w-full md:!w-3/4"
 			>
 				<Welcome
 					variant="borderless"
