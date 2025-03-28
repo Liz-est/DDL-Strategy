@@ -24,5 +24,19 @@
 			"@/*": ["src/*"]
 		}
 	},
+	"references": [
+		{
+			"path": "./packages/components"
+		},
+		{
+			"path": "./packages/core"
+		},
+		{
+			"path": "./packages/api"
+		},
+		{
+			"path": "./packages/helpers"
+		}
+	],
 	"include": ["src"]
 }

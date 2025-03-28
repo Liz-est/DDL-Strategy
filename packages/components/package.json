@@ -19,10 +19,12 @@
 	"type": "module",
 	"exports": {
 		".": {
+			"source": "./src/index.tsx",
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		}
 	},
+	"source": "./src/index.tsx",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
