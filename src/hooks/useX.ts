@@ -227,10 +227,7 @@ export const useX = (options: {
 							agentThoughts,
 						})
 					}
-					if (
-						parsedData.event === EventEnum.MESSAGE ||
-						parsedData.event === EventEnum.AGENT_MESSAGE
-					) {
+					if (parsedData.event === EventEnum.MESSAGE) {
 						const text = parsedData.answer
 						result += text
 						onUpdate({
@@ -247,8 +244,30 @@ export const useX = (options: {
 						})
 						getConversationMessages(parsedData.conversation_id)
 					}
+					if (parsedData.event === EventEnum.AGENT_MESSAGE) {
+						const lastAgentThought = agentThoughts[agentThoughts.length - 1]
+
+						if (lastAgentThought) {
+							// 将agent_message以流式形式输出到最后一条agent_thought里
+							const text = parsedData.answer
+							lastAgentThought.thought += text
+						} else {
+							continue
+						}
+
+						onUpdate({
+							content: result,
+							files,
+							workflows,
+							agentThoughts,
+						})
+					}
 					if (parsedData.event === EventEnum.AGENT_THOUGHT) {
-						agentThoughts.push({
+						const existAgentThoughtIndex = agentThoughts.findIndex(
+							_agentThought => _agentThought.position === parsedData.position,
+						)
+
+						const newAgentThought = {
 							conversation_id: parsedData.conversation_id,
 							id: parsedData.id as string,
 							task_id: parsedData.task_id,
@@ -258,7 +277,16 @@ export const useX = (options: {
 							observation: parsedData.observation,
 							message_files: parsedData.message_files,
 							message_id: parsedData.message_id,
-						})
+						} as IAgentThought
+
+						if (existAgentThoughtIndex !== -1) {
+							// 如果已存在一条，则替换内容
+							agentThoughts[existAgentThoughtIndex] = newAgentThought
+						} else {
+							// 如果不存在，则插入一条
+							agentThoughts.push(newAgentThought)
+						}
+
 						onUpdate({
 							content: result,
 							files,
