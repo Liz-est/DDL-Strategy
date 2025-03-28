@@ -26,16 +26,16 @@
 	},
 	"references": [
 		{
-			"path": "./packages/components"
+			"path": "./packages/components/tsconfig.dev.json"
 		},
 		{
-			"path": "./packages/core"
+			"path": "./packages/core/tsconfig.dev.json"
 		},
 		{
-			"path": "./packages/api"
+			"path": "./packages/api/tsconfig.dev.json"
 		},
 		{
-			"path": "./packages/helpers"
+			"path": "./packages/helpers/tsconfig.dev.json"
 		}
 	],
 	"include": ["src"]

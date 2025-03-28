@@ -1,11 +1,18 @@
 import { pluginReact } from '@rsbuild/plugin-react'
 import { defineConfig } from '@rslib/core'
+import path from 'path'
+
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+const tsconfigDevPath = path.resolve(__dirname, './tsconfig.dev.json')
+const tsconfigProdPath = path.resolve(__dirname, './tsconfig.json')
 
 export default defineConfig({
 	source: {
 		entry: {
 			index: ['./src/**'],
 		},
+		tsconfigPath: isDevelopment ? tsconfigDevPath : tsconfigProdPath,
 	},
 	lib: [
 		{
