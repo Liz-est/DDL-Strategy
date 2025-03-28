@@ -2,6 +2,12 @@
 
 一个基于 Dify API 的 AI 会话 Web APP, 适配深度思考、Dify Chatflow/Workflow 应用、Agent 思维链输出信息。
 
+如果你觉得这个项目还不错的话，请动动你的小手指点个 Star 吧～
+
+## Repobeats
+
+![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg 'Repobeats analytics image')
+
 ## 运行截图
 
 `<think>` 标签（DeepSeek 深度思考）：
@@ -302,3 +308,7 @@ pnpm preview
 ## License
 
 [MIT](./LICENSE)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=lexmin0412/dify-chat&type=Date)](https://www.star-history.com/#lexmin0412/dify-chat&Date)
