@@ -36,22 +36,25 @@ export default function ThoughtChain(props: IThoughtChainProps) {
 			status: 'success',
 			icon: <CheckCircleFilled />,
 			description: (
-				<Collapse
-					className="mt-3 min-w-chat-card"
-					size="small"
-					items={[
-						{
-							key: `${uniqueKey}-tool_input`,
-							label: '输入',
-							children: <CollapseItem text={item.tool_input} />,
-						},
-						{
-							key: `${uniqueKey}-observation`,
-							label: '输出',
-							children: <CollapseItem text={item.observation} />,
-						},
-					]}
-				/>
+				<>
+					<Collapse
+						className="mt-3 min-w-chat-card"
+						size="small"
+						items={[
+							{
+								key: `${uniqueKey}-tool_input`,
+								label: '输入',
+								children: <CollapseItem text={item.tool_input} />,
+							},
+							{
+								key: `${uniqueKey}-observation`,
+								label: '输出',
+								children: <CollapseItem text={item.observation} />,
+							},
+						]}
+					/>
+					<pre className="border-none">{item.thought}</pre>
+				</>
 			),
 		}
 	}) as ThoughtChainItem[]
