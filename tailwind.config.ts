@@ -11,10 +11,8 @@ const minWidth = {
 
 const content = ['./src/**/*.{html,js,ts,jsx,tsx}']
 
-// 如果是开发环境，则添加 packages/components 目录
-if (process.env.NODE_ENV === 'development') {
-	content.push('./packages/components/src/**/*.{html,js,ts,jsx,tsx}')
-}
+// 则添加 packages/components 目录
+content.push('./packages/components/src/**/*.{html,js,ts,jsx,tsx}')
 
 const config: Config = {
 	content,
