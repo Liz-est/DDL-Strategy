@@ -125,14 +125,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		}
 		const result = await difyApi.getConversationHistory(conversationId)
 
-		if (!result.data.length) {
+		if (!result?.data?.length) {
 			return
 		}
 
 		const newMessages: IMessageItem4Render[] = []
 
 		// 只有当历史消息中的参数不为空时才更新
-		if (result.data.length && Object.values(result.data[0]?.inputs)?.length) {
+		if (result?.data?.length && Object.values(result.data?.[0]?.inputs)?.length) {
 			setInputParams(result.data[0]?.inputs || {})
 		}
 
