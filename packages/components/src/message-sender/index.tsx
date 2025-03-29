@@ -207,6 +207,12 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			loading={isRequesting}
 			className={className}
 			onSubmit={async content => {
+				console.log('files', files)
+				// 当文件存在时，判断是否所有文件都已上传完成
+				if (files?.length && !files.every(item => item.status === 'done')) {
+					message.error('请等待所有文件上传完成')
+					return
+				}
 				await onSubmit(
 					content,
 					files?.map(file => {
