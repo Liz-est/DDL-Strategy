@@ -201,7 +201,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}
 
 	const isFormFilled = useMemo(() => {
-		if (!appParameters?.user_input_form.length) {
+		if (!appParameters?.user_input_form?.length) {
 			return true
 		}
 		return (
