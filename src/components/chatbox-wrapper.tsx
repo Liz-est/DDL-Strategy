@@ -1,6 +1,12 @@
 import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Prompts } from '@ant-design/x'
-import { DifyApi, IFile, IGetAppInfoResponse, IGetAppParametersResponse } from '@dify-chat/api'
+import {
+	DifyApi,
+	IFile,
+	IGetAppInfoResponse,
+	IGetAppParametersResponse,
+	IMessageFileItem,
+} from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
@@ -224,6 +230,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		filesRef.current = files || []
 		onRequest({
 			content: nextContent,
+			files: files as IMessageFileItem[],
 		})
 	}
 
