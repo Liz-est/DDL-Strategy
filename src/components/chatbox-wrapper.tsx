@@ -260,8 +260,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		return false
 	}, [appParameters, isFormFilled])
 
-	console.log('conversationItems', conversationItems)
-
 	const conversationTitle = (
 		<Popover
 			trigger={['click']}
