@@ -1,5 +1,5 @@
 import { WarningOutlined } from '@ant-design/icons'
-import { IMessageItem4Render } from '@dify-chat/api'
+import { IFile, IMessageItem4Render } from '@dify-chat/api'
 
 import { MarkdownRenderer } from '../../markdown-renderer'
 import ThoughtChain from '../thought-chain'
@@ -8,6 +8,12 @@ import MessageReferrence from './referrence'
 import WorkflowLogs from './workflow-logs'
 
 interface IMessageContentProps {
+	/**
+	 * 提交消息时触发的回调函数
+	 * @param nextContent 下一条消息的内容
+	 * @param files 附件文件列表
+	 */
+	onSubmit?: (nextContent: string, files?: IFile[]) => void
 	/**
 	 * 消息数据对象
 	 */
@@ -19,6 +25,7 @@ interface IMessageContentProps {
  */
 export default function MessageContent(props: IMessageContentProps) {
 	const {
+		onSubmit,
 		messageItem: {
 			id,
 			status,
@@ -66,7 +73,10 @@ export default function MessageContent(props: IMessageContentProps) {
 
 			{/* 消息主体文本内容 */}
 			<div className={role === 'local' || role === 'user' ? '' : 'md:min-w-chat-card'}>
-				<MarkdownRenderer markdownText={content} />
+				<MarkdownRenderer
+					markdownText={content}
+					onSubmit={onSubmit}
+				/>
 			</div>
 
 			{/* 引用链接列表 */}

@@ -121,7 +121,12 @@ export const Chatbox = (props: ChatboxProps) => {
 				// loading: status === 'loading',
 				content: messageItem.content,
 				messageRender: () => {
-					return <MessageContent messageItem={messageItem} />
+					return (
+						<MessageContent
+							onSubmit={onSubmit}
+							messageItem={messageItem}
+						/>
+					)
 				},
 				// 用户发送消息时，status 为 local，需要展示为用户头像
 				role: messageItem.role === 'local' ? 'user' : messageItem.role,
