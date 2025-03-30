@@ -9,9 +9,9 @@ import {
 } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
+import { useDifyChat } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
-import { useDifyChat } from 'packages/core/dist'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'

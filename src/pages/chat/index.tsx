@@ -1,4 +1,4 @@
-import { useDifyChat } from 'packages/core/dist'
+import { useDifyChat } from '@dify-chat/core'
 
 import MultiAppLayout from '@/layout/multi-app-layout'
 import SingleAppLayout from '@/layout/single-app-layout'
