@@ -41,7 +41,7 @@ export default function SettingForm(props: ISettingFormProps) {
 				rules={[{ required: true }]}
 				required
 			>
-				<Input.Password placeholder="请输入 API Key" />
+				<Input.Password placeholder="请输入 API Secret" />
 			</Form.Item>
 			<div className="text-base mb-3 flex items-center">
 				<div className="h-4 w-1 bg-primary rounded"></div>
