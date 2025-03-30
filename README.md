@@ -34,6 +34,10 @@ Chatflow 工作流：
 
 ![Screen Shot](./docs/guide__sample_mobile.png)
 
+回复表单：
+
+![回复表单](./docs/guide__sample_form_answer.png)
+
 ## 特性
 
 - 💬 多场景兼容: 支持多应用、多会话视图，支撑不同业务场景
