@@ -113,8 +113,10 @@ export default function App() {
 				user: USER,
 				// 单应用模式下，需要传入 appConfig 配置
 				appConfig: {
-					apiBase: '上一步中获取到的 API Base',
-					apiKey: '上一步中获取到的 API Key',
+					requestConfig: {
+						apiBase: '上一步中获取到的 API Base',
+						apiKey: '上一步中获取到的 API Key',
+					},
 				},
 			}}
 		>
@@ -232,6 +234,58 @@ DIFY_API_PREFIX=/v1 # API 访问前缀，如果你没有对 Dify 进行魔改的
 - 修改后: `/v1`
 
 在运行 `pnpm dev` 时，Rsbuild 会自动读取 `.env.local` 文件中的环境变量，设置正确的 `server.proxy` 实现本地代理，可以访问 `rsbuild.config.ts` 文件查看详情。
+
+### 4. 支持表单
+
+Dify 支持通过 `jinja2` 来配置回复表单供用户填写，本项目也支持了对应的功能。
+
+默认情况下，在用户点击表单的提交按钮后，会将表单的值对象作为消息发送给 Dify 应用，同时会在消息列表中展示。
+
+![回复表单](./docs/guide__sample_form_answer.png)
+
+如果你想要自定义发送的消息文本，可以按照下面的指引，在应用配置中进行配置。
+
+**多应用模式**
+
+在添加/更新应用配置弹窗中填写字段：
+
+- 表单回复 - 设置为 "启用"
+- 提交消息文本 - 用于替换表单值对象的文本
+
+![回复表单-配置](./docs/guide__sample_form_answer_config.png)
+
+**单应用模式**
+
+在入口文件中，添加对应的属性即可：
+
+```tsx
+export default function App() {
+	return (
+		<DifyChatProvider
+			value={{
+				mode: 'singleApp',
+				user: USER,
+				appConfig: {
+					requestConfig: {
+						apiBase: '你的 API Base',
+						apiKey: '你的 API Secret',
+					},
+					answerForm: {
+						enabled: true,
+						feedbackText: '我提交了一个表单',
+					},
+				},
+			}}
+		>
+			子组件
+		</DifyChatProvider>
+	)
+}
+```
+
+按照如上配置后，效果如下：
+
+![回复表单-自定义提交消息文本](./docs/guide__sample_form_answer1.png)
 
 ## 本地开发
 
