@@ -249,7 +249,7 @@ Dify 支持通过 `jinja2` 来配置回复表单供用户填写，本项目也�
 
 ```json
 {
-	"username": "lexmin0412",
+	"username": "cellerchan",
 	"phone": "13012345678",
 	"content": "我要举报你",
 	"isFormSubmit": true
