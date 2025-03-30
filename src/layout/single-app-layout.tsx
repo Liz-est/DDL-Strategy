@@ -6,7 +6,7 @@ import {
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
 import { ConversationList, type IConversationItem } from '@dify-chat/components'
-import { IDifyChatContextSingleApp } from '@dify-chat/core'
+import { IDifyAppItem, IDifyChatContextSingleApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useMount } from 'ahooks'
 import { Button, Empty, message, Spin } from 'antd'
@@ -35,7 +35,7 @@ const useStyle = createStyles(({ token, css }) => {
 
 const SingleAppLayout: React.FC = () => {
 	const difyChatContext = useDifyChat()
-	const { user } = difyChatContext
+	const { user, appConfig } = difyChatContext as IDifyChatContextSingleApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
 	const [difyApi] = useState(
@@ -198,6 +198,7 @@ const SingleAppLayout: React.FC = () => {
 						</div>
 					) : (
 						<ChatboxWrapper
+							appConfig={appConfig as IDifyAppItem}
 							appInfo={appInfo}
 							difyApi={difyApi}
 							conversationId={currentConversationId}
