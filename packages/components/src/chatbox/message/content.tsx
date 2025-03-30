@@ -1,5 +1,7 @@
 import { WarningOutlined } from '@ant-design/icons'
 import { IFile, IMessageItem4Render } from '@dify-chat/api'
+import { IDifyAppItem } from '@dify-chat/core'
+import { useMemo } from 'react'
 
 import { MarkdownRenderer } from '../../markdown-renderer'
 import ThoughtChain from '../thought-chain'
@@ -9,11 +11,21 @@ import WorkflowLogs from './workflow-logs'
 
 interface IMessageContentProps {
 	/**
+	 * 应用配置
+	 */
+	appConfig: IDifyAppItem
+	/**
 	 * 提交消息时触发的回调函数
 	 * @param nextContent 下一条消息的内容
 	 * @param files 附件文件列表
 	 */
-	onSubmit?: (nextContent: string, files?: IFile[]) => void
+	onSubmit: (
+		value: string,
+		options?: {
+			files?: IFile[]
+			inputs?: Record<string, unknown>
+		},
+	) => void
 	/**
 	 * 消息数据对象
 	 */
@@ -25,6 +37,7 @@ interface IMessageContentProps {
  */
 export default function MessageContent(props: IMessageContentProps) {
 	const {
+		appConfig,
 		onSubmit,
 		messageItem: {
 			id,
@@ -38,6 +51,24 @@ export default function MessageContent(props: IMessageContentProps) {
 			role,
 		},
 	} = props
+
+	const computedContent = useMemo(() => {
+		const likelyJSON = content.startsWith('{') && content.endsWith('}')
+		// 处理回复表单的自动生成消息
+		if (role === 'local' || (role === 'user' && likelyJSON)) {
+			if (appConfig.answerForm?.enabled && appConfig.answerForm?.feedbackText) {
+				// 尝试通过 json 解析
+				try {
+					const parsedValue = JSON.parse(content)
+					return parsedValue.isFormSubmit ? appConfig.answerForm?.feedbackText : content
+				} catch (error) {
+					console.log('computedContent json 解析失败', error)
+					return content
+				}
+			}
+		}
+		return content
+	}, [content])
 
 	// 如果是错误状态，则直接展示错误信息
 	if (status === 'error') {
@@ -74,7 +105,7 @@ export default function MessageContent(props: IMessageContentProps) {
 			{/* 消息主体文本内容 */}
 			<div className={role === 'local' || role === 'user' ? '' : 'md:min-w-chat-card'}>
 				<MarkdownRenderer
-					markdownText={content}
+					markdownText={computedContent}
 					onSubmit={onSubmit}
 				/>
 			</div>

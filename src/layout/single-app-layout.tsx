@@ -56,8 +56,8 @@ const SingleAppLayout: React.FC = () => {
 	const initInSingleMode = async () => {
 		difyApi.updateOptions({
 			user,
-			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.apiBase,
-			apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig.apiKey,
+			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiBase,
+			apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiKey,
 		})
 		initAppInfo().then(() => {
 			getConversationItems()

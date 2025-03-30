@@ -34,8 +34,16 @@ interface IMessageSenderProps {
 	onChange: (value: string) => void
 	/**
 	 * 提交事件
+	 * @param value 问题-文本
+	 * @param files 问题-文件
 	 */
-	onSubmit: (value: string, files?: IFile[]) => void
+	onSubmit: (
+		value: string,
+		options?: {
+			files?: IFile[]
+			inputs?: Record<string, unknown>
+		},
+	) => void
 	/**
 	 * 取消事件
 	 */
@@ -212,18 +220,18 @@ export const MessageSender = (props: IMessageSenderProps) => {
 					message.error('请等待所有文件上传完成')
 					return
 				}
-				await onSubmit(
-					content,
-					files?.map(file => {
-						const fileType = getFileTypeByName(file.name)
-						return {
-							...file,
-							type: fileType || 'document',
-							transfer_method: 'local_file',
-							upload_file_id: fileIdMap.get(file.uid) as string,
-						}
-					}) || [],
-				)
+				await onSubmit(content, {
+					files:
+						files?.map(file => {
+							const fileType = getFileTypeByName(file.name)
+							return {
+								...file,
+								type: fileType || 'document',
+								transfer_method: 'local_file',
+								upload_file_id: fileIdMap.get(file.uid) as string,
+							}
+						}) || [],
+				})
 				setFiles([])
 				setOpen(false)
 			}}

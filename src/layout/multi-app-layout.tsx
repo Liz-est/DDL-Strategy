@@ -10,7 +10,7 @@ import { type IConversationItem } from '@dify-chat/components'
 import { type IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useMount, useUpdateEffect } from 'ahooks'
-import { Button, Form, Input, message, Modal, Spin } from 'antd'
+import { Button, Form, message, Modal, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -18,6 +18,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import AppList from '@/components/app-list'
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { Logo } from '@/components/logo'
+import SettingForm from '@/components/setting-form'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useMap4Arr } from '@/hooks/use-map-4-arr'
 import { colors } from '@/theme/config'
@@ -38,8 +39,8 @@ const useStyle = createStyles(({ token, css }) => {
 
 const MultiAppLayout: React.FC = () => {
 	const searchParams = useSearchParams()
-	const difyChatContext = useDifyChat() as IDifyChatContextMultiApp
-	const { user, appService } = difyChatContext
+	const { setCurrentAppConfig, ...difyChatContext } = useDifyChat()
+	const { user, appService } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
 	const [difyApi] = useState(
@@ -122,6 +123,7 @@ const MultiAppLayout: React.FC = () => {
 			user,
 			...appItem.requestConfig,
 		})
+		setCurrentAppConfig(appItem)
 		initApp()
 	}, [selectedAppId])
 
@@ -193,35 +195,7 @@ const MultiAppLayout: React.FC = () => {
 				width: 600,
 				centered: true,
 				title: `${updatingItem ? '更新' : '添加'} Dify 应用配置`,
-				content: (
-					<Form
-						form={settingForm}
-						labelAlign="left"
-						className="mt-4"
-						labelCol={{
-							span: 5,
-						}}
-					>
-						<Form.Item
-							label="API Base"
-							name="apiBase"
-							rules={[{ required: true }]}
-							tooltip="Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1"
-							required
-						>
-							<Input placeholder="请输入 API BASE" />
-						</Form.Item>
-						<Form.Item
-							label="API Key"
-							name="apiKey"
-							tooltip="Dify App 的 API Key (以 app- 开头)"
-							rules={[{ required: true }]}
-							required
-						>
-							<Input placeholder="请输入 API Key" />
-						</Form.Item>
-					</Form>
-				),
+				content: <SettingForm formInstance={settingForm} />,
 				onOk: async () => {
 					await settingForm.validateFields()
 					const values = settingForm.getFieldsValue()
@@ -233,11 +207,15 @@ const MultiAppLayout: React.FC = () => {
 						apiKey: values.apiKey,
 					})
 					const difyAppInfo = await newDifyApiInstance.getAppInfo()
-					const commonInfo = {
+					const commonInfo: Omit<IDifyAppItem, 'id'> = {
 						info: difyAppInfo,
 						requestConfig: {
 							apiBase: values.apiBase,
 							apiKey: values.apiKey,
+						},
+						answerForm: {
+							enabled: values['answerForm.enabled'],
+							feedbackText: values['answerForm.feedbackText'],
 						},
 					}
 					if (updatingItem) {
@@ -316,6 +294,7 @@ const MultiAppLayout: React.FC = () => {
 						</div>
 					) : (
 						<ChatboxWrapper
+							appConfig={appList?.find(item => item.id === selectedAppId)}
 							appInfo={appInfo}
 							difyApi={difyApi}
 							conversationId={currentConversationId}

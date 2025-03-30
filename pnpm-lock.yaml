@@ -166,6 +166,9 @@ importers:
       '@dify-chat/api':
         specifier: workspace:^
         version: link:../api
+      '@dify-chat/core':
+        specifier: workspace:^
+        version: link:../core
       '@dify-chat/helpers':
         specifier: workspace:^
         version: link:../helpers

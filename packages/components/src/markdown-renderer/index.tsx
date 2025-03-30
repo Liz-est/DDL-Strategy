@@ -1,6 +1,6 @@
 import { IFile } from '@dify-chat/api'
 import { Typography } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import './index.css'
 import md from './utils'
@@ -9,7 +9,13 @@ interface IMarkdownRendererProps {
 	/**
 	 * 提交消息
 	 */
-	onSubmit?: (value: string, files?: IFile[]) => void
+	onSubmit: (
+		value: string,
+		options?: {
+			files?: IFile[]
+			inputs?: Record<string, unknown>
+		},
+	) => void
 	/**
 	 * 原始 Markdown 文本
 	 */
@@ -22,7 +28,7 @@ interface IMarkdownRendererProps {
 export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
 	const { onSubmit, markdownText } = props
 
-	useEffect(() => {
+	const dangerousHTML = useMemo(() => {
 		md.renderer.rules.html_block = function (tokens, idx) {
 			let html = tokens[idx].content
 
@@ -61,11 +67,16 @@ export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
 					values[child.name] = child.value
 				}
 			}
-			onSubmit?.(JSON.stringify(values))
+			onSubmit?.(
+				JSON.stringify({
+					...values,
+					isFormSubmit: true,
+				}),
+				{
+					inputs: values,
+				},
+			)
 		}
-	}, [])
-
-	const dangerousHTML = useMemo(() => {
 		return md.render(markdownText)
 	}, [markdownText])
 

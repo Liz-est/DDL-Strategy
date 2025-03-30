@@ -9,7 +9,7 @@ import {
 } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
-import { useDifyChat } from '@dify-chat/core'
+import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -30,6 +30,10 @@ interface IChatboxWrapperProps {
 	 * 应用参数
 	 */
 	appParameters?: IGetAppParametersResponse
+	/**
+	 * Dify 应用配置
+	 */
+	appConfig?: IDifyAppItem
 	/**
 	 * Dify API 实例
 	 */
@@ -72,6 +76,7 @@ interface IChatboxWrapperProps {
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const { mode } = useDifyChat()
 	const {
+		appConfig,
 		appInfo,
 		appParameters,
 		difyApi,
@@ -212,7 +217,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		)
 	}, [appParameters, inputParams])
 
-	const onSubmit = (nextContent: string, files?: IFile[]) => {
+	const onSubmit = (
+		nextContent: string,
+		options?: { files?: IFile[]; inputs?: Record<string, unknown> },
+	) => {
 		// 先校验表单是否填写完毕
 		if (!isFormFilled) {
 			// 过滤出没有填写的字段
@@ -227,10 +235,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			return
 		}
 
-		filesRef.current = files || []
+		filesRef.current = options?.files || []
 		onRequest({
 			content: nextContent,
-			files: files as IMessageFileItem[],
+			files: options?.files as IMessageFileItem[],
 		})
 	}
 
@@ -327,6 +335,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 				{chatReady && conversationId ? (
 					<Chatbox
+						appConfig={appConfig!}
 						conversationId={conversationId}
 						appParameters={appParameters}
 						nextSuggestions={nextSuggestions}

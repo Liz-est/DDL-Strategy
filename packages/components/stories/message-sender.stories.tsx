@@ -40,11 +40,11 @@ export const Primary: Story = {
 				onChange={onChange}
 				isRequesting={isRequesting}
 				onCancel={() => setIsRequesting(false)}
-				onSubmit={(value, files) => {
+				onSubmit={(value, options) => {
 					setIsRequesting(true)
 					setTimeout(() => {
 						message.success(`发送成功: ${value}`)
-						console.log('发送成功', '文本:', value, '文件:', files)
+						console.log('发送成功', '文本:', value, '文件:', options?.files)
 						setIsRequesting(false)
 						setContent('')
 					}, 3000)

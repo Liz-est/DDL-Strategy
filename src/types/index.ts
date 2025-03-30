@@ -38,6 +38,10 @@ export interface IAgentMessage {
 	 */
 	content: string
 	/**
+	 * 输入变量
+	 */
+	inputs?: Record<string, string>
+	/**
 	 * Agent 思维链信息
 	 */
 	agentThoughts?: IAgentThought[]

@@ -50,7 +50,7 @@ export const useX = (options: {
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 			// 发送消息
 			const response = await difyApi.sendMessage({
-				inputs: latestState.current.inputParams,
+				inputs: message?.inputs || latestState.current.inputParams,
 				conversation_id: !isTempId(latestProps.current.conversationId)
 					? latestProps.current.conversationId
 					: undefined,

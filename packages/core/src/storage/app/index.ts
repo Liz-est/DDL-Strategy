@@ -36,6 +36,19 @@ export interface IDifyAppItem {
 		 */
 		apiKey: string
 	}
+	/**
+	 * 回复表单配置
+	 */
+	answerForm?: {
+		/**
+		 * 是否启用
+		 */
+		enabled: boolean
+		/**
+		 * 反馈的占位文字
+		 */
+		feedbackText?: string
+	}
 }
 
 /**

@@ -1,6 +1,7 @@
 import { RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IGetAppParametersResponse, IMessageItem4Render } from '@dify-chat/api'
+import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { GetProp } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
@@ -15,6 +16,10 @@ export interface ChatboxProps {
 	 * 应用参数
 	 */
 	appParameters?: IGetAppParametersResponse
+	/**
+	 * 应用配置
+	 */
+	appConfig: IDifyAppItem
 	/**
 	 * 消息列表
 	 */
@@ -36,7 +41,13 @@ export interface ChatboxProps {
 	 * @param value 问题-文本
 	 * @param files 问题-文件
 	 */
-	onSubmit: (value: string, files?: IFile[]) => void
+	onSubmit: (
+		value: string,
+		options?: {
+			files?: IFile[]
+			inputs?: Record<string, unknown>
+		},
+	) => void
 	/**
 	 * 取消读取流
 	 */
@@ -78,6 +89,7 @@ export const Chatbox = (props: ChatboxProps) => {
 		feedbackCallback,
 		difyApi,
 		appParameters,
+		appConfig,
 	} = props
 	const [content, setContent] = useState('')
 	const isMobile = useIsMobile()
@@ -123,6 +135,7 @@ export const Chatbox = (props: ChatboxProps) => {
 				messageRender: () => {
 					return (
 						<MessageContent
+							appConfig={appConfig}
 							onSubmit={onSubmit}
 							messageItem={messageItem}
 						/>
@@ -202,11 +215,11 @@ export const Chatbox = (props: ChatboxProps) => {
 							appParameters={appParameters}
 							content={content}
 							onChange={value => setContent(value)}
-							onSubmit={(content, files) => {
+							onSubmit={(content, options) => {
 								if (!content) {
 									return
 								}
-								onSubmit(content, files)
+								onSubmit(content, options)
 								setContent('')
 							}}
 							isRequesting={isRequesting}
