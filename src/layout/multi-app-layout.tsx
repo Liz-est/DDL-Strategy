@@ -188,6 +188,8 @@ const MultiAppLayout: React.FC = () => {
 			settingForm.setFieldsValue({
 				apiBase: updatingItem.requestConfig.apiBase,
 				apiKey: updatingItem.requestConfig.apiKey,
+				'answerForm.enabled': updatingItem.answerForm?.enabled || false,
+				'answerForm.feedbackText': updatingItem.answerForm?.feedbackText || '',
 			})
 		}
 		return new Promise(resolve => {
