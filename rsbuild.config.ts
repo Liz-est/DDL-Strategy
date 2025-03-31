@@ -5,7 +5,13 @@ import { pluginSourceBuild } from '@rsbuild/plugin-source-build'
 import path from 'path'
 import tailwindcss from 'tailwindcss'
 
+const tsconfigDevPath = path.resolve(__dirname, './tsconfig.json')
+const tsconfigProdPath = path.resolve(__dirname, './tsconfig.prod.json')
+
 export default defineConfig({
+	source: {
+		tsconfigPath: process.env.NODE_ENV === 'development' ? tsconfigDevPath : tsconfigProdPath,
+	},
 	html: {
 		template: path.resolve(__dirname, './public/template.html'),
 	},

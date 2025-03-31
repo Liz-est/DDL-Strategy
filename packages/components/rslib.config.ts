@@ -4,8 +4,8 @@ import path from 'path'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
-const tsconfigDevPath = path.resolve(__dirname, './tsconfig.dev.json')
-const tsconfigProdPath = path.resolve(__dirname, './tsconfig.json')
+const tsconfigDevPath = path.resolve(__dirname, './tsconfig.json')
+const tsconfigProdPath = path.resolve(__dirname, './tsconfig.prod.json')
 
 export default defineConfig({
 	source: {
