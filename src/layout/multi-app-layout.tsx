@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, SettingOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
 import {
 	createDifyApiInstance,
@@ -6,11 +6,11 @@ import {
 	IGetAppInfoResponse,
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
-import { type IConversationItem } from '@dify-chat/components'
+import { ConversationList, type IConversationItem } from '@dify-chat/components'
 import { type IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useMount, useUpdateEffect } from 'ahooks'
-import { Button, Form, message, Modal, Spin } from 'antd'
+import { Button, Empty, Form, message, Modal, Popover, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -24,6 +24,8 @@ import { useMap4Arr } from '@/hooks/use-map-4-arr'
 import { colors } from '@/theme/config'
 
 import './../App.css'
+import { useIsMobile } from '@dify-chat/helpers'
+import AppManageDrawer, { useAppManageDrawer } from '@/components/app-manage-drawer'
 
 const useStyle = createStyles(({ token, css }) => {
 	return {
@@ -61,6 +63,9 @@ const MultiAppLayout: React.FC = () => {
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
 	const [appListLoading, setAppListLoading] = useState<boolean>(false)
+	const isMobile = useIsMobile()
+
+	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
 
 	/**
 	 * 获取应用列表
@@ -252,46 +257,61 @@ const MultiAppLayout: React.FC = () => {
 				<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
 					{/* 🌟 Logo */}
 					<Logo />
-					{/* 添加应用 */}
+					{/* 添加会话 */}
 					<Button
-						onClick={() => openSettingModal()}
+						onClick={() => onAddConversation()}
 						className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default"
 						icon={<PlusOutlined />}
 					>
-						添加 Dify 应用
+						新增对话
 					</Button>
-					{/* 🌟 应用管理 */}
-					<div className="px-3 pb-3 flex-1 overflow-y-auto">
-						<Spin spinning={appListLoading}>
-							<AppList
-								selectedId={selectedAppId}
-								onSelectedChange={id => {
-									setSelectedAppId(id)
-								}}
-								list={appList}
-								onUpdate={async (id: string, item) => {
-									const currentItem = appList.find(item => item.id === id)
-									if (!currentItem) {
-										message.error('应用不存在')
-										return
+					{/* 🌟 对话管理 */}
+					<div className="px-3">
+						<Spin spinning={conversationListLoading}>
+							{conversationsItems?.length ? (
+								<ConversationList
+									renameConversationPromise={(conversationId: string, name: string) =>
+										difyApi?.renameConversation({
+											conversation_id: conversationId,
+											name,
+										})
 									}
-									return openSettingModal(item)
-								}}
-								onDelete={async (id: string) => {
-									await appService.deleteApp(id)
-									getAppList()
-								}}
-							/>
+									deleteConversationPromise={difyApi?.deleteConversation}
+									items={conversationsItems}
+									activeKey={currentConversationId}
+									onActiveChange={id => setCurrentConversationId(id)}
+									onItemsChange={setConversationsItems}
+									refreshItems={getConversationItems}
+								/>
+							) : (
+								<Empty
+									className="mt-6"
+									description="当前应用下暂无会话"
+								/>
+							)}
 						</Spin>
 					</div>
 				</div>
 
 				{/* 右侧聊天窗口 - 移动端全屏 */}
-				<div className="flex-1 min-w-0">
-					{' '}
+
+				{/* 头部 */}
+				<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+					<div className="h-16 !leading-[4rem] px-8 text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border">
+						{/* 对话标题及切换 */}
+						{conversationName || DEFAULT_CONVERSATION_NAME}
+
+						<Button
+							icon={<SettingOutlined />}
+							onClick={()=>setAppManageDrawerVisible(true)}
+						>
+							应用管理
+						</Button>
+					</div>
+
 					{/* 新增外层容器 */}
 					{conversationListLoading ? (
-						<div className="w-full h-full flex items-center justify-center">
+						<div className="w-full flex-1 flex items-center justify-center">
 							<Spin spinning />
 						</div>
 					) : (
@@ -312,6 +332,8 @@ const MultiAppLayout: React.FC = () => {
 					)}
 				</div>
 			</div>
+
+			<AppManageDrawer open={appManageDrawerVisible} onClose={()=>setAppManageDrawerVisible(false)} activeAppId={selectedAppId} />
 		</XProvider>
 	)
 }
