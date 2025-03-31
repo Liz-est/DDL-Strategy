@@ -314,6 +314,8 @@ pnpm install
 
 启动开发服务器：
 
+> 支持子包热更新，无需提前构建
+
 ```bash
 pnpm dev
 ```
@@ -357,6 +359,7 @@ pnpm preview
   - [x] 支持内容复制
   - [x] 支持点赞/点踩
   - [x] 支持消息文件点击下载
+  - [x] 支持回复表单展示和提交
 - [x] 支持多应用模式
   - [x] Localstorage 实现
   - [x] Restful API 实现
