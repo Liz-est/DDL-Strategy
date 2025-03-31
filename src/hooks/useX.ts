@@ -12,6 +12,7 @@ import { IWorkflowNode } from '@dify-chat/api'
 import { useDifyChat } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { message as antdMessage } from 'antd'
+import { useState } from 'react'
 
 import { RESPONSE_MODE } from '@/config'
 import { IAgentMessage, IMessageFileItem } from '@/types'
@@ -45,6 +46,7 @@ export const useX = (options: {
 		difyApi,
 	} = options
 	const { user } = useDifyChat()
+	const [currentTaskId, setCurrentTaskId] = useState('')
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
@@ -88,6 +90,10 @@ export const useX = (options: {
 			const reader = readableStream.getReader()
 			abortRef.current = () => {
 				reader?.cancel()
+				onError({
+					name: 'abort',
+					message: '用户已取消',
+				})
 			}
 
 			while (reader) {
@@ -138,6 +144,9 @@ export const useX = (options: {
 						parsedData = JSON.parse(chunk.data)
 					} catch (error) {
 						console.error('解析 JSON 失败', error)
+					}
+					if (parsedData.task_id && parsedData.task_id !== currentTaskId) {
+						setCurrentTaskId(parsedData.task_id)
 					}
 					if (parsedData.event === EventEnum.MESSAGE_END) {
 						onSuccess({
@@ -306,5 +315,5 @@ export const useX = (options: {
 		agent,
 	})
 
-	return { agent, onRequest, messages, setMessages }
+	return { agent, onRequest, messages, setMessages, currentTaskId }
 }

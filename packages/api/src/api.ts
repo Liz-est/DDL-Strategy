@@ -376,6 +376,15 @@ export class DifyApi {
 	}
 
 	/**
+	 * 停止对话流式响应
+	 */
+	async stopTask(taskId: string) {
+		return this.baseRequest.post(`/chat-messages/${taskId}/stop`, {
+			user: this.options.user,
+		})
+	}
+
+	/**
 	 * 上传文件
 	 */
 	async uploadFile(file: File) {

@@ -169,7 +169,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setHistoryMessages(newMessages)
 	}
 
-	const { agent, onRequest, messages, setMessages } = useX({
+	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
 		latestProps,
 		latestState,
 		filesRef,
@@ -344,9 +344,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						isRequesting={agent.isRequesting()}
 						onPromptsItemClick={onPromptsItemClick}
 						onSubmit={onSubmit}
-						onCancel={() => {
-							console.log('打断输出')
+						onCancel={async () => {
 							abortRef.current()
+							if (currentTaskId) {
+								await difyApi.stopTask(currentTaskId)
+								getConversationMessages(conversationId)
+							}
 						}}
 						feedbackApi={difyApi.feedbackMessage}
 						feedbackCallback={(conversationId: string) => {
