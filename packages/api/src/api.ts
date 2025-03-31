@@ -140,18 +140,55 @@ interface IGetConversationListResponse {
  * 会话历史 Item 结构
  */
 interface IMessageItem {
+	/**
+	 * 消息 ID
+	 */
 	id: string
+	/**
+	 * 对话 ID
+	 */
 	conversation_id: string
+	/**
+	 * 输入参数，键值对形式
+	 */
 	inputs: Record<string, string>
+	/**
+	 * 问题
+	 */
 	query: string
+	/**
+	 * 答案
+	 */
 	answer: string
+	/**
+	 * 消息关联的文件列表
+	 */
 	message_files: []
+	/**
+	 * 消息反馈信息
+	 */
 	feedback?: {
+		/**
+		 * 反馈类型，like 表示点赞，dislike 表示点踩
+		 */
 		rating: 'like' | 'dislike'
 	}
+	/**
+	 * 消息状态，normal 表示正常，error 表示出错
+	 */
 	status: 'normal' | 'error'
+	/**
+	 * 错误信息，若消息状态为 error 时，该字段包含具体错误信息，否则为 null
+	 */
 	error: string | null
+	/**
+	 * 智能体思考过程列表
+	 */
 	agent_thoughts?: IAgentThought[]
+	/**
+	 * 消息创建时间戳
+	 */
+	created_at: number
 	/**
 	 * 知识库引用列表
 	 */
