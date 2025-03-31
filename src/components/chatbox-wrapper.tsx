@@ -12,6 +12,7 @@ import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/compone
 import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
@@ -142,6 +143,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		}
 
 		result.data.forEach(item => {
+			const createdAt = dayjs(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss')
 			newMessages.push(
 				{
 					id: item.id,
@@ -150,6 +152,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					isHistory: true,
 					files: item.message_files,
 					role: 'user',
+					created_at: createdAt,
 				},
 				{
 					id: item.id,
@@ -161,6 +164,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					agentThoughts: item.agent_thoughts || [],
 					retrieverResources: item.retriever_resources || [],
 					role: 'ai',
+					created_at: createdAt,
 				},
 			)
 		})

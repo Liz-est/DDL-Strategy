@@ -144,21 +144,24 @@ export const Chatbox = (props: ChatboxProps) => {
 				// 用户发送消息时，status 为 local，需要展示为用户头像
 				role: messageItem.role === 'local' ? 'user' : messageItem.role,
 				footer: messageItem.role === 'ai' && (
-					<MessageFooter
-						feedbackApi={params => difyApi.feedbackMessage(params)}
-						messageId={messageItem.id}
-						messageContent={messageItem.content}
-						feedback={{
-							rating: messageItem.feedback?.rating,
-							callback: () => {
-								feedbackCallback?.(conversationId!)
-							},
-						}}
-					/>
+					<div className="flex items-center">
+						<MessageFooter
+							feedbackApi={params => difyApi.feedbackMessage(params)}
+							messageId={messageItem.id}
+							messageContent={messageItem.content}
+							feedback={{
+								rating: messageItem.feedback?.rating,
+								callback: () => {
+									feedbackCallback?.(conversationId!)
+								},
+							}}
+						/>
+						<div className="ml-3 text-sm text-desc">回复时间：{messageItem.created_at}</div>
+					</div>
 				),
 			}
 		}) as GetProp<typeof Bubble.List, 'items'>
-	}, [messageItems, conversationId, difyApi, feedbackCallback])
+	}, [messageItems, conversationId, difyApi, feedbackCallback, appConfig, onSubmit])
 
 	// 监听 items 更新，滚动到最底部
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
