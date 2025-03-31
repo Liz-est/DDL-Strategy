@@ -38,7 +38,6 @@
 		"@rsbuild/core": "^1.2.19",
 		"@rsbuild/plugin-less": "^1.1.1",
 		"@rsbuild/plugin-react": "^1.1.1",
-		"@rsbuild/plugin-source-build": "^1.0.2",
 		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
 		"@types/markdown-it": "^14.1.2",
 		"@types/node": "^22.13.13",

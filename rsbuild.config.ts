@@ -1,7 +1,6 @@
 import { defineConfig } from '@rsbuild/core'
 import { pluginLess } from '@rsbuild/plugin-less'
 import { pluginReact } from '@rsbuild/plugin-react'
-import { pluginSourceBuild } from '@rsbuild/plugin-source-build'
 import path from 'path'
 import tailwindcss from 'tailwindcss'
 
@@ -25,7 +24,6 @@ export default defineConfig({
 				},
 			},
 		}),
-		pluginSourceBuild(),
 	],
 	server: {
 		compress: false, // 解决代理后流式输出失效的问题
