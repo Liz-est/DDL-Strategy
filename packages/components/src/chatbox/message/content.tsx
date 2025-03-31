@@ -87,7 +87,6 @@ export default function MessageContent(props: IMessageContentProps) {
 		!content &&
 		!files?.length &&
 		!agentThoughts?.length &&
-		!content &&
 		!workflows?.nodes?.length &&
 		!retrieverResources?.length
 	) {
