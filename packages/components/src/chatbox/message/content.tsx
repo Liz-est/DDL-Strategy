@@ -69,7 +69,7 @@ export default function MessageContent(props: IMessageContentProps) {
 			}
 		}
 		return content
-	}, [content])
+	}, [content, appConfig.answerForm, role])
 
 	// 如果是错误状态，则直接展示错误信息
 	if (status === 'error') {
