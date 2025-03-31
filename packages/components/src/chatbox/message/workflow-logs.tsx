@@ -73,20 +73,26 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 								</div>
 							),
 							children: (
-								<div>
-									<WorkflowNodeDetail
-										title="输入"
-										originalContent={item.inputs}
-									/>
-									<WorkflowNodeDetail
-										title="处理过程"
-										originalContent={item.process_data}
-									/>
-									<WorkflowNodeDetail
-										title="输出"
-										originalContent={item.outputs}
-									/>
-								</div>
+								<Collapse
+									size="small"
+									items={[
+										{
+											key: `${item.id}-input`,
+											label: '输入',
+											children: <WorkflowNodeDetail originalContent={item.inputs} />,
+										},
+										{
+											key: `${item.id}-process`,
+											label: '处理过程',
+											children: <WorkflowNodeDetail originalContent={item.process_data} />,
+										},
+										{
+											key: `${item.id}-output`,
+											label: '输出',
+											children: <WorkflowNodeDetail originalContent={item.outputs} />,
+										},
+									]}
+								></Collapse>
 							),
 						}
 					})}

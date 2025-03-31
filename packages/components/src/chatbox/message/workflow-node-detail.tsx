@@ -3,7 +3,6 @@ import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { message } from 'antd'
 
 interface IWorkflowNodeDetailProps {
-	title: string
 	/**
 	 * 原始结构化内容
 	 */
@@ -11,11 +10,10 @@ interface IWorkflowNodeDetailProps {
 }
 
 export default function WorkflowNodeDetail(props: IWorkflowNodeDetailProps) {
-	const { title, originalContent } = props
+	const { originalContent } = props
 
 	return (
-		<div className="mb-2">
-			{title}：
+		<div>
 			{originalContent ? (
 				<>
 					<CopyOutlined
