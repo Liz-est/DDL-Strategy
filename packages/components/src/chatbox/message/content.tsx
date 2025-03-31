@@ -1,6 +1,7 @@
-import { WarningOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { IFile, IMessageItem4Render } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
+import { Tooltip } from 'antd'
 import { useMemo } from 'react'
 
 import { MarkdownRenderer } from '../../markdown-renderer'
@@ -76,6 +77,27 @@ export default function MessageContent(props: IMessageContentProps) {
 			<p className="text-red-700">
 				<WarningOutlined className="mr-2" />
 				<span>{error}</span>
+			</p>
+		)
+	}
+
+	// 如果状态正常且没有任何数据，则展示缺省
+	if (
+		status === 'success' &&
+		!content &&
+		!files?.length &&
+		!agentThoughts?.length &&
+		!content &&
+		!workflows?.nodes?.length &&
+		!retrieverResources?.length
+	) {
+		return (
+			<p className="text-orange-600">
+				<WarningOutlined className="mr-2" />
+				<span>消息内容为空</span>
+				<Tooltip title="可能是用户在生成内容的过程中点击了停止响应按钮">
+					<QuestionCircleOutlined className="ml-2" />
+				</Tooltip>
 			</p>
 		)
 	}
