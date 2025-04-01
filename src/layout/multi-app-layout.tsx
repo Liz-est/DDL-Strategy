@@ -9,7 +9,7 @@ import { ConversationList, type IConversationItem } from '@dify-chat/components'
 import { type IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useMount, useUpdateEffect } from 'ahooks'
-import { Button, Divider, Dropdown, Empty, message, Spin, Tooltip } from 'antd'
+import { Button, Divider, Dropdown, Empty, message, Space, Spin, Tooltip } from 'antd'
 import { createStyles } from 'antd-style'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -38,7 +38,7 @@ const useStyle = createStyles(({ token, css }) => {
 const MultiAppLayout: React.FC = () => {
 	const searchParams = useSearchParams()
 	const { setCurrentAppConfig, ...difyChatContext } = useDifyChat()
-	const { user, appService } = difyChatContext as IDifyChatContextMultiApp
+	const { user, appService, enableSetting } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
 	const [difyApi] = useState(
@@ -242,39 +242,42 @@ const MultiAppLayout: React.FC = () => {
 						</div>
 
 						<div className="flex items-center text-sm">
-							<Dropdown
-								arrow
-								placement="bottomRight"
-								menu={{
-									items: appList?.map(item => {
-										const isSelected = selectedAppId === item.id
-										return {
-											key: item.id,
-											label: (
-												<div className={isSelected ? 'text-primary' : 'text-default'}>
-													{isSelected ? '【当前】' : ''}
-													{item.info.name}
-												</div>
-											),
-											onClick: () => {
-												setSelectedAppId(item.id)
-											},
-										}
-									}),
-								}}
-							>
-								<div className="flex items-center cursor-pointer">
-									<div>当前应用：{selectedAppItem?.info.name}</div>
-									<SwapOutlined className="cursor-pointer ml-1" />
-								</div>
-							</Dropdown>
-							<Divider type="vertical" />
-							<Tooltip title="应用配置管理">
-								<SettingOutlined
-									className="cursor-pointer"
-									onClick={() => setAppManageDrawerVisible(true)}
-								/>
-							</Tooltip>
+							<Space split={<Divider type="vertical" />}>
+								<Dropdown
+									arrow
+									placement="bottomRight"
+									menu={{
+										items: appList?.map(item => {
+											const isSelected = selectedAppId === item.id
+											return {
+												key: item.id,
+												label: (
+													<div className={isSelected ? 'text-primary' : 'text-default'}>
+														{isSelected ? '【当前】' : ''}
+														{item.info.name}
+													</div>
+												),
+												onClick: () => {
+													setSelectedAppId(item.id)
+												},
+											}
+										}),
+									}}
+								>
+									<div className="flex items-center cursor-pointer">
+										<div>当前应用：{selectedAppItem?.info.name}</div>
+										<SwapOutlined className="cursor-pointer ml-1" />
+									</div>
+								</Dropdown>
+								{enableSetting ? (
+									<Tooltip title="应用配置管理">
+										<SettingOutlined
+											className="cursor-pointer"
+											onClick={() => setAppManageDrawerVisible(true)}
+										/>
+									</Tooltip>
+								) : null}
+							</Space>
 						</div>
 					</div>
 
