@@ -28,10 +28,14 @@ hr {
 	display: none;
 }
 
-details {
-	background-color: transparent !important;
-	padding: 0 !important;
-	margin-top: 0.5rem;
+.ant-bubble-content {
+	think,
+	details {
+		background-color: transparent !important;
+		padding: 0 !important;
+		margin-top: 0.5rem;
+		color: gray;
+	}
 }
 
 h3 {
