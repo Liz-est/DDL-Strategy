@@ -132,21 +132,33 @@ export default function App() {
 
 ### 2. 多应用模式
 
-如果你需要支持用户在界面上添加多个 Dify 应用，多应用模式也是开箱即用的。
+如果你需要支持用户在界面上配置以及/或者切换多个 Dify 应用，多应用模式也是开箱即用的。
 
 #### 2.1. 在界面上添加 Dify 应用配置
 
-点击页面左上角 "添加 Dify 应用配置" 按钮：
+如果之前没有存量数据，第一次进入页面时会展示缺省状态，你需要点击页面右上角的 "应用配置管理" 按钮：
 
-![添加应用配置按钮](./docs/guide__add_dify_config.png)
+![应用配置管理按钮](./docs/guide_mtapp_setting.png)
 
-即可看到添加配置弹窗，依次填入我们在上一步中获取的信息：
+会弹出应用配置管理抽屉，点击下面的 "添加应用" 按钮：
 
-![添加应用配置弹窗](./docs/guide_add_dify_config_modal.png)
+![应用配置管理抽屉](./docs/guide_mtapp_setting_drawer.png)
 
-点击确定按钮，提示 “添加配置成功”，即可在左侧的应用列表中多出了一条数据：
+即可打开添加配置抽屉：
 
-![添加应用配置成功](./docs/guide__sample_app_config.png)
+![添加应用配置抽屉](./docs/guide_mtapp_setting_add.png)
+
+依次填入我们在上一步中获取的信息：
+
+![添加应用配置抽屉-已填入信息](./docs/guide_mtapp_setting_add_fulfilled.png)
+
+点击确定按钮，提示 “添加配置成功”，在应用列表中会多出一条数据：
+
+![添加应用配置成功](./docs/guide_mtapp_setting_add_success.png)
+
+主界面也会默认切换到刚刚添加的应用，加载对话列表，默认渲染第一条对话的历史记录：
+
+![主界面](./docs/guide_mtapp_main.png)
 
 #### 2.2. 自定义应用配置管理 (按需)
 
@@ -200,6 +212,33 @@ export default function App() {
 - 删除 App 配置
 
 然后在 `src/services/app` 中新建一个文件，只需要继承抽象类 `DifyAppStore` 并实现它的所有方法, 调用在上述服务中对应的接口即可。
+
+#### 2.3 禁用应用配置管理功能
+
+当你不想让用户在界面上管理应用配置, 而是仅提供一个应用列表供用户切换，可以在 `src/App.tsx` 中添加一个配置项即可：
+
+```tsx
+// src/App.tsx
+import { DifyChatProvider } from '@dify-chat/core'
+
+import DifyAppService from './services/app/localstorage'
+
+export default function App() {
+	return (
+		<DifyChatProvider
+			value={{
+				enableSetting: false,
+			}}
+		>
+			子组件
+		</DifyChatProvider>
+	)
+}
+```
+
+此时，页面上就只会展示应用切换按钮, 用户仍然可以切换应用，但设置入口被隐藏：
+
+![应用切换按钮](./docs/guide_mtapp_setting_hidden.png)
 
 ### 3. 跨域处理
 
@@ -364,6 +403,7 @@ pnpm preview
   - [x] Localstorage 实现
   - [x] Restful API 实现
   - [x] 支持自定义后端服务
+  - [x] 配置和切换功能分离，支持隐藏配置入口
 - [x] 支持单应用模式
 - [ ] 子包发布
   - [ ] 发布 `@dify-chat/core` 包
