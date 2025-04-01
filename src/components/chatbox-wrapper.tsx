@@ -1,4 +1,4 @@
-import { PlusCircleOutlined, SettingOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { UnorderedListOutlined } from '@ant-design/icons'
 import { Prompts } from '@ant-design/x'
 import {
 	DifyApi,
@@ -9,9 +9,9 @@ import {
 } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
-import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
+import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
+import { Empty, GetProp, message, Popover, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -75,7 +75,6 @@ interface IChatboxWrapperProps {
 }
 
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
-	const { mode } = useDifyChat()
 	const {
 		appConfig,
 		appInfo,
@@ -296,7 +295,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 								refreshItems={conversationItemsChangeCallback}
 							/>
 						) : (
-							<Empty description="当前应用下暂无会话" />
+							<Empty description="暂无会话" />
 						)}
 					</Spin>
 				</div>
@@ -312,9 +311,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden flex-1">
-			{isMobile ? (
-				<MobileHeader centerChildren={conversationTitle} />
-			) : null}
+			{isMobile ? <MobileHeader centerChildren={conversationTitle} /> : null}
 
 			<div className="flex-1 overflow-hidden relative">
 				{initLoading ? (

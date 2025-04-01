@@ -181,7 +181,7 @@ const SingleAppLayout: React.FC = () => {
 							) : (
 								<Empty
 									className="mt-6"
-									description="当前应用下暂无会话"
+									description="暂无会话"
 								/>
 							)}
 						</Spin>
