@@ -81,17 +81,17 @@ Chatflow 工作流：
 
 进入 Dify 的应用详情，点击左侧的 `访问 API`：
 
-![获取域名和前缀](./docs/get_api_base.jpg)
+![获取域名和前缀](./docs/get_api_base.png)
 
 `API 服务器` 后展示的域名即为 `API Base` 变量的值。
 
 点击右侧的 `API 密钥` 按钮，即可看到 API Key 的管理弹窗：
 
-![获取 API Key](./docs/get_api_key_entry.jpg)
+![获取 API Key](./docs/get_api_key_entry.png)
 
 你可以选择创建一个新的 API Key，或者复制现有的 API Key。
 
-![获取 API Key](./docs/get_api_key.jpg)
+![获取 API Key](./docs/get_api_key.png)
 
 完成以上步骤后，我们将会得到如下信息：
 
