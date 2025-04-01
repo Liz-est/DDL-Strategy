@@ -189,8 +189,12 @@ const SingleAppLayout: React.FC = () => {
 				</div>
 
 				{/* 右侧聊天窗口 - 移动端全屏 */}
-				<div className="flex-1 min-w-0">
-					{' '}
+				<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+					<div className="h-16 !leading-[4rem] px-8 top-0 z-20 bg-white w-full shadow-sm justify-between flex items-center box-border">
+						<div className="flex-1 truncate font-semibold  text-base">
+							{conversationName || DEFAULT_CONVERSATION_NAME}
+						</div>
+					</div>
 					{/* 新增外层容器 */}
 					{conversationListLoading ? (
 						<div className="w-full h-full flex items-center justify-center">

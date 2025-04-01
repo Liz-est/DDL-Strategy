@@ -37,6 +37,10 @@ export interface IDifyChatContextMultiApp extends IDifyChatContextBase {
 	 * 应用服务，用于实现应用列表的 CRUD 管理
 	 */
 	appService: DifyAppStore
+	/**
+	 * 是否允许用户配置, 启用后界面会展示设置按钮，点击可对应用进行增删改操作, 默认为 true
+	 */
+	enableSetting?: boolean
 }
 
 /**
@@ -49,6 +53,25 @@ const DEFAULT_CONTEXT_VALUE: IDifyChatContext = {
 	user: '',
 	// 修正为符合 DifyAppStore 类型的初始值，这里假设可以使用一个空对象作为初始值
 	appService: {} as DifyAppStore,
+	enableSetting: true,
+}
+
+/**
+ * 单应用模式下的默认上下文
+ */
+const DEFAULT_CONTEXT_VALUE_SINGLE_APP: IDifyChatContextSingleApp = {
+	mode: 'singleApp',
+	user: '',
+	appConfig: {
+		requestConfig: {
+			apiBase: '',
+			apiKey: '',
+		},
+		answerForm: {
+			enabled: false,
+			feedbackText: '',
+		},
+	},
 }
 
 /**
@@ -67,9 +90,13 @@ export const DifyChatProvider = DifyChatContext.Provider
 export const useDifyChat = (): IDifyChatContext & IGlobalStore => {
 	const [currentAppConfig, setCurrentAppConfig] = useState<IDifyAppItem>({} as IDifyAppItem)
 	const difyChatContext = useContext(DifyChatContext)
+	const { mode } = difyChatContext
+	const defaultValue =
+		mode === 'multiApp' ? DEFAULT_CONTEXT_VALUE : DEFAULT_CONTEXT_VALUE_SINGLE_APP
 	return {
 		currentAppConfig,
 		setCurrentAppConfig,
+		...defaultValue,
 		...difyChatContext,
 	}
 }

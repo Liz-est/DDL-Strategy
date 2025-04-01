@@ -1,4 +1,4 @@
-import { PlusCircleOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined, SettingOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import { Prompts } from '@ant-design/x'
 import {
 	DifyApi,
@@ -314,22 +314,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		<div className="flex h-screen flex-col overflow-hidden flex-1">
 			{isMobile ? (
 				<MobileHeader centerChildren={conversationTitle} />
-			) : (
-				<div className="h-16 !leading-[4rem] px-8 text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border">
-					{/* 对话标题及切换 */}
-					{mode === 'multiApp' ? conversationTitle : conversationName || DEFAULT_CONVERSATION_NAME}
-
-					{/* 大屏幕下的新增对话按钮 */}
-					{mode === 'singleApp' ? null : (
-						<Button
-							icon={<PlusCircleOutlined />}
-							onClick={onAddConversation}
-						>
-							新增对话
-						</Button>
-					)}
-				</div>
-			)}
+			) : null}
 
 			<div className="flex-1 overflow-hidden relative">
 				{initLoading ? (

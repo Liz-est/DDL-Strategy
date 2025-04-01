@@ -11,11 +11,11 @@ export default function SettingForm(props: ISettingFormProps) {
 
 	return (
 		<Form
+			autoComplete="off"
 			form={formInstance}
 			labelAlign="left"
-			className="mt-4"
 			labelCol={{
-				span: 6,
+				span: 5,
 			}}
 			initialValues={{
 				'answerForm.enabled': false,
@@ -23,7 +23,7 @@ export default function SettingForm(props: ISettingFormProps) {
 		>
 			<div className="text-base mb-3 flex items-center">
 				<div className="h-4 w-1 bg-primary rounded"></div>
-				<div className="ml-2">基础配置</div>
+				<div className="ml-2 font-semibold">请求配置</div>
 			</div>
 			<Form.Item
 				label="API Base"
@@ -32,7 +32,10 @@ export default function SettingForm(props: ISettingFormProps) {
 				tooltip="Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1"
 				required
 			>
-				<Input placeholder="请输入 API BASE" />
+				<Input
+					autoComplete="new-password"
+					placeholder="请输入 API BASE"
+				/>
 			</Form.Item>
 			<Form.Item
 				label="API Secret"
@@ -41,11 +44,14 @@ export default function SettingForm(props: ISettingFormProps) {
 				rules={[{ required: true }]}
 				required
 			>
-				<Input.Password placeholder="请输入 API Secret" />
+				<Input.Password
+					autoComplete="new-password"
+					placeholder="请输入 API Secret"
+				/>
 			</Form.Item>
 			<div className="text-base mb-3 flex items-center">
 				<div className="h-4 w-1 bg-primary rounded"></div>
-				<div className="ml-2">更多配置</div>
+				<div className="ml-2 font-semibold">更多配置</div>
 			</div>
 			<Form.Item
 				label="表单回复"
