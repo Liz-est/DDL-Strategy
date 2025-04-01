@@ -194,7 +194,7 @@ const MultiAppLayout: React.FC = () => {
 				{/* 左侧边栏 - 小屏幕隐藏 */}
 				<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
 					{/* 🌟 Logo */}
-					<div className="shadow-sm">
+					<div className={selectedAppId ? '' : 'shadow-sm'}>
 						<Logo />
 					</div>
 					{/* 添加会话 */}
