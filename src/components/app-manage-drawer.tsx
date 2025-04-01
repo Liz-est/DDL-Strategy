@@ -60,7 +60,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 			manual: true,
 			onSuccess: () => {
 				setDetailDrawerVisible(false)
-				message.success('创建应用成功')
+				message.success('添加应用配置成功')
 				getAppList()
 			},
 		},
@@ -74,7 +74,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 			manual: true,
 			onSuccess: () => {
 				setDetailDrawerVisible(false)
-				message.success('更新应用成功')
+				message.success('更新应用配置成功')
 				getAppList()
 			},
 		},
@@ -174,7 +174,10 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 									)
 								})
 							) : (
-								<Empty description="暂无应用" />
+								<Empty
+									className="mx-auto"
+									description="暂无应用"
+								/>
 							)}
 						</Row>
 					</Spin>
@@ -246,37 +249,39 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 					</Space>
 				}
 			>
-				<Form
-					labelAlign="left"
-					labelCol={{
-						span: 5,
-					}}
-					layout="horizontal"
-				>
-					<div className="text-base mb-3 flex items-center">
-						<div className="h-4 w-1 bg-primary rounded"></div>
-						<div className="ml-2 font-semibold">基本信息</div>
-					</div>
-					<Form.Item label="应用名称">
-						<Input
-							disabled
-							value={selectedAppItem?.info.name}
-						/>
-					</Form.Item>
-					<Form.Item label="应用描述">
-						<Input
-							disabled
-							value={selectedAppItem?.info.name}
-						/>
-					</Form.Item>
-					<Form.Item label="应用标签">
-						{selectedAppItem?.info.tags?.length ? (
-							<div className="text-default">{selectedAppItem.info.tags.join(', ')}</div>
-						) : (
-							<>无</>
-						)}
-					</Form.Item>
-				</Form>
+				{detailDrawerMode === AppDetailDrawerModeEnum.edit ? (
+					<Form
+						labelAlign="left"
+						labelCol={{
+							span: 5,
+						}}
+						layout="horizontal"
+					>
+						<div className="text-base mb-3 flex items-center">
+							<div className="h-4 w-1 bg-primary rounded"></div>
+							<div className="ml-2 font-semibold">基本信息</div>
+						</div>
+						<Form.Item label="应用名称">
+							<Input
+								disabled
+								value={selectedAppItem?.info.name}
+							/>
+						</Form.Item>
+						<Form.Item label="应用描述">
+							<Input
+								disabled
+								value={selectedAppItem?.info.name}
+							/>
+						</Form.Item>
+						<Form.Item label="应用标签">
+							{selectedAppItem?.info.tags?.length ? (
+								<div className="text-default">{selectedAppItem.info.tags.join(', ')}</div>
+							) : (
+								<>无</>
+							)}
+						</Form.Item>
+					</Form>
+				) : null}
 				<SettingForm formInstance={settingForm} />
 			</Drawer>
 		</Drawer>

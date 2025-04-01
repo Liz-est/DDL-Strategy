@@ -194,15 +194,19 @@ const MultiAppLayout: React.FC = () => {
 				{/* 左侧边栏 - 小屏幕隐藏 */}
 				<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
 					{/* 🌟 Logo */}
-					<Logo />
+					<div className="shadow-sm">
+						<Logo />
+					</div>
 					{/* 添加会话 */}
-					<Button
-						onClick={() => onAddConversation()}
-						className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default"
-						icon={<PlusOutlined />}
-					>
-						新增对话
-					</Button>
+					{selectedAppId ? (
+						<Button
+							onClick={() => onAddConversation()}
+							className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-0 mx-3 text-default"
+							icon={<PlusOutlined />}
+						>
+							新增对话
+						</Button>
+					) : null}
 					{/* 🌟 对话管理 */}
 					<div className="px-3">
 						<Spin spinning={conversationListLoading}>
@@ -223,8 +227,8 @@ const MultiAppLayout: React.FC = () => {
 								/>
 							) : (
 								<Empty
-									className="mt-6"
-									description="当前应用下暂无会话"
+									className="pt-6"
+									description="暂无会话"
 								/>
 							)}
 						</Spin>
@@ -243,32 +247,34 @@ const MultiAppLayout: React.FC = () => {
 
 						<div className="flex items-center text-sm">
 							<Space split={<Divider type="vertical" />}>
-								<Dropdown
-									arrow
-									placement="bottomRight"
-									menu={{
-										items: appList?.map(item => {
-											const isSelected = selectedAppId === item.id
-											return {
-												key: item.id,
-												label: (
-													<div className={isSelected ? 'text-primary' : 'text-default'}>
-														{isSelected ? '【当前】' : ''}
-														{item.info.name}
-													</div>
-												),
-												onClick: () => {
-													setSelectedAppId(item.id)
-												},
-											}
-										}),
-									}}
-								>
-									<div className="flex items-center cursor-pointer">
-										<div>当前应用：{selectedAppItem?.info.name}</div>
-										<SwapOutlined className="cursor-pointer ml-1" />
-									</div>
-								</Dropdown>
+								{selectedAppItem ? (
+									<Dropdown
+										arrow
+										placement="bottomRight"
+										menu={{
+											items: appList?.map(item => {
+												const isSelected = selectedAppId === item.id
+												return {
+													key: item.id,
+													label: (
+														<div className={isSelected ? 'text-primary' : 'text-default'}>
+															{isSelected ? '【当前】' : ''}
+															{item.info.name}
+														</div>
+													),
+													onClick: () => {
+														setSelectedAppId(item.id)
+													},
+												}
+											}),
+										}}
+									>
+										<div className="flex items-center cursor-pointer">
+											<div>当前应用：{selectedAppItem?.info.name}</div>
+											<SwapOutlined className="cursor-pointer ml-1" />
+										</div>
+									</Dropdown>
+								) : null}
 								{enableSetting ? (
 									<Tooltip title="应用配置管理">
 										<SettingOutlined
