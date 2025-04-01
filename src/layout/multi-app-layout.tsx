@@ -1,8 +1,7 @@
-import { PlusOutlined, SettingOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { PlusOutlined, SettingOutlined, SwapOutlined } from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
 import {
 	createDifyApiInstance,
-	DifyApi,
 	IGetAppInfoResponse,
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
@@ -10,22 +9,19 @@ import { ConversationList, type IConversationItem } from '@dify-chat/components'
 import { type IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useMount, useUpdateEffect } from 'ahooks'
-import { Button, Empty, Form, message, Modal, Popover, Spin } from 'antd'
+import { Button, Divider, Dropdown, Empty, message, Spin, Tooltip } from 'antd'
 import { createStyles } from 'antd-style'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
 
-import AppList from '@/components/app-list'
+import AppManageDrawer from '@/components/app-manage-drawer'
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { Logo } from '@/components/logo'
-import SettingForm from '@/components/setting-form'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useMap4Arr } from '@/hooks/use-map-4-arr'
 import { colors } from '@/theme/config'
 
 import './../App.css'
-import { useIsMobile } from '@dify-chat/helpers'
-import AppManageDrawer, { useAppManageDrawer } from '@/components/app-manage-drawer'
 
 const useStyle = createStyles(({ token, css }) => {
 	return {
@@ -62,8 +58,7 @@ const MultiAppLayout: React.FC = () => {
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
-	const [appListLoading, setAppListLoading] = useState<boolean>(false)
-	const isMobile = useIsMobile()
+	const [, setAppListLoading] = useState<boolean>(false)
 
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
 
@@ -182,73 +177,16 @@ const MultiAppLayout: React.FC = () => {
 		}
 	}, [currentConversationId])
 
-	const [settingForm] = Form.useForm()
-
-	/**
-	 * 开启应用配置弹窗, 支持添加/更新场景
-	 */
-	const openSettingModal = async (updatingItem?: IDifyAppItem): Promise<void> => {
-		settingForm.resetFields()
-		if (updatingItem) {
-			settingForm.setFieldsValue({
-				apiBase: updatingItem.requestConfig.apiBase,
-				apiKey: updatingItem.requestConfig.apiKey,
-				'answerForm.enabled': updatingItem.answerForm?.enabled || false,
-				'answerForm.feedbackText': updatingItem.answerForm?.feedbackText || '',
-			})
-		}
-		return new Promise(resolve => {
-			Modal.confirm({
-				width: 600,
-				centered: true,
-				title: `${updatingItem ? '更新' : '添加'} Dify 应用配置`,
-				content: <SettingForm formInstance={settingForm} />,
-				onOk: async () => {
-					await settingForm.validateFields()
-					const values = settingForm.getFieldsValue()
-
-					// 获取 Dify 应用信息
-					const newDifyApiInstance = new DifyApi({
-						user,
-						apiBase: values.apiBase,
-						apiKey: values.apiKey,
-					})
-					const difyAppInfo = await newDifyApiInstance.getAppInfo()
-					const commonInfo: Omit<IDifyAppItem, 'id'> = {
-						info: difyAppInfo,
-						requestConfig: {
-							apiBase: values.apiBase,
-							apiKey: values.apiKey,
-						},
-						answerForm: {
-							enabled: values['answerForm.enabled'],
-							feedbackText: values['answerForm.feedbackText'],
-						},
-					}
-					if (updatingItem) {
-						await appService.updateApp({
-							id: updatingItem.id,
-							...commonInfo,
-						})
-					} else {
-						await appService.addApp({
-							id: Math.random().toString(),
-							...commonInfo,
-						})
-					}
-					getAppList()
-					resolve()
-				},
-			})
-		})
-	}
-
 	const conversationName = useMemo(() => {
 		return (
 			conversationsItems.find(item => item.key === currentConversationId)?.label ||
 			DEFAULT_CONVERSATION_NAME
 		)
 	}, [conversationsItems, currentConversationId])
+
+	const selectedAppItem = useMemo(() => {
+		return appList.find(item => item.id === selectedAppId)
+	}, [appList, selectedAppId])
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
@@ -297,16 +235,47 @@ const MultiAppLayout: React.FC = () => {
 
 				{/* 头部 */}
 				<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-					<div className="h-16 !leading-[4rem] px-8 text-base top-0 z-20 bg-white w-full shadow-sm font-semibold justify-between flex items-center box-border">
+					<div className="h-16 !leading-[4rem] px-8 top-0 z-20 bg-white w-full shadow-sm justify-between flex items-center box-border">
 						{/* 对话标题及切换 */}
-						{conversationName || DEFAULT_CONVERSATION_NAME}
+						<div className="flex-1 truncate font-semibold  text-base">
+							{conversationName || DEFAULT_CONVERSATION_NAME}
+						</div>
 
-						<Button
-							icon={<SettingOutlined />}
-							onClick={()=>setAppManageDrawerVisible(true)}
-						>
-							应用管理
-						</Button>
+						<div className="flex items-center text-sm">
+							<Dropdown
+								arrow
+								placement="bottomRight"
+								menu={{
+									items: appList?.map(item => {
+										const isSelected = selectedAppId === item.id
+										return {
+											key: item.id,
+											label: (
+												<div className={isSelected ? 'text-primary' : 'text-default'}>
+													{isSelected ? '【当前】' : ''}
+													{item.info.name}
+												</div>
+											),
+											onClick: () => {
+												setSelectedAppId(item.id)
+											},
+										}
+									}),
+								}}
+							>
+								<div className="flex items-center cursor-pointer">
+									<div>当前应用：{selectedAppItem?.info.name}</div>
+									<SwapOutlined className="cursor-pointer ml-1" />
+								</div>
+							</Dropdown>
+							<Divider type="vertical" />
+							<Tooltip title="应用配置管理">
+								<SettingOutlined
+									className="cursor-pointer"
+									onClick={() => setAppManageDrawerVisible(true)}
+								/>
+							</Tooltip>
+						</div>
 					</div>
 
 					{/* 新增外层容器 */}
@@ -333,7 +302,11 @@ const MultiAppLayout: React.FC = () => {
 				</div>
 			</div>
 
-			<AppManageDrawer open={appManageDrawerVisible} onClose={()=>setAppManageDrawerVisible(false)} activeAppId={selectedAppId} />
+			<AppManageDrawer
+				open={appManageDrawerVisible}
+				onClose={() => setAppManageDrawerVisible(false)}
+				activeAppId={selectedAppId}
+			/>
 		</XProvider>
 	)
 }
