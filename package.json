@@ -15,7 +15,7 @@
 	"packageManager": "pnpm@8.9.2",
 	"dependencies": {
 		"@ant-design/icons": "^5.6.1",
-		"@ant-design/x": "^1.0.6",
+		"@ant-design/x": "^1.1.0",
 		"@dify-chat/api": "workspace:^",
 		"@dify-chat/components": "workspace:^",
 		"@dify-chat/core": "workspace:^",
