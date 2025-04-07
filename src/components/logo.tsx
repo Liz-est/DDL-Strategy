@@ -25,7 +25,16 @@ export const GithubIcon = () => {
 	)
 }
 
-export const Logo = () => {
+interface ILogoProps {
+	/**
+	 * 是否隐藏 Github 图标
+	 */
+	hideGithubIcon?: boolean
+}
+
+export const Logo = (props: ILogoProps) => {
+	const { hideGithubIcon } = props
+
 	return (
 		<div className="flex h-16 items-center justify-start py-0 px-6 box-border">
 			<div className="h-full flex items-center flex-1 overflow-hidden">
@@ -37,13 +46,7 @@ export const Logo = () => {
 				/>
 				<span className="inline-block my-0 mx-2 font-bold text-lg">Dify Chat</span>
 			</div>
-			<div>
-				{/* <Button
-          type="link"
-          onClick={openSettingModal}
-        >
-          <SettingOutlined className="text-lg cursor-pointer text-default" />
-        </Button> */}
+			{!hideGithubIcon && (
 				<Button
 					type="link"
 					href="https://github.com/lexmin0412/dify-chat"
@@ -52,7 +55,7 @@ export const Logo = () => {
 				>
 					<GithubOutlined className="text-lg cursor-pointer text-default" />
 				</Button>
-			</div>
+			)}
 		</div>
 	)
 }
