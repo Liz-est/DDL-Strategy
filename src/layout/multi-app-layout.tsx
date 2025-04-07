@@ -42,9 +42,7 @@ const MultiAppLayout: React.FC = () => {
 
 	const useAppInit = (difyApi: DifyApi, callback: () => void) => {
 		useUpdateEffect(() => {
-			console.log('进来了吗', selectedAppId)
 			const appItem = appList?.find(item => item.id === selectedAppId)
-			console.log('appItem', appItem)
 			if (!appItem) {
 				return
 			}

@@ -110,7 +110,6 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 											<div
 												className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
 												onClick={() => {
-													console.log('item', item)
 													setSelectedAppId(item.id)
 													settingForm.setFieldsValue({
 														apiBase: item.requestConfig.apiBase,
@@ -118,7 +117,6 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 														'answerForm.enabled': item.answerForm?.enabled || false,
 														'answerForm.feedbackText': item.answerForm?.feedbackText || '',
 													})
-													console.log('form', settingForm.getFieldsValue())
 													setDetailDrawerMode(AppDetailDrawerModeEnum.edit)
 													setDetailDrawerVisible(true)
 												}}
