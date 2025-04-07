@@ -82,21 +82,12 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 	const { activeAppId, getAppList, appListLoading, appList, ...drawerProps } = props
 
 	useEffect(() => {
-		getAppList()
-	}, [props.open])
-
-	useEffect(() => {
-		console.log('detailDrawerVisible', detailDrawerVisible)
 		if (!detailDrawerVisible) {
 			settingForm.resetFields()
 		}
 	}, [detailDrawerVisible])
 
-	console.log('appList', appList)
-
 	const selectedAppItem = appList?.find(item => item.id === selectedAppId)
-
-	console.log('updateAppLoading', updateAppLoading)
 
 	return (
 		<Drawer
@@ -287,14 +278,4 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 			</Drawer>
 		</Drawer>
 	)
-}
-
-export const useAppManageDrawer = () => {
-	const [drawerVisible, setDrawerVisible] = useState(false)
-
-	return {
-		AppManageDrawer: <AppManageDrawer open={drawerVisible} />,
-		drawerVisible,
-		setDrawerVisible,
-	}
 }
