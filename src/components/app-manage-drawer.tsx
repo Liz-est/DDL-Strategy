@@ -25,6 +25,18 @@ interface IAppManagerDrawerProps extends DrawerProps {
 	 * 当前激活的应用 ID
 	 */
 	activeAppId?: string
+	/**
+	 * 应用列表
+	 */
+	appList: IDifyAppItem[]
+	/**
+	 * 获取应用列表
+	 */
+	getAppList: () => Promise<IDifyAppItem[]>
+	/**
+	 * 应用列表加载中
+	 */
+	appListLoading: boolean
 }
 
 enum AppDetailDrawerModeEnum {
@@ -38,19 +50,6 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 	const [detailDrawerVisible, setDetailDrawerVisible] = useState(false)
 	const [settingForm] = Form.useForm()
 	const [detailDrawerMode, setDetailDrawerMode] = useState<AppDetailDrawerModeEnum>()
-
-	const {
-		runAsync: getAppList,
-		data: appList,
-		loading: appListLoading,
-	} = useRequest(
-		() => {
-			return appService.getApps()
-		},
-		{
-			manual: true,
-		},
-	)
 
 	const { runAsync: createApp, loading: createAppLoading } = useRequest(
 		async (appInfo: IDifyAppItem) => {
@@ -80,7 +79,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 		},
 	)
 
-	const { activeAppId, ...drawerProps } = props
+	const { activeAppId, getAppList, appListLoading, appList, ...drawerProps } = props
 
 	useEffect(() => {
 		getAppList()
@@ -140,6 +139,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 													</div>
 													<Space className="inline-flex items-center">
 														<Popconfirm
+															onPopupClick={e => e.stopPropagation()}
 															cancelText="取消"
 															okText="确定"
 															title="确定删除应用吗？"
@@ -242,6 +242,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 										...commonInfo,
 									})
 								}
+								getAppList()
 							}}
 						>
 							{detailDrawerMode === AppDetailDrawerModeEnum.create ? '确定' : '更新'}

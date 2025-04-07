@@ -6,9 +6,9 @@ import {
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
 import { ConversationList, type IConversationItem } from '@dify-chat/components'
-import { type IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
+import { IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
-import { useMount, useUpdateEffect } from 'ahooks'
+import { useMount, useRequest, useUpdateEffect } from 'ahooks'
 import { Button, Divider, Dropdown, Empty, message, Space, Spin, Tooltip } from 'antd'
 import { createStyles } from 'antd-style'
 import { useSearchParams } from 'pure-react-router'
@@ -48,7 +48,6 @@ const MultiAppLayout: React.FC = () => {
 			apiKey: '',
 		}),
 	)
-	const [appList, setAppList] = useState<IDifyAppItem[]>([])
 	const [conversationsItems, setConversationsItems] = useState<IConversationItem[]>([])
 	// 优化会话列表查找逻辑（高频操作）
 	const conversationMap = useMap4Arr<IConversationItem>(conversationsItems, 'key')
@@ -58,27 +57,25 @@ const MultiAppLayout: React.FC = () => {
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
-	const [, setAppListLoading] = useState<boolean>(false)
 
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
 
-	/**
-	 * 获取应用列表
-	 */
-	const getAppList = async () => {
-		setAppListLoading(true)
-		try {
-			const result = await appService.getApps()
-			console.log('应用列表', result)
-			setAppList(result || [])
-			return result
-		} catch (error) {
-			message.error(`获取应用列表失败: ${error}`)
-			console.error(error)
-		} finally {
-			setAppListLoading(false)
-		}
-	}
+	const {
+		runAsync: getAppList,
+		data: appList,
+		loading: appListLoading,
+	} = useRequest(
+		() => {
+			return appService.getApps()
+		},
+		{
+			manual: true,
+			onError: error => {
+				message.error(`获取应用列表失败: ${error}`)
+				console.error(error)
+			},
+		},
+	)
 
 	// 初始化获取应用列表
 	useMount(() => {
@@ -114,7 +111,7 @@ const MultiAppLayout: React.FC = () => {
 	}
 
 	useUpdateEffect(() => {
-		const appItem = appList.find(item => item.id === selectedAppId)
+		const appItem = appList?.find(item => item.id === selectedAppId)
 		if (!appItem) {
 			return
 		}
@@ -185,7 +182,7 @@ const MultiAppLayout: React.FC = () => {
 	}, [conversationsItems, currentConversationId])
 
 	const selectedAppItem = useMemo(() => {
-		return appList.find(item => item.id === selectedAppId)
+		return appList?.find(item => item.id === selectedAppId)
 	}, [appList, selectedAppId])
 
 	return (
@@ -315,6 +312,9 @@ const MultiAppLayout: React.FC = () => {
 				open={appManageDrawerVisible}
 				onClose={() => setAppManageDrawerVisible(false)}
 				activeAppId={selectedAppId}
+				appList={appList!}
+				getAppList={getAppList}
+				appListLoading={appListLoading}
 			/>
 		</XProvider>
 	)
