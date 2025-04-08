@@ -56,24 +56,25 @@ export default function AppListPage() {
 									history.push(`/chat?id=${item.id}`)
 								}}
 							>
-								<div className="w-full flex items-center">
-									<div className="flex-1 overflow-hidden flex items-center">
-										<span className="font-semibold truncate">{item.info.name}</span>
-										{item.info.tags
-											? item.info.tags.map(tag => {
-													return (
-														<Tag
-															key={tag}
-															className="ml-2"
-														>
-															{tag}
-														</Tag>
-													)
-												})
-											: null}
-									</div>
+								<div className="w-full flex items-center truncate font-semibold">
+									{item.info.name}
 								</div>
 								<div className="truncate text-sm mt-2 text-desc">{item.info.description}</div>
+
+								<div className="flex-1 overflow-hidden flex flex-wrap items-center">
+									{item.info.tags
+										? item.info.tags.map(tag => {
+												return (
+													<Tag
+														key={tag}
+														className="mr-2 mt-2"
+													>
+														{tag}
+													</Tag>
+												)
+											})
+										: null}
+								</div>
 							</div>
 						)
 					})
