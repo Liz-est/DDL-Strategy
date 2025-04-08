@@ -11,7 +11,7 @@ import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
 import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Empty, GetProp, message, Popover, Spin } from 'antd'
+import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -298,6 +298,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 							<Empty description="暂无会话" />
 						)}
 					</Spin>
+					<Button
+						onClick={onAddConversation}
+						block
+						type="primary"
+					>
+						新增对话
+					</Button>
 				</div>
 			}
 			placement={isMobile ? 'bottom' : 'bottomLeft'}
