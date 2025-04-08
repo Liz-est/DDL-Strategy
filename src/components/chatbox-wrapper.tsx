@@ -170,6 +170,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 		setMessages([])
 		setHistoryMessages(newMessages)
+		if (newMessages?.length) {
+			getNextSuggestions(newMessages[newMessages.length - 1].id)
+		}
 	}
 
 	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
