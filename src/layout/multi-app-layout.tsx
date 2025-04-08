@@ -2,9 +2,10 @@ import { SettingOutlined, SwapOutlined } from '@ant-design/icons'
 import { DifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
+import { useIsMobile } from '@dify-chat/helpers'
 import { useMount, useRequest, useUpdateEffect } from 'ahooks'
 import { Divider, Dropdown, message, Space, Tooltip } from 'antd'
-import { useSearchParams } from 'pure-react-router'
+import { useHistory, useSearchParams } from 'pure-react-router'
 import React, { useMemo, useState } from 'react'
 
 import AppManageDrawer from '@/components/app-manage-drawer'
@@ -15,6 +16,7 @@ const MultiAppLayout: React.FC = () => {
 	const searchParams = useSearchParams()
 	const { setCurrentAppConfig, ...difyChatContext } = useDifyChat()
 	const { user, appService, enableSetting } = difyChatContext as IDifyChatContextMultiApp
+	const history = useHistory()
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
@@ -55,10 +57,21 @@ const MultiAppLayout: React.FC = () => {
 		}, [selectedAppId])
 	}
 
+	const isMobile = useIsMobile()
+
 	// 初始化获取应用列表
 	useMount(() => {
 		getAppList().then(result => {
 			const idInQuery = searchParams.get('id')
+
+			if (isMobile) {
+				// 移动端如果没有应用，直接跳转应用列表页
+				if (!result?.length) {
+					history.replace('/apps')
+					return
+				}
+			}
+
 			if (idInQuery) {
 				setSelectedAppId(idInQuery as string)
 			} else if (!selectedAppId && result?.length) {
