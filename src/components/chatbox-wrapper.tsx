@@ -299,6 +299,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						)}
 					</Spin>
 					<Button
+						className="mt-3"
 						onClick={onAddConversation}
 						block
 						type="primary"
