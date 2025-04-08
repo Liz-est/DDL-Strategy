@@ -9,6 +9,7 @@ import {
 import { ConversationList, type IConversationItem } from '@dify-chat/components'
 import { IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
+import { useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, message, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -72,6 +73,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	const [currentConversationId, setCurrentConversationId] = useState<string>()
 	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
+	const isMobile = useIsMobile()
 
 	const initAppInfo = async () => {
 		setAppInfo(undefined)
@@ -204,15 +206,17 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 				{/* 头部 */}
 				<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-					<div className="h-16 !leading-[4rem] px-8 top-0 z-20 bg-white w-full shadow-sm justify-between flex items-center box-border">
-						{/* 对话标题 */}
-						<div className="flex-1 truncate font-semibold  text-base">
-							{conversationName || DEFAULT_CONVERSATION_NAME}
-						</div>
+					{!isMobile ? (
+						<div className="h-16 !leading-[4rem] px-8 top-0 z-20 bg-white w-full shadow-sm justify-between flex items-center box-border">
+							{/* 对话标题 */}
+							<div className="flex-1 truncate font-semibold  text-base">
+								{conversationName || DEFAULT_CONVERSATION_NAME}
+							</div>
 
-						{/* 自定义头部 */}
-						{renderRightHeader ? renderRightHeader() : null}
-					</div>
+							{/* 自定义头部 */}
+							{renderRightHeader ? renderRightHeader() : null}
+						</div>
+					) : null}
 
 					{/* 新增外层容器 */}
 					{conversationListLoading ? (

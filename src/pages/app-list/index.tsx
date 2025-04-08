@@ -1,15 +1,17 @@
-import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
+import { IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
-import { Empty, Tag } from 'antd'
+import { useRequest } from 'ahooks'
+import { Button, Empty, message, Tag } from 'antd'
 import { useHistory } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 
+import AppManageDrawer from '@/components/app-manage-drawer'
 import { MobileHeader } from '@/components/mobile/header'
 
 export default function AppListPage() {
 	const history = useHistory()
-	const [list, setList] = useState<IDifyAppItem[]>([])
 	const { appService } = useDifyChat() as IDifyChatContextMultiApp
+	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
 
 	const isMobile = useIsMobile()
 
@@ -19,10 +21,22 @@ export default function AppListPage() {
 		}
 	}, [isMobile])
 
-	const getAppList = async () => {
-		const result = await appService?.getApps()
-		setList(result!)
-	}
+	const {
+		runAsync: getAppList,
+		data: list,
+		loading: appListLoading,
+	} = useRequest(
+		() => {
+			return appService.getApps()
+		},
+		{
+			manual: true,
+			onError: error => {
+				message.error(`获取应用列表失败: ${error}`)
+				console.error(error)
+			},
+		},
+	)
 
 	useEffect(() => {
 		getAppList()
@@ -32,7 +46,7 @@ export default function AppListPage() {
 		<div className="h-screen overflow-hidden flex flex-col">
 			<MobileHeader centerChildren={<>应用列表</>} />
 			<div className="px-3 flex-1 overflow-auto">
-				{list?.length > 0 ? (
+				{list?.length ? (
 					list.map(item => {
 						return (
 							<div
@@ -64,11 +78,29 @@ export default function AppListPage() {
 						)
 					})
 				) : (
-					<div className="w-full h-full flex items-center justify-center">
-						<Empty description="暂无应用，请前往 PC 端添加" />
+					<div className="w-full h-full flex flex-col items-center justify-center">
+						<Empty description="暂无应用">
+							<Button
+								type="primary"
+								onClick={() => {
+									setAppManageDrawerVisible(true)
+								}}
+							>
+								添加应用
+							</Button>
+						</Empty>
 					</div>
 				)}
 			</div>
+
+			<AppManageDrawer
+				open={appManageDrawerVisible}
+				onClose={() => setAppManageDrawerVisible(false)}
+				activeAppId=""
+				appList={list!}
+				getAppList={getAppList}
+				appListLoading={appListLoading}
+			/>
 		</div>
 	)
 }

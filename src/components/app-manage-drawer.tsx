@@ -1,6 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons'
 import { DifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
+import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import {
 	Button,
@@ -50,6 +51,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 	const [detailDrawerVisible, setDetailDrawerVisible] = useState(false)
 	const [settingForm] = Form.useForm()
 	const [detailDrawerMode, setDetailDrawerMode] = useState<AppDetailDrawerModeEnum>()
+	const isMobile = useIsMobile()
 
 	const { runAsync: createApp, loading: createAppLoading } = useRequest(
 		async (appInfo: IDifyAppItem) => {
@@ -104,7 +106,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 								appList?.map(item => {
 									return (
 										<Col
-											span={12}
+											span={isMobile ? 24 : 12}
 											key={item.id}
 										>
 											<div
