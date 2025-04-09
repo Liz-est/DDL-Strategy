@@ -99,9 +99,12 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 		>
 			<div className="w-full h-full overflow-hidden flex flex-col">
 				{/* 🌟 应用管理 */}
-				<div className="px-3 pb-3 flex-1 overflow-y-auto">
+				<div className="pb-3 flex-1 overflow-y-auto">
 					<Spin spinning={appListLoading}>
-						<Row gutter={16}>
+						<Row
+							gutter={isMobile ? 0 : 16}
+							className="w-full"
+						>
 							{appList?.length ? (
 								appList?.map(item => {
 									return (
@@ -110,7 +113,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 											key={item.id}
 										>
 											<div
-												className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
+												className={`p-3 bg-white mb-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
 												onClick={() => {
 													setSelectedAppId(item.id)
 													settingForm.setFieldsValue({
