@@ -204,8 +204,8 @@ importers:
         specifier: ^8.6.12
         version: 8.6.12(@types/react@18.3.12)(storybook@8.6.12)
       '@storybook/addon-interactions':
-        specifier: ^8.6.10
-        version: 8.6.10(storybook@8.6.12)
+        specifier: ^8.6.12
+        version: 8.6.12(storybook@8.6.12)
       '@storybook/addon-links':
         specifier: ^8.6.12
         version: 8.6.12(react@18.3.1)(storybook@8.6.12)
@@ -2216,14 +2216,14 @@ packages:
       storybook: 8.6.12(prettier@3.5.3)
     dev: true
 
-  /@storybook/addon-interactions@8.6.10(storybook@8.6.12):
-    resolution: {integrity: sha512-BtuqLJj1L5a8a4RmnX5YjrGhiEfn7LTdQgn2m71F8DnMCwvvYLHQgYUcpjobMld1OZr3IKq4/zCqesaGET++fQ==}
+  /@storybook/addon-interactions@8.6.12(storybook@8.6.12):
+    resolution: {integrity: sha512-cTAJlTq6uVZBEbtwdXkXoPQ4jHOAGKQnYSezBT4pfNkdjn/FnEeaQhMBDzf14h2wr5OgBnJa6Lmd8LD9ficz4A==}
     peerDependencies:
-      storybook: ^8.6.10
+      storybook: ^8.6.12
     dependencies:
       '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.6.10(storybook@8.6.12)
-      '@storybook/test': 8.6.10(storybook@8.6.12)
+      '@storybook/instrumenter': 8.6.12(storybook@8.6.12)
+      '@storybook/test': 8.6.12(storybook@8.6.12)
       polished: 4.3.1
       storybook: 8.6.12(prettier@3.5.3)
       ts-dedent: 2.2.0
@@ -2376,16 +2376,6 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
     dev: true
 
-  /@storybook/instrumenter@8.6.10(storybook@8.6.12):
-    resolution: {integrity: sha512-Hlps6V0lkhFMbgcJQRynVBne51ciG7Xv+YtiDCd0PQtvZu8+vVJr/ebWt3nCwpvkRHooYiud1ScA3K8McyA73w==}
-    peerDependencies:
-      storybook: ^8.6.10
-    dependencies:
-      '@storybook/global': 5.0.0
-      '@vitest/utils': 2.1.9
-      storybook: 8.6.12(prettier@3.5.3)
-    dev: true
-
   /@storybook/instrumenter@8.6.12(storybook@8.6.12):
     resolution: {integrity: sha512-VK5fYAF8jMwWP/u3YsmSwKGh+FeSY8WZn78flzRUwirp2Eg1WWjsqPRubAk7yTpcqcC/km9YMF3KbqfzRv2s/A==}
     peerDependencies:
@@ -2469,21 +2459,6 @@ packages:
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.6.12(prettier@3.5.3)
       typescript: 5.8.2
-    dev: true
-
-  /@storybook/test@8.6.10(storybook@8.6.12):
-    resolution: {integrity: sha512-eCQueRB0SpwjnXcE5wmUNu2G7Z7nRzzHw+0QW2Yc3DoA5UwmOiuwTseZenQkD019dwvFJ87fHo1xXnDAamX1Tg==}
-    peerDependencies:
-      storybook: ^8.6.10
-    dependencies:
-      '@storybook/global': 5.0.0
-      '@storybook/instrumenter': 8.6.10(storybook@8.6.12)
-      '@testing-library/dom': 10.4.0
-      '@testing-library/jest-dom': 6.5.0
-      '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/expect': 2.0.5
-      '@vitest/spy': 2.0.5
-      storybook: 8.6.12(prettier@3.5.3)
     dev: true
 
   /@storybook/test@8.6.12(storybook@8.6.12):
