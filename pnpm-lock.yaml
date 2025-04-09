@@ -213,8 +213,8 @@ importers:
         specifier: ^8.6.9
         version: 8.6.9(storybook@8.6.12)
       '@storybook/blocks':
-        specifier: ^8.6.11
-        version: 8.6.11(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.12)
+        specifier: ^8.6.12
+        version: 8.6.12(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.12)
       '@storybook/react':
         specifier: ^8.6.12
         version: 8.6.12(@storybook/test@8.6.12)(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.12)(typescript@5.8.2)
@@ -2287,25 +2287,6 @@ packages:
     dependencies:
       memoizerific: 1.11.3
       storybook: 8.6.12(prettier@3.5.3)
-    dev: true
-
-  /@storybook/blocks@8.6.11(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.12):
-    resolution: {integrity: sha512-2IyS3nB6SoEjIt0nWUMxtRIjJRUvDU8EF/eMbM4F/FuwIM402P3kNQ4n4+q1xZtYjvoMr5QUq+K8YF4ZlxIz0A==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      storybook: ^8.6.11
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@storybook/icons': 1.4.0(react-dom@18.3.1)(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.12(prettier@3.5.3)
-      ts-dedent: 2.2.0
     dev: true
 
   /@storybook/blocks@8.6.12(react-dom@18.3.1)(react@18.3.1)(storybook@8.6.12):
