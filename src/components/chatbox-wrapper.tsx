@@ -171,7 +171,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setMessages([])
 		setHistoryMessages(newMessages)
 		if (newMessages?.length) {
-			getNextSuggestions(newMessages[newMessages.length - 1].id)
+			// 如果下一步问题建议已开启，则请求接口获取
+			if (appParameters?.suggested_questions_after_answer.enabled) {
+				getNextSuggestions(newMessages[newMessages.length - 1].id)
+			}
 		}
 	}
 
