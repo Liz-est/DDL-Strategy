@@ -80,18 +80,21 @@ export default function AppListPage() {
 					})
 				) : (
 					<div className="w-full h-full flex flex-col items-center justify-center">
-						<Empty description="暂无应用">
-							<Button
-								type="primary"
-								onClick={() => {
-									setAppManageDrawerVisible(true)
-								}}
-							>
-								添加应用
-							</Button>
-						</Empty>
+						<Empty description="暂无应用" />
 					</div>
 				)}
+			</div>
+			<div className="p-3">
+				<Button
+					size="large"
+					block
+					type="primary"
+					onClick={() => {
+						setAppManageDrawerVisible(true)
+					}}
+				>
+					应用配置管理
+				</Button>
 			</div>
 
 			<AppManageDrawer
