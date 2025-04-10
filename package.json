@@ -5,8 +5,7 @@
 	"scripts": {
 		"build:pkgs": "pnpm --filter @dify-chat/* build",
 		"build": "pnpm build:pkgs && rsbuild build",
-		"dev": "pnpm build:pkgs && pnpm dev:main",
-		"dev:main": "rsbuild dev",
+		"dev": "rsbuild dev",
 		"format": "prettier --write .",
 		"lint": "eslint .",
 		"preview": "rsbuild preview",
