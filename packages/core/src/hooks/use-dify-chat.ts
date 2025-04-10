@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 
-import { DifyAppStore, IDifyAppItem } from '../storage'
+import { DifyAppStore, IDifyAppItem } from '../repository'
 
 export type IDifyChatMode = 'singleApp' | 'multiApp'
 
