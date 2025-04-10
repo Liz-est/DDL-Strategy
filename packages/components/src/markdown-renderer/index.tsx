@@ -1,6 +1,7 @@
 import { IFile } from '@dify-chat/api'
 import { Typography } from 'antd'
-import { useMemo } from 'react'
+import mermaid from 'mermaid'
+import { useEffect, useMemo } from 'react'
 
 import './index.css'
 import md from './utils'
@@ -79,6 +80,10 @@ export const MarkdownRenderer = (props: IMarkdownRendererProps) => {
 		}
 		return md.render(markdownText)
 	}, [markdownText])
+
+	useEffect(() => {
+		mermaid.initialize({ startOnLoad: false })
+	}, [dangerousHTML])
 
 	return (
 		<Typography>

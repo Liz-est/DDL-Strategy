@@ -71,9 +71,11 @@
 		"@dify-chat/api": "workspace:^",
 		"@dify-chat/core": "workspace:^",
 		"@dify-chat/helpers": "workspace:^",
+		"markdown-it-mermaid": "workspace:^",
 		"@lexmin0412/markdown-it-echarts": "^0.1.4",
 		"markdown-it": "^14.1.0",
 		"markdown-it-katex-gpt": "^1.1.1",
+		"mermaid": "^11.6.0",
 		"react-photo-view": "^1.2.7"
 	}
 }
