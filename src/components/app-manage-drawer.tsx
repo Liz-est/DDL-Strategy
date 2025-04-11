@@ -38,6 +38,11 @@ interface IAppManagerDrawerProps extends DrawerProps {
 	 * 应用列表加载中
 	 */
 	appListLoading: boolean
+	/**
+	 * 删除应用成功回调
+	 * @param id 删除的应用 ID
+	 */
+	onDeleteSuccess?: (id: string) => void
 }
 
 enum AppDetailDrawerModeEnum {
@@ -46,6 +51,8 @@ enum AppDetailDrawerModeEnum {
 }
 
 export default function AppManageDrawer(props: IAppManagerDrawerProps) {
+	const { activeAppId, getAppList, appListLoading, appList, onDeleteSuccess, ...drawerProps } =
+		props
 	const { user, appService } = useDifyChat() as IDifyChatContextMultiApp
 	const [selectedAppId, setSelectedAppId] = useState<string>()
 	const [detailDrawerVisible, setDetailDrawerVisible] = useState(false)
@@ -80,8 +87,6 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 			},
 		},
 	)
-
-	const { activeAppId, getAppList, appListLoading, appList, ...drawerProps } = props
 
 	useEffect(() => {
 		if (!detailDrawerVisible) {
@@ -141,6 +146,7 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 																await appService.deleteApp(item.id)
 																message.success('删除应用成功')
 																getAppList()
+																onDeleteSuccess?.(item.id)
 															}}
 														>
 															<DeleteOutlined

@@ -46,7 +46,7 @@ interface IBaseLayoutProps {
 	/**
 	 * 获取当前应用配置
 	 */
-	getAppConfig: () => IDifyAppItem
+	appConfig: IDifyAppItem
 	/**
 	 * 初始化应用信息
 	 */
@@ -54,7 +54,7 @@ interface IBaseLayoutProps {
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
-	const { extComponents, renderRightHeader, getAppConfig, useAppInit } = props
+	const { extComponents, renderRightHeader, appConfig, useAppInit } = props
 	const { ...difyChatContext } = useDifyChat()
 	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
@@ -153,7 +153,13 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		)
 	}, [conversationsItems, currentConversationId])
 
-	const appConfig = getAppConfig()
+	useEffect(() => {
+		if (!appConfig) {
+			setConversationsItems([])
+			setAppInfo(undefined)
+			setCurrentConversationId('')
+		}
+	}, [appConfig])
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
@@ -225,7 +231,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						</div>
 					) : (
 						<ChatboxWrapper
-							appConfig={getAppConfig()}
+							appConfig={appConfig}
 							appInfo={appInfo}
 							difyApi={difyApi}
 							conversationId={currentConversationId}

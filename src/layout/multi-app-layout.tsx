@@ -31,6 +31,23 @@ const MultiAppLayout: React.FC = () => {
 		},
 		{
 			manual: true,
+			onSuccess: result => {
+				const idInQuery = searchParams.get('id')
+
+				if (isMobile) {
+					// 移动端如果没有应用，直接跳转应用列表页
+					if (!result?.length) {
+						history.replace('/apps')
+						return Promise.resolve([])
+					}
+				}
+
+				if (idInQuery) {
+					setSelectedAppId(idInQuery as string)
+				} else if (!selectedAppId && result?.length) {
+					setSelectedAppId(result[0]?.id || '')
+				}
+			},
 			onError: error => {
 				message.error(`获取应用列表失败: ${error}`)
 				console.error(error)
@@ -61,29 +78,13 @@ const MultiAppLayout: React.FC = () => {
 
 	// 初始化获取应用列表
 	useMount(() => {
-		getAppList().then(result => {
-			const idInQuery = searchParams.get('id')
-
-			if (isMobile) {
-				// 移动端如果没有应用，直接跳转应用列表页
-				if (!result?.length) {
-					history.replace('/apps')
-					return
-				}
-			}
-
-			if (idInQuery) {
-				setSelectedAppId(idInQuery as string)
-			} else if (!selectedAppId && result?.length) {
-				setSelectedAppId(result[0]?.id || '')
-			}
-		})
+		getAppList()
 	})
 
 	return (
 		<BaseLayout
 			useAppInit={useAppInit}
-			getAppConfig={() => appList?.find(item => item.id === selectedAppId) as IDifyAppItem}
+			appConfig={appList?.find(item => item.id === selectedAppId) as IDifyAppItem}
 			extComponents={
 				<>
 					<AppManageDrawer
@@ -93,6 +94,11 @@ const MultiAppLayout: React.FC = () => {
 						appList={appList!}
 						getAppList={getAppList}
 						appListLoading={appListLoading}
+						onDeleteSuccess={(deletedId: string) => {
+							if (deletedId === selectedAppId) {
+								setSelectedAppId('')
+							}
+						}}
 					/>
 				</>
 			}
