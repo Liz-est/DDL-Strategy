@@ -26,6 +26,10 @@ Chatflow 工作流：
 
 ![Screen Shot](./docs/sample_echarts.png)
 
+`Mermaid` 图表：
+
+![Mermaid](./docs/guide__sample_mermaid.png)
+
 单应用模式：
 
 ![单应用模式](./docs/sample_single-app-mode.png)
@@ -395,6 +399,7 @@ pnpm preview
   - [x] 支持 `Echarts` 渲染
   - [x] 支持数学公式渲染
   - [x] 支持文件卡片渲染
+  - [x] 支持 `Mermaid` 渲染
 - [x] 消息内容交互
   - [x] 支持内容复制
   - [x] 支持点赞/点踩
