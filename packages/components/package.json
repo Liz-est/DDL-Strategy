@@ -82,7 +82,6 @@
 		"lodash-es": "^4.17.21",
 		"markdown-it": "^14.1.0",
 		"markdown-it-katex-gpt": "^1.1.1",
-		"markdown-it-mermaid": "workspace:^",
 		"mermaid": "^11.6.0",
 		"react-markdown": "^10.1.0",
 		"react-photo-view": "^1.2.7",

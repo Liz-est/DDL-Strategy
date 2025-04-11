@@ -2,7 +2,6 @@ import MarkdownItPluginEcharts from '@lexmin0412/markdown-it-echarts'
 import classnames from 'classnames'
 import MarkdownIt from 'markdown-it'
 import markdownItPluginKatex from 'markdown-it-katex-gpt'
-import MarkdownItMermaid from 'markdown-it-mermaid'
 import { twMerge } from 'tailwind-merge'
 
 export const cn = (...cls: classnames.ArgumentArray) => {
@@ -11,7 +10,6 @@ export const cn = (...cls: classnames.ArgumentArray) => {
 
 const md = MarkdownIt({ html: true, breaks: true })
 	.use(MarkdownItPluginEcharts)
-	.use(MarkdownItMermaid)
 	.use(markdownItPluginKatex, {
 		delimiters: [
 			{ left: '\\[', right: '\\]', display: true },

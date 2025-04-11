@@ -4,8 +4,7 @@
 		"paths": {
 			"@dify-chat/api": ["../api/src/index.ts"],
 			"@dify-chat/core": ["../core/src/index.ts"],
-			"@dify-chat/helpers": ["../helpers/src/index.ts"],
-			"markdown-it-mermaid": ["../markdown-it-mermaid/src/index.ts"]
+			"@dify-chat/helpers": ["../helpers/src/index.ts"]
 		}
 	}
 }
