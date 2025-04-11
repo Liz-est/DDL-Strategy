@@ -176,8 +176,8 @@ importers:
         specifier: workspace:^
         version: link:../helpers
       '@lexmin0412/markdown-it-echarts':
-        specifier: ^0.1.4
-        version: 0.1.4
+        specifier: ^0.1.5
+        version: 0.1.5
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -1396,8 +1396,8 @@ packages:
       tslib: 2.8.1
     dev: true
 
-  /@lexmin0412/markdown-it-echarts@0.1.4:
-    resolution: {integrity: sha512-yyKd5C083O9IZpPCEKTz9AEdpPPZ+BPdti93B2J6uKERzjm41Nm3wURFumH+4p1Y1KPxZiOc5xc7Saz4FfBlIw==}
+  /@lexmin0412/markdown-it-echarts@0.1.5:
+    resolution: {integrity: sha512-b4pSiNhIVpbHccDGnib6lK83vty3KEj4sUCShfwmM4lhA/2684790gKqGNEAV2w/h7euAoD6rBTxMU18YOHljQ==}
     dependencies:
       echarts: 5.6.0
       markdown-it: 14.1.0
