@@ -2,9 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import mermaid from 'mermaid'
 import { usePrevious } from 'ahooks'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { cn } from '../utils'
 import { LoadingOutlined } from '@ant-design/icons'
-import { Tabs } from 'antd'
+import { Radio } from 'antd'
 
 export function cleanUpSvgCode(svgCode: string): string {
   return svgCode.replaceAll('<br>', '<br/>')
@@ -94,28 +93,23 @@ const Flowchart = (
   return (
     // eslint-disable-next-line ts/ban-ts-comment
     // @ts-expect-error
-    (<div ref={ref} className='max-w-[400px]'>
+    (<div ref={ref}>
       <div className="msh-segmented msh-segmented-sm css-23bs09 css-var-r1">
         <div className="msh-segmented-group">
           <label className="msh-segmented-item m-2 flex w-[200px] items-center space-x-1">
-            <Tabs 
-              items={[
-                {
-                  key: 'classic',
-                  label: '经典',
-                },
-                {
-                  key: 'handDrawn',
-                  label: '手绘'
-                }
-              ]}
-              onChange={key=>{
-                if (key === 'handDrawn')
+						<Radio.Group
+							value={look}
+							buttonStyle='solid'
+							optionType='button'
+              onChange={e=>{
+                if (e.target.value === 'handDrawn')
                   setLook('handDrawn')
                 else
                   setLook('classic')
-              }}
-            />
+              }}>
+							<Radio value='classic'>经典</Radio>
+							<Radio value='handDrawn'>手绘</Radio>
+						</Radio.Group>
           </label>
         </div>
       </div>
