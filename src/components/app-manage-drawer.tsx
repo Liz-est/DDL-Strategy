@@ -59,6 +59,8 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 	const [settingForm] = Form.useForm()
 	const [detailDrawerMode, setDetailDrawerMode] = useState<AppDetailDrawerModeEnum>()
 	const isMobile = useIsMobile()
+	// 保存应用配置确认按钮的 loading
+	const [confirmBtnLoading, setConfirmBtnLoading] = useState(false)
 
 	const { runAsync: createApp, loading: createAppLoading } = useRequest(
 		async (appInfo: IDifyAppItem) => {
@@ -207,42 +209,51 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 						<Button onClick={() => setDetailDrawerVisible(false)}>取消</Button>
 						<Button
 							type="primary"
-							loading={createAppLoading || updateAppLoading}
+							loading={createAppLoading || updateAppLoading || confirmBtnLoading}
 							onClick={async () => {
 								await settingForm.validateFields()
-								const values = settingForm.getFieldsValue()
-								const updatingItem = appList?.find(item => item.id === selectedAppId)
 
-								// 获取 Dify 应用信息
-								const newDifyApiInstance = new DifyApi({
-									user,
-									apiBase: values.apiBase,
-									apiKey: values.apiKey,
-								})
-								const difyAppInfo = await newDifyApiInstance.getAppInfo()
-								const commonInfo: Omit<IDifyAppItem, 'id'> = {
-									info: difyAppInfo,
-									requestConfig: {
+								setConfirmBtnLoading(true)
+								try {
+									const values = settingForm.getFieldsValue()
+									const updatingItem = appList?.find(item => item.id === selectedAppId)
+
+									// 获取 Dify 应用信息
+									const newDifyApiInstance = new DifyApi({
+										user,
 										apiBase: values.apiBase,
 										apiKey: values.apiKey,
-									},
-									answerForm: {
-										enabled: values['answerForm.enabled'],
-										feedbackText: values['answerForm.feedbackText'],
-									},
-								}
-								if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
-									await updateApp({
-										id: updatingItem!.id,
-										...commonInfo,
 									})
-								} else {
-									await createApp({
-										id: Math.random().toString(),
-										...commonInfo,
-									})
+									const difyAppInfo = await newDifyApiInstance.getAppInfo()
+									const commonInfo: Omit<IDifyAppItem, 'id'> = {
+										info: difyAppInfo,
+										requestConfig: {
+											apiBase: values.apiBase,
+											apiKey: values.apiKey,
+										},
+										answerForm: {
+											enabled: values['answerForm.enabled'],
+											feedbackText: values['answerForm.feedbackText'],
+										},
+									}
+									if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
+										await updateApp({
+											id: updatingItem!.id,
+											...commonInfo,
+										})
+									} else {
+										await createApp({
+											id: Math.random().toString(),
+											...commonInfo,
+										})
+									}
+									getAppList()
+								} catch (error) {
+									console.error('保存应用配置失败', error)
+									message.error(`保存应用配置失败: ${error}`)
+								} finally {
+									setConfirmBtnLoading(false)
 								}
-								getAppList()
 							}}
 						>
 							{detailDrawerMode === AppDetailDrawerModeEnum.create ? '确定' : '更新'}
