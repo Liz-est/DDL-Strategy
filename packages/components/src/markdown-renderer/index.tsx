@@ -21,6 +21,8 @@ import { copyToClipboard } from '@toolkit-fe/clipboard'
 import SVGBtn from './blocks/svg-button'
 import { Button } from 'antd'
 import './index.css'
+import MarkdownForm from './blocks/form'
+import { IFile } from '@dify-chat/api'
 
 // Available language https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_HLJS.MD
 const capitalizationLanguageNameMap: Record<string, string> = {
@@ -218,7 +220,17 @@ const Link = ({ node, ...props }: any) => {
 	return <a {...props} target="_blank" className="cursor-pointer underline !decoration-primary-700 decoration-dashed">{node.children[0] ? node.children[0]?.value : 'Download'}</a>
 }
 
-export function MarkdownRenderer(props: { markdownText: string; className?: string; customDisallowedElements?: string[] }) {
+export function MarkdownRenderer(props: {
+	markdownText: string; className?: string; customDisallowedElements?: string[]
+	onSubmit: (
+		value: string,
+		options?: {
+			files?: IFile[]
+			inputs?: Record<string, unknown>
+		},
+	) => void
+}) {
+	const { onSubmit } = props
   const latexContent = flow([
     preprocessThinkTag,
     preprocessLaTeX,
@@ -260,16 +272,14 @@ export function MarkdownRenderer(props: { markdownText: string; className?: stri
           img: Img,
           a: Link,
           p: Paragraph,
-          // button: MarkdownButton,
-          form: (props) => {
-            console.log('props', props)
-            return <form className='dc-answer-form-button'>
-              {props.children}
-              {/* <Button className='dc-answer-form-button' type='primary'>
-                提交
-              </Button> */}
-            </form>
-          },
+          form: (props) => <MarkdownForm {...props} onSend={(values: Record<string, any>)=>{
+						onSubmit(JSON.stringify({
+							...values,
+							isFormSubmit: true,
+						}), {
+							inputs: values
+						})
+					}} />,
           script: ScriptBlock as any,
           details: ThinkBlock,
         }}
