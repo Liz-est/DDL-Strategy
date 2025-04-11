@@ -181,6 +181,9 @@ importers:
       '@lexmin0412/markdown-it-echarts':
         specifier: ^0.1.5
         version: 0.1.5
+      '@svgdotjs/svg.js':
+        specifier: ^3.2.4
+        version: 3.2.4
       '@types/react-syntax-highlighter':
         specifier: ^15.5.13
         version: 15.5.13
@@ -2491,6 +2494,10 @@ packages:
     dependencies:
       storybook: 8.6.12(prettier@3.5.3)
     dev: true
+
+  /@svgdotjs/svg.js@3.2.4:
+    resolution: {integrity: sha512-BjJ/7vWNowlX3Z8O4ywT58DqbNRyYlkk6Yz/D13aB7hGmfQTvGX4Tkgtm/ApYlu9M7lCQi15xUEidqMUmdMYwg==}
+    dev: false
 
   /@swc/helpers@0.5.15:
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}

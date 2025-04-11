@@ -74,6 +74,7 @@
 		"@dify-chat/helpers": "workspace:^",
 		"@heroicons/react": "^2.2.0",
 		"@lexmin0412/markdown-it-echarts": "^0.1.5",
+		"@svgdotjs/svg.js": "^3.2.4",
 		"@types/react-syntax-highlighter": "^15.5.13",
 		"classnames": "^2.5.1",
 		"dompurify": "^3.2.5",
