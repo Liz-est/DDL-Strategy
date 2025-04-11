@@ -27,15 +27,16 @@ const svgToBase64 = (svgGraph: string) => {
 }
 
 const Flowchart = (
-  {
-    ref,
-    ...props
-  }: {
+  flowChartProps: {
     PrimitiveCode: string
   } & {
-    ref: React.RefObject<unknown>;
+    ref?: React.RefObject<unknown>;
   },
 ) => {
+	const {
+    ref,
+    ...props
+  } = flowChartProps
   const [svgCode, setSvgCode] = useState(null)
   const [look, setLook] = useState<'classic' | 'handDrawn'>('classic')
 
