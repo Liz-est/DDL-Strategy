@@ -19,7 +19,7 @@ import SVGRenderer from './blocks/svg-renderer'
 import { CopyOutlined } from '@ant-design/icons'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import SVGBtn from './blocks/svg-button'
-import { Button } from 'antd'
+import { Button, message } from 'antd'
 import './index.css'
 import MarkdownForm from './blocks/form'
 import { IFile } from '@dify-chat/api'
@@ -180,7 +180,10 @@ const CodeBlock: any = memo(({ inline, className, children, ...props }: any) => 
         <div className='flex items-center gap-1'>
           {(['mermaid', 'svg']).includes(language!) && <SVGBtn isSVG={isSVG} setIsSVG={setIsSVG} />}
           <Button>
-            <CopyOutlined onClick={()=>copyToClipboard(String(children).replace(/\n$/, ''))} />
+            <CopyOutlined onClick={async()=>{
+							await copyToClipboard(String(children).replace(/\n$/, ''))
+							message.success('复制成功')
+						}} />
           </Button>
         </div>
       </div>
