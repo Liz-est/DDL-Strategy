@@ -1,11 +1,13 @@
 import { GithubOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 
+import LogoImage from '@/assets/images/logo.png'
+
 export const LogoIcon = () => {
 	return (
 		<img
 			className="w-5 h-5 inline-block"
-			src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
+			src={LogoImage}
 			draggable={false}
 			alt="logo"
 		/>
@@ -40,7 +42,7 @@ export const Logo = (props: ILogoProps) => {
 			<div className="h-full flex items-center flex-1 overflow-hidden">
 				<img
 					className="w-6 h-6 inline-block"
-					src="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*eco6RrQhxbMAAAAAAAAAAAAADgCCAQ/original"
+					src={LogoImage}
 					draggable={false}
 					alt="logo"
 				/>
