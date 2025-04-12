@@ -34,13 +34,17 @@ Chatflow 工作流：
 
 ![单应用模式](./docs/sample_single-app-mode.png)
 
-移动端支持：
+多应用模式配置管理：
 
-![Screen Shot](./docs/guide__sample_mobile.png)
+![多应用模式-配置管理](./docs/guide__sample_multi_mode.png)
 
 回复表单：
 
 ![回复表单](./docs/guide__sample_form_answer.png)
+
+移动端支持：
+
+![Screen Shot](./docs/guide__sample_mobile.png)
 
 ## 特性
 
