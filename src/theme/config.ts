@@ -6,5 +6,5 @@ export const colors = {
 	desc: '#9CA3B3',
 	eb: '#ebebeb',
 	warning: '#FF5A07',
-	primary: '#4C84FF',
+	primary: '#1669ee',
 }
