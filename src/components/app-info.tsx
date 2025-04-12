@@ -16,11 +16,18 @@ export default function AppInfo(props: IAppInfoProps) {
 			<div className="flex items-center justify-center flex-col">
 				<RobotOutlined className="text-2xl text-primary" />
 				<div className="text-2xl font-bold mt-3">{info.name}</div>
-				<div className="text-desc text-base max-w-96 px-8 mt-3">{info.description}</div>
+				<div className="text-desc text-base max-w-96 mt-3 text-center">{info.description}</div>
 				{info.tags ? (
-					<div className="mt-3">
+					<div className="mt-3 text-center">
 						{info.tags.map(tag => {
-							return <Tag key={tag}>{tag}</Tag>
+							return (
+								<Tag
+									key={tag}
+									className="mb-2"
+								>
+									{tag}
+								</Tag>
+							)
 						})}
 					</div>
 				) : null}
