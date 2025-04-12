@@ -2,7 +2,7 @@
 
 ![GitHub License](https://img.shields.io/github/license/lexmin0412/dify-chat) ![GitHub Created At](https://img.shields.io/github/created-at/lexmin0412/dify-chat) ![GitHub contributors](https://img.shields.io/github/contributors/lexmin0412/dify-chat) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/lexmin0412/dify-chat)![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lexmin0412/dify-chat)
 
-一个基于 Dify API 的 AI 会话 Web 应用, 支持单应用、多应用等多种模式，并提供开箱即用的应用配置管理功能。支持深度思考、思维链、图表等多种输出，适配不同类型的 Dify 应用。
+一个基于 Dify API 的 AI 会话 Web 应用, 支持单应用、多应用等多种模式，提供开箱即用的应用配置管理功能。支持不同类型的 Dify 应用，适配深度思考、思维链、图表等多种形式输出。
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star 吧～
 
