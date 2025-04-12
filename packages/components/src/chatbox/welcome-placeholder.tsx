@@ -4,6 +4,7 @@ import {
 	FireOutlined,
 	HeartOutlined,
 	ReadOutlined,
+	RobotOutlined,
 	ShareAltOutlined,
 	SmileOutlined,
 } from '@ant-design/icons'
@@ -111,7 +112,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 			>
 				<Welcome
 					variant="borderless"
-					icon="https://mdn.alipayobjects.com/huamei_iwk9zp/afts/img/A*s5sNRo5LjfQAAAAAAAAAAAAADgCCAQ/fmt.webp"
+					icon={<RobotOutlined className="text-3xl text-primary" />}
 					title={appParameters?.opening_statement || "Hello, I'm Dify Chat"}
 					description="Base on Dify API, Dify Chat is a web app that can interact with AI."
 					extra={
