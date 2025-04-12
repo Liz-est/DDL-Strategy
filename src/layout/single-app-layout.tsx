@@ -29,7 +29,10 @@ const SingleAppLayout: React.FC = () => {
 	return (
 		<BaseLayout
 			useAppInit={useAppInit}
-			getAppConfig={() => appConfig as IDifyAppItem}
+			appConfig={appConfig as IDifyAppItem}
+			renderCenterTitle={appInfo => {
+				return <>{appInfo?.name}</>
+			}}
 		/>
 	)
 }

@@ -38,7 +38,7 @@ export const Logo = (props: ILogoProps) => {
 	const { hideGithubIcon } = props
 
 	return (
-		<div className="flex h-16 items-center justify-start py-0 px-6 box-border">
+		<div className="flex h-16 items-center justify-start py-0 box-border">
 			<div className="h-full flex items-center flex-1 overflow-hidden">
 				<img
 					className="w-6 h-6 inline-block"
