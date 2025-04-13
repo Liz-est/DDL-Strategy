@@ -11,6 +11,7 @@ import { IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { Button, Divider, Empty, message, Space, Spin } from 'antd'
 import { createStyles } from 'antd-style'
+import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
@@ -58,10 +59,21 @@ interface IBaseLayoutProps {
 	 * 触发配置应用事件
 	 */
 	handleStartConfig: () => void
+	/**
+	 * 是否正在加载应用配置
+	 */
+	appConfigLoading: boolean
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
-	const { extComponents, appConfig, useAppInit, renderCenterTitle, handleStartConfig } = props
+	const {
+		extComponents,
+		appConfig,
+		useAppInit,
+		renderCenterTitle,
+		handleStartConfig,
+		appConfigLoading,
+	} = props
 	const { ...difyChatContext } = useDifyChat()
 	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
@@ -73,6 +85,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 			apiKey: '',
 		}),
 	)
+	const searchParams = useSearchParams()
 	const [conversationsItems, setConversationsItems] = useState<IConversationItem[]>([])
 	// 优化会话列表查找逻辑（高频操作）
 	const conversationMap = useMap4Arr<IConversationItem>(conversationsItems, 'key')
@@ -97,7 +110,12 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 	useAppInit(difyApi, () => {
 		initAppInfo().then(() => {
-			getConversationItems()
+			getConversationItems().then(() => {
+				const isNewConversation = searchParams.get('isNewCvst') === '1'
+				if (isNewConversation) {
+					onAddConversation()
+				}
+			})
 		})
 		setCurrentConversationId(undefined)
 	})
@@ -242,6 +260,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 								{appConfig ? (
 									conversationListLoading ? (
+										<div className="w-full flex-1 flex items-center justify-center">
+											<Spin spinning />
+										</div>
+									) : appConfigLoading ? (
 										<div className="w-full flex-1 flex items-center justify-center">
 											<Spin spinning />
 										</div>
