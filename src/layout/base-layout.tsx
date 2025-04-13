@@ -190,7 +190,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 			<div
 				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
 			>
-				{/* 左侧边栏 - 小屏幕隐藏 */}
+				{/* 头部 */}
 				<div className="hidden md:!flex items-center justify-between px-6">
 					{/* 🌟 Logo */}
 					<div className={`flex-1 overflow-hidden ${appConfig ? '' : 'shadow-sm'}`}>
@@ -201,7 +201,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						{renderCenterTitle ? renderCenterTitle(appInfo!) : null}
 					</CenterTitleWrapper>
 
-					{/* 自定义头部 */}
+					{/* 右侧图标 */}
 					<div className="flex-1 overflow-hidden">
 						<div className="flex items-center justify-end text-sm">
 							<Space split={<Divider type="vertical" />}>
@@ -211,6 +211,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					</div>
 				</div>
 
+				{/* Main */}
 				<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
 					{appConfig ? (
 						<>
