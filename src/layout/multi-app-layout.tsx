@@ -85,6 +85,11 @@ const MultiAppLayout: React.FC = () => {
 		<BaseLayout
 			useAppInit={useAppInit}
 			appConfig={appList?.find(item => item.id === selectedAppId) as IDifyAppItem}
+			handleStartConfig={() => {
+				if (enableSetting) {
+					setAppManageDrawerVisible(true)
+				}
+			}}
 			extComponents={
 				<>
 					<AppManageDrawer
@@ -116,40 +121,44 @@ const MultiAppLayout: React.FC = () => {
 						>
 							应用列表
 						</span>
-						<div className="mx-2 font-normal text-desc">/</div>
-						<Dropdown
-							arrow
-							placement="bottomCenter"
-							trigger={['click']}
-							menu={{
-								style: {
-									// boxShadow: 'none',
-								},
-								selectedKeys: [selectedAppId],
-								items: [
-									...(appList?.map(item => {
-										const isSelected = selectedAppId === item.id
-										return {
-											key: item.id,
-											label: (
-												<div className={isSelected ? 'text-primary' : 'text-default'}>
-													{item.info.name}
-												</div>
-											),
-											onClick: () => {
-												setSelectedAppId(item.id)
-											},
-											icon: <RobotFilled />,
-										}
-									}) || []),
-								],
-							}}
-						>
-							<div className="cursor-pointer">
-								<span className="cursor-pointer">{selectedAppItem?.info?.name}</span>
-								<DownCircleTwoTone className="ml-1" />
-							</div>
-						</Dropdown>
+						{selectedAppId ? (
+							<>
+								<div className="mx-2 font-normal text-desc">/</div>
+								<Dropdown
+									arrow
+									placement="bottomCenter"
+									trigger={['click']}
+									menu={{
+										style: {
+											// boxShadow: 'none',
+										},
+										selectedKeys: [selectedAppId],
+										items: [
+											...(appList?.map(item => {
+												const isSelected = selectedAppId === item.id
+												return {
+													key: item.id,
+													label: (
+														<div className={isSelected ? 'text-primary' : 'text-default'}>
+															{item.info.name}
+														</div>
+													),
+													onClick: () => {
+														setSelectedAppId(item.id)
+													},
+													icon: <RobotFilled />,
+												}
+											}) || []),
+										],
+									}}
+								>
+									<div className="cursor-pointer">
+										<span className="cursor-pointer">{selectedAppItem?.info?.name}</span>
+										<DownCircleTwoTone className="ml-1" />
+									</div>
+								</Dropdown>
+							</>
+						) : null}
 					</>
 				)
 			}}

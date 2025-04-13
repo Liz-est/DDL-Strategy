@@ -54,10 +54,14 @@ interface IBaseLayoutProps {
 	 * 初始化应用信息
 	 */
 	useAppInit: (difyApi: DifyApi, callback: () => void) => void
+	/**
+	 * 触发配置应用事件
+	 */
+	handleStartConfig: () => void
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
-	const { extComponents, appConfig, useAppInit, renderCenterTitle } = props
+	const { extComponents, appConfig, useAppInit, renderCenterTitle, handleStartConfig } = props
 	const { ...difyChatContext } = useDifyChat()
 	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
@@ -190,71 +194,103 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 				</div>
 
 				<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
-					<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
-						{/* 添加会话 */}
-						{appConfig ? (
-							<Button
-								onClick={() => onAddConversation()}
-								className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
-								icon={<PlusOutlined />}
-							>
-								新增对话
-							</Button>
-						) : null}
-						{/* 🌟 对话管理 */}
-						<div className="px-3">
-							<Spin spinning={conversationListLoading}>
-								{conversationsItems?.length ? (
-									<ConversationList
-										renameConversationPromise={(conversationId: string, name: string) =>
-											difyApi?.renameConversation({
-												conversation_id: conversationId,
-												name,
-											})
-										}
-										deleteConversationPromise={difyApi?.deleteConversation}
-										items={conversationsItems}
-										activeKey={currentConversationId}
-										onActiveChange={id => setCurrentConversationId(id)}
-										onItemsChange={setConversationsItems}
-										refreshItems={getConversationItems}
-									/>
-								) : (
-									<Empty
-										className="pt-6"
-										description="暂无会话"
-									/>
-								)}
-							</Spin>
-						</div>
-					</div>
-
-					{/* 右侧聊天窗口 - 移动端全屏 */}
-
-					{/* 头部 */}
-					<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-						{/* 新增外层容器 */}
-						{conversationListLoading ? (
-							<div className="w-full flex-1 flex items-center justify-center">
-								<Spin spinning />
+					{appConfig ? (
+						<>
+							{/* 左侧对话列表 */}
+							<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
+								{/* 添加会话 */}
+								{appConfig ? (
+									<Button
+										onClick={() => onAddConversation()}
+										className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
+										icon={<PlusOutlined />}
+									>
+										新增对话
+									</Button>
+								) : null}
+								{/* 🌟 对话管理 */}
+								<div className="px-3">
+									<Spin spinning={conversationListLoading}>
+										{conversationsItems?.length ? (
+											<ConversationList
+												renameConversationPromise={(conversationId: string, name: string) =>
+													difyApi?.renameConversation({
+														conversation_id: conversationId,
+														name,
+													})
+												}
+												deleteConversationPromise={difyApi?.deleteConversation}
+												items={conversationsItems}
+												activeKey={currentConversationId}
+												onActiveChange={id => setCurrentConversationId(id)}
+												onItemsChange={setConversationsItems}
+												refreshItems={getConversationItems}
+											/>
+										) : (
+											<div className="w-full h-full flex items-center justify-center">
+												<Empty
+													className="pt-6"
+													description="暂无会话"
+												/>
+											</div>
+										)}
+									</Spin>
+								</div>
 							</div>
-						) : (
-							<ChatboxWrapper
-								appConfig={appConfig}
-								appInfo={appInfo}
-								difyApi={difyApi}
-								conversationId={currentConversationId}
-								conversationName={conversationName}
-								conversationItems={conversationsItems}
-								onConversationIdChange={setCurrentConversationId}
-								appParameters={appParameters}
-								conversationListLoading={conversationListLoading}
-								onAddConversation={onAddConversation}
-								onItemsChange={setConversationsItems}
-								conversationItemsChangeCallback={getConversationItems}
-							/>
-						)}
-					</div>
+
+							{/* 右侧聊天窗口 - 移动端全屏 */}
+							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+								{appConfig ? (
+									conversationListLoading ? (
+										<div className="w-full flex-1 flex items-center justify-center">
+											<Spin spinning />
+										</div>
+									) : (
+										<ChatboxWrapper
+											appConfig={appConfig}
+											appInfo={appInfo}
+											difyApi={difyApi}
+											conversationId={currentConversationId}
+											conversationName={conversationName}
+											conversationItems={conversationsItems}
+											onConversationIdChange={setCurrentConversationId}
+											appParameters={appParameters}
+											conversationListLoading={conversationListLoading}
+											onAddConversation={onAddConversation}
+											onItemsChange={setConversationsItems}
+											conversationItemsChangeCallback={getConversationItems}
+										/>
+									)
+								) : (
+									<div className="w-full h-full flex items-center justify-center">
+										<Empty description="请先配置 Dify 应用">
+											<Button
+												type="primary"
+												onClick={handleStartConfig}
+											>
+												开始配置
+											</Button>
+										</Empty>
+									</div>
+								)}
+							</div>
+						</>
+					) : (
+						<div className="w-full h-full flex items-center justify-center">
+							<Empty
+								description="暂无 Dify 应用配置"
+								className="text-base"
+							>
+								<Button
+									size="large"
+									type="primary"
+									onClick={handleStartConfig}
+								>
+									开始配置
+								</Button>
+							</Empty>
+						</div>
+					)}
 				</div>
 			</div>
 
