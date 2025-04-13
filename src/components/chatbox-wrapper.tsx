@@ -201,11 +201,24 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		}
 	}
 
+	const resetFormValues = () => {
+		// 遍历 inputParams 置为 undefined
+		if (appParameters?.user_input_form?.length) {
+			const newInputParams = { ...inputParams }
+			appParameters?.user_input_form.forEach(item => {
+				const field = item['text-input']
+				newInputParams[field.variable] = undefined
+			})
+			setInputParams(newInputParams)
+		}
+	}
+
 	useEffect(() => {
 		setInitLoading(true)
 		setMessages([])
 		setHistoryMessages([])
 		initConversationInfo()
+		resetFormValues()
 	}, [conversationId])
 
 	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
@@ -221,7 +234,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		return (
 			appParameters?.user_input_form?.every(item => {
 				const field = item['text-input']
-				return !!inputParams[field.variable] || !field.required
+				return !!inputParams[field.variable]
 			}) || false
 		)
 	}, [appParameters, inputParams])

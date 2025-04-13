@@ -57,6 +57,8 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
 		)
 	}, [user_input_form])
 
+	console.log('formFilled', formFilled, user_input_form)
+
 	return (
 		<div className="w-full h-full flex items-center justify-center -mt-5">
 			<div className="w-96 max-w-[80vw] py-6 px-10 rounded-3xl bg-gray-100 box-border">
