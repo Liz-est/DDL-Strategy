@@ -10,7 +10,7 @@ import { MobileHeader } from '@/components/mobile/header'
 
 export default function AppListPage() {
 	const history = useHistory()
-	const { appService } = useDifyChat() as IDifyChatContextMultiApp
+	const { appService, enableSetting } = useDifyChat() as IDifyChatContextMultiApp
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
 
 	const isMobile = useIsMobile()
@@ -84,18 +84,20 @@ export default function AppListPage() {
 					</div>
 				)}
 			</div>
-			<div className="p-3">
-				<Button
-					size="large"
-					block
-					type="primary"
-					onClick={() => {
-						setAppManageDrawerVisible(true)
-					}}
-				>
-					应用配置管理
-				</Button>
-			</div>
+			{enableSetting ? (
+				<div className="p-3">
+					<Button
+						size="large"
+						block
+						type="primary"
+						onClick={() => {
+							setAppManageDrawerVisible(true)
+						}}
+					>
+						应用配置管理
+					</Button>
+				</div>
+			) : null}
 
 			<AppManageDrawer
 				open={appManageDrawerVisible}
