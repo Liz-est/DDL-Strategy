@@ -362,6 +362,8 @@ export default function App() {
 
 Dify 应用支持配置初始参数，在对话开启时，展示在界面上供用户输入。在实际应用场景下，我们可能有需要在 URL 中动态传入参数值，填入表单。
 
+![读取 URL 作为应用参数-说明](./docs/sample_app_input_intro.png)
+
 为了支持此功能，你的 URL 需要定义成如下形式：
 
 ```shell
@@ -372,7 +374,7 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 
 默认情况下，表单值为空：
 
-![应用参数-默认](./docs/sample_app_input_default.jpg)
+![读取 URL 作为应用参数-默认](./docs/sample_app_input_default.jpg)
 
 我们可以在 URL 中拼接参数：
 
@@ -407,7 +409,7 @@ zlib.gzip(buffer, (err, compressedBuffer) => {
 
 将 `encodedValue` 填入链接后访问，可以看到我们定义的 `orderNo: 12345` 已经被填入表单：
 
-![应用参数-读取 URL 参数](./docs/sample_app_input_filled.jpg)
+![读取 URL 作为应用参数-结果](./docs/sample_app_input_filled.jpg)
 
 ## 本地开发
 
