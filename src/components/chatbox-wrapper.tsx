@@ -234,6 +234,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		if (!appParameters?.user_input_form?.length) {
 			return true
 		}
+		if (!isTempId(conversationId)) {
+			return true
+		}
 		return (
 			appParameters?.user_input_form?.every(item => {
 				const field = item['text-input']
