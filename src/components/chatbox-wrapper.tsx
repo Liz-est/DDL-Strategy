@@ -218,7 +218,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setMessages([])
 		setHistoryMessages([])
 		initConversationInfo()
-		resetFormValues()
+		// 当 ID 为临时ID 时，清除初始参数
+		if (isTempId(conversationId)) {
+			resetFormValues()
+		}
 	}, [conversationId])
 
 	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
@@ -281,16 +284,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		})
 	}, [messages])
 
-	const chatReady = useMemo(() => {
-		if (!appParameters?.user_input_form?.length) {
-			return true
-		}
-		if (isFormFilled) {
-			return true
-		}
-		return false
-	}, [appParameters, isFormFilled])
-
 	const conversationTitle = (
 		<Popover
 			trigger={['click']}
@@ -347,7 +340,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					</div>
 				) : null}
 
-				{chatReady && conversationId ? (
+				{conversationId && isFormFilled ? (
 					<Chatbox
 						appConfig={appConfig!}
 						conversationId={conversationId}
