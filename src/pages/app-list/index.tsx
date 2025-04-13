@@ -53,7 +53,7 @@ export default function AppListPage() {
 								key={item.id}
 								className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
 								onClick={() => {
-									history.push(`/chat?id=${item.id}`)
+									history.push(`/chat/${item.id}`)
 								}}
 							>
 								<div className="w-full flex items-center truncate font-semibold">

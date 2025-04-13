@@ -13,9 +13,9 @@ import DifyAppService from './services/app/localstorage'
 initResponsiveConfig()
 
 const routes: IRoute[] = [
-	{ path: '/chat', component: () => <ChatPage /> },
+	{ path: '/chat/:appId', component: () => <ChatPage /> },
 	{ path: '/apps', component: () => <AppListPage /> },
-	{ path: '/', component: () => <ChatPage /> },
+	{ path: '/', component: () => <AppListPage /> },
 ]
 
 /**

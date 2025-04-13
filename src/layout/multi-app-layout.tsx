@@ -5,21 +5,26 @@ import { useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useMount, useRequest, useUpdateEffect } from 'ahooks'
 import { Dropdown, message } from 'antd'
-import { useHistory, useSearchParams } from 'pure-react-router'
-import React, { useMemo, useState } from 'react'
+import { useHistory, useParams } from 'pure-react-router'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import AppManageDrawer from '@/components/app-manage-drawer'
 
 import BaseLayout from './base-layout'
 
 const MultiAppLayout: React.FC = () => {
-	const searchParams = useSearchParams()
 	const { setCurrentAppConfig, ...difyChatContext } = useDifyChat()
 	const { user, appService, enableSetting } = difyChatContext as IDifyChatContextMultiApp
 	const history = useHistory()
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
+
+	const { appId } = useParams<{ appId: string }>()
+
+	useEffect(() => {
+		setSelectedAppId(appId)
+	}, [appId])
 
 	const {
 		runAsync: getAppList,
@@ -32,8 +37,6 @@ const MultiAppLayout: React.FC = () => {
 		{
 			manual: true,
 			onSuccess: result => {
-				const idInQuery = searchParams.get('id')
-
 				if (isMobile) {
 					// 移动端如果没有应用，直接跳转应用列表页
 					if (!result?.length) {
@@ -42,8 +45,8 @@ const MultiAppLayout: React.FC = () => {
 					}
 				}
 
-				if (idInQuery) {
-					setSelectedAppId(idInQuery as string)
+				if (appId) {
+					setSelectedAppId(appId as string)
 				} else if (!selectedAppId && result?.length) {
 					setSelectedAppId(result[0]?.id || '')
 				}
@@ -84,7 +87,8 @@ const MultiAppLayout: React.FC = () => {
 	return (
 		<BaseLayout
 			useAppInit={useAppInit}
-			appConfig={appList?.find(item => item.id === selectedAppId) as IDifyAppItem}
+			appConfig={selectedAppItem as IDifyAppItem}
+			appConfigLoading={appListLoading}
 			handleStartConfig={() => {
 				if (enableSetting) {
 					setAppManageDrawerVisible(true)
@@ -144,7 +148,7 @@ const MultiAppLayout: React.FC = () => {
 														</div>
 													),
 													onClick: () => {
-														setSelectedAppId(item.id)
+														history.push(`/chat/${item.id}`)
 													},
 													icon: <RobotFilled />,
 												}

@@ -372,8 +372,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						uploadFileApi={difyApi.uploadFile}
 						difyApi={difyApi}
 					/>
-				) : (
+				) : appParameters?.user_input_form?.length ? (
 					<ChatPlaceholder
+						conversationId={conversationId}
 						formFilled={isFormFilled}
 						onStartConversation={formValues => {
 							setInputParams(formValues)
@@ -384,6 +385,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						appInfo={appInfo}
 						user_input_form={appParameters?.user_input_form}
 					/>
+				) : (
+					<div className="w-full h-full flex items-center justify-center">
+						<Spin spinning />
+					</div>
 				)}
 			</div>
 		</div>
