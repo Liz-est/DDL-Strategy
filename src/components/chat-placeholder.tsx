@@ -93,7 +93,7 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
 			const searchString = cachedSearchParams.current.size
 				? `?${cachedSearchParams.current.toString()}`
 				: ''
-			history.push(`/chat/${appId}${searchString}`)
+			history.push(`/app/${appId}${searchString}`)
 		}
 	}, [user_input_form])
 

@@ -367,7 +367,7 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 为了支持此功能，你的 URL 需要定义成如下形式：
 
 ```shell
-<dify-chat-address>/dify-chat/chat/<appId>?<paramName>=<encodedParamValue>&isNewCvst=1
+<dify-chat-address>/dify-chat/app/<appId>?<paramName>=<encodedParamValue>&isNewCvst=1
 ```
 
 #### 应用示例 - 订单号填入
@@ -379,7 +379,7 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 我们可以在 URL 中拼接参数：
 
 ```shell
-http://localhost:5200/dify-chat/chat/${appId}?orderNo=${encodedValue}&isNewCvst=1
+http://localhost:5200/dify-chat/app/${appId}?orderNo=${encodedValue}&isNewCvst=1
 ```
 
 说明：

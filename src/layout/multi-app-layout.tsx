@@ -159,7 +159,7 @@ const MultiAppLayout: React.FC = () => {
 														</div>
 													),
 													onClick: () => {
-														history.push(`/chat/${item.id}`)
+														history.push(`/app/${item.id}`)
 													},
 													icon: <RobotFilled />,
 												}
