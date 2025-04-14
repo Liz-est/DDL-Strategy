@@ -1,5 +1,6 @@
 import { MessageOutlined } from '@ant-design/icons'
 import { IGetAppInfoResponse, IGetAppParametersResponse } from '@dify-chat/api'
+import { useDifyChat } from '@dify-chat/core'
 import { Button, Empty, Form, FormItemProps, Input, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useRef, useState } from 'react'
@@ -45,6 +46,7 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
 	const searchParams = useSearchParams()
 	const [userInputItems, setUserInputItems] = useState<IConversationEntryFormItem[]>([])
 	const cachedSearchParams = useRef<URLSearchParams>(new URLSearchParams(searchParams))
+	const { mode } = useDifyChat()
 
 	const [entryForm] = Form.useForm()
 
@@ -93,7 +95,11 @@ export const ChatPlaceholder = (props: IChatPlaceholderProps) => {
 			const searchString = cachedSearchParams.current.size
 				? `?${cachedSearchParams.current.toString()}`
 				: ''
-			history.push(`/app/${appId}${searchString}`)
+			if (mode === 'multiApp') {
+				history.push(`/app/${appId}${searchString}`)
+			} else {
+				history.push(`/chat${searchString}`)
+			}
 		}
 	}, [user_input_form])
 
