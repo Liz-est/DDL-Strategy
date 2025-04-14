@@ -72,8 +72,19 @@ interface IChatboxWrapperProps {
 	 * 添加对话
 	 */
 	onAddConversation: () => void
+	/**
+	 * 应用配置加载中
+	 */
+	appConfigLoading?: boolean
+	/**
+	 * 触发配置应用事件
+	 */
+	handleStartConfig?: () => void
 }
 
+/**
+ * 聊天容器 进入此组件时, 应保证应用信息和对话列表已经加载完成
+ */
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const {
 		appConfig,
@@ -88,6 +99,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		onAddConversation,
 		onItemsChange,
 		conversationItemsChangeCallback,
+		appConfigLoading,
+		handleStartConfig,
 	} = props
 
 	const isMobile = useIsMobile()
@@ -332,6 +345,32 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		</Popover>
 	)
 
+	// 如果应用配置 / 对话列表加载中，则展示 loading
+	if (conversationListLoading || appConfigLoading) {
+		return (
+			<div className="w-full h-full flex items-center justify-center">
+				<Spin spinning />
+			</div>
+		)
+	}
+
+	if (!appConfig) {
+		return (
+			<div className="w-full h-full flex items-center justify-center">
+				<Empty description="请先配置 Dify 应用">
+					<Button
+						type="primary"
+						onClick={handleStartConfig}
+					>
+						开始配置
+					</Button>
+				</Empty>
+			</div>
+		)
+	}
+
+	console.log('appInfoappInfo', appInfo)
+
 	return (
 		<div className="flex h-screen flex-col overflow-hidden flex-1">
 			{isMobile ? <MobileHeader centerChildren={conversationTitle} /> : null}
@@ -343,49 +382,65 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					</div>
 				) : null}
 
-				{conversationId && isFormFilled ? (
-					<Chatbox
-						appConfig={appConfig!}
-						conversationId={conversationId}
-						appParameters={appParameters}
-						nextSuggestions={nextSuggestions}
-						messageItems={[...historyMessages, ...unStoredMessages4Render]}
-						isRequesting={agent.isRequesting()}
-						onPromptsItemClick={onPromptsItemClick}
-						onSubmit={onSubmit}
-						onCancel={async () => {
-							abortRef.current()
-							if (currentTaskId) {
-								await difyApi.stopTask(currentTaskId)
+				{
+					// 没有对话时, 展示开始对话入口
+					!conversationItems.length ? (
+						<ChatPlaceholder
+							conversationId={conversationId}
+							formFilled={isFormFilled}
+							onStartConversation={formValues => {
+								setInputParams(formValues)
+								if (!conversationId) {
+									onAddConversation()
+								}
+							}}
+							appInfo={appInfo}
+							user_input_form={appParameters?.user_input_form}
+						/>
+					) : conversationId && isFormFilled ? (
+						<Chatbox
+							appConfig={appConfig!}
+							conversationId={conversationId}
+							appParameters={appParameters}
+							nextSuggestions={nextSuggestions}
+							messageItems={[...historyMessages, ...unStoredMessages4Render]}
+							isRequesting={agent.isRequesting()}
+							onPromptsItemClick={onPromptsItemClick}
+							onSubmit={onSubmit}
+							onCancel={async () => {
+								abortRef.current()
+								if (currentTaskId) {
+									await difyApi.stopTask(currentTaskId)
+									getConversationMessages(conversationId)
+								}
+							}}
+							feedbackApi={difyApi.feedbackMessage}
+							feedbackCallback={(conversationId: string) => {
+								// 反馈成功后，重新获取历史消息
 								getConversationMessages(conversationId)
-							}
-						}}
-						feedbackApi={difyApi.feedbackMessage}
-						feedbackCallback={(conversationId: string) => {
-							// 反馈成功后，重新获取历史消息
-							getConversationMessages(conversationId)
-						}}
-						uploadFileApi={difyApi.uploadFile}
-						difyApi={difyApi}
-					/>
-				) : appParameters?.user_input_form?.length ? (
-					<ChatPlaceholder
-						conversationId={conversationId}
-						formFilled={isFormFilled}
-						onStartConversation={formValues => {
-							setInputParams(formValues)
-							if (!conversationId) {
-								onAddConversation()
-							}
-						}}
-						appInfo={appInfo}
-						user_input_form={appParameters?.user_input_form}
-					/>
-				) : (
-					<div className="w-full h-full flex items-center justify-center">
-						<Spin spinning />
-					</div>
-				)}
+							}}
+							uploadFileApi={difyApi.uploadFile}
+							difyApi={difyApi}
+						/>
+					) : appParameters?.user_input_form?.length ? (
+						<ChatPlaceholder
+							conversationId={conversationId}
+							formFilled={isFormFilled}
+							onStartConversation={formValues => {
+								setInputParams(formValues)
+								if (!conversationId) {
+									onAddConversation()
+								}
+							}}
+							appInfo={appInfo}
+							user_input_form={appParameters?.user_input_form}
+						/>
+					) : (
+						<div className="w-full h-full flex items-center justify-center">
+							<Spin spinning />
+						</div>
+					)
+				}
 			</div>
 		</div>
 	)

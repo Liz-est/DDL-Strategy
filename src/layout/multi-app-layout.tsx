@@ -3,8 +3,8 @@ import { DifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
-import { useMount, useRequest, useUpdateEffect } from 'ahooks'
-import { Dropdown, message } from 'antd'
+import { useMount, useRequest } from 'ahooks'
+import { Dropdown, message, Spin } from 'antd'
 import { useHistory, useParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
 
@@ -19,6 +19,7 @@ const MultiAppLayout: React.FC = () => {
 
 	const [selectedAppId, setSelectedAppId] = useState<string>('')
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
+	const [initLoading, setInitLoading] = useState(false)
 
 	const { appId } = useParams<{ appId: string }>()
 
@@ -50,10 +51,12 @@ const MultiAppLayout: React.FC = () => {
 				} else if (!selectedAppId && result?.length) {
 					setSelectedAppId(result[0]?.id || '')
 				}
+				setInitLoading(false)
 			},
 			onError: error => {
 				message.error(`获取应用列表失败: ${error}`)
 				console.error(error)
+				setInitLoading(false)
 			},
 		},
 	)
@@ -63,7 +66,7 @@ const MultiAppLayout: React.FC = () => {
 	}, [appList, selectedAppId])
 
 	const useAppInit = (difyApi: DifyApi, callback: () => void) => {
-		useUpdateEffect(() => {
+		useEffect(() => {
 			const appItem = appList?.find(item => item.id === selectedAppId)
 			if (!appItem) {
 				return
@@ -84,11 +87,19 @@ const MultiAppLayout: React.FC = () => {
 		getAppList()
 	})
 
-	return (
+	if (initLoading) {
+		return (
+			<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
+				<Spin spinning />
+			</div>
+		)
+	}
+
+	return selectedAppItem ? (
 		<BaseLayout
 			useAppInit={useAppInit}
 			appConfig={selectedAppItem as IDifyAppItem}
-			appConfigLoading={appListLoading}
+			initLoading={initLoading}
 			handleStartConfig={() => {
 				if (enableSetting) {
 					setAppManageDrawerVisible(true)
@@ -167,7 +178,7 @@ const MultiAppLayout: React.FC = () => {
 				)
 			}}
 		/>
-	)
+	) : null
 }
 
 export default MultiAppLayout

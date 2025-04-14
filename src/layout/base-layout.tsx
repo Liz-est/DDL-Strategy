@@ -62,7 +62,7 @@ interface IBaseLayoutProps {
 	/**
 	 * 是否正在加载应用配置
 	 */
-	appConfigLoading: boolean
+	initLoading: boolean
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
@@ -72,7 +72,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		useAppInit,
 		renderCenterTitle,
 		handleStartConfig,
-		appConfigLoading,
+		initLoading,
 	} = props
 	const { ...difyChatContext } = useDifyChat()
 	const { user } = difyChatContext as IDifyChatContextMultiApp
@@ -93,12 +93,14 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	const [currentConversationId, setCurrentConversationId] = useState<string>()
 	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
+	const [appConfigLoading, setAppConfigLoading] = useState(false)
 
 	const initAppInfo = async () => {
 		setAppInfo(undefined)
 		if (!difyApi) {
 			return
 		}
+		setAppConfigLoading(true)
 		// 获取应用信息
 		const baseInfo = await difyApi.getAppInfo()
 		setAppInfo({
@@ -106,6 +108,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		})
 		const appParameters = await difyApi.getAppParameters()
 		setAppParameters(appParameters)
+		setAppConfigLoading(false)
 	}
 
 	useAppInit(difyApi, () => {
@@ -213,7 +216,11 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 				{/* Main */}
 				<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
-					{appConfig ? (
+					{appConfigLoading || initLoading ? (
+						<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
+							<Spin spinning />
+						</div>
+					) : appConfig ? (
 						<>
 							{/* 左侧对话列表 */}
 							<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
@@ -259,43 +266,21 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 							{/* 右侧聊天窗口 - 移动端全屏 */}
 							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-								{appConfig ? (
-									conversationListLoading ? (
-										<div className="w-full flex-1 flex items-center justify-center">
-											<Spin spinning />
-										</div>
-									) : appConfigLoading ? (
-										<div className="w-full flex-1 flex items-center justify-center">
-											<Spin spinning />
-										</div>
-									) : (
-										<ChatboxWrapper
-											appConfig={appConfig}
-											appInfo={appInfo}
-											difyApi={difyApi}
-											conversationId={currentConversationId}
-											conversationName={conversationName}
-											conversationItems={conversationsItems}
-											onConversationIdChange={setCurrentConversationId}
-											appParameters={appParameters}
-											conversationListLoading={conversationListLoading}
-											onAddConversation={onAddConversation}
-											onItemsChange={setConversationsItems}
-											conversationItemsChangeCallback={getConversationItems}
-										/>
-									)
-								) : (
-									<div className="w-full h-full flex items-center justify-center">
-										<Empty description="请先配置 Dify 应用">
-											<Button
-												type="primary"
-												onClick={handleStartConfig}
-											>
-												开始配置
-											</Button>
-										</Empty>
-									</div>
-								)}
+								<ChatboxWrapper
+									appConfig={appConfig}
+									appConfigLoading={appConfigLoading}
+									appInfo={appInfo}
+									difyApi={difyApi}
+									conversationId={currentConversationId}
+									conversationName={conversationName}
+									conversationItems={conversationsItems}
+									onConversationIdChange={setCurrentConversationId}
+									appParameters={appParameters}
+									conversationListLoading={conversationListLoading}
+									onAddConversation={onAddConversation}
+									onItemsChange={setConversationsItems}
+									conversationItemsChangeCallback={getConversationItems}
+								/>
 							</div>
 						</>
 					) : (
