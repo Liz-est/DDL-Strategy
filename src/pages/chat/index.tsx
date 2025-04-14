@@ -1,5 +1,5 @@
 import { useDifyChat } from '@dify-chat/core'
-import { Empty } from 'antd'
+import { Spin } from 'antd'
 
 import { Logo } from '@/components/logo'
 import MultiAppLayout from '@/layout/multi-app-layout'
@@ -12,8 +12,13 @@ export default function ChatPage() {
 	if (!user) {
 		return (
 			<div className="w-screen h-screen flex flex-col items-center justify-center">
-				<Logo hideGithubIcon />
-				<Empty description="请先登录" />
+				<div className="absolute flex-col w-full h-full left-0 top-0 z-50 flex items-center justify-center">
+					<Logo hideGithubIcon />
+					<div>授权登录中...</div>
+					<div className="mt-6">
+						<Spin spinning />
+					</div>
+				</div>
 			</div>
 		)
 	}
