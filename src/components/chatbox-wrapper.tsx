@@ -247,7 +247,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		if (!appParameters?.user_input_form?.length) {
 			return true
 		}
-		if (!isTempId(conversationId)) {
+		if (conversationId && !isTempId(conversationId)) {
 			return true
 		}
 		return (
