@@ -7,15 +7,17 @@ import { useState } from 'react'
 
 import AppListPage from './pages/app-list'
 import ChatPage from './pages/chat'
+import IndexPage from './pages/index'
 import DifyAppService from './services/app/localstorage'
 
 // 初始化响应式配置
 initResponsiveConfig()
 
 const routes: IRoute[] = [
+	{ path: '/chat', component: () => <ChatPage /> },
 	{ path: '/chat/:appId', component: () => <ChatPage /> },
 	{ path: '/apps', component: () => <AppListPage /> },
-	{ path: '/', component: () => <AppListPage /> },
+	{ path: '/', component: () => <IndexPage /> },
 ]
 
 /**

@@ -1,5 +1,4 @@
 import { IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
-import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Empty, message, Tag } from 'antd'
 import { useHistory } from 'pure-react-router'
@@ -10,16 +9,8 @@ import { MobileHeader } from '@/components/mobile/header'
 
 export default function AppListPage() {
 	const history = useHistory()
-	const { appService, enableSetting } = useDifyChat() as IDifyChatContextMultiApp
+	const { appService, enableSetting, mode } = useDifyChat() as IDifyChatContextMultiApp
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
-
-	const isMobile = useIsMobile()
-
-	useEffect(() => {
-		if (!isMobile) {
-			history.push('/chat')
-		}
-	}, [isMobile])
 
 	const {
 		runAsync: getAppList,
@@ -39,7 +30,14 @@ export default function AppListPage() {
 	)
 
 	useEffect(() => {
-		getAppList()
+		if (mode === 'multiApp') {
+			getAppList()
+		} else {
+			// FIXME: 若不加定时器，URL 会更新但是页面 UI 仍然停在当前页面
+			setTimeout(() => {
+				history.push('/chat')
+			}, 200)
+		}
 	}, [])
 
 	return (
