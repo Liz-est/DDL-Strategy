@@ -94,6 +94,22 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
 	const [appConfigLoading, setAppConfigLoading] = useState(false)
+	const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>({})
+
+	/**
+	 * 重置输入表单值
+	 */
+	const resetFormValues = () => {
+		// 遍历 inputParams 置为 undefined
+		if (appParameters?.user_input_form?.length) {
+			const newInputParams = { ...inputParams }
+			appParameters?.user_input_form.forEach(item => {
+				const field = item['text-input']
+				newInputParams[field.variable] = undefined
+			})
+			setInputParams(newInputParams)
+		}
+	}
 
 	const initAppInfo = async () => {
 		setAppInfo(undefined)
@@ -120,6 +136,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 				}
 			})
 		})
+		resetFormValues()
 		setCurrentConversationId(undefined)
 	})
 
@@ -185,6 +202,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 			setConversationsItems([])
 			setAppInfo(undefined)
 			setCurrentConversationId('')
+			resetFormValues()
 		}
 	}, [appConfig])
 
@@ -227,7 +245,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 								{/* 添加会话 */}
 								{appConfig ? (
 									<Button
-										onClick={() => onAddConversation()}
+										onClick={() => {
+											resetFormValues()
+											onAddConversation()
+										}}
 										className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
 										icon={<PlusOutlined />}
 									>
@@ -248,7 +269,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 												deleteConversationPromise={difyApi?.deleteConversation}
 												items={conversationsItems}
 												activeKey={currentConversationId}
-												onActiveChange={id => setCurrentConversationId(id)}
+												onActiveChange={id => {
+													resetFormValues()
+													setCurrentConversationId(id)
+												}}
 												onItemsChange={setConversationsItems}
 												refreshItems={getConversationItems}
 											/>
@@ -267,6 +291,9 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 							{/* 右侧聊天窗口 - 移动端全屏 */}
 							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 								<ChatboxWrapper
+									inputParams={inputParams}
+									setInputParams={setInputParams}
+									resetFormValues={resetFormValues}
 									appConfig={appConfig}
 									appConfigLoading={appConfigLoading}
 									appInfo={appInfo}

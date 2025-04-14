@@ -80,6 +80,18 @@ interface IChatboxWrapperProps {
 	 * 触发配置应用事件
 	 */
 	handleStartConfig?: () => void
+	/**
+	 * 输入参数
+	 */
+	inputParams: Record<string, unknown>
+	/**
+	 * 设置输入参数
+	 */
+	setInputParams: (params: Record<string, unknown>) => void
+	/**
+	 * 重置表单值
+	 */
+	resetFormValues: () => void
 }
 
 /**
@@ -101,6 +113,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationItemsChangeCallback,
 		appConfigLoading,
 		handleStartConfig,
+		inputParams,
+		setInputParams,
 	} = props
 
 	const isMobile = useIsMobile()
@@ -112,7 +126,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}, [])
 	const [initLoading, setInitLoading] = useState<boolean>(false)
 	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([])
-	const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>({})
 
 	const [nextSuggestions, setNextSuggestions] = useState<string[]>([])
 	// 定义 ref, 用于获取最新的 conversationId
@@ -214,27 +227,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		}
 	}
 
-	const resetFormValues = () => {
-		// 遍历 inputParams 置为 undefined
-		if (appParameters?.user_input_form?.length) {
-			const newInputParams = { ...inputParams }
-			appParameters?.user_input_form.forEach(item => {
-				const field = item['text-input']
-				newInputParams[field.variable] = undefined
-			})
-			setInputParams(newInputParams)
-		}
-	}
-
 	useEffect(() => {
 		setInitLoading(true)
 		setMessages([])
 		setHistoryMessages([])
 		initConversationInfo()
-		// 当 ID 为临时ID 时，清除初始参数
-		if (isTempId(conversationId)) {
-			resetFormValues()
-		}
 	}, [conversationId])
 
 	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
@@ -256,7 +253,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				return !!inputParams[field.variable]
 			}) || false
 		)
-	}, [appParameters, inputParams])
+	}, [appParameters, inputParams, conversationId])
 
 	const onSubmit = (
 		nextContent: string,
