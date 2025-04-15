@@ -1,8 +1,16 @@
-import { CopyOutlined, DislikeOutlined, LikeOutlined, SyncOutlined } from '@ant-design/icons'
-import { IRating } from '@dify-chat/api'
+import {
+	CopyOutlined,
+	DislikeOutlined,
+	LikeOutlined,
+	MutedOutlined,
+	SoundOutlined,
+	SyncOutlined,
+} from '@ant-design/icons'
+import { DifyApi, IGetAppParametersResponse, IRating } from '@dify-chat/api'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { useRequest, useSetState } from 'ahooks'
 import { message as antdMessage, Space } from 'antd'
+import { useState } from 'react'
 
 import ActionButton from './action-btn'
 
@@ -25,6 +33,10 @@ interface IMessageFooterProps {
 		content: string
 	}) => Promise<unknown>
 	/**
+	 * 文本转语音 API
+	 */
+	ttsApi: DifyApi['text2Audio']
+	/**
 	 * 消息 ID
 	 */
 	messageId: string
@@ -45,6 +57,10 @@ interface IMessageFooterProps {
 		 */
 		callback: () => void
 	}
+	/**
+	 * TTS 配置
+	 */
+	ttsConfig?: IGetAppParametersResponse['text_to_speech']
 }
 
 /**
@@ -56,6 +72,8 @@ export default function MessageFooter(props: IMessageFooterProps) {
 		messageContent,
 		feedback: { rating, callback },
 		feedbackApi,
+		ttsApi,
+		ttsConfig,
 	} = props
 
 	const isLiked = rating === 'like'
@@ -64,6 +82,8 @@ export default function MessageFooter(props: IMessageFooterProps) {
 		like: false,
 		dislike: false,
 	})
+	const [ttsPlaying, setTTSPlaying] = useState(false)
+	const [cachedAudioUrl, setCachedAudioUrl] = useState<string>('')
 
 	/**
 	 * 用户对消息的反馈
@@ -92,13 +112,51 @@ export default function MessageFooter(props: IMessageFooterProps) {
 	)
 
 	/**
+	 * 播放音频
+	 * @param audioUrl 音频 URL
+	 */
+	const playAudio = async (audioUrl: string) => {
+		const audio = new Audio()
+		audio.src = audioUrl
+		audio.play()
+		setTTSPlaying(true)
+		audio.addEventListener('ended', () => {
+			// 播放完成后释放 URL 对象
+			// URL.revokeObjectURL(audioUrl);
+			setTTSPlaying(false)
+		})
+	}
+
+	/**
+	 * 文本转语音
+	 */
+	const { runAsync: runTTS, loading: ttsLoading } = useRequest(
+		(text: string) => {
+			return ttsApi({
+				text,
+			})
+				.then(response => response.blob())
+				.then(blob => {
+					const audioUrl = URL.createObjectURL(blob)
+					setCachedAudioUrl(audioUrl)
+					playAudio(audioUrl)
+				})
+		},
+		{
+			manual: true,
+		},
+	)
+
+	/**
 	 * 操作按钮列表
 	 */
 	const actionButtons = [
+		// 重新生成回复
 		{
 			icon: <SyncOutlined />,
 			hidden: true,
 		},
+		// 复制内容
 		{
 			icon: <CopyOutlined />,
 			onClick: async () => {
@@ -109,6 +167,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
 			loading: false,
 			hidden: false,
 		},
+		// 点赞
 		{
 			icon: <LikeOutlined />,
 			onClick: () => {
@@ -121,6 +180,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
 			loading: loading.like,
 			hidden: false,
 		},
+		// 点踩
 		{
 			icon: <DislikeOutlined />,
 			onClick: () => {
@@ -132,6 +192,20 @@ export default function MessageFooter(props: IMessageFooterProps) {
 			active: isDisLiked,
 			loading: loading.dislike,
 			hidden: false,
+		},
+		// 文本转语音
+		{
+			icon: ttsPlaying ? <SoundOutlined /> : <MutedOutlined />,
+			onClick: () => {
+				if (cachedAudioUrl) {
+					playAudio(cachedAudioUrl)
+				} else {
+					runTTS(messageContent)
+				}
+			},
+			active: ttsPlaying,
+			loading: ttsLoading,
+			hidden: !ttsConfig?.enabled,
 		},
 	]
 
