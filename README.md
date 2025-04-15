@@ -438,6 +438,19 @@ pnpm build
 ```bash
 pnpm preview
 ```
+## 容器运行
+
+进入docker目录启动容器编排：
+
+```bash
+cd docker
+docker-compose up -d
+```
+浏览器访问http://127.0.0.1:8080/dify-chat/
+
+容器默认暴露http端口8080，https端口8443，可修改.env文件配置环境变量
+
+默认配置的docker镜像为多应用模式，如需自定义使用（如单应用模式）请自行构建docker镜像
 
 ## Roadmap
 
