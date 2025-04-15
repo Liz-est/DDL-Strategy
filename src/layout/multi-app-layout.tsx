@@ -141,7 +141,7 @@ const MultiAppLayout: React.FC = () => {
 								<div className="mx-2 font-normal text-desc">/</div>
 								<Dropdown
 									arrow
-									placement="bottomCenter"
+									placement="bottom"
 									trigger={['click']}
 									menu={{
 										style: {
