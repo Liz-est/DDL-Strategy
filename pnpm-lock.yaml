@@ -12,8 +12,8 @@ importers:
         specifier: ^5.6.1
         version: 5.6.1(react-dom@18.3.1)(react@18.3.1)
       '@ant-design/x':
-        specifier: ^1.1.0
-        version: 1.1.0(antd@5.24.7)(react-dom@18.3.1)(react@18.3.1)
+        specifier: ^1.1.1
+        version: 1.1.1(antd@5.24.7)(react-dom@18.3.1)(react@18.3.1)
       '@dify-chat/api':
         specifier: workspace:^
         version: link:packages/api
@@ -497,8 +497,8 @@ packages:
       throttle-debounce: 5.0.2
     dev: false
 
-  /@ant-design/x@1.1.0(antd@5.24.7)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-l+GR5OC/BLzLLrxF/2Ud1dqmazLK3T03BiAeFcaghzHRE2BwGu7yo3EM0h7OMFUCtKReuswcB90tpZXY6pBWtw==}
+  /@ant-design/x@1.1.1(antd@5.24.7)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-DFzNQfCTdYBhTJxorGI1ylhH/ZODcU5yn64xt/8/11slT0ALMuHC5Afx717KNQiao4RleXjypiEWuP0K1f+Szg==}
     peerDependencies:
       antd: ^5.20.3
       react: '>=18.0.0'
