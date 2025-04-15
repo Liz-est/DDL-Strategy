@@ -146,7 +146,9 @@ export const Chatbox = (props: ChatboxProps) => {
 				footer: messageItem.role === 'ai' && (
 					<div className="flex items-center">
 						<MessageFooter
+							ttsConfig={appParameters?.text_to_speech}
 							feedbackApi={params => difyApi.feedbackMessage(params)}
+							ttsApi={params => difyApi.text2Audio(params)}
 							messageId={messageItem.id}
 							messageContent={messageItem.content}
 							feedback={{
