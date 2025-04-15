@@ -1,0 +1,22 @@
+services:
+  dify-chat:
+    container_name: dify-chat
+    image: ${DOCKER_IMAGE}
+    volumes:
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./nginx/https.conf.template:/etc/nginx/https.conf.template
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
+      - ./nginx/ssl:/etc/ssl
+    ports:
+      - ${EXPOSE_NGINX_PORT}:${NGINX_PORT}
+      #如需启用ssl，请编辑.env文件并将证书放置在ssl目录
+      - ${EXPOSE_NGINX_SSL_PORT}:${NGINX_SSL_PORT}
+    entrypoint: [ 'sh', '-c', "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
+    networks:
+      - dify-chat
+    restart: on-failure
+    env_file: .env
+networks:
+  dify-chat:
+    driver: bridge
