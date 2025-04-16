@@ -128,6 +128,15 @@ export interface IGetAppParametersResponse {
 		 */
 		voice: string
 	}
+	/**
+	 * 语音转文本配置
+	 */
+	speech_to_text: {
+		/**
+		 * 是否启用
+		 */
+		enabled: boolean
+	}
 }
 
 interface IConversationItem {
