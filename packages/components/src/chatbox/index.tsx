@@ -1,6 +1,12 @@
 import { RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
-import { DifyApi, IFile, IGetAppInfoResponse, IGetAppParametersResponse, IMessageItem4Render } from '@dify-chat/api'
+import {
+	DifyApi,
+	IFile,
+	IGetAppInfoResponse,
+	IGetAppParametersResponse,
+	IMessageItem4Render,
+} from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { FormInstance, GetProp } from 'antd'
@@ -87,7 +93,7 @@ export interface ChatboxProps {
 	/**
 	 * 应用入参表单实例
 	 */
-	entryForm: FormInstance<any>
+	entryForm: FormInstance<Record<string, unknown>>
 }
 
 /**
@@ -108,7 +114,7 @@ export const Chatbox = (props: ChatboxProps) => {
 		appConfig,
 		isFormFilled,
 		onStartConversation,
-		entryForm
+		entryForm,
 	} = props
 	const isMobile = useIsMobile()
 
@@ -243,7 +249,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					<div className="px-3">
 						<MessageSender
 							appParameters={appParameters}
-							onSubmit={async(...params)=>{
+							onSubmit={async (...params) => {
 								await entryForm.validateFields()
 								return onSubmit(...params)
 							}}
@@ -252,6 +258,7 @@ export const Chatbox = (props: ChatboxProps) => {
 							uploadFileApi={(...params) => {
 								return difyApi.uploadFile(...params)
 							}}
+							audio2TextApi={(...params) => difyApi.audio2Text(...params)}
 							onCancel={onCancel}
 						/>
 					</div>
