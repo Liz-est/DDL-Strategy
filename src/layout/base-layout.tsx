@@ -266,7 +266,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										</Button>
 									) : null}
 									{/* 🌟 对话管理 */}
-									<div className="px-3">
+									<div className="px-3 mt-3">
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList
