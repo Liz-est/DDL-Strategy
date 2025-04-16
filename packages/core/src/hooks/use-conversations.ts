@@ -15,9 +15,9 @@ interface IConversationItem {
  */
 export interface IConversationContext {
 	conversations: IConversationItem[]
-	setConversations: (conversations: IConversationItem[]) => void
+	setConversations: React.Dispatch<React.SetStateAction<IConversationItem[]>>
 	currentConversationId: string
-	setCurrentConversationId: (currentConversationId: string) => void
+	setCurrentConversationId: React.Dispatch<React.SetStateAction<string>>
 	currentConversationInfo?: IConversationItem
 }
 
