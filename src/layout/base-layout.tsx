@@ -19,7 +19,7 @@ import { Button, Divider, Empty, message, Space, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { GithubIcon, Logo } from '@/components/logo'
@@ -208,15 +208,6 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		setCurrentConversationId(newKey)
 	}
 
-	useEffect(() => {
-		if (!appConfig) {
-			console.log('setConversations: useEffect !appConfig', [])
-			setConversations([])
-			setAppInfo(undefined)
-			setCurrentConversationId('')
-		}
-	}, [appConfig])
-
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
 			<ConversationsContextProvider
@@ -275,7 +266,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										</Button>
 									) : null}
 									{/* 🌟 对话管理 */}
-									<div className="px-3">
+									<div className="px-3 mt-3">
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList

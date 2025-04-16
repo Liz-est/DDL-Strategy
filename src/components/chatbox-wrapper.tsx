@@ -20,7 +20,6 @@ import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 import { useX } from '@/hooks/useX'
 
-import { ChatPlaceholder } from './chat-placeholder'
 import { MobileHeader } from './mobile/header'
 
 interface IChatboxWrapperProps {
@@ -411,20 +410,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						uploadFileApi={difyApi.uploadFile}
 						difyApi={difyApi}
 						entryForm={entryForm}
-					/>
-				) : appParameters?.user_input_form?.length ? (
-					<ChatPlaceholder
-						conversationId={currentConversationId}
-						formFilled={isFormFilled}
-						onStartConversation={formValues => {
-							updateConversationInputs(formValues)
-							if (!currentConversationId) {
-								onAddConversation()
-							}
-						}}
-						entryForm={entryForm}
-						appInfo={appInfo}
-						user_input_form={appParameters?.user_input_form}
 					/>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
