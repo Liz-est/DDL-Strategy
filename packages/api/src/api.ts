@@ -2,14 +2,37 @@ import XRequest from './base-request'
 import { IAgentThought, IRetrieverResource } from './types'
 import { IFileType } from './types/file'
 
-interface IUserInputForm {
-	'text-input': {
-		default: string
-		label: string
-		required: boolean
-		variable: string
-	}
+/**
+ * 用户输入表单控件类型
+ */
+export type IUserInputFormItemType =
+	| 'text-input'
+	| 'paragraph'
+	| 'select'
+	| 'number'
+	| 'file'
+	| 'file-list'
+
+/**
+ * 用户输入表单控件对象
+ */
+export interface IUserInputFormItemValueBase {
+	default: string
+	label: string
+	required: boolean
+	variable: string
+	options?: string[]
+	/**
+	 * 最大长度
+	 */
+	max_length?: number
+	type: IUserInputFormItemType
 }
+
+/**
+ * 应用输入配置
+ */
+export type IUserInputForm = Record<IUserInputFormItemType, IUserInputFormItemValueBase>
 
 /**
  * 获取应用参数-响应体
@@ -139,10 +162,10 @@ export interface IGetAppParametersResponse {
 	}
 }
 
-interface IConversationItem {
+export interface IConversationItem {
 	created_at: number
 	id: string
-	inputs: Record<string, string>
+	inputs: Record<string, unknown>
 	introduction: string
 	name: string
 	status: 'normal'
