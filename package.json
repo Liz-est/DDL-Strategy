@@ -14,7 +14,7 @@
 	"packageManager": "pnpm@8.9.2",
 	"dependencies": {
 		"@ant-design/icons": "^5.6.1",
-		"@ant-design/x": "^1.1.0",
+		"@ant-design/x": "^1.1.1",
 		"@dify-chat/api": "workspace:^",
 		"@dify-chat/components": "workspace:^",
 		"@dify-chat/core": "workspace:^",
@@ -26,7 +26,7 @@
 		"antd": "^5.24.7",
 		"antd-style": "^3.7.1",
 		"markdown-it": "^14.1.0",
-		"openai": "^4.93.0",
+		"openai": "^4.94.0",
 		"pure-react-router": "^0.2.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -36,7 +36,7 @@
 		"@eslint/compat": "^1.2.8",
 		"@eslint/js": "^9.24.0",
 		"@fingerprintjs/fingerprintjs": "^4.6.2",
-		"@rsbuild/core": "^1.3.5",
+		"@rsbuild/core": "^1.3.7",
 		"@rsbuild/plugin-less": "^1.2.2",
 		"@rsbuild/plugin-react": "^1.2.0",
 		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -56,6 +56,6 @@
 		"prettier": "^3.5.3",
 		"tailwindcss": "3",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.29.1"
+		"typescript-eslint": "^8.30.1"
 	}
 }

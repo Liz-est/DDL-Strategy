@@ -438,6 +438,7 @@ pnpm build
 ```bash
 pnpm preview
 ```
+
 ## 容器运行
 
 进入docker目录启动容器编排：
@@ -446,11 +447,43 @@ pnpm preview
 cd docker
 docker-compose up -d
 ```
+
 浏览器访问http://127.0.0.1:8080/dify-chat/
 
 容器默认暴露http端口8080，https端口8443，可修改.env文件配置环境变量
 
 默认配置的docker镜像为多应用模式，如需自定义使用（如单应用模式）请自行构建docker镜像
+
+## 使用certbot全自动签发letsencrypt免费ssl证书
+
+在操作之前请将自签名证书放置在docker/nginx/ssl目录，并编辑.env文件修改以下几个参数：
+
+```bash
+#nginx ssl证书名称
+NGINX_SSL_CERT_FILENAME
+#nginx ssl证书私钥名称
+NGINX_SSL_CERT_KEY_FILENAME
+NGINX_HTTPS_ENABLED=true
+#域名
+NGINX_SERVER_NAME
+#待申请证书的域名
+CERTBOT_DOMAIN
+NGINX_ENABLE_CERTBOT_CHALLENGE=true
+#域名邮箱，随便写
+CERTBOT_EMAIL
+#更多证书申请参数，可留空
+CERTBOT_OPTIONS
+```
+
+![注意：请确保你配置的域名可以使用80端口访问到你的dify-chat站点](详见：https://eff-certbot.readthedocs.io/en/latest/install.html#alternative-1-docker)
+
+在docker目录执行命令即可全自动申请、签发证书
+
+```bash
+docker-compose --profile certbot up
+```
+
+签发的证书在[docker/certbot/conf/live/你的域名]目录下 ![注意：证书需要定期续期]
 
 ## Roadmap
 
