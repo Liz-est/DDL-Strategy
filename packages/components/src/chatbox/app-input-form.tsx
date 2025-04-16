@@ -4,12 +4,11 @@ import {
 	IUserInputFormItemValueBase,
 } from '@dify-chat/api'
 import { useDifyChat } from '@dify-chat/core'
+import { useConversationsContext } from '@dify-chat/core'
 import { unParseGzipString } from '@dify-chat/helpers'
 import { Form, FormInstance, FormItemProps, Input, InputNumber, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useRef, useState } from 'react'
-
-import useConversationsContext from '../../../core/src/hooks/use-conversations'
 
 export type IConversationEntryFormItem = FormItemProps &
 	Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {

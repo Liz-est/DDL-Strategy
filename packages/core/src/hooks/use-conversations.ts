@@ -44,7 +44,7 @@ export const ConversationsContextProvider = ConversationContext.Provider
 /**
  * 获取对话上下文
  */
-export default function useConversationsContext() {
+export function useConversationsContext() {
 	const context = useContext(ConversationContext)
 	return context
 }

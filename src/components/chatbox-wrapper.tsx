@@ -10,10 +10,10 @@ import {
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox, ConversationList } from '@dify-chat/components'
 import { IDifyAppItem } from '@dify-chat/core'
+import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Popover, Spin } from 'antd'
 import dayjs from 'dayjs'
-import useConversationsContext from 'packages/core/src/hooks/use-conversations'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
