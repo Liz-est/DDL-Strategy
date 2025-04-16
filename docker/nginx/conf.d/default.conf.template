@@ -1,0 +1,12 @@
+# Please do not directly edit this file. Instead, modify the .env variables related to NGINX configuration.
+
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_SERVER_NAME};
+    location ^~ /dify-chat {
+      alias /app/dify-chat/;
+      index index.html;
+      rewrite /dify-chat/chat /dify-chat/;
+    }
+    ${HTTPS_CONFIG}
+}

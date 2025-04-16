@@ -107,6 +107,27 @@ export interface IGetAppParametersResponse {
 		 */
 		number_limits: number
 	}
+	/**
+	 * 文本转语音配置
+	 */
+	text_to_speech: {
+		/**
+		 * 是否启用
+		 */
+		enabled: boolean
+		/**
+		 * 是否开启自动播放 enabled-启用 disabled-禁用
+		 */
+		autoPlay: 'enabled' | 'disabled'
+		/**
+		 * 语言
+		 */
+		language: string
+		/**
+		 * 音色
+		 */
+		voice: string
+	}
 }
 
 interface IConversationItem {
@@ -272,6 +293,16 @@ export interface IUploadFileResponse {
 	mime_type: string
 	created_by: number
 	created_at: number
+}
+
+/**
+ * 语音转文字的响应
+ */
+export interface IAudio2TextResponse {
+	/**
+	 * 生成的文本内容
+	 */
+	text: string
 }
 
 /**
@@ -477,6 +508,52 @@ export class DifyApi {
 			// 固定返回 success
 			result: 'success'
 		}>
+	}
+
+	/**
+	 * 文字转语音
+	 */
+	async text2Audio(
+		params:
+			| {
+					/**
+					 * 消息 ID，优先级高于 text
+					 */
+					message_id: string
+			  }
+			| {
+					/**
+					 * 文本内容
+					 */
+					text: string
+			  },
+	) {
+		return this.baseRequest.baseRequest('/text-to-audio', {
+			method: 'POST',
+			body: JSON.stringify({
+				...params,
+				user: this.options.user,
+			}),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+	}
+
+	/**
+	 * 语音转文本
+	 * @param file 语音文件。 支持格式：['mp3', 'mp4', 'mpeg', 'mpga', 'm4a', 'wav', 'webm'] 文件大小限制：15MB
+	 */
+	async audio2Text(file: File) {
+		const formData = new FormData()
+		formData.append('file', file)
+		formData.append('user', this.options.user)
+		return this.baseRequest
+			.baseRequest('/audio-to-text', {
+				method: 'POST',
+				body: formData,
+			})
+			.then(res => res.json()) as Promise<IAudio2TextResponse>
 	}
 }
 
