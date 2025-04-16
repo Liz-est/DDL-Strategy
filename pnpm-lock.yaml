@@ -48,8 +48,8 @@ importers:
         specifier: ^14.1.0
         version: 14.1.0
       openai:
-        specifier: ^4.93.0
-        version: 4.93.0
+        specifier: ^4.94.0
+        version: 4.94.0
       pure-react-router:
         specifier: ^0.2.3
         version: 0.2.3(@types/react@18.3.12)(react-dom@18.3.1)(react@18.3.1)
@@ -7715,8 +7715,8 @@ packages:
       is-wsl: 2.2.0
     dev: true
 
-  /openai@4.93.0:
-    resolution: {integrity: sha512-2kONcISbThKLfm7T9paVzg+QCE1FOZtNMMUfXyXckUAoXRRS/mTP89JSDHPMp8uM5s0bz28RISbvQjArD6mgUQ==}
+  /openai@4.94.0:
+    resolution: {integrity: sha512-WVmr9HWcwfouLJ7R3UHd2A93ClezTPuJljQxkCYQAL15Sjyt+FBNoqEz5MHSdH/ebQrVyvRhFyn/bvdqtSPyIA==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
