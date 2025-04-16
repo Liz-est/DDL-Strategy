@@ -11,8 +11,9 @@ import {
 import { Prompts, Welcome } from '@ant-design/x'
 import { IGetAppParametersResponse } from '@dify-chat/api'
 import { useIsMobile } from '@dify-chat/helpers'
-import { Button, GetProp, Space } from 'antd'
+import { Button, FormInstance, GetProp, Space } from 'antd'
 import { useMemo } from 'react'
+import AppInputWrapper from './app-input-wrapper'
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
 	<Space align="start">
@@ -30,6 +31,26 @@ interface IWelcomePlaceholderProps {
 	 * 点击提示项时触发的回调函数
 	 */
 	onPromptItemClick: GetProp<typeof Prompts, 'onItemClick'>
+	/**
+	 * 表单是否填写
+	 */
+	formFilled: boolean
+	/**
+	 * 表单填写状态改变回调
+	 */
+	onStartConversation: (formValues: Record<string, unknown>) => void
+	/**
+	 * 表单数据
+	 */
+	user_input_form?: IGetAppParametersResponse['user_input_form']
+	/**
+	 * 当前对话 ID
+	 */
+	conversationId?: string
+	/**
+	 * 应用入参的表单实例
+	 */
+	entryForm: FormInstance<any>
 }
 
 /**
@@ -122,6 +143,16 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 						</Space>
 					}
 				/>
+
+				{/* 应用输入参数 */}
+				<AppInputWrapper
+					formFilled={props.formFilled}
+					onStartConversation={props.onStartConversation}
+					user_input_form={props.user_input_form}
+					entryForm={props.entryForm}
+					conversationId={props.conversationId!}
+				/>
+
 				<Prompts
 					title="Do you want?"
 					vertical={isMobile}
@@ -132,11 +163,11 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 						},
 						item: isMobile
 							? {
-									width: '100%',
-								}
+								width: '100%',
+							}
 							: {
-									flex: 1,
-								},
+								flex: 1,
+							},
 					}}
 					onItemClick={onPromptItemClick}
 				/>

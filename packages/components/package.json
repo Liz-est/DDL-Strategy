@@ -84,6 +84,7 @@
 		"markdown-it": "^14.1.0",
 		"markdown-it-katex-gpt": "^1.1.1",
 		"mermaid": "^11.6.0",
+		"pure-react-router": "^0.2.3",
 		"react-markdown": "^10.1.0",
 		"react-photo-view": "^1.2.7",
 		"react-syntax-highlighter": "^15.6.1",
