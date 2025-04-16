@@ -17,10 +17,6 @@ interface IMessageSenderProps {
 	 */
 	className?: string
 	/**
-	 * 当前输出的文字
-	 */
-	content: string
-	/**
 	 * 是否正在请求
 	 */
 	isRequesting: boolean
@@ -28,10 +24,6 @@ interface IMessageSenderProps {
 	 * 上传文件 Api
 	 */
 	uploadFileApi: (file: File) => Promise<IUploadFileResponse>
-	/**
-	 * 输入框 change 事件
-	 */
-	onChange: (value: string) => void
 	/**
 	 * 提交事件
 	 * @param value 问题-文本
@@ -54,19 +46,15 @@ interface IMessageSenderProps {
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-	const {
-		content,
-		isRequesting,
-		onChange,
-		onSubmit,
-		className,
-		onCancel,
-		uploadFileApi,
-		appParameters,
-	} = props
+	const { isRequesting, onSubmit, className, onCancel, uploadFileApi, appParameters } = props
+	const [content, setContent] = useState('')
 	const [open, setOpen] = useState(false)
 	const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([])
 	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
+
+	const onChange = (value: string) => {
+		setContent(value)
+	}
 
 	const allowedFileTypes = useMemo(() => {
 		if (!appParameters?.file_upload) {
@@ -216,6 +204,10 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			loading={isRequesting}
 			className={className}
 			onSubmit={async content => {
+				if (!content) {
+					message.error('内容不能为空')
+					return
+				}
 				// 当文件存在时，判断是否所有文件都已上传完成
 				if (files?.length && !files.every(item => item.status === 'done')) {
 					message.error('请等待所有文件上传完成')
@@ -233,6 +225,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 							}
 						}) || [],
 				})
+				setContent('')
 				setFiles([])
 				setOpen(false)
 			}}

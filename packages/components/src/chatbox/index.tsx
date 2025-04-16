@@ -4,7 +4,7 @@ import { DifyApi, IFile, IGetAppParametersResponse, IMessageItem4Render } from '
 import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { GetProp } from 'antd'
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 
 import { MessageSender } from '../message-sender'
 import MessageContent from './message/content'
@@ -91,7 +91,6 @@ export const Chatbox = (props: ChatboxProps) => {
 		appParameters,
 		appConfig,
 	} = props
-	const [content, setContent] = useState('')
 	const isMobile = useIsMobile()
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
@@ -220,15 +219,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					<div className="px-3">
 						<MessageSender
 							appParameters={appParameters}
-							content={content}
-							onChange={value => setContent(value)}
-							onSubmit={(content, options) => {
-								if (!content) {
-									return
-								}
-								onSubmit(content, options)
-								setContent('')
-							}}
+							onSubmit={onSubmit}
 							isRequesting={isRequesting}
 							className="w-full"
 							uploadFileApi={(...params) => {
