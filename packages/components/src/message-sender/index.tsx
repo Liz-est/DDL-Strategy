@@ -1,6 +1,6 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
-import { IFile, IGetAppParametersResponse, IUploadFileResponse } from '@dify-chat/api'
+import { DifyApi, IFile, IGetAppParametersResponse, IUploadFileResponse } from '@dify-chat/api'
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
 import { useMemo, useRef, useState } from 'react'
@@ -25,6 +25,10 @@ interface IMessageSenderProps {
 	 */
 	uploadFileApi: (file: File) => Promise<IUploadFileResponse>
 	/**
+	 * 语音转文字 Api
+	 */
+	audio2TextApi?: DifyApi['audio2Text']
+	/**
 	 * 提交事件
 	 * @param value 问题-文本
 	 * @param files 问题-文件
@@ -46,11 +50,21 @@ interface IMessageSenderProps {
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-	const { isRequesting, onSubmit, className, onCancel, uploadFileApi, appParameters } = props
+	const {
+		isRequesting,
+		onSubmit,
+		className,
+		onCancel,
+		uploadFileApi,
+		audio2TextApi,
+		appParameters,
+	} = props
 	const [content, setContent] = useState('')
 	const [open, setOpen] = useState(false)
 	const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([])
 	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
+	const recordedChunks = useRef<Blob[]>([])
+	const [audio2TextLoading, setAudio2TextLoading] = useState(false)
 
 	const onChange = (value: string) => {
 		setContent(value)
@@ -184,9 +198,60 @@ export const MessageSender = (props: IMessageSenderProps) => {
 		</Sender.Header>
 	)
 
+	const [recording, setRecording] = useState(false)
+	const mediaRecorder = useRef<MediaRecorder | null>(null)
+
 	return (
 		<Sender
-			allowSpeech={appParameters?.speech_to_text.enabled}
+			allowSpeech={
+				appParameters?.speech_to_text.enabled
+					? {
+							recording,
+							onRecordingChange: async nextRecording => {
+								if (nextRecording) {
+									try {
+										const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+										mediaRecorder.current = new MediaRecorder(stream)
+
+										mediaRecorder.current.ondataavailable = event => {
+											if (event.data.size > 0) {
+												recordedChunks.current = [...recordedChunks.current, event.data]
+											}
+										}
+
+										mediaRecorder.current.onstop = () => {
+											console.log('停止了', recordedChunks)
+											const blob = new Blob(recordedChunks.current, { type: 'audio/webm' })
+											setAudio2TextLoading(true)
+											setContent('正在识别...')
+											audio2TextApi?.(blob as File)
+												.then(res => {
+													setContent(res.text)
+													recordedChunks.current = []
+												})
+												.catch(error => {
+													console.error('语音转文本错误', error)
+													message.error(`语音转文本错误: ${error}`)
+													setContent('')
+												})
+												.finally(() => {
+													setAudio2TextLoading(false)
+												})
+										}
+
+										mediaRecorder.current.start()
+									} catch (error) {
+										console.error('Error accessing microphone:', error)
+									}
+								} else {
+									mediaRecorder.current?.stop()
+								}
+
+								setRecording(nextRecording)
+							},
+						}
+					: false
+			}
 			header={senderHeader}
 			value={content}
 			onChange={onChange}
@@ -202,6 +267,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 				boxShadow: '0px -2px 12px 4px #efefef',
 			}}
 			loading={isRequesting}
+			disabled={audio2TextLoading}
 			className={className}
 			onSubmit={async content => {
 				if (!content) {
