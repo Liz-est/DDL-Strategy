@@ -3,21 +3,28 @@ import { XProvider } from '@ant-design/x'
 import {
 	createDifyApiInstance,
 	DifyApi,
+	IConversationItem,
 	IGetAppInfoResponse,
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
-import { ConversationList, type IConversationItem } from '@dify-chat/components'
-import { IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
+import { ConversationList } from '@dify-chat/components'
+import {
+	ConversationsContextProvider,
+	IDifyAppItem,
+	IDifyChatContextMultiApp,
+} from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
+import { isTempId } from '@dify-chat/helpers'
 import { Button, Divider, Empty, message, Space, Spin } from 'antd'
 import { createStyles } from 'antd-style'
+import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { GithubIcon, Logo } from '@/components/logo'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
-import { useMap4Arr } from '@/hooks/use-map-4-arr'
+import { useLatest } from '@/hooks/use-latest'
 import { colors } from '@/theme/config'
 
 import './../App.css'
@@ -75,6 +82,13 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		initLoading,
 	} = props
 	const { ...difyChatContext } = useDifyChat()
+
+	const [conversations, setConversations] = useState<IConversationItem[]>([])
+	const [currentConversationId, setCurrentConversationId] = useState<string>('')
+	const currentConversationInfo = useMemo(() => {
+		return conversations.find(item => item.id === currentConversationId)
+	}, [conversations, currentConversationId])
+
 	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
@@ -86,30 +100,11 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		}),
 	)
 	const searchParams = useSearchParams()
-	const [conversationsItems, setConversationsItems] = useState<IConversationItem[]>([])
-	// 优化会话列表查找逻辑（高频操作）
-	const conversationMap = useMap4Arr<IConversationItem>(conversationsItems, 'key')
 	const [conversationListLoading, setCoversationListLoading] = useState<boolean>(false)
-	const [currentConversationId, setCurrentConversationId] = useState<string>()
 	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
 	const [appConfigLoading, setAppConfigLoading] = useState(false)
-	const [inputParams, setInputParams] = useState<{ [key: string]: unknown }>({})
-
-	/**
-	 * 重置输入表单值
-	 */
-	const resetFormValues = () => {
-		// 遍历 inputParams 置为 undefined
-		if (appParameters?.user_input_form?.length) {
-			const newInputParams = { ...inputParams }
-			appParameters?.user_input_form.forEach(item => {
-				const field = item['text-input']
-				newInputParams[field.variable] = undefined
-			})
-			setInputParams(newInputParams)
-		}
-	}
+	const latestCurrentConversationId = useLatest(currentConversationId)
 
 	const initAppInfo = async () => {
 		setAppInfo(undefined)
@@ -128,17 +123,22 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	}
 
 	useAppInit(difyApi, () => {
+		setConversations([])
+		console.log('setCurrentConversationId: useAppInit', '')
+		setCurrentConversationId('')
+		setAppInfo(undefined)
 		initAppInfo().then(() => {
 			getConversationItems().then(() => {
+				console.log('ssss', searchParams.get('isNewCvst'))
 				const isNewConversation = searchParams.get('isNewCvst') === '1'
 				if (isNewConversation) {
 					onAddConversation()
 				}
 			})
 		})
-		resetFormValues()
-		setCurrentConversationId(undefined)
 	})
+
+	console.log('currentConversationId in render', currentConversationId)
 
 	/**
 	 * 获取对话列表
@@ -154,8 +154,15 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						label: item.name,
 					}
 				}) || []
-			setConversationsItems(newItems)
-			setCurrentConversationId(newItems[0]?.key)
+			setConversations(result?.data)
+			// 避免闭包问题
+			if (!latestCurrentConversationId.current) {
+				if (newItems.length) {
+					setCurrentConversationId(newItems[0]?.key)
+				} else {
+					onAddConversation()
+				}
+			}
 		} catch (error) {
 			console.error(error)
 			message.error(`获取会话列表失败: ${error}`)
@@ -171,165 +178,200 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		// 创建新对话
 		const newKey = `temp_${Math.random()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
-		setConversationsItems(prev => {
+		setConversations(prev => {
+			console.log('setConversations: onAddConversation', [
+				{
+					id: newKey,
+					name: DEFAULT_CONVERSATION_NAME,
+					created_at: dayjs().valueOf(),
+					inputs: {},
+					introduction: '',
+					status: 'normal',
+					updated_at: dayjs().valueOf(),
+				},
+				...prev,
+			])
 			return [
 				{
-					key: newKey,
-					label: DEFAULT_CONVERSATION_NAME,
+					id: newKey,
+					name: DEFAULT_CONVERSATION_NAME,
+					created_at: dayjs().valueOf(),
+					inputs: {},
+					introduction: '',
+					status: 'normal',
+					updated_at: dayjs().valueOf(),
 				},
 				...prev,
 			]
 		})
+		console.log('setCurrentConversationId: onAddConversation', newKey)
 		setCurrentConversationId(newKey)
 	}
 
 	useEffect(() => {
-		// 如果对话 ID 不在当前列表中，则刷新一下
-		if (currentConversationId && !conversationMap.has(currentConversationId)) {
-			getConversationItems()
-		}
-	}, [currentConversationId])
-
-	const conversationName = useMemo(() => {
-		return (
-			conversationsItems.find(item => item.key === currentConversationId)?.label ||
-			DEFAULT_CONVERSATION_NAME
-		)
-	}, [conversationsItems, currentConversationId])
-
-	useEffect(() => {
 		if (!appConfig) {
-			setConversationsItems([])
+			console.log('setConversations: useEffect !appConfig', [])
+			setConversations([])
 			setAppInfo(undefined)
 			setCurrentConversationId('')
-			resetFormValues()
 		}
 	}, [appConfig])
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
-			<div
-				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
+			<ConversationsContextProvider
+				value={{
+					conversations,
+					setConversations,
+					currentConversationId,
+					setCurrentConversationId,
+					currentConversationInfo,
+				}}
 			>
-				{/* 头部 */}
-				<div className="hidden md:!flex items-center justify-between px-6">
-					{/* 🌟 Logo */}
-					<div className={`flex-1 overflow-hidden ${appConfig ? '' : 'shadow-sm'}`}>
-						<Logo hideGithubIcon />
-					</div>
+				<div
+					className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
+				>
+					{/* 头部 */}
+					<div className="hidden md:!flex items-center justify-between px-6">
+						{/* 🌟 Logo */}
+						<div className={`flex-1 overflow-hidden ${appConfig ? '' : 'shadow-sm'}`}>
+							<Logo hideGithubIcon />
+						</div>
 
-					<CenterTitleWrapper>
-						{renderCenterTitle ? renderCenterTitle(appInfo!) : null}
-					</CenterTitleWrapper>
+						<CenterTitleWrapper>
+							{renderCenterTitle ? renderCenterTitle(appInfo!) : null}
+						</CenterTitleWrapper>
 
-					{/* 右侧图标 */}
-					<div className="flex-1 overflow-hidden">
-						<div className="flex items-center justify-end text-sm">
-							<Space split={<Divider type="vertical" />}>
-								<GithubIcon />
-							</Space>
+						{/* 右侧图标 */}
+						<div className="flex-1 overflow-hidden">
+							<div className="flex items-center justify-end text-sm">
+								<Space split={<Divider type="vertical" />}>
+									<GithubIcon />
+								</Space>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				{/* Main */}
-				<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
-					{appConfigLoading || initLoading ? (
-						<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
-							<Spin spinning />
-						</div>
-					) : appConfig ? (
-						<>
-							{/* 左侧对话列表 */}
-							<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
-								{/* 添加会话 */}
-								{appConfig ? (
-									<Button
-										onClick={() => {
-											resetFormValues()
-											onAddConversation()
-										}}
-										className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
-										icon={<PlusOutlined />}
-									>
-										新增对话
-									</Button>
-								) : null}
-								{/* 🌟 对话管理 */}
-								<div className="px-3">
-									<Spin spinning={conversationListLoading}>
-										{conversationsItems?.length ? (
-											<ConversationList
-												renameConversationPromise={(conversationId: string, name: string) =>
-													difyApi?.renameConversation({
-														conversation_id: conversationId,
-														name,
-													})
-												}
-												deleteConversationPromise={difyApi?.deleteConversation}
-												items={conversationsItems}
-												activeKey={currentConversationId}
-												onActiveChange={id => {
-													resetFormValues()
-													setCurrentConversationId(id)
-												}}
-												onItemsChange={setConversationsItems}
-												refreshItems={getConversationItems}
-											/>
-										) : (
-											<div className="w-full h-full flex items-center justify-center">
-												<Empty
-													className="pt-6"
-													description="暂无会话"
+					{/* Main */}
+					<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
+						{appConfigLoading || initLoading ? (
+							<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
+								<Spin spinning />
+							</div>
+						) : appConfig ? (
+							<>
+								{/* 左侧对话列表 */}
+								<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
+									{/* 添加会话 */}
+									{appConfig ? (
+										<Button
+											onClick={() => {
+												onAddConversation()
+											}}
+											className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
+											icon={<PlusOutlined />}
+										>
+											新增对话
+										</Button>
+									) : null}
+									{/* 🌟 对话管理 */}
+									<div className="px-3">
+										<Spin spinning={conversationListLoading}>
+											{conversations?.length ? (
+												<ConversationList
+													renameConversationPromise={async (
+														conversationId: string,
+														name: string,
+													) => {
+														await difyApi?.renameConversation({
+															conversation_id: conversationId,
+															name,
+														})
+														getConversationItems()
+													}}
+													deleteConversationPromise={async (conversationId: string) => {
+														if (isTempId(conversationId)) {
+															setConversations(prev => {
+																const newConversations = prev.filter(
+																	item => item.id !== conversationId,
+																)
+																if (
+																	conversationId === currentConversationId &&
+																	newConversations.length
+																) {
+																	console.log(
+																		'setCurrentConversationId: deleteConversationPromise',
+																		newConversations[0].id,
+																	)
+																	setCurrentConversationId(newConversations[0].id)
+																}
+																return newConversations
+															})
+														} else {
+															await difyApi?.deleteConversation(conversationId)
+															getConversationItems()
+															return Promise.resolve()
+														}
+													}}
+													items={conversations.map(item => {
+														return {
+															key: item.id,
+															label: item.name,
+														}
+													})}
+													activeKey={currentConversationId}
+													onActiveChange={id => {
+														console.log('setCurrentConversationId: onActiveChange', id)
+														setCurrentConversationId(id)
+													}}
 												/>
-											</div>
-										)}
-									</Spin>
+											) : (
+												<div className="w-full h-full flex items-center justify-center">
+													<Empty
+														className="pt-6"
+														description="暂无会话"
+													/>
+												</div>
+											)}
+										</Spin>
+									</div>
 								</div>
-							</div>
 
-							{/* 右侧聊天窗口 - 移动端全屏 */}
-							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
-								<ChatboxWrapper
-									inputParams={inputParams}
-									setInputParams={setInputParams}
-									resetFormValues={resetFormValues}
-									appConfig={appConfig}
-									appConfigLoading={appConfigLoading}
-									appInfo={appInfo}
-									difyApi={difyApi}
-									conversationId={currentConversationId}
-									conversationName={conversationName}
-									conversationItems={conversationsItems}
-									onConversationIdChange={setCurrentConversationId}
-									appParameters={appParameters}
-									conversationListLoading={conversationListLoading}
-									onAddConversation={onAddConversation}
-									onItemsChange={setConversationsItems}
-									conversationItemsChangeCallback={getConversationItems}
-								/>
-							</div>
-						</>
-					) : (
-						<div className="w-full h-full flex items-center justify-center">
-							<Empty
-								description="暂无 Dify 应用配置"
-								className="text-base"
-							>
-								<Button
-									size="large"
-									type="primary"
-									onClick={handleStartConfig}
+								{/* 右侧聊天窗口 - 移动端全屏 */}
+								<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
+									<ChatboxWrapper
+										appConfig={appConfig}
+										appConfigLoading={appConfigLoading}
+										appInfo={appInfo}
+										difyApi={difyApi}
+										appParameters={appParameters}
+										conversationListLoading={conversationListLoading}
+										onAddConversation={onAddConversation}
+										conversationItemsChangeCallback={getConversationItems}
+									/>
+								</div>
+							</>
+						) : (
+							<div className="w-full h-full flex items-center justify-center">
+								<Empty
+									description="暂无 Dify 应用配置"
+									className="text-base"
 								>
-									开始配置
-								</Button>
-							</Empty>
-						</div>
-					)}
+									<Button
+										size="large"
+										type="primary"
+										onClick={handleStartConfig}
+									>
+										开始配置
+									</Button>
+								</Empty>
+							</div>
+						)}
+					</div>
 				</div>
-			</div>
 
-			{extComponents}
+				{extComponents}
+			</ConversationsContextProvider>
 		</XProvider>
 	)
 }

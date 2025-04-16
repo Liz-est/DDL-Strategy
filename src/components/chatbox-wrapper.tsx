@@ -8,11 +8,12 @@ import {
 	IMessageFileItem,
 } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
-import { Chatbox, ConversationList, IConversationItem } from '@dify-chat/components'
+import { Chatbox, ConversationList } from '@dify-chat/components'
 import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Empty, GetProp, message, Popover, Spin } from 'antd'
+import { Button, Empty, Form, GetProp, Popover, Spin } from 'antd'
 import dayjs from 'dayjs'
+import useConversationsContext from 'packages/core/src/hooks/use-conversations'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
@@ -40,30 +41,9 @@ interface IChatboxWrapperProps {
 	 */
 	difyApi: DifyApi
 	/**
-	 * 当前对话 ID
-	 */
-	conversationId?: string
-	/**
 	 * 对话列表 loading
 	 */
 	conversationListLoading?: boolean
-	/**
-	 * 当前对话名称
-	 */
-	conversationName: string
-	/**
-	 * 对话列表
-	 */
-	conversationItems: IConversationItem[]
-	/**
-	 * 对话 ID 变更时触发的回调函数
-	 * @param id 即将变更的对话 ID
-	 */
-	onConversationIdChange: (id: string) => void
-	/**
-	 * 对话列表变更时触发的回调函数
-	 */
-	onItemsChange: (items: IConversationItem[]) => void
 	/**
 	 * 内部处理对话列表变更的函数
 	 */
@@ -80,18 +60,6 @@ interface IChatboxWrapperProps {
 	 * 触发配置应用事件
 	 */
 	handleStartConfig?: () => void
-	/**
-	 * 输入参数
-	 */
-	inputParams: Record<string, unknown>
-	/**
-	 * 设置输入参数
-	 */
-	setInputParams: (params: Record<string, unknown>) => void
-	/**
-	 * 重置表单值
-	 */
-	resetFormValues: () => void
 }
 
 /**
@@ -103,20 +71,21 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		appInfo,
 		appParameters,
 		difyApi,
-		conversationId,
-		conversationItems,
-		conversationName,
-		onConversationIdChange,
 		conversationListLoading,
 		onAddConversation,
-		onItemsChange,
 		conversationItemsChangeCallback,
 		appConfigLoading,
 		handleStartConfig,
-		inputParams,
-		setInputParams,
 	} = props
+	const {
+		currentConversationId,
+		setCurrentConversationId,
+		conversations,
+		setConversations,
+		currentConversationInfo,
+	} = useConversationsContext()
 
+	const [entryForm] = Form.useForm()
 	const isMobile = useIsMobile()
 	const abortRef = useRef(() => {})
 	useEffect(() => {
@@ -130,10 +99,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const [nextSuggestions, setNextSuggestions] = useState<string[]>([])
 	// 定义 ref, 用于获取最新的 conversationId
 	const latestProps = useLatest({
-		conversationId,
+		conversationId: currentConversationId,
 	})
 	const latestState = useLatest({
-		inputParams,
+		inputParams: currentConversationInfo?.inputs || {},
 	})
 
 	const filesRef = useRef<IFile[]>([])
@@ -144,6 +113,32 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const getNextSuggestions = async (message_id: string) => {
 		const result = await difyApi.getNextSuggestions({ message_id })
 		setNextSuggestions(result.data)
+	}
+
+	const updateConversationInputs = (formValues: Record<string, unknown>) => {
+		setConversations(prev => {
+			console.log(
+				'setConversations: updateConversationInputs',
+				prev.map(item => {
+					if (item.id === currentConversationId) {
+						return {
+							...item,
+							inputs: formValues,
+						}
+					}
+					return item
+				}),
+			)
+			return prev.map(item => {
+				if (item.id === currentConversationId) {
+					return {
+						...item,
+						inputs: formValues,
+					}
+				}
+				return item
+			})
+		})
 	}
 
 	/**
@@ -164,7 +159,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 		// 只有当历史消息中的参数不为空时才更新
 		if (result?.data?.length && Object.values(result.data?.[0]?.inputs)?.length) {
-			setInputParams(result.data[0]?.inputs || {})
+			updateConversationInputs(result.data[0]?.inputs || {})
 		}
 
 		result.data.forEach(item => {
@@ -212,14 +207,20 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		appParameters,
 		abortRef,
 		getConversationMessages,
-		onConversationIdChange,
+		onConversationIdChange: id => {
+			console.log('setCurrentConversationId: agent', id)
+			setCurrentConversationId(id)
+			if (id !== latestProps.current.conversationId) {
+				conversationItemsChangeCallback()
+			}
+		},
 		difyApi,
 	})
 
 	const initConversationInfo = async () => {
 		// 有对话 ID 且非临时 ID 时，获取历史消息
-		if (conversationId && !isTempId(conversationId)) {
-			await getConversationMessages(conversationId)
+		if (currentConversationId && !isTempId(currentConversationId)) {
+			await getConversationMessages(currentConversationId)
 			setInitLoading(false)
 		} else {
 			// 不管有没有参数，都结束 loading，开始展示内容
@@ -232,7 +233,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setMessages([])
 		setHistoryMessages([])
 		initConversationInfo()
-	}, [conversationId])
+	}, [currentConversationId])
 
 	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
 		onRequest({
@@ -244,35 +245,16 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		if (!appParameters?.user_input_form?.length) {
 			return true
 		}
-		if (conversationId && !isTempId(conversationId)) {
-			return true
-		}
-		return (
-			appParameters?.user_input_form?.every(item => {
-				const field = item['text-input']
-				return !!inputParams[field.variable]
-			}) || false
-		)
-	}, [appParameters, inputParams, conversationId])
+		return appParameters.user_input_form.every(item => {
+			const fieldInfo = Object.values(item)[0]
+			return !!currentConversationInfo?.inputs?.[fieldInfo.variable]
+		})
+	}, [appParameters, currentConversationInfo])
 
 	const onSubmit = (
 		nextContent: string,
 		options?: { files?: IFile[]; inputs?: Record<string, unknown> },
 	) => {
-		// 先校验表单是否填写完毕
-		if (!isFormFilled) {
-			// 过滤出没有填写的字段
-			const unFilledFields =
-				appParameters?.user_input_form
-					.filter(item => {
-						const field = item['text-input']
-						return !inputParams[field.variable] && field.required
-					})
-					.map(item => item['text-input'].label) || []
-			message.error(`${unFilledFields.join('、')}不能为空`)
-			return
-		}
-
 		filesRef.current = options?.files || []
 		onRequest({
 			content: nextContent,
@@ -304,20 +286,38 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				<div className="w-60">
 					<div className="text-base font-semibold">对话列表</div>
 					<Spin spinning={conversationListLoading}>
-						{conversationItems?.length ? (
+						{conversations?.length ? (
 							<ConversationList
-								renameConversationPromise={(conversationId: string, name: string) =>
-									difyApi?.renameConversation({
+								renameConversationPromise={async (conversationId: string, name: string) => {
+									await difyApi?.renameConversation({
 										conversation_id: conversationId,
 										name,
 									})
-								}
-								deleteConversationPromise={difyApi?.deleteConversation}
-								items={conversationItems}
-								activeKey={conversationId}
-								onActiveChange={onConversationIdChange}
-								onItemsChange={onItemsChange}
-								refreshItems={conversationItemsChangeCallback}
+									conversationItemsChangeCallback()
+								}}
+								deleteConversationPromise={async (conversationId: string) => {
+									if (isTempId(conversationId)) {
+										setConversations(prev => {
+											const newConversations = prev.filter(item => item.id !== conversationId)
+											if (conversationId === currentConversationId && newConversations.length) {
+												setCurrentConversationId(newConversations[0].id)
+											}
+											return newConversations
+										})
+									} else {
+										await difyApi?.deleteConversation(conversationId)
+										conversationItemsChangeCallback()
+										return Promise.resolve()
+									}
+								}}
+								items={conversations.map(item => {
+									return {
+										key: item.id,
+										label: item.name,
+									}
+								})}
+								activeKey={currentConversationId}
+								onActiveChange={setCurrentConversationId}
 							/>
 						) : (
 							<Empty description="暂无会话" />
@@ -337,7 +337,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		>
 			<div className="inline-flex items-center">
 				<UnorderedListOutlined className="mr-3 cursor-pointer" />
-				<span>{conversationName || DEFAULT_CONVERSATION_NAME}</span>
+				<span>{currentConversationInfo?.name || DEFAULT_CONVERSATION_NAME}</span>
 			</div>
 		</Popover>
 	)
@@ -366,8 +366,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		)
 	}
 
-	console.log('appInfoappInfo', appInfo)
-
 	return (
 		<div className="flex h-screen flex-col overflow-hidden flex-1">
 			{isMobile ? <MobileHeader centerChildren={conversationTitle} /> : null}
@@ -379,65 +377,60 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					</div>
 				) : null}
 
-				{
-					// 没有对话时, 展示开始对话入口
-					!conversationItems.length ? (
-						<ChatPlaceholder
-							conversationId={conversationId}
-							formFilled={isFormFilled}
-							onStartConversation={formValues => {
-								setInputParams(formValues)
-								if (!conversationId) {
-									onAddConversation()
-								}
-							}}
-							appInfo={appInfo}
-							user_input_form={appParameters?.user_input_form}
-						/>
-					) : conversationId && isFormFilled ? (
-						<Chatbox
-							appConfig={appConfig!}
-							conversationId={conversationId}
-							appParameters={appParameters}
-							nextSuggestions={nextSuggestions}
-							messageItems={[...historyMessages, ...unStoredMessages4Render]}
-							isRequesting={agent.isRequesting()}
-							onPromptsItemClick={onPromptsItemClick}
-							onSubmit={onSubmit}
-							onCancel={async () => {
-								abortRef.current()
-								if (currentTaskId) {
-									await difyApi.stopTask(currentTaskId)
-									getConversationMessages(conversationId)
-								}
-							}}
-							feedbackApi={difyApi.feedbackMessage}
-							feedbackCallback={(conversationId: string) => {
-								// 反馈成功后，重新获取历史消息
-								getConversationMessages(conversationId)
-							}}
-							uploadFileApi={difyApi.uploadFile}
-							difyApi={difyApi}
-						/>
-					) : appParameters?.user_input_form?.length ? (
-						<ChatPlaceholder
-							conversationId={conversationId}
-							formFilled={isFormFilled}
-							onStartConversation={formValues => {
-								setInputParams(formValues)
-								if (!conversationId) {
-									onAddConversation()
-								}
-							}}
-							appInfo={appInfo}
-							user_input_form={appParameters?.user_input_form}
-						/>
-					) : (
-						<div className="w-full h-full flex items-center justify-center">
-							<Spin spinning />
-						</div>
-					)
-				}
+				{currentConversationId ? (
+					<Chatbox
+						appInfo={appInfo}
+						appConfig={appConfig!}
+						conversationId={currentConversationId!}
+						appParameters={appParameters}
+						nextSuggestions={nextSuggestions}
+						messageItems={[...historyMessages, ...unStoredMessages4Render]}
+						isRequesting={agent.isRequesting()}
+						onPromptsItemClick={onPromptsItemClick}
+						onSubmit={onSubmit}
+						onCancel={async () => {
+							abortRef.current()
+							if (currentTaskId) {
+								await difyApi.stopTask(currentTaskId)
+								getConversationMessages(currentConversationId!)
+							}
+						}}
+						isFormFilled={isFormFilled}
+						onStartConversation={formValues => {
+							updateConversationInputs(formValues)
+
+							if (!currentConversationId) {
+								onAddConversation()
+							}
+						}}
+						feedbackApi={difyApi.feedbackMessage}
+						feedbackCallback={(conversationId: string) => {
+							// 反馈成功后，重新获取历史消息
+							getConversationMessages(conversationId)
+						}}
+						uploadFileApi={difyApi.uploadFile}
+						difyApi={difyApi}
+						entryForm={entryForm}
+					/>
+				) : appParameters?.user_input_form?.length ? (
+					<ChatPlaceholder
+						conversationId={currentConversationId}
+						formFilled={isFormFilled}
+						onStartConversation={formValues => {
+							updateConversationInputs(formValues)
+							if (!currentConversationId) {
+								onAddConversation()
+							}
+						}}
+						entryForm={entryForm}
+						appInfo={appInfo}
+						user_input_form={appParameters?.user_input_form}
+					/>
+				) : (
+					<div className="w-full h-full flex items-center justify-center">
+						<Spin spinning />
+					</div>
+				)}
 			</div>
 		</div>
 	)

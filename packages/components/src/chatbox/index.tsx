@@ -1,10 +1,10 @@
 import { RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
-import { DifyApi, IFile, IGetAppParametersResponse, IMessageItem4Render } from '@dify-chat/api'
+import { DifyApi, IFile, IGetAppInfoResponse, IGetAppParametersResponse, IMessageItem4Render } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { GetProp } from 'antd'
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { FormInstance, GetProp } from 'antd'
+import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 
 import { MessageSender } from '../message-sender'
 import MessageContent from './message/content'
@@ -72,6 +72,22 @@ export interface ChatboxProps {
 	 * 上传文件 API
 	 */
 	uploadFileApi: DifyApi['uploadFile']
+	/**
+	 * 表单是否填写
+	 */
+	isFormFilled: boolean
+	/**
+	 * 表单填写状态改变回调
+	 */
+	onStartConversation: (formValues: Record<string, unknown>) => void
+	/**
+	 * 当前应用基本信息
+	 */
+	appInfo?: IGetAppInfoResponse
+	/**
+	 * 应用入参表单实例
+	 */
+	entryForm: FormInstance<any>
 }
 
 /**
@@ -90,8 +106,10 @@ export const Chatbox = (props: ChatboxProps) => {
 		difyApi,
 		appParameters,
 		appConfig,
+		isFormFilled,
+		onStartConversation,
+		entryForm
 	} = props
-	const [content, setContent] = useState('')
 	const isMobile = useIsMobile()
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
@@ -191,6 +209,11 @@ export const Chatbox = (props: ChatboxProps) => {
 					<WelcomePlaceholder
 						appParameters={appParameters}
 						onPromptItemClick={onPromptsItemClick}
+						formFilled={isFormFilled}
+						onStartConversation={onStartConversation}
+						user_input_form={appParameters?.user_input_form}
+						conversationId={conversationId}
+						entryForm={entryForm}
 					/>
 				)}
 				{/* 🌟 消息列表 */}
@@ -220,14 +243,9 @@ export const Chatbox = (props: ChatboxProps) => {
 					<div className="px-3">
 						<MessageSender
 							appParameters={appParameters}
-							content={content}
-							onChange={value => setContent(value)}
-							onSubmit={(content, options) => {
-								if (!content) {
-									return
-								}
-								onSubmit(content, options)
-								setContent('')
+							onSubmit={async(...params)=>{
+								await entryForm.validateFields()
+								return onSubmit(...params)
 							}}
 							isRequesting={isRequesting}
 							className="w-full"

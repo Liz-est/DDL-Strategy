@@ -1,19 +1,9 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { Conversations } from '@ant-design/x'
-import { isTempId } from '@dify-chat/helpers'
 import { Form, Input, message, Modal } from 'antd'
 
-/**
- * 会话列表项
- */
-export interface IConversationItem {
-	/**
-	 * 会话 ID
-	 */
+interface IConversationItem {
 	key: string
-	/**
-	 * 会话标题
-	 */
 	label: string
 }
 
@@ -38,14 +28,6 @@ interface IConversationListProps {
 	 * 会话切换回调
 	 */
 	onActiveChange?: (key: string) => void
-	/**
-	 * 会话列表更新回调
-	 */
-	onItemsChange?: (items: IConversationItem[]) => void
-	/**
-	 * 刷新会话列表
-	 */
-	refreshItems: () => void
 }
 
 /**
@@ -58,8 +40,6 @@ export const ConversationList = (props: IConversationListProps) => {
 		items,
 		activeKey,
 		onActiveChange,
-		onItemsChange,
-		refreshItems,
 	} = props
 
 	const [renameForm] = Form.useForm()
@@ -69,18 +49,8 @@ export const ConversationList = (props: IConversationListProps) => {
 	 * @param conversationId 会话 ID
 	 */
 	const deleteConversation = async (conversationId: string) => {
-		if (isTempId(conversationId)) {
-			// 如果是临时对话，则直接删除
-			onItemsChange?.(items.filter(item => item.key !== conversationId))
-		} else {
-			// 否则调用删除接口
-			await deleteConversationPromise(conversationId)
-			refreshItems()
-		}
+		await deleteConversationPromise(conversationId)
 		message.success('删除成功')
-		if (activeKey === conversationId) {
-			onActiveChange?.('')
-		}
 	}
 
 	/**
@@ -109,7 +79,6 @@ export const ConversationList = (props: IConversationListProps) => {
 				const values = await renameForm.validateFields()
 				await renameConversationPromise(conversation.key, values.name)
 				message.success('会话重命名成功')
-				refreshItems()
 			},
 		})
 	}
