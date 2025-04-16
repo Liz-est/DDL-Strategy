@@ -198,6 +198,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 
 	return (
 		<Sender
+			allowSpeech={appParameters?.speech_to_text.enabled}
 			header={senderHeader}
 			value={content}
 			onChange={onChange}
