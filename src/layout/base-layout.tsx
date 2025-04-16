@@ -8,22 +8,27 @@ import {
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
 import { ConversationList } from '@dify-chat/components'
-import { ConversationsContextProvider, IDifyAppItem, IDifyChatContextMultiApp } from '@dify-chat/core'
+import {
+	ConversationsContextProvider,
+	IDifyAppItem,
+	IDifyChatContextMultiApp,
+} from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
+import { isTempId } from '@dify-chat/helpers'
 import { Button, Divider, Empty, message, Space, Spin } from 'antd'
 import { createStyles } from 'antd-style'
+import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { GithubIcon, Logo } from '@/components/logo'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
+import { useLatest } from '@/hooks/use-latest'
 import { colors } from '@/theme/config'
 
 import './../App.css'
 import CenterTitleWrapper from './components/center-title-wrapper'
-import { isTempId } from '@dify-chat/helpers'
-import dayjs from 'dayjs'
 
 const useStyle = createStyles(({ token, css }) => {
 	return {
@@ -77,7 +82,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		initLoading,
 	} = props
 	const { ...difyChatContext } = useDifyChat()
-	
+
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
 	const [currentConversationId, setCurrentConversationId] = useState<string>('')
 	const currentConversationInfo = useMemo(() => {
@@ -99,6 +104,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
 	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
 	const [appConfigLoading, setAppConfigLoading] = useState(false)
+	const latestCurrentConversationId = useLatest(currentConversationId)
 
 	const initAppInfo = async () => {
 		setAppInfo(undefined)
@@ -117,16 +123,22 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	}
 
 	useAppInit(difyApi, () => {
+		setConversations([])
+		console.log('setCurrentConversationId: useAppInit', '')
+		setCurrentConversationId('')
+		setAppInfo(undefined)
 		initAppInfo().then(() => {
 			getConversationItems().then(() => {
+				console.log('ssss', searchParams.get('isNewCvst'))
 				const isNewConversation = searchParams.get('isNewCvst') === '1'
 				if (isNewConversation) {
 					onAddConversation()
 				}
 			})
 		})
-		setCurrentConversationId('')
 	})
+
+	console.log('currentConversationId in render', currentConversationId)
 
 	/**
 	 * 获取对话列表
@@ -143,10 +155,13 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					}
 				}) || []
 			setConversations(result?.data)
-			if (newItems.length) {
-				setCurrentConversationId(newItems[0]?.key)
-			} else {
-				onAddConversation()
+			// 避免闭包问题
+			if (!latestCurrentConversationId.current) {
+				if (newItems.length) {
+					setCurrentConversationId(newItems[0]?.key)
+				} else {
+					onAddConversation()
+				}
 			}
 		} catch (error) {
 			console.error(error)
@@ -164,6 +179,18 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		const newKey = `temp_${Math.random()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
 		setConversations(prev => {
+			console.log('setConversations: onAddConversation', [
+				{
+					id: newKey,
+					name: DEFAULT_CONVERSATION_NAME,
+					created_at: dayjs().valueOf(),
+					inputs: {},
+					introduction: '',
+					status: 'normal',
+					updated_at: dayjs().valueOf(),
+				},
+				...prev,
+			])
 			return [
 				{
 					id: newKey,
@@ -172,16 +199,18 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					inputs: {},
 					introduction: '',
 					status: 'normal',
-					updated_at: dayjs().valueOf()
+					updated_at: dayjs().valueOf(),
 				},
 				...prev,
 			]
 		})
+		console.log('setCurrentConversationId: onAddConversation', newKey)
 		setCurrentConversationId(newKey)
 	}
 
 	useEffect(() => {
 		if (!appConfig) {
+			console.log('setConversations: useEffect !appConfig', [])
 			setConversations([])
 			setAppInfo(undefined)
 			setCurrentConversationId('')
@@ -190,7 +219,15 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
-			<ConversationsContextProvider value={{ conversations, setConversations, currentConversationId, setCurrentConversationId, currentConversationInfo }}>
+			<ConversationsContextProvider
+				value={{
+					conversations,
+					setConversations,
+					currentConversationId,
+					setCurrentConversationId,
+					currentConversationInfo,
+				}}
+			>
 				<div
 					className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
 				>
@@ -242,7 +279,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList
-													renameConversationPromise={async (conversationId: string, name: string) => {
+													renameConversationPromise={async (
+														conversationId: string,
+														name: string,
+													) => {
 														await difyApi?.renameConversation({
 															conversation_id: conversationId,
 															name,
@@ -251,25 +291,37 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 													}}
 													deleteConversationPromise={async (conversationId: string) => {
 														if (isTempId(conversationId)) {
-															const newConversations = conversations.filter((item) => item.id !== conversationId)
-															setConversations(newConversations)
-															if (conversationId === currentConversationId && newConversations.length) {
-																setCurrentConversationId(newConversations[0].id)
-															}
+															setConversations(prev => {
+																const newConversations = prev.filter(
+																	item => item.id !== conversationId,
+																)
+																if (
+																	conversationId === currentConversationId &&
+																	newConversations.length
+																) {
+																	console.log(
+																		'setCurrentConversationId: deleteConversationPromise',
+																		newConversations[0].id,
+																	)
+																	setCurrentConversationId(newConversations[0].id)
+																}
+																return newConversations
+															})
 														} else {
 															await difyApi?.deleteConversation(conversationId)
 															getConversationItems()
 															return Promise.resolve()
 														}
 													}}
-													items={conversations.map((item)=>{
+													items={conversations.map(item => {
 														return {
 															key: item.id,
-															label: item.name
+															label: item.name,
 														}
 													})}
 													activeKey={currentConversationId}
 													onActiveChange={id => {
+														console.log('setCurrentConversationId: onActiveChange', id)
 														setCurrentConversationId(id)
 													}}
 												/>

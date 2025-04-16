@@ -1,14 +1,20 @@
-import { IGetAppParametersResponse, IUserInputFormItemType, IUserInputFormItemValueBase } from "@dify-chat/api"
-import { Form, FormInstance, FormItemProps, Input, InputNumber, Select } from "antd"
-import { useEffect, useRef, useState } from "react"
+import {
+	IGetAppParametersResponse,
+	IUserInputFormItemType,
+	IUserInputFormItemValueBase,
+} from '@dify-chat/api'
+import { useDifyChat } from '@dify-chat/core'
+import { unParseGzipString } from '@dify-chat/helpers'
+import { Form, FormInstance, FormItemProps, Input, InputNumber, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
-import { useDifyChat } from "@dify-chat/core"
-import { unParseGzipString } from "@dify-chat/helpers"
-import useConversationsContext from "../../../core/src/hooks/use-conversations"
+import { useEffect, useRef, useState } from 'react'
 
-export type IConversationEntryFormItem = FormItemProps & Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {
-	type: IUserInputFormItemType
-}
+import useConversationsContext from '../../../core/src/hooks/use-conversations'
+
+export type IConversationEntryFormItem = FormItemProps &
+	Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {
+		type: IUserInputFormItemType
+	}
 
 const SUPPORTED_CONTROL_TYPES = ['text-input', 'select', 'number', 'paragraph']
 
@@ -32,16 +38,16 @@ export interface IAppInputFormProps {
 	/**
 	 * 应用入参的表单实例
 	 */
-	entryForm: FormInstance<any>
+	// FIXME: any 类型后续优化 @ts-expect-error
+	entryForm: FormInstance<Record<string, unknown>>
 }
 
 /**
  * 应用输入表单
  */
 export default function AppInputForm(props: IAppInputFormProps) {
-
 	const { user_input_form, conversationId, entryForm } = props
-	const { currentConversationId, conversations, setConversations } = useConversationsContext()
+	const { currentConversationId, setConversations } = useConversationsContext()
 	const history = useHistory()
 	const { appId } = useParams<{ appId: string }>()
 	const searchParams = useSearchParams()
@@ -107,49 +113,76 @@ export default function AppInputForm(props: IAppInputFormProps) {
 					form={entryForm}
 					className="mt-6"
 					labelCol={{ span: 5 }}
-					onValuesChange={(_, allValues)=>{
-						setConversations(conversations.map((item)=>{
-							if (item.id === currentConversationId) {
-								return {
-									...item,
-									inputs: allValues
+					onValuesChange={(_, allValues) => {
+						setConversations(prev => {
+							console.log(
+								'setConversations: onValuesChange',
+								prev.map(item => {
+									if (item.id === currentConversationId) {
+										return {
+											...item,
+											inputs: allValues,
+										}
+									}
+									return item
+								}),
+							)
+							return prev.map(item => {
+								if (item.id === currentConversationId) {
+									return {
+										...item,
+										inputs: allValues,
+									}
 								}
-							}
-							return item
-						}))
+								return item
+							})
+						})
 					}}
 				>
-					{userInputItems.filter((item) => SUPPORTED_CONTROL_TYPES.includes(item.type)).map(item => {
-						return (
-							<Form.Item
-								key={item.name}
-								name={item.name}
-								label={item.label}
-								required={item.required}
-								rules={item.rules}
-							>
-								{item.type === 'text-input' ? (
-									<Input placeholder="请输入" maxLength={item.max_length} />
-								) : item.type === 'select' ? (
-									<Select placeholder="请选择" options={item.options?.map((option) => {
-										return {
-											value: option,
-											label: option
-										}
-									}) || []} />
-								) : item.type === 'paragraph' ?
-									(
-										<Input.TextArea placeholder="请输入" maxLength={item.max_length} />
-									) :
-									item.type === 'number' ?
-										<InputNumber placeholder="请输入" className="w-full" />
-										:
-										(
-											`暂不支持的控件类型: ${item.type}`
-										)}
-							</Form.Item>
-						)
-					})}
+					{userInputItems
+						.filter(item => SUPPORTED_CONTROL_TYPES.includes(item.type))
+						.map(item => {
+							return (
+								<Form.Item
+									key={item.name}
+									name={item.name}
+									label={item.label}
+									required={item.required}
+									rules={item.rules}
+								>
+									{item.type === 'text-input' ? (
+										<Input
+											placeholder="请输入"
+											maxLength={item.max_length}
+										/>
+									) : item.type === 'select' ? (
+										<Select
+											placeholder="请选择"
+											options={
+												item.options?.map(option => {
+													return {
+														value: option,
+														label: option,
+													}
+												}) || []
+											}
+										/>
+									) : item.type === 'paragraph' ? (
+										<Input.TextArea
+											placeholder="请输入"
+											maxLength={item.max_length}
+										/>
+									) : item.type === 'number' ? (
+										<InputNumber
+											placeholder="请输入"
+											className="w-full"
+										/>
+									) : (
+										`暂不支持的控件类型: ${item.type}`
+									)}
+								</Form.Item>
+							)
+						})}
 				</Form>
 			) : null}
 		</>

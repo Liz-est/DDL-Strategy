@@ -13,6 +13,7 @@ import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Popover, Spin } from 'antd'
 import dayjs from 'dayjs'
+import useConversationsContext from 'packages/core/src/hooks/use-conversations'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
@@ -21,7 +22,6 @@ import { useX } from '@/hooks/useX'
 
 import { ChatPlaceholder } from './chat-placeholder'
 import { MobileHeader } from './mobile/header'
-import useConversationsContext from 'packages/core/src/hooks/use-conversations'
 
 interface IChatboxWrapperProps {
 	/**
@@ -82,12 +82,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setCurrentConversationId,
 		conversations,
 		setConversations,
-		currentConversationInfo
+		currentConversationInfo,
 	} = useConversationsContext()
 
 	const [entryForm] = Form.useForm()
 	const isMobile = useIsMobile()
-	const abortRef = useRef(() => { })
+	const abortRef = useRef(() => {})
 	useEffect(() => {
 		return () => {
 			abortRef.current()
@@ -116,15 +116,29 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}
 
 	const updateConversationInputs = (formValues: Record<string, unknown>) => {
-		setConversations(conversations.map((item)=>{
-			if (item.id === currentConversationId) {
-				return {
-					...item,
-					inputs: formValues,
+		setConversations(prev => {
+			console.log(
+				'setConversations: updateConversationInputs',
+				prev.map(item => {
+					if (item.id === currentConversationId) {
+						return {
+							...item,
+							inputs: formValues,
+						}
+					}
+					return item
+				}),
+			)
+			return prev.map(item => {
+				if (item.id === currentConversationId) {
+					return {
+						...item,
+						inputs: formValues,
+					}
 				}
-			}
-			return item
-		}))
+				return item
+			})
+		})
 	}
 
 	/**
@@ -193,9 +207,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		appParameters,
 		abortRef,
 		getConversationMessages,
-		onConversationIdChange: (id) => {
+		onConversationIdChange: id => {
+			console.log('setCurrentConversationId: agent', id)
 			setCurrentConversationId(id)
-			conversationItemsChangeCallback()
+			if (id !== latestProps.current.conversationId) {
+				conversationItemsChangeCallback()
+			}
 		},
 		difyApi,
 	})
@@ -228,7 +245,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		if (!appParameters?.user_input_form?.length) {
 			return true
 		}
-		return appParameters.user_input_form.every((item)=>{
+		return appParameters.user_input_form.every(item => {
 			const fieldInfo = Object.values(item)[0]
 			return !!currentConversationInfo?.inputs?.[fieldInfo.variable]
 		})
@@ -280,21 +297,23 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 								}}
 								deleteConversationPromise={async (conversationId: string) => {
 									if (isTempId(conversationId)) {
-										const newConversations = conversations.filter((item) => item.id !== conversationId)
-										setConversations(newConversations)
-										if (conversationId === currentConversationId && newConversations.length) {
-											setCurrentConversationId(newConversations[0].id)
-										}
+										setConversations(prev => {
+											const newConversations = prev.filter(item => item.id !== conversationId)
+											if (conversationId === currentConversationId && newConversations.length) {
+												setCurrentConversationId(newConversations[0].id)
+											}
+											return newConversations
+										})
 									} else {
 										await difyApi?.deleteConversation(conversationId)
 										conversationItemsChangeCallback()
 										return Promise.resolve()
 									}
 								}}
-								items={conversations.map((item) => {
+								items={conversations.map(item => {
 									return {
 										key: item.id,
-										label: item.name
+										label: item.name,
 									}
 								})}
 								activeKey={currentConversationId}
@@ -411,8 +430,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					<div className="w-full h-full flex items-center justify-center">
 						<Spin spinning />
 					</div>
-				)
-				}
+				)}
 			</div>
 		</div>
 	)
