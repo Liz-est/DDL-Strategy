@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 import { useX } from '@/hooks/useX'
+import workflowDataStorage from '@/hooks/useX/workflow-data-storage'
 
 import { MobileHeader } from './mobile/header'
 
@@ -99,6 +100,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	// 定义 ref, 用于获取最新的 conversationId
 	const latestProps = useLatest({
 		conversationId: currentConversationId,
+		appId: appConfig?.id,
 	})
 	const latestState = useLatest({
 		inputParams: currentConversationInfo?.inputs || {},
@@ -180,6 +182,13 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					error: item.error || '',
 					isHistory: true,
 					feedback: item.feedback,
+					workflows:
+						workflowDataStorage.get({
+							appId: appConfig?.id || '',
+							conversationId,
+							messageId: item.id,
+							key: 'workflows',
+						}) || [],
 					agentThoughts: item.agent_thoughts || [],
 					retrieverResources: item.retriever_resources || [],
 					role: 'ai',
