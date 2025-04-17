@@ -17,7 +17,7 @@ services:
     command: [ 'tail', '-f', '/dev/null' ]
   dify-chat:
     container_name: dify-chat
-    image: dify-chat:latest
+    image: ${DOCKER_IMAGE}
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
       - ./nginx/https.conf.template:/etc/nginx/https.conf.template
