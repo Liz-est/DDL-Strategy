@@ -33,15 +33,15 @@
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@rslib/core": "^0.6.3",
-		"@types/node": "^22.14.1",
-		"@types/pako": "^2.0.3",
-		"typescript": "^5.8.3",
-		"vitest": "^3.1.1"
+		"@biomejs/biome": "catalog:",
+		"@rslib/core": "catalog:",
+		"@types/node": "catalog:",
+		"@types/pako": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
 	},
 	"dependencies": {
-		"ahooks": "^3.8.4",
-		"pako": "^2.1.0"
+		"ahooks": "catalog:",
+		"pako": "catalog:"
 	}
 }
