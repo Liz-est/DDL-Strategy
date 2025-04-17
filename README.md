@@ -73,10 +73,10 @@ Chatflow 工作流：
 
 开发/生产构建环境要求：
 
-- Node.js v18.17.1+
-- pnpm v8.x
+- Node.js ^22.5.1
+- pnpm ^10.8.1
 
-> 注意：本应用使用了 pnpm workspace 来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
+> 注意：本项目使用了 pnpm workspace 来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
 
 ## 开始使用
 
@@ -446,6 +446,7 @@ pnpm preview
 ```bash
 docker compose up dify-chat -d
 ```
+
 浏览器访问http://127.0.0.1:8080/dify-chat/
 
 容器默认暴露http端口8080，https端口8443，可修改.env文件配置环境变量
@@ -468,13 +469,16 @@ CERTBOT_EMAIL
 #更多证书申请参数，可留空
 CERTBOT_OPTIONS
 ```
+
 ![注意：请确保你配置的域名可以使用80端口访问到你的dify-chat站点](详见：https://eff-certbot.readthedocs.io/en/latest/install.html#alternative-1-docker)
 
-在docker目录执行命令即可全自动申请、签发证书
+在docker目录执行命令即可全自动申请、签发证书：
+
 ```bash
 docker-compose --profile certbot up
 ```
-签发的证书在[docker/certbot/conf/live/你的域名]目录下
+
+签发的证书在[docker/certbot/conf/live/你的域名]目录下。
 
 注意：以上路径的证书文件为替身，如需将证书用在其他项目上需要在[docker/certbot/conf/archive/你的域名]目录下获取真实证书文件
 
@@ -485,7 +489,14 @@ docker-compose --profile certbot up
 `cert.pem`     : will break many server configurations, and should not be used
                  without reading further documentation (see link below).
 ```
+
 ![注意：证书需要定期续期]
+
+## FAQ
+
+A: pnpm install 报错 `Cannot find matching keyid: ${JSON.stringify({ signatures, keys })}`
+
+Q: 先运行 `COREPACK_INTEGRITY_KEYS=0 corepack prepare` 再执行 `pnpm install`。
 
 ## Roadmap
 

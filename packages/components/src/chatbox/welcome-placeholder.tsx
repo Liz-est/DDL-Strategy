@@ -12,7 +12,9 @@ import { Prompts, Welcome } from '@ant-design/x'
 import { IGetAppParametersResponse } from '@dify-chat/api'
 import { useIsMobile } from '@dify-chat/helpers'
 import { Button, FormInstance, GetProp, Space } from 'antd'
+import classNames from 'classnames'
 import { useMemo } from 'react'
+
 import AppInputWrapper from './app-input-wrapper'
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
@@ -23,6 +25,10 @@ const renderTitle = (icon: React.ReactElement, title: string) => (
 )
 
 interface IWelcomePlaceholderProps {
+	/**
+	 * 是否展示提示项
+	 */
+	showPrompts: boolean
 	/**
 	 * 应用参数
 	 */
@@ -50,14 +56,14 @@ interface IWelcomePlaceholderProps {
 	/**
 	 * 应用入参的表单实例
 	 */
-	entryForm: FormInstance<any>
+	entryForm: FormInstance<Record<string, unknown>>
 }
 
 /**
  * 对话内容区的欢迎占位符
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
-	const { onPromptItemClick, appParameters } = props
+	const { onPromptItemClick, appParameters, showPrompts } = props
 	const isMobile = useIsMobile()
 
 	const placeholderPromptsItems: GetProp<typeof Prompts, 'items'> = useMemo(() => {
@@ -129,20 +135,25 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 		<div className="flex justify-center w-full px-3 box-border mx-auto">
 			<Space
 				direction="vertical"
-				className="pt-8 w-full md:!w-3/4"
+				className={classNames({
+					'w-full md:!w-3/4': true,
+					'pt-8': showPrompts,
+				})}
 			>
-				<Welcome
-					variant="borderless"
-					icon={<RobotOutlined className="text-3xl text-primary" />}
-					title={appParameters?.opening_statement || "Hello, I'm Dify Chat"}
-					description="Base on Dify API, Dify Chat is a web app that can interact with AI."
-					extra={
-						<Space>
-							<Button icon={<ShareAltOutlined />} />
-							<Button icon={<EllipsisOutlined />} />
-						</Space>
-					}
-				/>
+				{showPrompts ? (
+					<Welcome
+						variant="borderless"
+						icon={<RobotOutlined className="text-3xl text-primary" />}
+						title={appParameters?.opening_statement || "Hello, I'm Dify Chat"}
+						description="Base on Dify API, Dify Chat is a web app that can interact with AI."
+						extra={
+							<Space>
+								<Button icon={<ShareAltOutlined />} />
+								<Button icon={<EllipsisOutlined />} />
+							</Space>
+						}
+					/>
+				) : null}
 
 				{/* 应用输入参数 */}
 				<AppInputWrapper
@@ -153,24 +164,26 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					conversationId={props.conversationId!}
 				/>
 
-				<Prompts
-					title="Do you want?"
-					vertical={isMobile}
-					items={placeholderPromptsItems}
-					styles={{
-						list: {
-							width: '100%',
-						},
-						item: isMobile
-							? {
+				{showPrompts ? (
+					<Prompts
+						title="Do you want?"
+						vertical={isMobile}
+						items={placeholderPromptsItems}
+						styles={{
+							list: {
 								width: '100%',
-							}
-							: {
-								flex: 1,
 							},
-					}}
-					onItemClick={onPromptItemClick}
-				/>
+							item: isMobile
+								? {
+										width: '100%',
+									}
+								: {
+										flex: 1,
+									},
+						}}
+						onItemClick={onPromptItemClick}
+					/>
+				) : null}
 			</Space>
 		</div>
 	)
