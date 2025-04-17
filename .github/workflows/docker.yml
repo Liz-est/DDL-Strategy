@@ -1,0 +1,47 @@
+name: release
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # This schedule runs every 13:00:00Z(21:00:00+08:00)
+  # The "create tags" trigger is specifically focused on the creation of new tags, while the "push tags" trigger is activated when tags are pushed, including both new tag creations and updates to existing tags.
+  create:
+    tags:
+      - "v*.*.*"                  # normal release
+      - "nightly"                 # the only one mutable tag
+
+# https://docs.github.com/en/actions/using-jobs/using-concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: [ "self-hosted", "overseas" ]
+    steps:
+      - name: Ensure workspace ownership
+        run: echo "chown -R $USER $GITHUB_WORKSPACE" && sudo chown -R $USER $GITHUB_WORKSPACE
+
+      # https://github.com/actions/checkout/blob/v3/README.md
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }}  # Use the secret as an environment variable
+          fetch-depth: 0
+          fetch-tags: true
+
+      # https://github.com/marketplace/actions/docker-login
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # https://github.com/marketplace/actions/build-and-push-docker-images
+      - name: Build and push full image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: lexmin0412/dify-chat:nightly
+          file: Dockerfile
+          platforms: linux/amd64
