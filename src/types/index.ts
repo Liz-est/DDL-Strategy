@@ -40,7 +40,7 @@ export interface IAgentMessage {
 	/**
 	 * 输入变量
 	 */
-	inputs?: Record<string, string>
+	inputs?: Record<string, unknown>
 	/**
 	 * Agent 思维链信息
 	 */

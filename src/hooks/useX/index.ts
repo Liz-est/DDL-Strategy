@@ -17,15 +17,16 @@ import { useState } from 'react'
 import { RESPONSE_MODE } from '@/config'
 import { IAgentMessage, IMessageFileItem } from '@/types'
 
+import workflowDataStorage from './workflow-data-storage'
+
 export const useX = (options: {
 	difyApi: DifyApi
 	latestProps: React.MutableRefObject<{
 		conversationId: string | undefined
+		appId?: string
 	}>
 	latestState: React.MutableRefObject<{
-		inputParams: {
-			[key: string]: unknown
-		}
+		inputParams: Record<string, unknown>
 	}>
 	getNextSuggestions: (messageId: string) => void
 	appParameters?: IGetAppParametersResponse
@@ -96,15 +97,28 @@ export const useX = (options: {
 				})
 			}
 
+			// 记录对话和消息 ID
+			let conversationId = latestProps.current.conversationId || ''
+			let messageId = ''
 			while (reader) {
 				const { value: chunk, done } = await reader.read()
 				if (done) {
+					// 缓存工作流数据
+					workflowDataStorage.set({
+						appId: latestProps.current.appId || '',
+						conversationId,
+						messageId,
+						key: 'workflows',
+						value: workflows,
+					})
 					onSuccess({
 						content: result,
 						files,
 						workflows,
 						agentThoughts,
 					})
+					getConversationMessages(conversationId)
+					onConversationIdChange(conversationId)
 					break
 				}
 				if (!chunk) continue
@@ -149,15 +163,15 @@ export const useX = (options: {
 						setCurrentTaskId(parsedData.task_id)
 					}
 					if (parsedData.event === EventEnum.MESSAGE_END) {
-						onSuccess({
-							content: result,
-							files,
-							workflows,
-							agentThoughts,
-						})
+						// onSuccess({
+						// 	content: result,
+						// 	files,
+						// 	workflows,
+						// 	agentThoughts,
+						// })
 						// 刷新消息列表
-						getConversationMessages(parsedData.conversation_id)
-						onConversationIdChange(parsedData.conversation_id)
+						// getConversationMessages(parsedData.conversation_id)
+						// onConversationIdChange(parsedData.conversation_id)
 						// const conversation_id = parsedData.conversation_id;
 						// 如果有对话 ID，跟当前的对比一下
 						// if (conversation_id && isTempId(conversationId)) {
@@ -171,6 +185,9 @@ export const useX = (options: {
 					}
 					const innerData = parsedData.data
 					if (parsedData.event === EventEnum.WORKFLOW_STARTED) {
+						// 在这里才赋值 conversationId 和 messageId，因为其他事件中可能没有这些字段
+						conversationId = parsedData.conversation_id
+						messageId = parsedData.message_id
 						workflows.status = 'running'
 						workflows.nodes = []
 						onUpdate({
