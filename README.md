@@ -472,13 +472,15 @@ CERTBOT_OPTIONS
 
 ![注意：请确保你配置的域名可以使用80端口访问到你的dify-chat站点](详见：https://eff-certbot.readthedocs.io/en/latest/install.html#alternative-1-docker)
 
-在docker目录执行命令即可全自动申请、签发证书
+在docker目录执行命令即可全自动申请、签发证书：
 
 ```bash
 docker-compose --profile certbot up
 ```
 
-签发的证书在[docker/certbot/conf/live/你的域名]目录下
+签发的证书在[docker/certbot/conf/live/你的域名]目录下。
+
+注意：以上路径的证书文件为替身，如需将证书用在其他项目上需要在[docker/certbot/conf/archive/你的域名]目录下获取真实证书文件
 
 ```txt
 `privkey.pem`  : the private key for your certificate.
