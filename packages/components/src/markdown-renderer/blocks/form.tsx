@@ -51,7 +51,10 @@ const MarkdownForm = ({ node, onSend }: any) => {
 
     if (format === DATA_FORMAT.JSON) {
 			console.log('即将发送', format, result)
-      onSend?.(result)
+      onSend?.(JSON.stringify({
+				...result,
+				isFormSubmit: true
+			}))
     }
     else {
       const textResult = Object.entries(result)

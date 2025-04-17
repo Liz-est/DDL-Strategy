@@ -275,13 +275,8 @@ export function MarkdownRenderer(props: {
           img: Img,
           a: Link,
           p: Paragraph,
-          form: (props) => <MarkdownForm {...props} onSend={(values: Record<string, any>)=>{
-						onSubmit(JSON.stringify({
-							...values,
-							isFormSubmit: true,
-						}), {
-							inputs: values
-						})
+          form: (props) => <MarkdownForm {...props} onSend={(values: string)=>{
+						onSubmit(values)
 					}} />,
           script: ScriptBlock as any,
           details: ThinkBlock,
