@@ -210,18 +210,18 @@ export const Chatbox = (props: ChatboxProps) => {
 				className="w-full h-full overflow-auto pt-4 pb-48"
 				ref={scrollContainerRef}
 			>
-				{/* 🌟 欢迎占位 */}
-				{!items?.length && isTempId(conversationId) && (
-					<WelcomePlaceholder
-						appParameters={appParameters}
-						onPromptItemClick={onPromptsItemClick}
-						formFilled={isFormFilled}
-						onStartConversation={onStartConversation}
-						user_input_form={appParameters?.user_input_form}
-						conversationId={conversationId}
-						entryForm={entryForm}
-					/>
-				)}
+				{/* 🌟 欢迎占位 + 对话参数 */}
+				<WelcomePlaceholder
+					showPrompts={!items?.length && isTempId(conversationId)}
+					appParameters={appParameters}
+					onPromptItemClick={onPromptsItemClick}
+					formFilled={isFormFilled}
+					onStartConversation={onStartConversation}
+					user_input_form={appParameters?.user_input_form}
+					conversationId={conversationId}
+					entryForm={entryForm}
+				/>
+
 				{/* 🌟 消息列表 */}
 				<Bubble.List
 					items={items}
