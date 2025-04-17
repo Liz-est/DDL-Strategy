@@ -475,6 +475,9 @@ CERTBOT_OPTIONS
 docker-compose --profile certbot up
 ```
 签发的证书在[docker/certbot/conf/live/你的域名]目录下
+
+注意：以上路径的证书文件为替身，如需将证书用在其他项目上需要在[docker/certbot/conf/archive/你的域名]目录下获取真实证书文件
+
 ```txt
 `privkey.pem`  : the private key for your certificate.
 `fullchain.pem`: the certificate file used in most server software.
