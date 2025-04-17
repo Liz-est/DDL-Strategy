@@ -13,8 +13,8 @@ services:
       - ./certbot/update-cert.template.txt:/update-cert.template.txt
       - ./certbot/docker-entrypoint.sh:/docker-entrypoint.sh
     env_file: .env
-    entrypoint: ['/docker-entrypoint.sh']
-    command: ['tail', '-f', '/dev/null']
+    entrypoint: [ '/docker-entrypoint.sh' ]
+    command: [ 'tail', '-f', '/dev/null' ]
   dify-chat:
     container_name: dify-chat
     image: dify-chat:latest
@@ -30,12 +30,7 @@ services:
     ports:
       - ${EXPOSE_NGINX_PORT}:${NGINX_PORT}
       - ${EXPOSE_NGINX_SSL_PORT}:${NGINX_SSL_PORT}
-    entrypoint:
-      [
-        'sh',
-        '-c',
-        "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh",
-      ]
+    entrypoint: [ 'sh', '-c', "cp /docker-entrypoint-mount.sh /docker-entrypoint.sh && sed -i 's/\r$$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh && /docker-entrypoint.sh" ]
     networks:
       - dify-chat
     restart: on-failure
