@@ -38,13 +38,13 @@
 		"test": "vitest run"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@rslib/core": "^0.6.3",
-		"@types/node": "^22.14.1",
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1",
-		"typescript": "^5.8.3",
-		"vitest": "^3.1.1"
+		"@biomejs/biome": "catalog:",
+		"@rslib/core": "catalog:",
+		"@types/node": "catalog:",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"typescript": "catalog:",
+		"vitest": "catalog:"
 	},
 	"peerDependencies": {
 		"react": ">=16.9.0",
