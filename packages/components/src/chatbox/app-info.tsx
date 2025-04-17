@@ -20,10 +20,10 @@ export function AppInfo(props: IAppInfoProps) {
 				<div className="bg-[#ffead5] rounded-lg p-2">
 					<AndroidFilled className="text-gray-700" />
 				</div>
-				<div className="ml-3 text-default text-sm">{info.name}</div>
+				<div className="ml-3 text-default text-sm truncate">{info.name}</div>
 			</div>
 			{info.tags ? (
-				<div className="mt-3 text-center">
+				<div className="mt-3 px-4">
 					{info.tags.map(tag => {
 						return (
 							<Tag
