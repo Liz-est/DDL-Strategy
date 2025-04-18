@@ -105,33 +105,41 @@ const ReferenceItem = (props: IRetrieverResourceGroupedItem) => {
 													icon: <FileWordOutlined />,
 													title: `字符: ${item.word_count}`,
 													value: item.word_count,
+													visible: !!item.word_count,
 												},
 												{
 													id: `${item.segment_id}_hit_count`,
 													icon: <AimOutlined />,
 													title: `召回次数: ${item.hit_count}`,
 													value: item.hit_count,
+													visible: !!item.hit_count,
 												},
 												{
 													id: `${item.segment_id}_index_node_hash`,
 													icon: <ShareAltOutlined />,
 													title: `向量哈希: ${item.index_node_hash}`,
-													value: item.index_node_hash!.substring(0, 7),
+													value: item.index_node_hash?.substring(0, 7),
+													visible: !!item.index_node_hash,
 												},
 												{
 													id: `${item.segment_id}_score`,
 													icon: <StarOutlined />,
 													title: `召回得分: ${item.score}`,
 													value: item.score,
+													visible: !!item.score,
 												},
-											].map(metric => (
-												<MetricItem
-													key={metric.id}
-													icon={metric.icon}
-													title={metric.title}
-													value={metric.value}
-												/>
-											))}
+											]
+												.filter(item => {
+													return item.visible
+												})
+												.map(metric => (
+													<MetricItem
+														key={metric.id}
+														icon={metric.icon}
+														title={metric.title}
+														value={metric.value}
+													/>
+												))}
 										</Space>
 									</div>
 								</div>
