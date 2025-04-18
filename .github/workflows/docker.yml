@@ -42,6 +42,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: lexmin0412/dify-chat:nightly
+          tags: hello2008/dify-chat:nightly
           file: Dockerfile
           platforms: linux/amd64
