@@ -4,7 +4,11 @@
 
 一个基于 Dify API 的 AI 会话 Web 应用, 支持单应用、多应用等多种模式，提供开箱即用的应用配置管理功能。支持不同类型的 Dify 应用，适配深度思考、思维链、图表等多种形式输出。
 
-如果你觉得这个项目还不错的话，请动动你的小手指点个 Star 吧～
+如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
+
+|加群沟通|喂我花生|
+|---|---|
+|![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363)|![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec)|
 
 ## Repobeats
 
