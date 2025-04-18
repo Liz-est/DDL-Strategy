@@ -88,9 +88,9 @@ export interface IRetrieverResource {
 	 */
 	segment_position: number
 	/**
-	 * 索引节点的哈希值，当前为 null
+	 * 索引节点的哈希值
 	 */
-	index_node_hash: null
+	index_node_hash: string
 	/**
 	 * 文档片段的内容
 	 */
