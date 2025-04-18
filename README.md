@@ -6,7 +6,7 @@
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
-|加群沟通|喂我花生|
+|加群沟通（提需求/ bug 请带 issue 发言）|喂我花生（请在留言中备注自己的 Github 用户名哦）|
 |---|---|
 |![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363)|![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec)|
 
