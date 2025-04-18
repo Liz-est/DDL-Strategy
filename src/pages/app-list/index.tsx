@@ -1,6 +1,7 @@
 import { IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
+import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
-import { Button, Empty, message, Tag } from 'antd'
+import { Button, Col, Empty, message, Row, Tag } from 'antd'
 import { useHistory } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 
@@ -11,6 +12,7 @@ export default function AppListPage() {
 	const history = useHistory()
 	const { appService, enableSetting, mode } = useDifyChat() as IDifyChatContextMultiApp
 	const [appManageDrawerVisible, setAppManageDrawerVisible] = useState(false)
+	const isMobile = useIsMobile()
 
 	const {
 		runAsync: getAppList,
@@ -43,39 +45,48 @@ export default function AppListPage() {
 	return (
 		<div className="h-screen overflow-hidden flex flex-col">
 			<MobileHeader centerChildren={<>应用列表</>} />
-			<div className="px-3 flex-1 overflow-auto">
+			<div className="px-3 md:px-44 flex-1 overflow-auto">
 				{list?.length ? (
-					list.map(item => {
-						return (
-							<div
-								key={item.id}
-								className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
-								onClick={() => {
-									history.push(`/app/${item.id}`)
-								}}
-							>
-								<div className="w-full flex items-center truncate font-semibold">
-									{item.info.name}
-								</div>
-								<div className="truncate text-sm mt-2 text-desc">{item.info.description}</div>
+					<Row gutter={isMobile ? 0 : 12}>
+						{list.map(item => {
+							return (
+								<Col
+									key={item.id}
+									span={isMobile ? 24 : 8}
+								>
+									<div
+										key={item.id}
+										className={`p-3 bg-white mt-3 border border-solid border-gray-200 rounded-lg cursor-pointer hover:border-primary hover:text-primary`}
+										onClick={() => {
+											history.push(`/app/${item.id}`)
+										}}
+									>
+										<div className="w-full flex items-center truncate font-semibold">
+											{item.info.name}
+										</div>
+										<div className="truncate text-sm mt-2 text-desc h-8 leading-8">
+											{item.info.description}
+										</div>
 
-								<div className="flex-1 overflow-hidden flex flex-wrap items-center">
-									{item.info.tags
-										? item.info.tags.map(tag => {
-												return (
-													<Tag
-														key={tag}
-														className="mr-2 mt-2"
-													>
-														{tag}
-													</Tag>
-												)
-											})
-										: null}
-								</div>
-							</div>
-						)
-					})
+										<div className="overflow-auto flex items-center md:h-14">
+											{item.info.tags
+												? item.info.tags.map(tag => {
+														return (
+															<Tag
+																key={tag}
+																className="mr-2 mt-2 shrink-0"
+															>
+																{tag}
+															</Tag>
+														)
+													})
+												: null}
+										</div>
+									</div>
+								</Col>
+							)
+						})}
+					</Row>
 				) : (
 					<div className="w-full h-full flex flex-col items-center justify-center">
 						<Empty description="暂无应用" />
@@ -83,7 +94,7 @@ export default function AppListPage() {
 				)}
 			</div>
 			{enableSetting ? (
-				<div className="p-3">
+				<div className="p-3 md:mx-44">
 					<Button
 						size="large"
 						block

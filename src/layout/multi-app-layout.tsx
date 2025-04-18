@@ -129,9 +129,10 @@ const MultiAppLayout: React.FC = () => {
 						<span
 							className="cursor-pointer"
 							onClick={() => {
-								if (enableSetting) {
-									setAppManageDrawerVisible(true)
-								}
+								// if (enableSetting) {
+								// 	setAppManageDrawerVisible(true)
+								// }
+								history.push('/apps')
 							}}
 						>
 							应用列表
