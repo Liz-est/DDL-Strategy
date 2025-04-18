@@ -7,7 +7,7 @@ import {
 	IGetAppInfoResponse,
 	IGetAppParametersResponse,
 } from '@dify-chat/api'
-import { ConversationList } from '@dify-chat/components'
+import { AppInfo, ConversationList } from '@dify-chat/components'
 import {
 	ConversationsContextProvider,
 	IDifyAppItem,
@@ -34,9 +34,6 @@ const useStyle = createStyles(({ token, css }) => {
 	return {
 		layout: css`
 			font-family: AlibabaPuHuiTi, ${token.fontFamily}, sans-serif;
-		`,
-		menu: css`
-			background: ${token.colorBgLayout}80;
 		`,
 	}
 })
@@ -223,7 +220,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
 				>
 					{/* 头部 */}
-					<div className="hidden md:!flex items-center justify-between px-6">
+					<div className="hidden md:!flex items-center justify-between px-4">
 						{/* 🌟 Logo */}
 						<div className={`flex-1 overflow-hidden ${appConfig ? '' : 'shadow-sm'}`}>
 							<Logo hideGithubIcon />
@@ -252,21 +249,24 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						) : appConfig ? (
 							<>
 								{/* 左侧对话列表 */}
-								<div className={`${styles.menu} hidden md:!flex w-72 h-full flex-col`}>
+								<div
+									className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-[#eff0f5]`}
+								>
+									{appInfo ? <AppInfo info={appInfo!} /> : null}
 									{/* 添加会话 */}
 									{appConfig ? (
 										<Button
 											onClick={() => {
 												onAddConversation()
 											}}
-											className="h-10 leading-10 border border-solid border-gray-200 w-[calc(100%-24px)] mt-3 mx-3 text-default"
+											className="h-10 leading-10 rounded-lg border border-solid border-gray-200 mt-3 mx-4 text-default "
 											icon={<PlusOutlined />}
 										>
 											新增对话
 										</Button>
 									) : null}
 									{/* 🌟 对话管理 */}
-									<div className="px-3 mt-3">
+									<div className="px-4 mt-3">
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList

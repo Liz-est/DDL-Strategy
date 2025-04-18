@@ -1,10 +1,10 @@
 import {
+	AndroidFilled,
 	CommentOutlined,
 	EllipsisOutlined,
 	FireOutlined,
 	HeartOutlined,
 	ReadOutlined,
-	RobotOutlined,
 	ShareAltOutlined,
 	SmileOutlined,
 } from '@ant-design/icons'
@@ -136,14 +136,18 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 			<Space
 				direction="vertical"
 				className={classNames({
-					'w-full md:!w-3/4': true,
-					'pt-8': showPrompts,
+					'w-full md:!w-3/4 pb-6': true,
+					'pt-3': showPrompts,
 				})}
 			>
 				{showPrompts ? (
 					<Welcome
 						variant="borderless"
-						icon={<RobotOutlined className="text-3xl text-primary" />}
+						icon={
+							<div className="flex items-center justify-center rounded-[50%] w-16 h-16 border-gray-100 border-solid border-[1px] bg-[#eff0f5]">
+								<AndroidFilled className="text-3xl text-primary" />
+							</div>
+						}
 						title={appParameters?.opening_statement || "Hello, I'm Dify Chat"}
 						description="Base on Dify API, Dify Chat is a web app that can interact with AI."
 						extra={
@@ -166,7 +170,8 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 
 				{showPrompts ? (
 					<Prompts
-						title="Do you want?"
+						className="mt-4"
+						title="问一问："
 						vertical={isMobile}
 						items={placeholderPromptsItems}
 						styles={{

@@ -41,12 +41,12 @@ export const Logo = (props: ILogoProps) => {
 		<div className="flex h-16 items-center justify-start py-0 box-border">
 			<div className="h-full flex items-center flex-1 overflow-hidden">
 				<img
-					className="w-6 h-6 inline-block"
+					className="w-8 h-8 inline-block"
 					src={LogoImage}
 					draggable={false}
 					alt="logo"
 				/>
-				<span className="inline-block my-0 mx-2 font-bold text-lg">Dify Chat</span>
+				<span className="inline-block my-0 ml-3 font-bold text-lg">Dify Chat</span>
 			</div>
 			{!hideGithubIcon && (
 				<Button
