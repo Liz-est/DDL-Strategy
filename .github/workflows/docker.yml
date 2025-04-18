@@ -47,11 +47,11 @@ jobs:
           platforms: linux/amd64
       - name: Build and push full image to Aliyun
         run:
-           docker login --username=${{ secrets.ALIYUN_REGISTRY_USER }} --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }} ${{ secrets.ALIYUN_REGISTRY }}
-           docker build . --file Dockerfile --tag ${{ secrets.ALIYUN_REGISTRY }}/{{ secrets.ALIYUN_NAME_SPACE }}/dify-chat:nightly
+           docker login --username=${{ secrets.ALIYUN_REGISTRY_USER }} --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }} ${{ secrets.ALIYUN_REGISTRY }} && \
+           docker build . -t ${{ secrets.ALIYUN_REGISTRY }}/{{ secrets.ALIYUN_NAME_SPACE }}/dify-chat:nightly && \
            docker push ${{ secrets.ALIYUN_REGISTRY }}/{{ secrets.ALIYUN_NAME_SPACE }}/dify-chat:nightly
       - name: Build and push full image to HuaweiCloud
         run:
-           docker login --username=${{ secrets.HUAWEICLOUD_REGISTRY_USER }} --password=${{ secrets.HUAWEICLOUD_REGISTRY_PASSWORD }} ${{ secrets.HUAWEICLOUD_REGISTRY }}
-           docker build . --file Dockerfile --tag ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat/dify-chat:nightly
+           docker login --username=${{ secrets.HUAWEICLOUD_REGISTRY_USER }} --password=${{ secrets.HUAWEICLOUD_REGISTRY_PASSWORD }} ${{ secrets.HUAWEICLOUD_REGISTRY }} && \
+           docker build . -t ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat/dify-chat:nightly && \
            docker push ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat//dify-chat:nightly
