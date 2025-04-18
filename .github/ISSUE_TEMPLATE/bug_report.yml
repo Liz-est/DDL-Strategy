@@ -1,0 +1,67 @@
+name: 🐞 Bug 报告
+description: 报告一个 Bug
+labels: [pending triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请用一句话简单描述这个 Bug，以便我们快速理解你的问题，感谢你的支持。
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 清晰简洁的问题描述
+      description: 请尽量详细地描述你的问题，包括复现问题的最简路径，推荐使用截图/录屏说明。
+      placeholder: Bug 描述
+    validations:
+      required: true
+  - type: input
+    id: dify-version
+    attributes:
+      label: 使用的 Dify 版本
+      description: 使用的 Dify 版本，如 v1.2.0
+      placeholder: 请输入 Dify 版本
+    validations:
+      required: true
+  - type: input
+    id: dify-dsl
+    attributes:
+      label: 可重现问题的 DSL 链接
+      description: 可重现问题的 DSL 链接，请注意移除敏感信息
+      placeholder: 请输入可重现问题的 DSL 链接
+    validations:
+      required: true
+  - type: textarea
+    id: system-info
+    attributes:
+      label: 系统信息
+      description: 运行 `npx envinfo --system --binaries --browsers` 的输出
+      render: Shell
+      placeholder: System, Binaries, Browsers
+    validations:
+      required: true
+  - type: dropdown
+    id: running-type
+    attributes:
+      label: 运行环境
+      description: 请确认你的启动方式
+      options:
+        - 本地启动
+        - Docker
+    validations:
+      required: true
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: 验证项
+      description: 在提交问题之前，请确保您已完成以下检查。
+      options:
+        # - label: 遵守我们的 [行为准则](https://github.com/antfu/.github/blob/main/CODE_OF_CONDUCT.md)
+        #   required: true
+        # - label: 阅读 [贡献指南](https://github.com/antfu/contribute)。
+        #   required: true
+        - label: 检查是否已经存在相同的 issue，避免创建重复问题。
+          required: true
+        - label: 确认这是一个具体的 Bug。
+          required: true
+        - label: 提供的 DSL 是该 Bug 的 [最小可复现示例](https://stackoverflow.com/help/minimal-reproducible-example)。
+          required: true

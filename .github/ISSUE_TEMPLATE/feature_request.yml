@@ -1,0 +1,35 @@
+name: 🚀 新功能提议
+description: 提议一个新功能
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请用一句话简单描述你的需求，以便我们快速理解你的问题，感谢你的支持。
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 清晰简洁的问题描述
+      description: '请尽量详细地描述你的需求，说明你的应用场景，期望的功能和解决的问题。'
+      placeholder: 作为 XXX, 我希望 XXX，以便 XXX。
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 其他上下文信息
+      description: 在此处提供有关功能请求的任何其他上下文信息或截图。
+  - type: checkboxes
+    id: checkboxes
+    attributes:
+      label: 验证项
+      description: 在提交问题之前，请确保您已完成以下检查。
+      options:
+        # - label: 遵守我们的 [行为准则](https://github.com/antfu/.github/blob/main/CODE_OF_CONDUCT.md)
+        #   required: true
+        # - label: 阅读 [贡献指南](https://github.com/antfu/contribute)。
+        #   required: true
+        - label: 检查是否已经存在相同的 issue，以避免创建重复问题。
+          required: true
+        - label: 确认你的描述简单易懂，包含足够的上下文。
+          required: true
