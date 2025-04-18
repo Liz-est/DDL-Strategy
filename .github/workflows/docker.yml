@@ -45,13 +45,35 @@ jobs:
           tags: hello2008/dify-chat:nightly
           file: Dockerfile
           platforms: linux/amd64
-      - name: Build and push full image to Aliyun
-        run: |
-           docker login --username=${{ secrets.ALIYUN_REGISTRY_USER }} --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }} ${{ secrets.ALIYUN_REGISTRY }}  \
-             docker build . -t ${{ secrets.ALIYUN_REGISTRY }}/{{ secrets.ALIYUN_NAME_SPACE }}/dify-chat:nightly  \
-             docker push ${{ secrets.ALIYUN_REGISTRY }}/{{ secrets.ALIYUN_NAME_SPACE }}/dify-chat:nightly
-      - name: Build and push full image to HuaweiCloud
-        run: |
-           docker login --username=${{ secrets.HUAWEICLOUD_REGISTRY_USER }} --password=${{ secrets.HUAWEICLOUD_REGISTRY_PASSWORD }} ${{ secrets.HUAWEICLOUD_REGISTRY }}  \
-             docker build . -t ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat/dify-chat:nightly  \
-             docker push ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat//dify-chat:nightly
+
+      - name: Login to ACR
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.ALIYUN_REGISTRY }}
+          username: ${{ secrets.ALIYUN_REGISTRY_USER }}
+          password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+
+      - name: Build and push full image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.ALIYUN_REGISTRY }}/hs08/dify-chat:nightly
+          file: Dockerfile
+          platforms: linux/amd64
+     
+      - name: Login to SWR
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.HUAWEICLOUD_REGISTRY }}
+          username: ${{ secrets.HUAWEICLOUD_REGISTRY_USER }}
+          password: ${{ secrets.HUAWEICLOUD_REGISTRY_PASSWORD }}
+
+      - name: Build and push full image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.HUAWEICLOUD_REGISTRY }}/dify-chat/dify-chat:nightly
+          file: Dockerfile
+          platforms: linux/amd64
