@@ -7,6 +7,7 @@ import {
 	StarOutlined,
 } from '@ant-design/icons'
 import { IRetrieverResource } from '@dify-chat/api'
+import { useIsMobile } from '@dify-chat/helpers'
 import { Divider, Popover, Space, Tooltip } from 'antd'
 
 interface IRetrieverResourceGroupedItem {
@@ -40,6 +41,7 @@ const MetricItem = (props: IMetricItemProps) => {
 }
 
 const ReferenceItem = (props: IRetrieverResourceGroupedItem) => {
+	const isMobile = useIsMobile()
 	return (
 		<div
 			className="text-gray-600 flex items-center"
@@ -48,7 +50,7 @@ const ReferenceItem = (props: IRetrieverResourceGroupedItem) => {
 			<Popover
 				trigger={['click']}
 				classNames={{
-					root: 'max-w-[400px]',
+					root: 'max-w-[85vw] md:max-w-[50vw]',
 					body: 'max-h-[50vh] overflow-y-auto overflow-x-hidden',
 				}}
 				title={
@@ -59,7 +61,7 @@ const ReferenceItem = (props: IRetrieverResourceGroupedItem) => {
 						{props.name}
 					</div>
 				}
-				placement="topLeft"
+				placement={isMobile ? 'top' : 'topLeft'}
 				content={
 					<Space
 						className="w-full overflow-hidden"
