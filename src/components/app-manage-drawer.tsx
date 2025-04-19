@@ -1,8 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons'
-import { DifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
-import { useRequest } from 'ahooks'
 import {
 	Button,
 	Col,
@@ -10,16 +8,15 @@ import {
 	DrawerProps,
 	Empty,
 	Form,
-	Input,
 	message,
 	Popconfirm,
 	Row,
 	Space,
 	Spin,
 } from 'antd'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import SettingForm from './setting-form'
+import { AppEditDrawer } from './app-edit-drawer'
 
 interface IAppManagerDrawerProps extends DrawerProps {
 	/**
@@ -45,7 +42,7 @@ interface IAppManagerDrawerProps extends DrawerProps {
 	onDeleteSuccess?: (id: string) => void
 }
 
-enum AppDetailDrawerModeEnum {
+export enum AppDetailDrawerModeEnum {
 	create = 'create',
 	edit = 'edit',
 }
@@ -53,49 +50,12 @@ enum AppDetailDrawerModeEnum {
 export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 	const { activeAppId, getAppList, appListLoading, appList, onDeleteSuccess, ...drawerProps } =
 		props
-	const { user, appService } = useDifyChat() as IDifyChatContextMultiApp
+	const { appService } = useDifyChat() as IDifyChatContextMultiApp
 	const [selectedAppId, setSelectedAppId] = useState<string>()
 	const [detailDrawerVisible, setDetailDrawerVisible] = useState(false)
 	const [settingForm] = Form.useForm()
 	const [detailDrawerMode, setDetailDrawerMode] = useState<AppDetailDrawerModeEnum>()
 	const isMobile = useIsMobile()
-	// 保存应用配置确认按钮的 loading
-	const [confirmBtnLoading, setConfirmBtnLoading] = useState(false)
-
-	const { runAsync: createApp, loading: createAppLoading } = useRequest(
-		async (appInfo: IDifyAppItem) => {
-			return appService.addApp(appInfo)
-		},
-		{
-			manual: true,
-			onSuccess: () => {
-				setDetailDrawerVisible(false)
-				message.success('添加应用配置成功')
-				getAppList()
-			},
-		},
-	)
-
-	const { runAsync: updateApp, loading: updateAppLoading } = useRequest(
-		async (appInfo: IDifyAppItem) => {
-			return appService.updateApp(appInfo)
-		},
-		{
-			manual: true,
-			onSuccess: () => {
-				setDetailDrawerVisible(false)
-				message.success('更新应用配置成功')
-				getAppList()
-			},
-		},
-	)
-
-	useEffect(() => {
-		if (!detailDrawerVisible) {
-			settingForm.resetFields()
-		}
-	}, [detailDrawerVisible])
-
 	const selectedAppItem = appList?.find(item => item.id === selectedAppId)
 
 	return (
@@ -199,103 +159,12 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 				</Button>
 			</div>
 
-			<Drawer
-				width={600}
-				title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? '添加应用配置' : `应用配置详情 - ${selectedAppItem?.info.name}`}`}
+			<AppEditDrawer
 				open={detailDrawerVisible}
+				detailDrawerMode={detailDrawerMode!}
 				onClose={() => setDetailDrawerVisible(false)}
-				extra={
-					<Space>
-						<Button onClick={() => setDetailDrawerVisible(false)}>取消</Button>
-						<Button
-							type="primary"
-							loading={createAppLoading || updateAppLoading || confirmBtnLoading}
-							onClick={async () => {
-								await settingForm.validateFields()
-
-								setConfirmBtnLoading(true)
-								try {
-									const values = settingForm.getFieldsValue()
-									const updatingItem = appList?.find(item => item.id === selectedAppId)
-
-									// 获取 Dify 应用信息
-									const newDifyApiInstance = new DifyApi({
-										user,
-										apiBase: values.apiBase,
-										apiKey: values.apiKey,
-									})
-									const difyAppInfo = await newDifyApiInstance.getAppInfo()
-									const commonInfo: Omit<IDifyAppItem, 'id'> = {
-										info: difyAppInfo,
-										requestConfig: {
-											apiBase: values.apiBase,
-											apiKey: values.apiKey,
-										},
-										answerForm: {
-											enabled: values['answerForm.enabled'],
-											feedbackText: values['answerForm.feedbackText'],
-										},
-									}
-									if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
-										await updateApp({
-											id: updatingItem!.id,
-											...commonInfo,
-										})
-									} else {
-										await createApp({
-											id: Math.random().toString(),
-											...commonInfo,
-										})
-									}
-									getAppList()
-								} catch (error) {
-									console.error('保存应用配置失败', error)
-									message.error(`保存应用配置失败: ${error}`)
-								} finally {
-									setConfirmBtnLoading(false)
-								}
-							}}
-						>
-							{detailDrawerMode === AppDetailDrawerModeEnum.create ? '确定' : '更新'}
-						</Button>
-					</Space>
-				}
-			>
-				{detailDrawerMode === AppDetailDrawerModeEnum.edit ? (
-					<Form
-						labelAlign="left"
-						labelCol={{
-							span: 5,
-						}}
-						layout="horizontal"
-					>
-						<div className="text-base mb-3 flex items-center">
-							<div className="h-4 w-1 bg-primary rounded"></div>
-							<div className="ml-2 font-semibold">基本信息</div>
-						</div>
-						<Form.Item label="应用名称">
-							<Input
-								disabled
-								value={selectedAppItem?.info.name}
-							/>
-						</Form.Item>
-						<Form.Item label="应用描述">
-							<Input
-								disabled
-								value={selectedAppItem?.info.name}
-							/>
-						</Form.Item>
-						<Form.Item label="应用标签">
-							{selectedAppItem?.info.tags?.length ? (
-								<div className="text-default">{selectedAppItem.info.tags.join(', ')}</div>
-							) : (
-								<>无</>
-							)}
-						</Form.Item>
-					</Form>
-				) : null}
-				<SettingForm formInstance={settingForm} />
-			</Drawer>
+				appItem={selectedAppItem}
+			/>
 		</Drawer>
 	)
 }
