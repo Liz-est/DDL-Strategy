@@ -75,8 +75,8 @@ body {
 
 /* 滚动条的宽度 */
 
-::-webkit-scrollbar {
-	width: 8px; /*  */
+::-webkit-scrollbar:vertical {
+	width: 8px; /* 纵向滚动条宽度 */
 }
 
 /* 滚动条的轨道颜色 */
