@@ -1,4 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons'
+import { MenuOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
 import {
 	createDifyApiInstance,
@@ -14,21 +14,20 @@ import {
 	IDifyChatContextMultiApp,
 } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
-import { isTempId } from '@dify-chat/helpers'
-import { Button, Divider, Empty, message, Space, Spin } from 'antd'
+import { isTempId, useIsMobile } from '@dify-chat/helpers'
+import { Button, Dropdown, Empty, message, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
 import React, { useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
-import { GithubIcon, Logo } from '@/components/logo'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 import { colors } from '@/theme/config'
 
 import './../App.css'
-import CenterTitleWrapper from './components/center-title-wrapper'
+import HeaderLayout from './header'
 
 const useStyle = createStyles(({ token, css }) => {
 	return {
@@ -85,6 +84,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	const currentConversationInfo = useMemo(() => {
 		return conversations.find(item => item.id === currentConversationId)
 	}, [conversations, currentConversationId])
+	const isMobile = useIsMobile()
 
 	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
@@ -220,25 +220,53 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
 				>
 					{/* 头部 */}
-					<div className="hidden md:!flex items-center justify-between px-4">
-						{/* 🌟 Logo */}
-						<div className={`flex-1 overflow-hidden ${appConfig ? '' : 'shadow-sm'}`}>
-							<Logo hideGithubIcon />
-						</div>
-
-						<CenterTitleWrapper>
-							{renderCenterTitle ? renderCenterTitle(appInfo!) : null}
-						</CenterTitleWrapper>
-
-						{/* 右侧图标 */}
-						<div className="flex-1 overflow-hidden">
-							<div className="flex items-center justify-end text-sm">
-								<Space split={<Divider type="vertical" />}>
-									<GithubIcon />
-								</Space>
-							</div>
-						</div>
-					</div>
+					<HeaderLayout
+						title={appInfo ? renderCenterTitle?.(appInfo) : null}
+						rightIcon={
+							isMobile ? (
+								<Dropdown
+									menu={{
+										items: [
+											{
+												key: 'add_conversation',
+												icon: <PlusCircleOutlined />,
+												label: '新建对话',
+												onClick: () => {
+													onAddConversation()
+												},
+											},
+											{
+												type: 'divider',
+											},
+											{
+												type: 'group',
+												label: '历史对话',
+												children: conversations?.length
+													? conversations.map(item => {
+															return {
+																key: item.id,
+																label: item.name,
+																onClick: () => {
+																	setCurrentConversationId(item.id)
+																},
+															}
+														})
+													: [
+															{
+																key: 'no_conversation',
+																label: '暂无历史对话',
+																disabled: true,
+															},
+														],
+											},
+										],
+									}}
+								>
+									<MenuOutlined className="text-xl" />
+								</Dropdown>
+							) : null
+						}
+					/>
 
 					{/* Main */}
 					<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
