@@ -222,29 +222,51 @@ export const Chatbox = (props: ChatboxProps) => {
 					entryForm={entryForm}
 				/>
 
-				{/* 🌟 消息列表 */}
-				<Bubble.List
-					items={items}
-					roles={roles}
-					className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border"
-				/>
+				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
+					{/* 🌟 消息列表 */}
+					<Bubble.List
+						items={items}
+						roles={roles}
+					/>
+
+					{/* 下一步问题建议 */}
+					{nextSuggestions?.length ? (
+						<div className="p-3 md:pl-[44px] mt-3">
+							<div className="text-desc">🤔 你可能还想问:</div>
+							<div>
+								{nextSuggestions?.map(item => {
+									return (
+										<div
+											key={item}
+											className="mt-3 cursor-pointer"
+										>
+											<div
+												className="p-2 rounded-lg border border-solid border-[#eff0f5] inline-block text-sm"
+												onClick={() => {
+													onPromptsItemClick({
+														data: {
+															key: item,
+															description: item,
+														},
+													})
+												}}
+											>
+												{item}
+											</div>
+										</div>
+									)
+								})}
+							</div>
+						</div>
+					) : null}
+				</div>
+
 				<div
 					className="absolute bottom-0 bg-white w-full md:!w-3/4 left-1/2"
 					style={{
 						transform: 'translateX(-50%)',
 					}}
 				>
-					{/* 🌟 提示词 */}
-					<Prompts
-						className="text-default p-3 bg-transparent"
-						items={nextSuggestions?.map((item, index) => {
-							return {
-								key: index.toString(),
-								description: item,
-							}
-						})}
-						onItemClick={onPromptsItemClick}
-					/>
 					{/* 🌟 输入框 */}
 					<div className="px-3">
 						<MessageSender
