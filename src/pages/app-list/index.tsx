@@ -3,6 +3,7 @@ import {
 	DeleteOutlined,
 	EditOutlined,
 	MoreOutlined,
+	RobotFilled,
 	TagOutlined,
 } from '@ant-design/icons'
 import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
@@ -55,7 +56,14 @@ export default function AppListPage() {
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-[#f2f4f7] w-full">
-			<HeaderLayout title={<div>应用列表</div>} />
+			<HeaderLayout
+				title={
+					<div>
+						<RobotFilled className="mr-2" />
+						应用列表
+					</div>
+				}
+			/>
 			<div className="flex-1 bg-white rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{list?.length ? (
 					<Row
