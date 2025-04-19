@@ -1,4 +1,3 @@
-import { UnorderedListOutlined } from '@ant-design/icons'
 import { Prompts } from '@ant-design/x'
 import {
 	DifyApi,
@@ -8,20 +7,17 @@ import {
 	IMessageFileItem,
 } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
-import { Chatbox, ConversationList } from '@dify-chat/components'
+import { Chatbox } from '@dify-chat/components'
 import { IDifyAppItem } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
-import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Empty, Form, GetProp, Popover, Spin } from 'antd'
+import { isTempId } from '@dify-chat/helpers'
+import { Button, Empty, Form, GetProp, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 import { useX } from '@/hooks/useX'
 import workflowDataStorage from '@/hooks/useX/workflow-data-storage'
-
-import { MobileHeader } from './mobile/header'
 
 interface IChatboxWrapperProps {
 	/**
@@ -80,13 +76,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const {
 		currentConversationId,
 		setCurrentConversationId,
-		conversations,
 		setConversations,
 		currentConversationInfo,
 	} = useConversationsContext()
 
 	const [entryForm] = Form.useForm()
-	const isMobile = useIsMobile()
 	const abortRef = useRef(() => {})
 	useEffect(() => {
 		return () => {
@@ -239,6 +233,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	useEffect(() => {
 		setInitLoading(true)
 		setMessages([])
+		setNextSuggestions([])
 		setHistoryMessages([])
 		initConversationInfo()
 	}, [currentConversationId])
@@ -287,69 +282,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		})
 	}, [messages])
 
-	const conversationTitle = (
-		<Popover
-			trigger={['click']}
-			content={
-				<div className="w-60">
-					<div className="text-base font-semibold">对话列表</div>
-					<Spin spinning={conversationListLoading}>
-						{conversations?.length ? (
-							<ConversationList
-								renameConversationPromise={async (conversationId: string, name: string) => {
-									await difyApi?.renameConversation({
-										conversation_id: conversationId,
-										name,
-									})
-									conversationItemsChangeCallback()
-								}}
-								deleteConversationPromise={async (conversationId: string) => {
-									if (isTempId(conversationId)) {
-										setConversations(prev => {
-											const newConversations = prev.filter(item => item.id !== conversationId)
-											if (conversationId === currentConversationId && newConversations.length) {
-												setCurrentConversationId(newConversations[0].id)
-											}
-											return newConversations
-										})
-									} else {
-										await difyApi?.deleteConversation(conversationId)
-										conversationItemsChangeCallback()
-										return Promise.resolve()
-									}
-								}}
-								items={conversations.map(item => {
-									return {
-										key: item.id,
-										label: item.name,
-									}
-								})}
-								activeKey={currentConversationId}
-								onActiveChange={setCurrentConversationId}
-							/>
-						) : (
-							<Empty description="暂无会话" />
-						)}
-					</Spin>
-					<Button
-						className="mt-3"
-						onClick={onAddConversation}
-						block
-						type="primary"
-					>
-						新增对话
-					</Button>
-				</div>
-			}
-			placement={isMobile ? 'bottom' : 'bottomLeft'}
-		>
-			<div className="inline-flex items-center">
-				<UnorderedListOutlined className="mr-3 cursor-pointer" />
-				<span>{currentConversationInfo?.name || DEFAULT_CONVERSATION_NAME}</span>
-			</div>
-		</Popover>
-	)
-
 	// 如果应用配置 / 对话列表加载中，则展示 loading
 	if (conversationListLoading || appConfigLoading) {
 		return (
@@ -376,8 +308,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 	return (
 		<div className="flex h-screen flex-col overflow-hidden flex-1">
-			{isMobile ? <MobileHeader centerChildren={conversationTitle} /> : null}
-
 			<div className="flex-1 overflow-hidden relative">
 				{initLoading ? (
 					<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
@@ -394,7 +324,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						nextSuggestions={nextSuggestions}
 						messageItems={[...historyMessages, ...unStoredMessages4Render]}
 						isRequesting={agent.isRequesting()}
-						onPromptsItemClick={onPromptsItemClick}
+						onPromptsItemClick={(...params) => {
+							setNextSuggestions([])
+							return onPromptsItemClick(...params)
+						}}
 						onSubmit={onSubmit}
 						onCancel={async () => {
 							abortRef.current()

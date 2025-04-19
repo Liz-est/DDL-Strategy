@@ -26,6 +26,13 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	useEffect(() => {
 		if (!open) {
 			settingForm.resetFields()
+		} else if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
+			settingForm.setFieldsValue({
+				apiBase: appItem?.requestConfig.apiBase,
+				apiKey: appItem?.requestConfig.apiKey,
+				'answerForm.enabled': appItem?.answerForm?.enabled || false,
+				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
+			})
 		}
 	}, [open])
 
@@ -58,7 +65,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	return (
 		<Drawer
 			width={600}
-			title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? '添加应用配置' : `编辑应用配置 - ${appItem?.info.name}`}`}
+			title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? '新增应用配置' : `编辑应用配置 - ${appItem?.info.name}`}`}
 			open={open}
 			onClose={onClose}
 			extra={
