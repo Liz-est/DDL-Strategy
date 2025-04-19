@@ -136,7 +136,8 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 			<Space
 				direction="vertical"
 				className={classNames({
-					'w-full md:!w-3/4 pb-6': true,
+					'w-full md:!w-3/4': true,
+					'pb-6': !showPrompts && props.user_input_form?.length,
 					'pt-3': showPrompts,
 				})}
 			>
