@@ -176,6 +176,9 @@ export default function AppListPage() {
 				open={appEditDrawerOpen}
 				onClose={() => setAppEditDrawerOpen(false)}
 				appItem={appEditDrawerAppItem}
+				confirmCallback={() => {
+					getAppList()
+				}}
 			/>
 		</div>
 	)
