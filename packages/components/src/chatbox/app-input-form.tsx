@@ -46,7 +46,8 @@ export interface IAppInputFormProps {
  */
 export default function AppInputForm(props: IAppInputFormProps) {
 	const { user_input_form, conversationId, entryForm } = props
-	const { currentConversationId, setConversations } = useConversationsContext()
+	const { currentConversationId, currentConversationInfo, setConversations } =
+		useConversationsContext()
 	const history = useHistory()
 	const { appId } = useParams<{ appId: string }>()
 	const searchParams = useSearchParams()
@@ -79,6 +80,11 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				if (searchValue) {
 					entryForm.setFieldValue(originalProps.variable, unParseGzipString(searchValue))
 					cachedSearchParams.current.delete(originalProps.variable)
+				} else {
+					entryForm.setFieldValue(
+						originalProps.variable,
+						currentConversationInfo?.inputs?.[originalProps.variable],
+					)
 				}
 				if (originalProps.required) {
 					baseProps.required = true
@@ -101,7 +107,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				history.push(`/chat${searchString}`)
 			}
 		}
-	}, [user_input_form])
+	}, [user_input_form, currentConversationInfo])
 
 	console.log('user_input_form', user_input_form)
 
