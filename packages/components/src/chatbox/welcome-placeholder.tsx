@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons'
 import { Prompts, Welcome } from '@ant-design/x'
 import { IGetAppParametersResponse } from '@dify-chat/api'
+import { IDifyAppItem } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { Button, FormInstance, GetProp, Space } from 'antd'
 import classNames from 'classnames'
@@ -57,13 +58,17 @@ interface IWelcomePlaceholderProps {
 	 * 应用入参的表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
+	/**
+	 * 当前应用基本信息
+	 */
+	appConfig?: IDifyAppItem
 }
 
 /**
  * 对话内容区的欢迎占位符
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
-	const { onPromptItemClick, appParameters, showPrompts } = props
+	const { onPromptItemClick, appParameters, showPrompts, appConfig } = props
 	const isMobile = useIsMobile()
 
 	const placeholderPromptsItems: GetProp<typeof Prompts, 'items'> = useMemo(() => {
@@ -167,6 +172,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					user_input_form={props.user_input_form}
 					entryForm={props.entryForm}
 					conversationId={props.conversationId!}
+					appConfig={appConfig}
 				/>
 
 				{showPrompts ? (

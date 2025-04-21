@@ -88,6 +88,8 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 														apiKey: item.requestConfig.apiKey,
 														'answerForm.enabled': item.answerForm?.enabled || false,
 														'answerForm.feedbackText': item.answerForm?.feedbackText || '',
+														'inputParams.enableUpdateAfterCvstStarts':
+															item.inputParams?.enableUpdateAfterCvstStarts || false,
 													})
 													setDetailDrawerMode(AppDetailDrawerModeEnum.edit)
 													setDetailDrawerVisible(true)

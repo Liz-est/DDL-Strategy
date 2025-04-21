@@ -32,6 +32,8 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				apiKey: appItem?.requestConfig.apiKey,
 				'answerForm.enabled': appItem?.answerForm?.enabled || false,
 				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
+				'inputParams.enableUpdateAfterCvstStarts':
+					appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
 			})
 		}
 	}, [open])
@@ -64,7 +66,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	return (
 		<Drawer
-			width={600}
+			width={700}
 			title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? '新增应用配置' : `编辑应用配置 - ${appItem?.info.name}`}`}
 			open={open}
 			onClose={onClose}
@@ -98,6 +100,9 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 									answerForm: {
 										enabled: values['answerForm.enabled'],
 										feedbackText: values['answerForm.feedbackText'],
+									},
+									inputParams: {
+										enableUpdateAfterCvstStarts: values['inputParams.enableUpdateAfterCvstStarts'],
 									},
 								}
 								if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {

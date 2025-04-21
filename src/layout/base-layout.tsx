@@ -140,8 +140,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	/**
 	 * 获取对话列表
 	 */
-	const getConversationItems = async () => {
-		setCoversationListLoading(true)
+	const getConversationItems = async (showLoading = true) => {
+		if (showLoading) {
+			setCoversationListLoading(true)
+		}
 		try {
 			const result = await difyApi?.getConversationList()
 			const newItems =
@@ -366,7 +368,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										appParameters={appParameters}
 										conversationListLoading={conversationListLoading}
 										onAddConversation={onAddConversation}
-										conversationItemsChangeCallback={getConversationItems}
+										conversationItemsChangeCallback={() => getConversationItems(false)}
 									/>
 								</div>
 							</>

@@ -19,6 +19,7 @@ export default function SettingForm(props: ISettingFormProps) {
 			}}
 			initialValues={{
 				'answerForm.enabled': false,
+				'inputParams.enableUpdateAfterCvstStarts': false,
 			}}
 		>
 			<div className="text-base mb-3 flex items-center">
@@ -49,10 +50,39 @@ export default function SettingForm(props: ISettingFormProps) {
 					placeholder="请输入 API Secret"
 				/>
 			</Form.Item>
+
+			<div className="text-base mb-3 flex items-center">
+				<div className="h-4 w-1 bg-primary rounded"></div>
+				<div className="ml-2 font-semibold">对话参数配置</div>
+			</div>
+
+			<Form.Item
+				label="更新历史参数"
+				name="inputParams.enableUpdateAfterCvstStarts"
+				tooltip="是否支持更新历史对话的输入参数"
+				rules={[{ required: true }]}
+				required
+			>
+				<Select
+					placeholder="请选择"
+					options={[
+						{
+							label: '启用',
+							value: true,
+						},
+						{
+							label: '禁用',
+							value: false,
+						},
+					]}
+				/>
+			</Form.Item>
+
 			<div className="text-base mb-3 flex items-center">
 				<div className="h-4 w-1 bg-primary rounded"></div>
 				<div className="ml-2 font-semibold">更多配置</div>
 			</div>
+
 			<Form.Item
 				label="表单回复"
 				name="answerForm.enabled"

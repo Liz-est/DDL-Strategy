@@ -3,12 +3,12 @@ import {
 	IUserInputFormItemType,
 	IUserInputFormItemValueBase,
 } from '@dify-chat/api'
-import { useDifyChat } from '@dify-chat/core'
+import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
-import { unParseGzipString } from '@dify-chat/helpers'
+import { isTempId, unParseGzipString } from '@dify-chat/helpers'
 import { Form, FormInstance, FormItemProps, Input, InputNumber, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export type IConversationEntryFormItem = FormItemProps &
 	Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {
@@ -39,13 +39,17 @@ export interface IAppInputFormProps {
 	 */
 	// FIXME: any 类型后续优化 @ts-expect-error
 	entryForm: FormInstance<Record<string, unknown>>
+	/**
+	 * 是否禁用输入
+	 */
+	appConfig?: IDifyAppItem
 }
 
 /**
  * 应用输入表单
  */
 export default function AppInputForm(props: IAppInputFormProps) {
-	const { user_input_form, conversationId, entryForm } = props
+	const { user_input_form, conversationId, entryForm, appConfig } = props
 	const { currentConversationId, currentConversationInfo, setConversations } =
 		useConversationsContext()
 	const history = useHistory()
@@ -111,18 +115,41 @@ export default function AppInputForm(props: IAppInputFormProps) {
 
 	console.log('user_input_form', user_input_form)
 
+	/**
+	 * 是否禁用输入
+	 */
+	const disabled = useMemo(() => {
+		// 如果是临时对话，则允许输入
+		if (isTempId(conversationId)) {
+			return false
+		}
+		// 否则取配置值
+		return !appConfig?.inputParams?.enableUpdateAfterCvstStarts
+	}, [conversationId])
+
 	return (
 		<>
 			{user_input_form?.length ? (
-				<Form
-					form={entryForm}
-					className="mt-6"
-					labelCol={{ span: 5 }}
-					onValuesChange={(_, allValues) => {
-						setConversations(prev => {
-							console.log(
-								'setConversations: onValuesChange',
-								prev.map(item => {
+				<>
+					<Form
+						layout="vertical"
+						form={entryForm}
+						labelCol={{ span: 5 }}
+						onValuesChange={(_, allValues) => {
+							setConversations(prev => {
+								console.log(
+									'setConversations: onValuesChange',
+									prev.map(item => {
+										if (item.id === currentConversationId) {
+											return {
+												...item,
+												inputs: allValues,
+											}
+										}
+										return item
+									}),
+								)
+								return prev.map(item => {
 									if (item.id === currentConversationId) {
 										return {
 											...item,
@@ -130,65 +157,60 @@ export default function AppInputForm(props: IAppInputFormProps) {
 										}
 									}
 									return item
-								}),
-							)
-							return prev.map(item => {
-								if (item.id === currentConversationId) {
-									return {
-										...item,
-										inputs: allValues,
-									}
-								}
-								return item
+								})
 							})
-						})
-					}}
-				>
-					{userInputItems
-						.filter(item => SUPPORTED_CONTROL_TYPES.includes(item.type))
-						.map(item => {
-							return (
-								<Form.Item
-									key={item.name}
-									name={item.name}
-									label={item.label}
-									required={item.required}
-									rules={item.rules}
-								>
-									{item.type === 'text-input' ? (
-										<Input
-											placeholder="请输入"
-											maxLength={item.max_length}
-										/>
-									) : item.type === 'select' ? (
-										<Select
-											placeholder="请选择"
-											options={
-												item.options?.map(option => {
-													return {
-														value: option,
-														label: option,
-													}
-												}) || []
-											}
-										/>
-									) : item.type === 'paragraph' ? (
-										<Input.TextArea
-											placeholder="请输入"
-											maxLength={item.max_length}
-										/>
-									) : item.type === 'number' ? (
-										<InputNumber
-											placeholder="请输入"
-											className="w-full"
-										/>
-									) : (
-										`暂不支持的控件类型: ${item.type}`
-									)}
-								</Form.Item>
-							)
-						})}
-				</Form>
+						}}
+					>
+						{userInputItems
+							.filter(item => SUPPORTED_CONTROL_TYPES.includes(item.type))
+							.map(item => {
+								return (
+									<Form.Item
+										key={item.name}
+										name={item.name}
+										label={item.label}
+										required={item.required}
+										rules={item.rules}
+									>
+										{item.type === 'text-input' ? (
+											<Input
+												placeholder="请输入"
+												maxLength={item.max_length}
+												disabled={disabled}
+											/>
+										) : item.type === 'select' ? (
+											<Select
+												placeholder="请选择"
+												disabled={disabled}
+												options={
+													item.options?.map(option => {
+														return {
+															value: option,
+															label: option,
+														}
+													}) || []
+												}
+											/>
+										) : item.type === 'paragraph' ? (
+											<Input.TextArea
+												placeholder="请输入"
+												disabled={disabled}
+												maxLength={item.max_length}
+											/>
+										) : item.type === 'number' ? (
+											<InputNumber
+												placeholder="请输入"
+												disabled={disabled}
+												className="w-full"
+											/>
+										) : (
+											`暂不支持的控件类型: ${item.type}`
+										)}
+									</Form.Item>
+								)
+							})}
+					</Form>
+				</>
 			) : null}
 		</>
 	)

@@ -1,4 +1,5 @@
 import { CaretRightOutlined } from '@ant-design/icons'
+import { IDifyAppItem } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { Collapse, CollapseProps, theme } from 'antd'
 import { CSSProperties, useEffect, useState } from 'react'
@@ -8,10 +9,14 @@ import AppInputForm, { IAppInputFormProps } from './app-input-form'
 /**
  * 应用输入参数管理容器
  */
-export default function AppInputWrapper(props: IAppInputFormProps) {
+export default function AppInputWrapper(
+	props: IAppInputFormProps & {
+		appConfig?: IDifyAppItem
+	},
+) {
 	const { token } = theme.useToken()
 	const [activeKey, setActiveKey] = useState<string[]>([])
-	const { conversationId } = props
+	const { conversationId, appConfig } = props
 
 	useEffect(() => {
 		if (isTempId(conversationId)) {
@@ -28,7 +33,14 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 	const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = panelStyle => [
 		{
 			key: '1',
-			label: <div className="font-semibold text-base">对话参数设置</div>,
+			label: (
+				<div className="flex items-center">
+					<div className="font-semibold text-base">对话参数设置</div>
+					{!appConfig?.inputParams?.enableUpdateAfterCvstStarts ? (
+						<div className="text-desc">（注意：对话开始后，参数设置将无法修改）</div>
+					) : null}
+				</div>
+			),
 			children: (
 				<AppInputForm
 					formFilled={props.formFilled}
@@ -36,6 +48,7 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 					user_input_form={props.user_input_form}
 					conversationId={props.conversationId}
 					entryForm={props.entryForm}
+					appConfig={appConfig}
 				/>
 			),
 			style: panelStyle,

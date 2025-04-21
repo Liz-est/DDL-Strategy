@@ -49,6 +49,15 @@ export interface IDifyAppItem {
 		 */
 		feedbackText?: string
 	}
+	/**
+	 * 输入参数配置
+	 */
+	inputParams?: {
+		/**
+		 * 开始对话后，是否支持更新对话参数
+		 */
+		enableUpdateAfterCvstStarts: boolean
+	}
 }
 
 /**

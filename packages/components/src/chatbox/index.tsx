@@ -220,6 +220,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					user_input_form={appParameters?.user_input_form}
 					conversationId={conversationId}
 					entryForm={entryForm}
+					appConfig={appConfig}
 				/>
 
 				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">

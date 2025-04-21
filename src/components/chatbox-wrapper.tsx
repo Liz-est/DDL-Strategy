@@ -43,7 +43,7 @@ interface IChatboxWrapperProps {
 	/**
 	 * 内部处理对话列表变更的函数
 	 */
-	conversationItemsChangeCallback: () => void
+	conversationItemsChangeCallback: (showLoading?: boolean) => void
 	/**
 	 * 添加对话
 	 */
@@ -212,9 +212,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		onConversationIdChange: id => {
 			console.log('setCurrentConversationId: agent', id)
 			setCurrentConversationId(id)
-			if (id !== latestProps.current.conversationId) {
-				conversationItemsChangeCallback()
-			}
+			conversationItemsChangeCallback()
 		},
 		difyApi,
 	})
