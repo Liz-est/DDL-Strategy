@@ -2,12 +2,12 @@ import { DifyChatProvider } from '@dify-chat/core'
 import { initResponsiveConfig } from '@dify-chat/helpers'
 import FingerPrintJS from '@fingerprintjs/fingerprintjs'
 import { useMount } from 'ahooks'
-import { BrowserRouter, type IRoute, Route } from 'pure-react-router'
+import { BrowserRouter, type IRoute } from 'pure-react-router'
 import { useState } from 'react'
 
+import LayoutIndex from './layout'
 import AppListPage from './pages/app-list'
 import ChatPage from './pages/chat'
-import IndexPage from './pages/index'
 import DifyAppService from './services/app/localstorage'
 
 // 初始化响应式配置
@@ -17,7 +17,6 @@ const routes: IRoute[] = [
 	{ path: '/chat', component: () => <ChatPage /> },
 	{ path: '/app/:appId', component: () => <ChatPage /> },
 	{ path: '/apps', component: () => <AppListPage /> },
-	{ path: '/', component: () => <IndexPage /> },
 ]
 
 /**
@@ -49,7 +48,7 @@ export default function App() {
 					appService: new DifyAppService(),
 				}}
 			>
-				<Route />
+				<LayoutIndex />
 			</DifyChatProvider>
 		</BrowserRouter>
 	)
