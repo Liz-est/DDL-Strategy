@@ -6,9 +6,9 @@
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
-|加群沟通（提需求/ bug 请带 issue 发言）|喂我花生（请在留言中备注自己的 Github 用户名哦）|
-|---|---|
-|![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363)|![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec)|
+| 加群沟通（提需求/ bug 请带 issue 发言） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
+| --- | --- |
+| ![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363) | ![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec) |
 
 ## Repobeats
 
@@ -362,9 +362,52 @@ export default function App() {
 
 ![回复表单-自定义提交消息文本](./docs/guide__sample_form_answer1.png)
 
-### 5. 支持读取 URL 中的参数作为应用入参
+### 5. 支持应用输入参数
 
-Dify 应用支持配置初始参数，在对话开启时，展示在界面上供用户输入。在实际应用场景下，我们可能有需要在 URL 中动态传入参数值，填入表单。
+Dify 应用支持配置初始参数，在对话开启时，展示在界面上供用户输入。
+
+默认情况下，同一个对话只允许输入一次参数值，在后续对话时，将会禁用输入控件。
+
+![应用输入参数-默认](./docs/sample_app_input_disabled.png)
+
+### 5.1 支持更新对话参数
+
+在应用配置中，你可以选择是否允许用户在对话中更新参数值：
+
+**单应用模式**：
+
+增加 `inputParams.enableUpdateAfterCvstStarts` 配置项：
+
+```tsx
+export default function App() {
+	return (
+		<DifyChatProvider
+			value={{
+				...其他配置,
+				appConfig: {
+					...其他配置,
+					inputParams: {
+						// 是否允许用户在对话中更新参数值
+						enableUpdateAfterCvstStarts: false,
+					},
+				},
+			}}
+		>
+			子组件
+		</DifyChatProvider>
+	)
+}
+```
+
+**多应用模式**：
+
+在界面上编辑应用配置，将 "对话参数配置" 中的 "更新历史参数" 设为 "启用" 即可。
+
+![应用输入参数-配置](./docs/sample_app_input_setting.png)
+
+### 5.2 读取 URL 作为应用参数
+
+在实际应用场景下，我们可能有需要在 URL 中动态传入参数值，填入表单。
 
 ![读取 URL 作为应用参数-说明](./docs/sample_app_input_intro.png)
 
