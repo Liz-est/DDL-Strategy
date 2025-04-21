@@ -22,7 +22,7 @@ export interface IDifyChatContextSingleApp extends IDifyChatContextBase {
 	/**
 	 * 当前应用配置
 	 */
-	appConfig: Pick<IDifyAppItem, 'requestConfig' | 'answerForm'>
+	appConfig: Omit<IDifyAppItem, 'id' | 'info'>
 }
 
 /**
