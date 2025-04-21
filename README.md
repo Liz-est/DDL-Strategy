@@ -10,6 +10,12 @@
 | --- | --- |
 | ![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363) | ![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec) |
 
+## 🥇 Golden Sponsors
+
+- [forgoodthing](https://github.com/forgoodthing)
+- [Unmurphy](https://github.com/unmurphy)
+- [打豆豆](https://github.com/wallowbear)
+
 ## Repobeats
 
 ![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg 'Repobeats analytics image')
