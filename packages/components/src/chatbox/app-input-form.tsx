@@ -91,8 +91,11 @@ export default function AppInputForm(props: IAppInputFormProps) {
 							currentConversationInfo?.inputs?.[originalProps.variable],
 						)
 					} else {
-						entryForm.setFieldValue(originalProps.variable, data)
-						cachedSearchParams.current.delete(originalProps.variable)
+						// 新对话或者允许更新对话参数, 则更新表单值
+						if (isTempId(conversationId) || appConfig?.inputParams?.enableUpdateAfterCvstStarts) {
+							entryForm.setFieldValue(originalProps.variable, data)
+							cachedSearchParams.current.delete(originalProps.variable)
+						}
 					}
 				} else {
 					entryForm.setFieldValue(
