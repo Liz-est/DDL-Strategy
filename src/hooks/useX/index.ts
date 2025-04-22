@@ -11,7 +11,7 @@ import {
 import { IWorkflowNode } from '@dify-chat/api'
 import { useDifyChat } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
-import { message as antdMessage } from 'antd'
+import { message as antdMessage, FormInstance } from 'antd'
 import { useState } from 'react'
 
 import { RESPONSE_MODE } from '@/config'
@@ -25,6 +25,7 @@ export const useX = (options: {
 		conversationId: string | undefined
 		appId?: string
 	}>
+	entryForm: FormInstance<Record<string, unknown>>
 	latestState: React.MutableRefObject<{
 		inputParams: Record<string, unknown>
 	}>
@@ -37,13 +38,13 @@ export const useX = (options: {
 }) => {
 	const {
 		latestProps,
-		latestState,
 		appParameters,
 		getNextSuggestions,
 		filesRef,
 		abortRef,
 		getConversationMessages,
 		onConversationIdChange,
+		entryForm,
 		difyApi,
 	} = options
 	const { user } = useDifyChat()
@@ -53,7 +54,7 @@ export const useX = (options: {
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
 			// 发送消息
 			const response = await difyApi.sendMessage({
-				inputs: message?.inputs || latestState.current.inputParams,
+				inputs: message?.inputs || entryForm.getFieldsValue() || {},
 				conversation_id: !isTempId(latestProps.current.conversationId)
 					? latestProps.current.conversationId
 					: undefined,

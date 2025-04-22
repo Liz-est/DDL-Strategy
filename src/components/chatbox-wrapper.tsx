@@ -214,6 +214,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			setCurrentConversationId(id)
 			conversationItemsChangeCallback()
 		},
+		entryForm,
 		difyApi,
 	})
 

@@ -83,19 +83,24 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
 				if (searchValue) {
 					const { error, data } = unParseGzipString(searchValue)
+
 					if (error) {
 						message.error(`解压缩参数 ${originalProps.variable} 失败: ${error}`)
-						// 解压缩失败则设置对话原始参数
+					}
+
+					// 解析正常且是新对话 或者允许更新对话参数，则写入 URL 参数
+					if (
+						(!error && isTempId(conversationId)) ||
+						appConfig?.inputParams?.enableUpdateAfterCvstStarts
+					) {
+						// 新对话或者允许更新对话参数, 则更新表单值
+						entryForm.setFieldValue(originalProps.variable, data)
+						cachedSearchParams.current.delete(originalProps.variable)
+					} else {
 						entryForm.setFieldValue(
 							originalProps.variable,
 							currentConversationInfo?.inputs?.[originalProps.variable],
 						)
-					} else {
-						// 新对话或者允许更新对话参数, 则更新表单值
-						if (isTempId(conversationId) || appConfig?.inputParams?.enableUpdateAfterCvstStarts) {
-							entryForm.setFieldValue(originalProps.variable, data)
-							cachedSearchParams.current.delete(originalProps.variable)
-						}
 					}
 				} else {
 					entryForm.setFieldValue(
