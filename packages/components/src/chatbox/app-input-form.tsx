@@ -6,7 +6,7 @@ import {
 import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
-import { Form, FormInstance, FormItemProps, Input, InputNumber, Select } from 'antd'
+import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -82,8 +82,18 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				}
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
 				if (searchValue) {
-					entryForm.setFieldValue(originalProps.variable, unParseGzipString(searchValue))
-					cachedSearchParams.current.delete(originalProps.variable)
+					const { error, data } = unParseGzipString(searchValue)
+					if (error) {
+						message.error(`解压缩参数 ${originalProps.variable} 失败: ${error}`)
+						// 解压缩失败则设置对话原始参数
+						entryForm.setFieldValue(
+							originalProps.variable,
+							currentConversationInfo?.inputs?.[originalProps.variable],
+						)
+					} else {
+						entryForm.setFieldValue(originalProps.variable, data)
+						cachedSearchParams.current.delete(originalProps.variable)
+					}
 				} else {
 					entryForm.setFieldValue(
 						originalProps.variable,
