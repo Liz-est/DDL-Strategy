@@ -12,9 +12,13 @@
 
 ## 🥇 Golden Sponsors
 
+> 注：每日手动更新
+
 - [forgoodthing](https://github.com/forgoodthing)
 - [Unmurphy](https://github.com/unmurphy)
 - [打豆豆](https://github.com/wallowbear)
+- [TZP](https://github.com/tangzp)
+- 匿名慈善家
 
 ## Repobeats
 
