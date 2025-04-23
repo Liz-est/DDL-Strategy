@@ -124,21 +124,18 @@ const MultiAppLayout: React.FC = () => {
 			}
 			renderCenterTitle={() => {
 				return (
-					<>
+					<div className="flex items-center overflow-hidden">
 						<RobotFilled className="mr-2" />
 						<span
-							className="cursor-pointer"
+							className="cursor-pointer inline-block shrink-0"
 							onClick={() => {
-								// if (enableSetting) {
-								// 	setAppManageDrawerVisible(true)
-								// }
 								history.push('/apps')
 							}}
 						>
 							应用列表
 						</span>
 						{selectedAppId ? (
-							<>
+							<div className="flex items-center overflow-hidden">
 								<div className="mx-2 font-normal text-desc">/</div>
 								<Dropdown
 									arrow
@@ -168,14 +165,16 @@ const MultiAppLayout: React.FC = () => {
 										],
 									}}
 								>
-									<div className="cursor-pointer">
-										<span className="cursor-pointer">{selectedAppItem?.info?.name}</span>
+									<div className="cursor-pointer flex-1 flex items-center overflow-hidden">
+										<span className="cursor-pointer w-full inline-block truncate">
+											{selectedAppItem?.info?.name}
+										</span>
 										<DownCircleTwoTone className="ml-1" />
 									</div>
 								</Dropdown>
-							</>
+							</div>
 						) : null}
-					</>
+					</div>
 				)
 			}}
 		/>
