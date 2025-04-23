@@ -23,6 +23,8 @@ import { Button, message } from 'antd'
 import './index.css'
 import MarkdownForm from './blocks/form'
 import { IFile } from '@dify-chat/api'
+import VideoBlock from './blocks/video'
+import ImageBlock from './blocks/image'
 
 // Available language https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_HLJS.MD
 const capitalizationLanguageNameMap: Record<string, string> = {
@@ -215,10 +217,6 @@ const Paragraph = (paragraph: any) => {
   return <p>{paragraph.children}</p>
 }
 
-const Img = ({ src }: any) => {
-  return (<img src={src} />)
-}
-
 const Link = ({ node, ...props }: any) => {
 	return <a {...props} target="_blank" className="cursor-pointer underline !decoration-primary-700 decoration-dashed">{node.children[0] ? node.children[0]?.value : 'Download'}</a>
 }
@@ -234,14 +232,29 @@ export function MarkdownRenderer(props: {
 	) => void
 }) {
 	const { onSubmit } = props
-  const latexContent = flow([
-    preprocessThinkTag,
-    preprocessLaTeX,
-  ])(props.markdownText)
+
+	/**
+	 * 最终用于渲染的 markdown 文本
+	 */
+	const text4Render = useMemo(() => {
+		let result = props.markdownText
+		// 正则匹配所有 markdown 图片转为 img 标签，保留 src/alt 属性
+		// 这种处理是为了解决 markdownText 以一个 md 图片开始（如: `![alt](url)`）时，图片无法展示的问题
+		result = result.replace(/!\[([^\]]*)\]\(([^)]*)\)/g, (match, alt, src) => {
+			return `<img src="${src}" alt="${alt}" />`
+		})
+		result = flow([
+			preprocessThinkTag,
+			preprocessLaTeX,
+		])(result)
+		// 如果是以图片标签开头，则加一个 p
+		return result
+	}, [props.markdownText])
 
   return (
     <div className='text-default'>
       <ReactMarkdown
+				// urlTransform={(value: string) => defaultUrlTransform(value)}
         remarkPlugins={[
           RemarkGfm,
           [RemarkMath, { singleDollarTextMath: false }],
@@ -272,7 +285,6 @@ export function MarkdownRenderer(props: {
         disallowedElements={['iframe', 'head', 'html', 'meta', 'link', 'style', 'body', ...(props.customDisallowedElements || [])]}
         components={{
           code: CodeBlock,
-          img: Img,
           a: Link,
           p: Paragraph,
           form: (props) => <MarkdownForm {...props} onSend={(values: string)=>{
@@ -280,10 +292,13 @@ export function MarkdownRenderer(props: {
 					}} />,
           script: ScriptBlock as any,
           details: ThinkBlock,
+					// @ts-expect-error TODO: 类型待优化
+					img: ImageBlock,
+					// @ts-expect-error TODO: 类型待优化
+					video: VideoBlock,
         }}
       >
-        {/* Markdown detect has problem. */}
-        {latexContent}
+        {text4Render}
       </ReactMarkdown>
     </div>
   )
