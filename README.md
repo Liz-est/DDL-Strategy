@@ -24,7 +24,28 @@
 
 ![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg 'Repobeats analytics image')
 
+## 特性
+
+- 📦 开箱即用：仅需 30 秒配置，即可开始使用
+- 💬 随心所欲：支持单应用/多应用模式，满足不同企业级业务场景
+- 💃 灵活部署：自身无任何后端依赖，可无缝对接 Dify Cloud 及私有化部署的 API 服务
+- 📱 响应式设计：同时支持 PC 和移动端，双端功能同步
+- 📝 支持渲染图片、视频、图表等丰富内容，让 AI 自由发挥
+- 🔧 长期维护：日益增长的活跃社群，助力功能完善
+
 ## 运行截图
+
+应用列表：
+
+![应用列表](./docs/guide__app_list.png)
+
+管理应用配置：
+
+![管理应用配置](./docs/guide__app_config_update.png)
+
+对话参数设置：
+
+![对话参数设置](./docs/guide__app_input_params.png)
 
 `<think>` 标签（DeepSeek 深度思考）：
 
@@ -50,29 +71,17 @@ Chatflow 工作流：
 
 ![文档处理](./docs/sample_file.jpg)
 
+回复表单：
+
+![回复表单](./docs/guide__sample_form.png)
+
 单应用模式：
 
 ![单应用模式](./docs/sample_single-app-mode.png)
 
-多应用模式配置管理：
-
-![多应用模式-配置管理](./docs/guide__sample_multi_mode.png)
-
-回复表单：
-
-![回复表单](./docs/guide__sample_form_answer.png)
-
 移动端支持：
 
 ![Screen Shot](./docs/guide__sample_mobile.png)
-
-## 特性
-
-- 📦 开箱即用：仅需配置 API 密钥即可开始使用
-- 💬 随心所欲：支持单应用/多应用模式，满足不同企业级业务场景
-- 💃 灵活部署：自身无任何后端依赖，可无缝接入 Dify Cloud 及私有化部署的 API 服务
-- 🚀 高效集成：提供高度可复用的 React 组件，加速开发进程
-- 🎨 风格适配：支持深度自定义样式与主题，轻松契合业务系统独特风格
 
 ## 技术栈
 
@@ -90,14 +99,14 @@ Chatflow 工作流：
 - Node.js ^22.5.1
 - pnpm ^10.8.1
 
-> 注意：本项目使用了 pnpm workspace 来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
+> 注意：本项目使用了 pnpm workspace 高级特性来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
 
 ## 开始使用
 
 本项目支持两种开箱即用的使用方式：
 
-- 单应用模式: 全局只需要一个 Dify 应用
-- 多应用模式: 支持用户在界面上添加多个 Dify 应用
+- 单应用模式: 全局只有一个 Dify 应用，用户无需选择，可直接开始对话
+- 多应用模式: 提供应用聚合列表页，支持用户选择不同的 Dify 应用，可根据业务需求灵活配置
 
 ## 0. 获取 Dify 应用配置
 
@@ -165,19 +174,17 @@ export default function App() {
 
 #### 2.1. 在界面上添加 Dify 应用配置
 
-如果之前没有存量数据，第一次进入页面时会展示缺省状态，你需要点击页面右上角的 "应用配置管理" 按钮：
+如果之前没有存量数据，第一次进入页面时会展示缺省状态，你需要点击页面底部的 "添加应用配置" 按钮：
 
-![应用配置管理按钮](./docs/guide_mtapp_setting.png)
+![添加应用配置按钮](./docs/guide_mtapp_setting.png)
 
-会弹出应用配置管理抽屉，点击下面的 "添加应用" 按钮：
-
-![应用配置管理抽屉](./docs/guide_mtapp_setting_drawer.png)
-
-即可打开添加配置抽屉：
+此时会弹出添加应用配置的表单抽屉：
 
 ![添加应用配置抽屉](./docs/guide_mtapp_setting_add.png)
 
-依次填入我们在上一步中获取的信息：
+依次填入在上一步中获取的 API Base 和 API Secret：
+
+> 注：其他配置非必需，保持默认值即可。
 
 ![添加应用配置抽屉-已填入信息](./docs/guide_mtapp_setting_add_fulfilled.png)
 
@@ -185,17 +192,21 @@ export default function App() {
 
 ![添加应用配置成功](./docs/guide_mtapp_setting_add_success.png)
 
-主界面也会默认切换到刚刚添加的应用，加载对话列表，默认渲染第一条对话的历史记录：
+此时你可以点击应用卡片右上角的 "更多" 图标，对应用进行编辑和删除操作：
+
+![应用卡片操作](./docs/guide_mtapp_app_actions.png)
+
+点击应用卡片，即可进入应用详情页开始对话：
 
 ![主界面](./docs/guide_mtapp_main.png)
 
-#### 2.2. 自定义应用配置管理 (按需)
+#### 2.2. 自定义应用配置管理服务 (按需)
 
 **默认实现说明**
 
-为方便演示, 本项目默认使用 Localstorage 进行应用配置管理。
+为方便演示, 本项目默认使用 LocalStorage 进行应用配置管理。
 
-但实际在生产环境中，我们会将应用数据存储在服务端，此时就需要接入后端服务来实现应用配置管理。
+但实际在生产环境中，由于应用配置涉及 API Secret 等机密信息，我们一般会将应用数据存储在服务端，此时就需要接入后端服务来实现应用配置管理。
 
 为方便使用方自定义, 应用配置管理的服务是通过 `src/App.tsx` 中的 `DifyChatProvider` 组件注入的:
 
@@ -209,6 +220,7 @@ export default function App() {
 	return (
 		<DifyChatProvider
 			value={{
+				...其他属性,
 				appService: new DifyAppService(),
 			}}
 		>
@@ -218,7 +230,7 @@ export default function App() {
 }
 ```
 
-在子组件中，会使用 `useDifyChat` 钩子获取 `appService` 实例并调用相关方法进行应用配置的管理。
+在子组件中，会使用 `useDifyChat` 钩子获取在顶部注入的 `appService` 实例并调用相关方法实现应用配置的管理。
 
 **自定义后端服务示例**
 
@@ -256,6 +268,7 @@ export default function App() {
 	return (
 		<DifyChatProvider
 			value={{
+				...其他配置,
 				enableSetting: false,
 			}}
 		>
@@ -273,9 +286,7 @@ export default function App() {
 
 Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
 
-#### 3.1. 生产构建模式(pnpm build)
-
-在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-chat 应用的部署域名访问，以 nginx 为例：
+在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-Chat 应用的部署域名访问，以 nginx 为例：
 
 ```bash
 # nginx.conf
@@ -290,30 +301,43 @@ server {
 }
 ```
 
-#### 3.2 本地开发模式(pnpm dev)
-
-在项目根目录新建 `.env.local` 文件，添加以下内容：
-
-```bash
-# .env.local
-DIFY_API_DOMAIN=https://api.dify.ai # 换成你的 API 部署域名
-DIFY_API_PREFIX=/v1 # API 访问前缀，如果你没有对 Dify 进行魔改的话，一般就是 /v1
-```
-
-然后，你需要在界面上修改上一步中 API Base 的配置：
-
-- 修改前: `${SELF_HOSTED_API_DOMAIN}/v1`
-- 修改后: `/v1`
-
-在运行 `pnpm dev` 时，Rsbuild 会自动读取 `.env.local` 文件中的环境变量，设置正确的 `server.proxy` 实现本地代理，可以访问 `rsbuild.config.ts` 文件查看详情。
-
 ### 4. 支持表单
 
 Dify 支持通过 `jinja2` 来配置回复表单供用户填写，本项目也支持了对应的功能。
 
-> 注意：你需要自行在 Chatflow 中对 `sys.query` 进行正确的逻辑处理，区分普通消息、触发表单的消息及提交信息。
+Dify Chatflow 编排的回复内容示例：
 
-默认情况下，在用户点击表单的提交按钮后，会将表单的值对象作为消息发送给 Dify 应用，同时会在消息列表中展示，提交消息的示例文本：
+```html
+<form data-format="json">
+	<label for="username">用户名字:</label>
+	<input
+		type="text"
+		name="username"
+		value="{{ username }}"
+	/>
+	<label for="phone">联系电话:</label>
+	<input
+		type="text"
+		name="phone"
+		value="{{ phone }}"
+	/>
+	<label for="content">投诉内容:</label>
+	<textarea name="content"></textarea>
+	<button
+		data-size="small"
+		data-variant="primary"
+	>
+		提交
+	</button>
+</form>
+```
+
+> 注意：
+>
+> - 你需要自行在 Chatflow 中对 `sys.query` 进行正确的逻辑处理，区分普通消息、触发表单的消息及提交信息。
+> - form 标签的 `data-format` 属性用于指定表单数据的格式，目前支持 `json` 和 `text` 两种格式。
+
+按照上面的内容回复后，默认情况下，在用户点击表单的提交按钮后，会将表单的值对象作为消息发送给同一个 Dify 应用，同时会在消息列表中展示。提交消息的示例文本：
 
 ```json
 {
@@ -324,20 +348,20 @@ Dify 支持通过 `jinja2` 来配置回复表单供用户填写，本项目也�
 }
 ```
 
-其中，`isFormSubmit` 字段用于标识这是一个表单提交的消息, 你可以在 Chatflow 编排的条件分支中使用它来进行判断。
+其中，`isFormSubmit` 字段用于标识这是一个表单提交的消息, 你可以在 Chatflow 编排的条件分支中使用它来进行判断消息类型。
 
 ![回复表单](./docs/guide__sample_form_answer.png)
 
 #### 4.1 自定义提交消息文本
 
-如果你不想展示具体的表单值对象，而是需要自定义发送的消息文本，可以按照下面的指引，在应用配置中进行配置（此配置只影响界面展示，实际提交到 Dify Chatflow 开始节点的仍然是用户填写的表单值 json 字符串）。
+如果你不想展示具体的表单值 json 字符串，而是需要自定义发送的消息文本，可以按照下面的指引，在应用配置中进行配置（此配置只影响界面展示，实际提交到 Dify Chatflow 开始节点的仍然是用户填写的表单值 json 字符串）。
 
 **多应用模式**
 
 在添加/更新应用配置弹窗中填写字段：
 
 - 表单回复 - 设置为 "启用"
-- 提交消息文本 - 用于替换表单值对象的文本
+- 提交消息文本 - 用于替换表单值对象的文本，如 "我提交了一个表单"
 
 ![回复表单-配置](./docs/guide__sample_form_answer_config.png)
 
@@ -372,7 +396,7 @@ export default function App() {
 
 按照如上配置后，效果如下：
 
-![回复表单-自定义提交消息文本](./docs/guide__sample_form_answer1.png)
+![回复表单](./docs/guide__sample_form.png)
 
 ### 5. 支持应用输入参数
 
@@ -382,9 +406,9 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 
 ![应用输入参数-默认](./docs/sample_app_input_disabled.png)
 
-### 5.1 支持更新对话参数
+### 5.1 支持在对话开始后更新参数
 
-在应用配置中，你可以选择是否允许用户在对话中更新参数值：
+在应用配置中，你可以选择是否允许用户在对话开始后更新参数值：
 
 **单应用模式**：
 
@@ -431,7 +455,7 @@ export default function App() {
 
 #### 应用示例 - 订单号填入
 
-默认情况下，表单值为空：
+默认情况下，对话参数的值为空：
 
 ![读取 URL 作为应用参数-默认](./docs/sample_app_input_default.jpg)
 
@@ -445,14 +469,14 @@ http://localhost:5200/dify-chat/app/${appId}?orderNo=${encodedValue}&isNewCvst=1
 
 - `appId`, 应用 ID
 - `encodedValue`, 经过 `Gzip` 和 `encodeUriComponent` 处理后的参数值
-- `isNewCvst`, 指定需要新增一个会话（默认情况下会加载最近更新的一个会话）
+- `isNewCvst`, 指定需要开启新对话（如果不指定且存在历史对话时，默认将会选中最近一个对话）
 
-`encodedValue` 生成方式：
+`encodedValue` 生成方式（NodeJS）：
 
 ```javascript
 const zlib = require('zlib')
 
-const originalOrderNo = '12345'
+const originalOrderNo = '123456'
 const buffer = Buffer.from(originalString, 'utf8')
 let encodedValue = ''
 
@@ -466,7 +490,7 @@ zlib.gzip(buffer, (err, compressedBuffer) => {
 })
 ```
 
-将 `encodedValue` 填入链接后访问，可以看到我们定义的 `orderNo: 12345` 已经被填入表单：
+将 `encodedValue` 填入链接后访问，可以看到我们定义的 `orderNo: 123456` 已经被填入表单：
 
 ![读取 URL 作为应用参数-结果](./docs/sample_app_input_filled.jpg)
 
@@ -529,7 +553,7 @@ CERTBOT_EMAIL
 CERTBOT_OPTIONS
 ```
 
-![注意：请确保你配置的域名可以使用80端口访问到你的dify-chat站点](详见：https://eff-certbot.readthedocs.io/en/latest/install.html#alternative-1-docker)
+> 注意：请确保你配置的域名可以使用80端口访问到你的 dify-chat 站点，详见：https://eff-certbot.readthedocs.io/en/latest/install.html#alternative-1-docker
 
 在docker目录执行命令即可全自动申请、签发证书：
 
@@ -566,11 +590,13 @@ Q: 先运行 `COREPACK_INTEGRITY_KEYS=0 corepack prepare` 再执行 `pnpm instal
 - [x] 拆分独立组件库，方便二次开发
 - [x] 会话操作
   - [x] 支持会话重命名
+- [x] 对话参数设置
+  - [x] 支持修改对话参数
 - [x] 消息发送区域功能
   - [x] 支持发送图片
   - [x] 支持发送其他类型的文件
   - [x] 支持打断输出
-  - [ ] 支持语音输入转文字
+  - [x] 支持语音输入转文字
 - [x] 消息内容渲染
   - [x] 支持深度思考标签展示（如 DeepSeek-R1 的输出）
   - [x] 支持工作流信息展示
@@ -582,12 +608,13 @@ Q: 先运行 `COREPACK_INTEGRITY_KEYS=0 corepack prepare` 再执行 `pnpm instal
   - [x] 支持数学公式渲染
   - [x] 支持文件卡片渲染
   - [x] 支持 `Mermaid` 渲染
+  - [x] 支持图片/视频
 - [x] 消息内容交互
   - [x] 支持内容复制
   - [x] 支持点赞/点踩
   - [x] 支持消息文件点击下载
   - [x] 支持回复表单展示和提交
-  - [ ] 支持文字转语音
+  - [x] 支持文字转语音
 - [x] 支持多应用模式
   - [x] Localstorage 实现
   - [x] Restful API 实现
