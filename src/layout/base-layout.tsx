@@ -45,7 +45,7 @@ interface IBaseLayoutProps {
 	/**
 	 * 自定义中心标题
 	 */
-	renderCenterTitle?: (appInfo: IDifyAppItem['info']) => React.ReactNode
+	renderCenterTitle?: (appInfo?: IDifyAppItem['info']) => React.ReactNode
 	/**
 	 * 自定义右侧头部内容
 	 */
@@ -110,13 +110,19 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		}
 		setAppConfigLoading(true)
 		// 获取应用信息
-		const baseInfo = await difyApi.getAppInfo()
-		setAppInfo({
-			...baseInfo,
-		})
-		const appParameters = await difyApi.getAppParameters()
-		setAppParameters(appParameters)
-		setAppConfigLoading(false)
+		try {
+			const baseInfo = await difyApi.getAppInfo()
+			setAppInfo({
+				...baseInfo,
+			})
+			const appParameters = await difyApi.getAppParameters()
+			setAppParameters(appParameters)
+		} catch (error) {
+			console.error('获取应用信息错误', error)
+			return Promise.reject(error)
+		} finally {
+			setAppConfigLoading(false)
+		}
 	}
 
 	useAppInit(difyApi, () => {
@@ -223,7 +229,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 				>
 					{/* 头部 */}
 					<HeaderLayout
-						title={appInfo ? renderCenterTitle?.(appInfo) : null}
+						title={renderCenterTitle?.(appInfo)}
 						rightIcon={
 							isMobile ? (
 								<Dropdown
