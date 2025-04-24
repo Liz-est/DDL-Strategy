@@ -4,6 +4,7 @@ import { DifyApi, IFile, IGetAppParametersResponse, IUploadFileResponse } from '
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
 import { useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils'
 
@@ -65,6 +66,8 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
 	const recordedChunks = useRef<Blob[]>([])
 	const [audio2TextLoading, setAudio2TextLoading] = useState(false)
+	const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
+	const senderRef = useRef<GetRef<typeof Sender>>(null)
 
 	const onChange = (value: string) => {
 		setContent(value)
@@ -142,7 +145,6 @@ export const MessageSender = (props: IMessageSenderProps) => {
 		})
 	}
 
-	const senderRef = useRef<GetRef<typeof Sender>>(null)
 	const senderHeader = (
 		<Sender.Header
 			title="上传文件"
@@ -155,10 +157,10 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			}}
 		>
 			<Attachments
+				ref={attachmentsRef}
 				beforeUpload={async file => {
 					// 校验文件类型
 					// 自定义上传
-
 					const ext = getFileExtByName(file.name)
 					// 校验文件类型
 					if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
@@ -269,6 +271,18 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			loading={isRequesting}
 			disabled={audio2TextLoading}
 			className={className}
+			onPasteFile={(firstFile, files) => {
+				if (files?.length > 1) {
+					message.warning('暂不支持一次性上传多个文件，请逐个上传')
+					return
+				}
+				// 如果附件面板是关闭状态，则打开
+				if (!open) {
+					// 强制更新 立即打开 Attachments 面板，以供获取 attachmentsRef
+					flushSync(() => setOpen(true))
+				}
+				attachmentsRef.current?.upload(firstFile)
+			}}
 			onSubmit={async content => {
 				if (!content) {
 					message.error('内容不能为空')
