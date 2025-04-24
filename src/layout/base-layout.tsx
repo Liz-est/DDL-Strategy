@@ -1,4 +1,10 @@
-import { MenuOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+	EditOutlined,
+	MenuOutlined,
+	MinusCircleOutlined,
+	PlusCircleOutlined,
+	PlusOutlined,
+} from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
 import {
 	createDifyApiInstance,
@@ -15,7 +21,7 @@ import {
 } from '@dify-chat/core'
 import { useDifyChat } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Dropdown, Empty, message, Spin } from 'antd'
+import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
@@ -79,6 +85,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	} = props
 	const { ...difyChatContext } = useDifyChat()
 
+	const [renameForm] = Form.useForm()
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
 	const [currentConversationId, setCurrentConversationId] = useState<string>('')
 	const currentConversationInfo = useMemo(() => {
@@ -211,6 +218,155 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		setCurrentConversationId(newKey)
 	}
 
+	/**
+	 * 重命名对话
+	 */
+	const onRenameConversation = async (conversationId: string, name: string) => {
+		await difyApi?.renameConversation({
+			conversation_id: conversationId,
+			name,
+		})
+		getConversationItems()
+	}
+
+	/**
+	 * 重命名会话
+	 * @param conversation 会话对象
+	 */
+	const handleRenameConversation = () => {
+		renameForm.setFieldsValue({
+			name: currentConversationInfo?.name,
+		})
+		Modal.confirm({
+			centered: true,
+			destroyOnClose: true,
+			title: '编辑对话名称',
+			content: (
+				<Form
+					form={renameForm}
+					className="mt-3"
+				>
+					<Form.Item name="name">
+						<Input placeholder="请输入" />
+					</Form.Item>
+				</Form>
+			),
+			onOk: async () => {
+				await renameForm.validateFields()
+				const values = await renameForm.validateFields()
+				await onRenameConversation(currentConversationId, values.name)
+				message.success('对话重命名成功')
+			},
+		})
+	}
+
+	/**
+	 * 删除对话
+	 */
+	const onDeleteConversation = async (conversationId: string) => {
+		console.log('onDeleteConversation', conversationId, isTempId(conversationId))
+		if (isTempId(conversationId)) {
+			setConversations(prev => {
+				const newConversations = prev.filter(item => item.id !== conversationId)
+				// 删除当前对话
+				if (conversationId === currentConversationId) {
+					// 如果列表不为空，则选择第一个作为当前对话
+					if (newConversations.length) {
+						setCurrentConversationId(newConversations[0].id)
+					} else {
+						// 如果列表为空，则创建一个新的临时对话
+						onAddConversation()
+					}
+				}
+				return newConversations
+			})
+		} else {
+			await difyApi?.deleteConversation(conversationId)
+			if (conversationId === currentConversationId) {
+				setCurrentConversationId('')
+			}
+			getConversationItems()
+			return Promise.resolve()
+		}
+	}
+
+	const mobileMenuItems: GetProp<typeof Dropdown, 'menu'>['items'] = useMemo(() => {
+		const actionMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				key: 'add_conversation',
+				icon: <PlusCircleOutlined />,
+				label: '新增对话',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					onAddConversation()
+				},
+			},
+			{
+				key: 'add_conversation',
+				icon: <EditOutlined />,
+				label: '编辑对话名称',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					handleRenameConversation()
+				},
+			},
+			{
+				key: 'delete_conversation',
+				icon: <MinusCircleOutlined />,
+				label: '删除当前对话',
+				disabled: isTempId(currentConversationId),
+				danger: true,
+				onClick: () => {
+					Modal.confirm({
+						centered: true,
+						title: '确定删除当前对话？',
+						content: '删除后，聊天记录将不可恢复。',
+						okText: '删除',
+						cancelText: '取消',
+						onOk: async () => {
+							// 执行删除操作
+							await onDeleteConversation(currentConversationId)
+							message.success('删除成功')
+						},
+					})
+				},
+			},
+			{
+				type: 'divider',
+			},
+		]
+
+		const conversationListMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				type: 'group',
+				label: '对话列表',
+				children: conversations?.length
+					? conversations.map(item => {
+							return {
+								key: item.id,
+								label: item.name,
+								onClick: () => {
+									setCurrentConversationId(item.id)
+								},
+							}
+						})
+					: [
+							{
+								key: 'no_conversation',
+								label: '暂无对话',
+								disabled: true,
+							},
+						],
+			},
+		]
+
+		if (isTempId(currentConversationId)) {
+			return [...conversationListMenus]
+		}
+
+		return [...actionMenus, ...conversationListMenus]
+	}, [currentConversationId, conversations])
+
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
 			<ConversationsContextProvider
@@ -232,40 +388,9 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 							isMobile ? (
 								<Dropdown
 									menu={{
-										items: [
-											{
-												key: 'add_conversation',
-												icon: <PlusCircleOutlined />,
-												label: '新建对话',
-												onClick: () => {
-													onAddConversation()
-												},
-											},
-											{
-												type: 'divider',
-											},
-											{
-												type: 'group',
-												label: '历史对话',
-												children: conversations?.length
-													? conversations.map(item => {
-															return {
-																key: item.id,
-																label: item.name,
-																onClick: () => {
-																	setCurrentConversationId(item.id)
-																},
-															}
-														})
-													: [
-															{
-																key: 'no_conversation',
-																label: '暂无历史对话',
-																disabled: true,
-															},
-														],
-											},
-										],
+										className: '!pb-3 w-[50vw]',
+										activeKey: currentConversationId,
+										items: mobileMenuItems,
 									}}
 								>
 									<MenuOutlined className="text-xl" />
@@ -304,40 +429,8 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList
-													renameConversationPromise={async (
-														conversationId: string,
-														name: string,
-													) => {
-														await difyApi?.renameConversation({
-															conversation_id: conversationId,
-															name,
-														})
-														getConversationItems()
-													}}
-													deleteConversationPromise={async (conversationId: string) => {
-														if (isTempId(conversationId)) {
-															setConversations(prev => {
-																const newConversations = prev.filter(
-																	item => item.id !== conversationId,
-																)
-																if (
-																	conversationId === currentConversationId &&
-																	newConversations.length
-																) {
-																	console.log(
-																		'setCurrentConversationId: deleteConversationPromise',
-																		newConversations[0].id,
-																	)
-																	setCurrentConversationId(newConversations[0].id)
-																}
-																return newConversations
-															})
-														} else {
-															await difyApi?.deleteConversation(conversationId)
-															getConversationItems()
-															return Promise.resolve()
-														}
-													}}
+													renameConversationPromise={onRenameConversation}
+													deleteConversationPromise={onDeleteConversation}
 													items={conversations.map(item => {
 														return {
 															key: item.id,
