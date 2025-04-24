@@ -127,12 +127,10 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 	useAppInit(difyApi, () => {
 		setConversations([])
-		console.log('setCurrentConversationId: useAppInit', '')
 		setCurrentConversationId('')
 		setAppInfo(undefined)
 		initAppInfo().then(() => {
 			getConversationItems().then(() => {
-				console.log('ssss', searchParams.get('isNewCvst'))
 				const isNewConversation = searchParams.get('isNewCvst') === '1'
 				if (isNewConversation) {
 					onAddConversation()
@@ -348,7 +346,6 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 													})}
 													activeKey={currentConversationId}
 													onActiveChange={id => {
-														console.log('setCurrentConversationId: onActiveChange', id)
 														setCurrentConversationId(id)
 													}}
 												/>

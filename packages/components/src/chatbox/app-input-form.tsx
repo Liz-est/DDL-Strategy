@@ -131,8 +131,6 @@ export default function AppInputForm(props: IAppInputFormProps) {
 		}
 	}, [user_input_form, currentConversationInfo])
 
-	console.log('user_input_form', user_input_form)
-
 	/**
 	 * 是否禁用输入
 	 */
@@ -155,18 +153,6 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						labelCol={{ span: 5 }}
 						onValuesChange={(_, allValues) => {
 							setConversations(prev => {
-								console.log(
-									'setConversations: onValuesChange',
-									prev.map(item => {
-										if (item.id === currentConversationId) {
-											return {
-												...item,
-												inputs: allValues,
-											}
-										}
-										return item
-									}),
-								)
 								return prev.map(item => {
 									if (item.id === currentConversationId) {
 										return {

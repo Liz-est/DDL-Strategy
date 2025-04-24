@@ -27,17 +27,10 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
 	args: {},
 	render: function Render() {
-		const [content, setContent] = useState('')
 		const [isRequesting, setIsRequesting] = useState(false)
-
-		const onChange = value => {
-			setContent(value)
-		}
 
 		return (
 			<MessageSender
-				content={content}
-				onChange={onChange}
 				isRequesting={isRequesting}
 				onCancel={() => setIsRequesting(false)}
 				onSubmit={(value, options) => {
@@ -46,7 +39,6 @@ export const Primary: Story = {
 						message.success(`发送成功: ${value}`)
 						console.log('发送成功', '文本:', value, '文件:', options?.files)
 						setIsRequesting(false)
-						setContent('')
 					}, 3000)
 				}}
 				uploadFileApi={file =>
