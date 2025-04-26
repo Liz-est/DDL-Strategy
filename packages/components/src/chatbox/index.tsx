@@ -1,13 +1,7 @@
 import { RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
-import {
-	DifyApi,
-	IFile,
-	IGetAppInfoResponse,
-	IGetAppParametersResponse,
-	IMessageItem4Render,
-} from '@dify-chat/api'
-import { IDifyAppItem } from '@dify-chat/core'
+import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
+import { useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { FormInstance, GetProp, message } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
@@ -19,14 +13,6 @@ import MessageFooter from './message/footer'
 import { WelcomePlaceholder } from './welcome-placeholder'
 
 export interface ChatboxProps {
-	/**
-	 * 应用参数
-	 */
-	appParameters?: IGetAppParametersResponse
-	/**
-	 * 应用配置
-	 */
-	appConfig: IDifyAppItem
 	/**
 	 * 消息列表
 	 */
@@ -88,10 +74,6 @@ export interface ChatboxProps {
 	 */
 	onStartConversation: (formValues: Record<string, unknown>) => void
 	/**
-	 * 当前应用基本信息
-	 */
-	appInfo?: IGetAppInfoResponse
-	/**
 	 * 应用入参表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
@@ -111,13 +93,12 @@ export const Chatbox = (props: ChatboxProps) => {
 		conversationId,
 		feedbackCallback,
 		difyApi,
-		appParameters,
-		appConfig,
 		isFormFilled,
 		onStartConversation,
 		entryForm,
 	} = props
 	const isMobile = useIsMobile()
+	const { currentApp } = useAppContext()
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
 		ai: {
@@ -160,7 +141,6 @@ export const Chatbox = (props: ChatboxProps) => {
 				messageRender: () => {
 					return (
 						<MessageContent
-							appConfig={appConfig}
 							onSubmit={onSubmit}
 							messageItem={messageItem}
 						/>
@@ -171,7 +151,7 @@ export const Chatbox = (props: ChatboxProps) => {
 				footer: messageItem.role === 'ai' && (
 					<div className="flex items-center">
 						<MessageFooter
-							ttsConfig={appParameters?.text_to_speech}
+							ttsConfig={currentApp?.parameters?.text_to_speech}
 							feedbackApi={params => difyApi.feedbackMessage(params)}
 							ttsApi={params => difyApi.text2Audio(params)}
 							messageId={messageItem.id}
@@ -190,7 +170,7 @@ export const Chatbox = (props: ChatboxProps) => {
 				),
 			}
 		}) as GetProp<typeof Bubble.List, 'items'>
-	}, [messageItems, conversationId, difyApi, feedbackCallback, appConfig, onSubmit])
+	}, [messageItems, conversationId, difyApi, feedbackCallback, currentApp?.config, onSubmit])
 
 	// 监听 items 更新，滚动到最底部
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -214,14 +194,11 @@ export const Chatbox = (props: ChatboxProps) => {
 				{/* 🌟 欢迎占位 + 对话参数 */}
 				<WelcomePlaceholder
 					showPrompts={!items?.length && isTempId(conversationId)}
-					appParameters={appParameters}
 					onPromptItemClick={onPromptsItemClick}
 					formFilled={isFormFilled}
 					onStartConversation={onStartConversation}
-					user_input_form={appParameters?.user_input_form}
 					conversationId={conversationId}
 					entryForm={entryForm}
-					appConfig={appConfig}
 				/>
 
 				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
@@ -272,7 +249,6 @@ export const Chatbox = (props: ChatboxProps) => {
 					{/* 🌟 输入框 */}
 					<div className="px-3">
 						<MessageSender
-							appParameters={appParameters}
 							onSubmit={async (...params) => {
 								return validateAndGenErrMsgs(entryForm).then(res => {
 									if (res.isSuccess) {
