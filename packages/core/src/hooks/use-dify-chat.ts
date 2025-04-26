@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import { DifyAppStore, IDifyAppItem } from '../repository'
 
@@ -87,27 +87,13 @@ export const DifyChatProvider = DifyChatContext.Provider
 /**
  * 使用 DifyChat 的 context 值
  */
-export const useDifyChat = (): IDifyChatContext & IGlobalStore => {
-	const [currentAppConfig, setCurrentAppConfig] = useState<IDifyAppItem>({} as IDifyAppItem)
+export const useDifyChat = (): IDifyChatContext => {
 	const difyChatContext = useContext(DifyChatContext)
 	const { mode } = difyChatContext
 	const defaultValue =
 		mode === 'multiApp' ? DEFAULT_CONTEXT_VALUE : DEFAULT_CONTEXT_VALUE_SINGLE_APP
 	return {
-		currentAppConfig,
-		setCurrentAppConfig,
 		...defaultValue,
 		...difyChatContext,
 	}
-}
-
-interface IGlobalStore {
-	/**
-	 * 当前的应用配置
-	 */
-	currentAppConfig: IDifyAppItem
-	/**
-	 * 更新当前的应用配置
-	 */
-	setCurrentAppConfig: (config: IDifyAppItem) => void
 }

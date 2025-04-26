@@ -6,10 +6,9 @@ import {
 	IChunkChatCompletionResponse,
 	IErrorEvent,
 	IFile,
-	IGetAppParametersResponse,
 } from '@dify-chat/api'
 import { IWorkflowNode } from '@dify-chat/api'
-import { useDifyChat } from '@dify-chat/core'
+import { useAppContext, useDifyChat } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { message as antdMessage, FormInstance } from 'antd'
 import { useState } from 'react'
@@ -30,7 +29,6 @@ export const useX = (options: {
 		inputParams: Record<string, unknown>
 	}>
 	getNextSuggestions: (messageId: string) => void
-	appParameters?: IGetAppParametersResponse
 	filesRef: React.MutableRefObject<IFile[]>
 	abortRef: React.MutableRefObject<() => void>
 	getConversationMessages: (conversationId: string) => void
@@ -38,7 +36,6 @@ export const useX = (options: {
 }) => {
 	const {
 		latestProps,
-		appParameters,
 		getNextSuggestions,
 		filesRef,
 		abortRef,
@@ -47,6 +44,7 @@ export const useX = (options: {
 		entryForm,
 		difyApi,
 	} = options
+	const { currentApp } = useAppContext()
 	const { user } = useDifyChat()
 	const [currentTaskId, setCurrentTaskId] = useState('')
 
@@ -178,7 +176,7 @@ export const useX = (options: {
 
 					if (parsedData.event === EventEnum.MESSAGE_END) {
 						// 如果开启了建议问题，获取下一轮问题建议
-						if (appParameters?.suggested_questions_after_answer.enabled) {
+						if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
 							getNextSuggestions(parsedData.message_id)
 						}
 					}

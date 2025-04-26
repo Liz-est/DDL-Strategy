@@ -1,6 +1,7 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
-import { DifyApi, IFile, IGetAppParametersResponse, IUploadFileResponse } from '@dify-chat/api'
+import { DifyApi, IFile, IUploadFileResponse } from '@dify-chat/api'
+import { useAppContext } from '@dify-chat/core'
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
 import { useMemo, useRef, useState } from 'react'
@@ -9,10 +10,6 @@ import { flushSync } from 'react-dom'
 import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils'
 
 interface IMessageSenderProps {
-	/**
-	 * Dify 应用参数
-	 */
-	appParameters?: IGetAppParametersResponse
 	/**
 	 * 类名
 	 */
@@ -51,15 +48,8 @@ interface IMessageSenderProps {
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-	const {
-		isRequesting,
-		onSubmit,
-		className,
-		onCancel,
-		uploadFileApi,
-		audio2TextApi,
-		appParameters,
-	} = props
+	const { isRequesting, onSubmit, className, onCancel, uploadFileApi, audio2TextApi } = props
+	const { currentApp } = useAppContext()
 	const [content, setContent] = useState('')
 	const [open, setOpen] = useState(false)
 	const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([])
@@ -74,17 +64,17 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	}
 
 	const allowedFileTypes = useMemo(() => {
-		if (!appParameters?.file_upload) {
+		if (!currentApp?.parameters?.file_upload) {
 			return []
 		}
 		const result: string[] = []
-		appParameters.file_upload.allowed_file_types.forEach(item => {
+		currentApp.parameters.file_upload.allowed_file_types.forEach(item => {
 			if (FileTypeMap.get(item)) {
 				result.push(...((FileTypeMap.get(item) as string[]) || []))
 			}
 		})
 		return result
-	}, [appParameters?.file_upload])
+	}, [currentApp?.parameters?.file_upload])
 
 	const handleUpload = async (file: RcFile) => {
 		const prevFiles = [...files]
@@ -206,7 +196,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	return (
 		<Sender
 			allowSpeech={
-				appParameters?.speech_to_text.enabled
+				currentApp?.parameters?.speech_to_text.enabled
 					? {
 							recording,
 							onRecordingChange: async nextRecording => {

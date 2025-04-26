@@ -9,8 +9,7 @@ import {
 	SmileOutlined,
 } from '@ant-design/icons'
 import { Prompts, Welcome } from '@ant-design/x'
-import { IGetAppParametersResponse } from '@dify-chat/api'
-import { IDifyAppItem } from '@dify-chat/core'
+import { useAppContext } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { Button, FormInstance, GetProp, message, Space } from 'antd'
 import classNames from 'classnames'
@@ -32,10 +31,6 @@ interface IWelcomePlaceholderProps {
 	 */
 	showPrompts: boolean
 	/**
-	 * 应用参数
-	 */
-	appParameters?: IGetAppParametersResponse
-	/**
 	 * 点击提示项时触发的回调函数
 	 */
 	onPromptItemClick: GetProp<typeof Prompts, 'onItemClick'>
@@ -48,10 +43,6 @@ interface IWelcomePlaceholderProps {
 	 */
 	onStartConversation: (formValues: Record<string, unknown>) => void
 	/**
-	 * 表单数据
-	 */
-	user_input_form?: IGetAppParametersResponse['user_input_form']
-	/**
 	 * 当前对话 ID
 	 */
 	conversationId?: string
@@ -59,18 +50,15 @@ interface IWelcomePlaceholderProps {
 	 * 应用入参的表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
-	/**
-	 * 当前应用基本信息
-	 */
-	appConfig?: IDifyAppItem
 }
 
 /**
  * 对话内容区的欢迎占位符
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
-	const { onPromptItemClick, appParameters, showPrompts, appConfig } = props
+	const { onPromptItemClick, showPrompts } = props
 	const isMobile = useIsMobile()
+	const { currentApp } = useAppContext()
 
 	const placeholderPromptsItems: GetProp<typeof Prompts, 'items'> = useMemo(() => {
 		const DefaultPlaceholderPromptsItems = [
@@ -116,13 +104,13 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 				],
 			},
 		]
-		if (appParameters?.suggested_questions?.length) {
+		if (currentApp?.parameters?.suggested_questions?.length) {
 			return [
 				{
 					key: 'remote',
 					label: renderTitle(<FireOutlined style={{ color: '#FF4D4F' }} />, 'Hot Topics'),
 					description: 'What are you interested in?',
-					children: appParameters.suggested_questions.map(item => {
+					children: currentApp.parameters.suggested_questions.map(item => {
 						return {
 							key: 'remote',
 							description: item,
@@ -143,7 +131,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 				direction="vertical"
 				className={classNames({
 					'w-full md:!w-3/4': true,
-					'pb-6': !showPrompts && props.user_input_form?.length,
+					'pb-6': !showPrompts && currentApp?.parameters.user_input_form?.length,
 					'pt-3': showPrompts,
 				})}
 			>
@@ -155,7 +143,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 								<AndroidFilled className="text-3xl text-primary" />
 							</div>
 						}
-						title={appParameters?.opening_statement || "Hello, I'm Dify Chat"}
+						title={currentApp?.parameters?.opening_statement || "Hello, I'm Dify Chat"}
 						description="Base on Dify API, Dify Chat is a web app that can interact with AI."
 						extra={
 							<Space>
@@ -170,10 +158,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 				<AppInputWrapper
 					formFilled={props.formFilled}
 					onStartConversation={props.onStartConversation}
-					user_input_form={props.user_input_form}
 					entryForm={props.entryForm}
-					conversationId={props.conversationId!}
-					appConfig={appConfig}
 				/>
 
 				{showPrompts ? (

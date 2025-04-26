@@ -6,26 +6,15 @@ import {
 	PlusOutlined,
 } from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
-import {
-	createDifyApiInstance,
-	DifyApi,
-	IConversationItem,
-	IGetAppInfoResponse,
-	IGetAppParametersResponse,
-} from '@dify-chat/api'
+import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppInfo, ConversationList } from '@dify-chat/components'
-import {
-	ConversationsContextProvider,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-} from '@dify-chat/core'
-import { useDifyChat } from '@dify-chat/core'
+import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
@@ -57,34 +46,18 @@ interface IBaseLayoutProps {
 	 */
 	renderRightHeader?: () => React.ReactNode
 	/**
-	 * 获取当前应用配置
-	 */
-	appConfig: IDifyAppItem
-	/**
-	 * 初始化应用信息
-	 */
-	useAppInit: (difyApi: DifyApi, callback: () => void) => void
-	/**
-	 * 触发配置应用事件
-	 */
-	handleStartConfig: () => void
-	/**
 	 * 是否正在加载应用配置
 	 */
 	initLoading: boolean
+	/**
+	 * Dify API 实例
+	 */
+	difyApi: DifyApi
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
-	const {
-		extComponents,
-		appConfig,
-		useAppInit,
-		renderCenterTitle,
-		handleStartConfig,
-		initLoading,
-	} = props
-	const { ...difyChatContext } = useDifyChat()
-
+	const { extComponents, renderCenterTitle, initLoading, difyApi } = props
+	const { appLoading, currentApp } = useAppContext()
 	const [renameForm] = Form.useForm()
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
 	const [currentConversationId, setCurrentConversationId] = useState<string>('')
@@ -93,65 +66,33 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	}, [conversations, currentConversationId])
 	const isMobile = useIsMobile()
 
-	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
-	const [difyApi] = useState(
-		createDifyApiInstance({
-			user,
-			apiBase: '',
-			apiKey: '',
-		}),
-	)
 	const searchParams = useSearchParams()
 	const [conversationListLoading, setCoversationListLoading] = useState<boolean>(false)
-	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
-	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
-	const [appConfigLoading, setAppConfigLoading] = useState(false)
 	const latestCurrentConversationId = useLatest(currentConversationId)
 
-	const initAppInfo = async () => {
-		setAppInfo(undefined)
-		if (!difyApi) {
+	useEffect(() => {
+		console.log('currentApp?.config change', currentApp?.config)
+		if (!currentApp?.config) {
 			return
 		}
-		setAppConfigLoading(true)
-		// 获取应用信息
-		try {
-			const baseInfo = await difyApi.getAppInfo()
-			setAppInfo({
-				...baseInfo,
-			})
-			const appParameters = await difyApi.getAppParameters()
-			setAppParameters(appParameters)
-		} catch (error) {
-			console.error('获取应用信息错误', error)
-			return Promise.reject(error)
-		} finally {
-			setAppConfigLoading(false)
-		}
-	}
-
-	useAppInit(difyApi, () => {
+		console.log('即将开始获取对话列表', difyApi.options)
 		setConversations([])
 		setCurrentConversationId('')
-		setAppInfo(undefined)
-		initAppInfo().then(() => {
-			getConversationItems().then(() => {
-				const isNewConversation = searchParams.get('isNewCvst') === '1'
-				if (isNewConversation) {
-					onAddConversation()
-				}
-			})
+		getConversationItems().then(() => {
+			const isNewConversation = searchParams.get('isNewCvst') === '1'
+			if (isNewConversation) {
+				onAddConversation()
+			}
 		})
-	})
-
-	console.log('currentConversationId in render', currentConversationId)
+	}, [currentApp?.config])
 
 	/**
 	 * 获取对话列表
 	 */
 	const getConversationItems = async (showLoading = true) => {
+		console.log('getConversationItems', showLoading)
 		if (showLoading) {
 			setCoversationListLoading(true)
 		}
@@ -189,18 +130,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		const newKey = `temp_${Math.random()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
 		setConversations(prev => {
-			console.log('setConversations: onAddConversation', [
-				{
-					id: newKey,
-					name: DEFAULT_CONVERSATION_NAME,
-					created_at: dayjs().valueOf(),
-					inputs: {},
-					introduction: '',
-					status: 'normal',
-					updated_at: dayjs().valueOf(),
-				},
-				...prev,
-			])
+			console.log('setConversations: onAddConversation', prev)
 			return [
 				{
 					id: newKey,
@@ -211,7 +141,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					status: 'normal',
 					updated_at: dayjs().valueOf(),
 				},
-				...prev,
+				...(prev || []),
 			]
 		})
 		console.log('setCurrentConversationId: onAddConversation', newKey)
@@ -367,6 +297,8 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		return [...actionMenus, ...conversationListMenus]
 	}, [currentConversationId, conversations])
 
+	console.log('currentApp in render', currentApp)
+
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
 			<ConversationsContextProvider
@@ -383,7 +315,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 				>
 					{/* 头部 */}
 					<HeaderLayout
-						title={renderCenterTitle?.(appInfo)}
+						title={renderCenterTitle?.(currentApp?.config?.info)}
 						rightIcon={
 							isMobile ? (
 								<Dropdown
@@ -401,19 +333,19 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 					{/* Main */}
 					<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
-						{appConfigLoading || initLoading ? (
+						{appLoading || initLoading ? (
 							<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
 								<Spin spinning />
 							</div>
-						) : appConfig ? (
+						) : currentApp?.config ? (
 							<>
 								{/* 左侧对话列表 */}
 								<div
 									className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-[#eff0f5]`}
 								>
-									{appInfo ? <AppInfo info={appInfo!} /> : null}
+									{currentApp.config.info ? <AppInfo info={currentApp.config.info!} /> : null}
 									{/* 添加会话 */}
-									{appConfig ? (
+									{currentApp ? (
 										<Button
 											onClick={() => {
 												onAddConversation()
@@ -457,11 +389,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 								{/* 右侧聊天窗口 - 移动端全屏 */}
 								<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 									<ChatboxWrapper
-										appConfig={appConfig}
-										appConfigLoading={appConfigLoading}
-										appInfo={appInfo}
 										difyApi={difyApi}
-										appParameters={appParameters}
 										conversationListLoading={conversationListLoading}
 										onAddConversation={onAddConversation}
 										conversationItemsChangeCallback={() => getConversationItems(false)}
@@ -471,17 +399,9 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						) : (
 							<div className="w-full h-full flex items-center justify-center">
 								<Empty
-									description="暂无 Dify 应用配置"
+									description="暂无 Dify 应用配置，请联系管理员"
 									className="text-base"
-								>
-									<Button
-										size="large"
-										type="primary"
-										onClick={handleStartConfig}
-									>
-										开始配置
-									</Button>
-								</Empty>
+								/>
 							</div>
 						)}
 					</div>
