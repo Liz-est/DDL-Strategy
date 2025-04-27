@@ -1,17 +1,19 @@
-import { IUserInputFormItemType, IUserInputFormItemValueBase } from '@dify-chat/api'
+import { UploadOutlined } from '@ant-design/icons'
+import { DifyApi, IUserInputFormItemType, IUserInputFormItemValueBase } from '@dify-chat/api'
 import { useAppContext, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
-import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
+import { Button, Form, FormInstance, FormItemProps, Input, InputNumber, message, Select, Upload } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import FileUpload from './form-controls/file-upload'
 
 export type IConversationEntryFormItem = FormItemProps &
 	Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {
 		type: IUserInputFormItemType
 	}
 
-const SUPPORTED_CONTROL_TYPES = ['text-input', 'select', 'number', 'paragraph']
+const SUPPORTED_CONTROL_TYPES = ['text-input', 'select', 'number', 'paragraph', 'file', 'file-list']
 
 export interface IAppInputFormProps {
 	/**
@@ -27,13 +29,14 @@ export interface IAppInputFormProps {
 	 */
 	// FIXME: any 类型后续优化 @ts-expect-error
 	entryForm: FormInstance<Record<string, unknown>>
+	uploadFileApi: DifyApi['uploadFile']
 }
 
 /**
  * 应用输入表单
  */
 export default function AppInputForm(props: IAppInputFormProps) {
-	const { entryForm } = props
+	const { entryForm, uploadFileApi } = props
 	const { currentApp } = useAppContext()
 	const { currentConversationId, currentConversationInfo, setConversations } =
 		useConversationsContext()
@@ -162,11 +165,11 @@ export default function AppInputForm(props: IAppInputFormProps) {
 										rules={
 											item.required
 												? [
-														{
-															required: true,
-															message: `${item.label}不能为空`,
-														},
-													]
+													{
+														required: true,
+														message: `${item.label}不能为空`,
+													},
+												]
 												: []
 										}
 									>
@@ -201,9 +204,14 @@ export default function AppInputForm(props: IAppInputFormProps) {
 												disabled={disabled}
 												className="w-full"
 											/>
-										) : (
-											`暂不支持的控件类型: ${item.type}`
-										)}
+										) : item.type === 'file-list' ?
+											<FileUpload allowed_file_types={item.allowed_file_types
+											} uploadFileApi={uploadFileApi}>
+												<Button icon={<UploadOutlined />}>Click to Upload</Button>
+											</FileUpload>
+											: (
+												`暂不支持的控件类型: ${item.type}`
+											)}
 									</Form.Item>
 								)
 							})}

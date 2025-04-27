@@ -43,6 +43,7 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 					formFilled={props.formFilled}
 					onStartConversation={props.onStartConversation}
 					entryForm={props.entryForm}
+					uploadFileApi={props.uploadFileApi}
 				/>
 			),
 			style: panelStyle,

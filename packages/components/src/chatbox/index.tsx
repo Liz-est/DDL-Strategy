@@ -199,6 +199,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					onStartConversation={onStartConversation}
 					conversationId={conversationId}
 					entryForm={entryForm}
+					uploadFileApi={(...params)=>difyApi.uploadFile(...params)}
 				/>
 
 				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">

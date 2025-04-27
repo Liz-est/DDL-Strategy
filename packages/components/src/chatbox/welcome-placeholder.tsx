@@ -17,6 +17,7 @@ import { useMemo } from 'react'
 
 import { validateAndGenErrMsgs } from '../utils'
 import AppInputWrapper from './app-input-wrapper'
+import { DifyApi } from '@dify-chat/api'
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
 	<Space align="start">
@@ -50,13 +51,14 @@ interface IWelcomePlaceholderProps {
 	 * 应用入参的表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
+	uploadFileApi?: DifyApi['uploadFile']
 }
 
 /**
  * 对话内容区的欢迎占位符
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
-	const { onPromptItemClick, showPrompts } = props
+	const { onPromptItemClick, showPrompts, uploadFileApi } = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
 
@@ -159,6 +161,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					formFilled={props.formFilled}
 					onStartConversation={props.onStartConversation}
 					entryForm={props.entryForm}
+					uploadFileApi={uploadFileApi}
 				/>
 
 				{showPrompts ? (
