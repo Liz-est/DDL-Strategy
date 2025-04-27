@@ -247,6 +247,9 @@ export const MessageSender = (props: IMessageSenderProps) => {
 		} as GetProp<typeof Sender, 'allowSpeech'>
 	}, [currentApp, recording, audio2TextApi])
 
+	// 是否允许文件上传
+	const enableFileUpload = currentApp?.parameters?.file_upload?.enabled
+
 	return (
 		<Sender
 			allowSpeech={allowSpeechConfig}
@@ -254,12 +257,15 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			value={content}
 			onChange={onChange}
 			prefix={
-				<Badge dot={files.length > 0 && !open}>
-					<Button
-						onClick={() => setOpen(!open)}
-						icon={<LinkOutlined />}
-					/>
-				</Badge>
+				enableFileUpload ? (
+					// 附件上传按钮
+					<Badge dot={files.length > 0 && !open}>
+						<Button
+							onClick={() => setOpen(!open)}
+							icon={<LinkOutlined />}
+						/>
+					</Badge>
+				) : null
 			}
 			style={{
 				boxShadow: '0px -2px 12px 4px #efefef',
@@ -267,18 +273,22 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			loading={isRequesting}
 			disabled={audio2TextLoading}
 			className={className}
-			onPasteFile={(firstFile, files) => {
-				if (files?.length > 1) {
-					message.warning('暂不支持一次性上传多个文件，请逐个上传')
-					return
-				}
-				// 如果附件面板是关闭状态，则打开
-				if (!open) {
-					// 强制更新 立即打开 Attachments 面板，以供获取 attachmentsRef
-					flushSync(() => setOpen(true))
-				}
-				attachmentsRef.current?.upload(firstFile)
-			}}
+			onPasteFile={
+				enableFileUpload
+					? (firstFile, files) => {
+							if (files?.length > 1) {
+								message.warning('暂不支持一次性上传多个文件，请逐个上传')
+								return
+							}
+							// 如果附件面板是关闭状态，则打开
+							if (!open) {
+								// 强制更新 立即打开 Attachments 面板，以供获取 attachmentsRef
+								flushSync(() => setOpen(true))
+							}
+							attachmentsRef.current?.upload(firstFile)
+						}
+					: undefined
+			}
 			onSubmit={async content => {
 				if (!content) {
 					message.error('内容不能为空')
