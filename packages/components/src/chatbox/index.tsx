@@ -1,4 +1,4 @@
-import { RobotOutlined, UserOutlined } from '@ant-design/icons'
+import { ArrowRightOutlined, RobotOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
@@ -217,10 +217,10 @@ export const Chatbox = (props: ChatboxProps) => {
 									return (
 										<div
 											key={item}
-											className="mt-3 cursor-pointer"
+											className="mt-3 flex items-center"
 										>
 											<div
-												className="p-2 rounded-lg border border-solid border-[#eff0f5] inline-block text-sm"
+												className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-[#eff0f5] text-sm max-w-full"
 												onClick={() => {
 													onPromptsItemClick({
 														data: {
@@ -230,7 +230,8 @@ export const Chatbox = (props: ChatboxProps) => {
 													})
 												}}
 											>
-												{item}
+												<span className="truncate">{item}</span>
+												<ArrowRightOutlined className="ml-1" />
 											</div>
 										</div>
 									)
