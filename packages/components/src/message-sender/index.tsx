@@ -193,57 +193,63 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const [recording, setRecording] = useState(false)
 	const mediaRecorder = useRef<MediaRecorder | null>(null)
 
+	/**
+	 * 语音转文本配置
+	 */
+	const allowSpeechConfig = useMemo(() => {
+		if (!currentApp?.parameters?.speech_to_text?.enabled) {
+			return false
+		}
+		return {
+			recording,
+			onRecordingChange: async nextRecording => {
+				if (nextRecording) {
+					try {
+						const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+						mediaRecorder.current = new MediaRecorder(stream)
+
+						mediaRecorder.current.ondataavailable = event => {
+							if (event.data.size > 0) {
+								recordedChunks.current = [...recordedChunks.current, event.data]
+							}
+						}
+
+						mediaRecorder.current.onstop = () => {
+							console.log('停止了', recordedChunks)
+							const blob = new Blob(recordedChunks.current, { type: 'audio/webm' })
+							setAudio2TextLoading(true)
+							setContent('正在识别...')
+							audio2TextApi?.(blob as File)
+								.then(res => {
+									setContent(res.text)
+									recordedChunks.current = []
+								})
+								.catch(error => {
+									console.error('语音转文本错误', error)
+									message.error(`语音转文本错误: ${error}`)
+									setContent('')
+								})
+								.finally(() => {
+									setAudio2TextLoading(false)
+								})
+						}
+
+						mediaRecorder.current.start()
+					} catch (error) {
+						console.error('Error accessing microphone:', error)
+					}
+				} else {
+					mediaRecorder.current?.stop()
+				}
+
+				setRecording(nextRecording)
+			},
+		} as GetProp<typeof Sender, 'allowSpeech'>
+	}, [currentApp, recording, audio2TextApi])
+
 	return (
 		<Sender
-			allowSpeech={
-				currentApp?.parameters?.speech_to_text.enabled
-					? {
-							recording,
-							onRecordingChange: async nextRecording => {
-								if (nextRecording) {
-									try {
-										const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-										mediaRecorder.current = new MediaRecorder(stream)
-
-										mediaRecorder.current.ondataavailable = event => {
-											if (event.data.size > 0) {
-												recordedChunks.current = [...recordedChunks.current, event.data]
-											}
-										}
-
-										mediaRecorder.current.onstop = () => {
-											console.log('停止了', recordedChunks)
-											const blob = new Blob(recordedChunks.current, { type: 'audio/webm' })
-											setAudio2TextLoading(true)
-											setContent('正在识别...')
-											audio2TextApi?.(blob as File)
-												.then(res => {
-													setContent(res.text)
-													recordedChunks.current = []
-												})
-												.catch(error => {
-													console.error('语音转文本错误', error)
-													message.error(`语音转文本错误: ${error}`)
-													setContent('')
-												})
-												.finally(() => {
-													setAudio2TextLoading(false)
-												})
-										}
-
-										mediaRecorder.current.start()
-									} catch (error) {
-										console.error('Error accessing microphone:', error)
-									}
-								} else {
-									mediaRecorder.current?.stop()
-								}
-
-								setRecording(nextRecording)
-							},
-						}
-					: false
-			}
+			allowSpeech={allowSpeechConfig}
 			header={senderHeader}
 			value={content}
 			onChange={onChange}
