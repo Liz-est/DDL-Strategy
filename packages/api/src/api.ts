@@ -190,6 +190,29 @@ interface IGetConversationListResponse {
 }
 
 /**
+ * 消息文件所属类型
+ */
+export enum MessageFileBelongsToEnum {
+	'user' = 'user', // 用户
+	'assistant' = 'assistant', // 助手
+}
+
+/**
+ * 消息文件 Item 结构
+ */
+interface IMessageFileItem {
+	id: string
+	filename: string
+	type: string
+	url: string
+	mime_type: string
+	size: number
+	transfer_method: string
+	belongs_to: MessageFileBelongsToEnum
+	upload_file_id: string
+}
+
+/**
  * 会话历史 Item 结构
  */
 interface IMessageItem {
@@ -216,7 +239,7 @@ interface IMessageItem {
 	/**
 	 * 消息关联的文件列表
 	 */
-	message_files: []
+	message_files?: IMessageFileItem[]
 	/**
 	 * 消息反馈信息
 	 */
