@@ -1,5 +1,5 @@
 import { Prompts } from '@ant-design/x'
-import { DifyApi, IFile, IMessageFileItem } from '@dify-chat/api'
+import { DifyApi, IFile, IMessageFileItem, MessageFileBelongsToEnum } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox } from '@dify-chat/components'
 import { useAppContext } from '@dify-chat/core'
@@ -140,7 +140,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					content: item.query,
 					status: 'success',
 					isHistory: true,
-					files: item.message_files,
+					files: item.message_files?.filter(item => {
+						return item.belongs_to === MessageFileBelongsToEnum.user
+					}),
 					role: 'user',
 					created_at: createdAt,
 				},
@@ -150,6 +152,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					status: item.status === 'error' ? item.status : 'success',
 					error: item.error || '',
 					isHistory: true,
+					files: item.message_files?.filter(item => {
+						return item.belongs_to === MessageFileBelongsToEnum.assistant
+					}),
 					feedback: item.feedback,
 					workflows:
 						workflowDataStorage.get({

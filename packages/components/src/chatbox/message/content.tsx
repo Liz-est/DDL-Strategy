@@ -97,6 +97,13 @@ export default function MessageContent(props: IMessageContentProps) {
 		)
 	}
 
+	// 消息附件列表 用户文件展示在消息体上方，AI 消息文件展示在消息体下方
+	const fileList = files?.length ? (
+		<div className="mt-3">
+			<MessageFileList files={files} />
+		</div>
+	) : null
+
 	return (
 		<>
 			{/* Agent 思维链信息 */}
@@ -112,12 +119,8 @@ export default function MessageContent(props: IMessageContentProps) {
 				status={workflows?.status}
 			/>
 
-			{/* 消息附件列表 */}
-			{files?.length ? (
-				<div className="mt-3">
-					<MessageFileList files={files} />
-				</div>
-			) : null}
+			{/* 消息附件列表 - 用户消息 */}
+			{role === 'local' || role === 'user' ? fileList : null}
 
 			{/* 消息主体文本内容 */}
 			<div className={role === 'local' || role === 'user' ? '' : 'md:min-w-chat-card'}>
@@ -126,6 +129,9 @@ export default function MessageContent(props: IMessageContentProps) {
 					onSubmit={onSubmit}
 				/>
 			</div>
+
+			{/* 消息附件列表 - AI 消息 */}
+			{role === 'ai' ? fileList : null}
 
 			{/* 引用链接列表 */}
 			<MessageReferrence items={retrieverResources} />
