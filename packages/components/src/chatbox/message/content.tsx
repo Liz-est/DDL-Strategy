@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { IFile, IMessageItem4Render } from '@dify-chat/api'
-import { IDifyAppItem } from '@dify-chat/core'
+import { useAppContext } from '@dify-chat/core'
 import { Tooltip } from 'antd'
 import { useMemo } from 'react'
 
@@ -11,10 +11,6 @@ import MessageReferrence from './referrence'
 import WorkflowLogs from './workflow-logs'
 
 interface IMessageContentProps {
-	/**
-	 * 应用配置
-	 */
-	appConfig: IDifyAppItem
 	/**
 	 * 提交消息时触发的回调函数
 	 * @param nextContent 下一条消息的内容
@@ -38,7 +34,6 @@ interface IMessageContentProps {
  */
 export default function MessageContent(props: IMessageContentProps) {
 	const {
-		appConfig,
 		onSubmit,
 		messageItem: {
 			id,
@@ -52,16 +47,17 @@ export default function MessageContent(props: IMessageContentProps) {
 			role,
 		},
 	} = props
+	const { currentApp } = useAppContext()
 
 	const computedContent = useMemo(() => {
 		const likelyJSON = content.startsWith('{') && content.endsWith('}')
 		// 处理回复表单的自动生成消息
 		if (role === 'local' || (role === 'user' && likelyJSON)) {
-			if (appConfig.answerForm?.enabled && appConfig.answerForm?.feedbackText) {
+			if (currentApp?.config.answerForm?.enabled && currentApp.config.answerForm?.feedbackText) {
 				// 尝试通过 json 解析
 				try {
 					const parsedValue = JSON.parse(content)
-					return parsedValue.isFormSubmit ? appConfig.answerForm?.feedbackText : content
+					return parsedValue.isFormSubmit ? currentApp.config.answerForm?.feedbackText : content
 				} catch (error) {
 					console.log('computedContent json 解析失败', error)
 					return content
@@ -69,7 +65,7 @@ export default function MessageContent(props: IMessageContentProps) {
 			}
 		}
 		return content
-	}, [content, appConfig?.answerForm, role])
+	}, [content, currentApp?.config?.answerForm, role])
 
 	// 如果是错误状态，则直接展示错误信息
 	if (status === 'error') {

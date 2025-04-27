@@ -1,9 +1,5 @@
-import {
-	IGetAppParametersResponse,
-	IUserInputFormItemType,
-	IUserInputFormItemValueBase,
-} from '@dify-chat/api'
-import { IDifyAppItem, useDifyChat } from '@dify-chat/core'
+import { IUserInputFormItemType, IUserInputFormItemValueBase } from '@dify-chat/api'
+import { useAppContext, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
 import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
@@ -27,29 +23,18 @@ export interface IAppInputFormProps {
 	 */
 	onStartConversation: (formValues: Record<string, unknown>) => void
 	/**
-	 * 表单数据
-	 */
-	user_input_form?: IGetAppParametersResponse['user_input_form']
-	/**
-	 * 当前对话 ID
-	 */
-	conversationId: string
-	/**
 	 * 应用入参的表单实例
 	 */
 	// FIXME: any 类型后续优化 @ts-expect-error
 	entryForm: FormInstance<Record<string, unknown>>
-	/**
-	 * 是否禁用输入
-	 */
-	appConfig?: IDifyAppItem
 }
 
 /**
  * 应用输入表单
  */
 export default function AppInputForm(props: IAppInputFormProps) {
-	const { user_input_form, conversationId, entryForm, appConfig } = props
+	const { entryForm } = props
+	const { currentApp } = useAppContext()
 	const { currentConversationId, currentConversationInfo, setConversations } =
 		useConversationsContext()
 	const history = useHistory()
@@ -60,10 +45,10 @@ export default function AppInputForm(props: IAppInputFormProps) {
 	const { mode } = useDifyChat()
 	useEffect(() => {
 		entryForm.resetFields()
-	}, [conversationId])
+	}, [currentConversationId])
 
 	useEffect(() => {
-		// 如果已经填写了，那就不需要了
+		const user_input_form = currentApp?.parameters.user_input_form
 		if (!user_input_form?.length) {
 			setUserInputItems([])
 			return
@@ -90,8 +75,8 @@ export default function AppInputForm(props: IAppInputFormProps) {
 
 					// 解析正常且是新对话 或者允许更新对话参数，则写入 URL 参数
 					if (
-						(!error && isTempId(conversationId)) ||
-						appConfig?.inputParams?.enableUpdateAfterCvstStarts
+						(!error && isTempId(currentConversationId)) ||
+						currentApp?.config?.inputParams?.enableUpdateAfterCvstStarts
 					) {
 						// 新对话或者允许更新对话参数, 则更新表单值
 						entryForm.setFieldValue(originalProps.variable, data)
@@ -129,23 +114,23 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				history.push(`/chat${searchString}`)
 			}
 		}
-	}, [user_input_form, currentConversationInfo])
+	}, [currentApp?.parameters.user_input_form, currentConversationInfo])
 
 	/**
 	 * 是否禁用输入
 	 */
 	const disabled = useMemo(() => {
 		// 如果是临时对话，则允许输入
-		if (isTempId(conversationId)) {
+		if (isTempId(currentConversationId)) {
 			return false
 		}
 		// 否则取配置值
-		return !appConfig?.inputParams?.enableUpdateAfterCvstStarts
-	}, [conversationId])
+		return !currentApp?.config?.inputParams?.enableUpdateAfterCvstStarts
+	}, [currentConversationId])
 
 	return (
 		<>
-			{user_input_form?.length ? (
+			{currentApp?.parameters.user_input_form?.length ? (
 				<>
 					<Form
 						layout="vertical"

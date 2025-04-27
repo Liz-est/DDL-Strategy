@@ -1,17 +1,15 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
-import { DifyApi, IFile, IGetAppParametersResponse, IUploadFileResponse } from '@dify-chat/api'
+import { DifyApi, IFile, IUploadFileResponse } from '@dify-chat/api'
+import { useAppContext } from '@dify-chat/core'
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
 import { useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils'
 
 interface IMessageSenderProps {
-	/**
-	 * Dify 应用参数
-	 */
-	appParameters?: IGetAppParametersResponse
 	/**
 	 * 类名
 	 */
@@ -50,38 +48,33 @@ interface IMessageSenderProps {
  * 用户消息发送区
  */
 export const MessageSender = (props: IMessageSenderProps) => {
-	const {
-		isRequesting,
-		onSubmit,
-		className,
-		onCancel,
-		uploadFileApi,
-		audio2TextApi,
-		appParameters,
-	} = props
+	const { isRequesting, onSubmit, className, onCancel, uploadFileApi, audio2TextApi } = props
+	const { currentApp } = useAppContext()
 	const [content, setContent] = useState('')
 	const [open, setOpen] = useState(false)
 	const [files, setFiles] = useState<GetProp<AttachmentsProps, 'items'>>([])
 	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
 	const recordedChunks = useRef<Blob[]>([])
 	const [audio2TextLoading, setAudio2TextLoading] = useState(false)
+	const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
+	const senderRef = useRef<GetRef<typeof Sender>>(null)
 
 	const onChange = (value: string) => {
 		setContent(value)
 	}
 
 	const allowedFileTypes = useMemo(() => {
-		if (!appParameters?.file_upload) {
+		if (!currentApp?.parameters?.file_upload) {
 			return []
 		}
 		const result: string[] = []
-		appParameters.file_upload.allowed_file_types.forEach(item => {
+		currentApp.parameters.file_upload.allowed_file_types.forEach(item => {
 			if (FileTypeMap.get(item)) {
 				result.push(...((FileTypeMap.get(item) as string[]) || []))
 			}
 		})
 		return result
-	}, [appParameters?.file_upload])
+	}, [currentApp?.parameters?.file_upload])
 
 	const handleUpload = async (file: RcFile) => {
 		const prevFiles = [...files]
@@ -142,7 +135,6 @@ export const MessageSender = (props: IMessageSenderProps) => {
 		})
 	}
 
-	const senderRef = useRef<GetRef<typeof Sender>>(null)
 	const senderHeader = (
 		<Sender.Header
 			title="上传文件"
@@ -155,10 +147,10 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			}}
 		>
 			<Attachments
+				ref={attachmentsRef}
 				beforeUpload={async file => {
 					// 校验文件类型
 					// 自定义上传
-
 					const ext = getFileExtByName(file.name)
 					// 校验文件类型
 					if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
@@ -204,7 +196,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	return (
 		<Sender
 			allowSpeech={
-				appParameters?.speech_to_text.enabled
+				currentApp?.parameters?.speech_to_text.enabled
 					? {
 							recording,
 							onRecordingChange: async nextRecording => {
@@ -269,6 +261,18 @@ export const MessageSender = (props: IMessageSenderProps) => {
 			loading={isRequesting}
 			disabled={audio2TextLoading}
 			className={className}
+			onPasteFile={(firstFile, files) => {
+				if (files?.length > 1) {
+					message.warning('暂不支持一次性上传多个文件，请逐个上传')
+					return
+				}
+				// 如果附件面板是关闭状态，则打开
+				if (!open) {
+					// 强制更新 立即打开 Attachments 面板，以供获取 attachmentsRef
+					flushSync(() => setOpen(true))
+				}
+				attachmentsRef.current?.upload(firstFile)
+			}}
 			onSubmit={async content => {
 				if (!content) {
 					message.error('内容不能为空')

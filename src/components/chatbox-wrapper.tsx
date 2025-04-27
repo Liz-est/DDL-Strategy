@@ -1,14 +1,8 @@
 import { Prompts } from '@ant-design/x'
-import {
-	DifyApi,
-	IFile,
-	IGetAppInfoResponse,
-	IGetAppParametersResponse,
-	IMessageFileItem,
-} from '@dify-chat/api'
+import { DifyApi, IFile, IMessageFileItem } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { Chatbox } from '@dify-chat/components'
-import { IDifyAppItem } from '@dify-chat/core'
+import { useAppContext } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Spin } from 'antd'
@@ -20,18 +14,6 @@ import { useX } from '@/hooks/useX'
 import workflowDataStorage from '@/hooks/useX/workflow-data-storage'
 
 interface IChatboxWrapperProps {
-	/**
-	 * 应用信息
-	 */
-	appInfo?: IGetAppInfoResponse
-	/**
-	 * 应用参数
-	 */
-	appParameters?: IGetAppParametersResponse
-	/**
-	 * Dify 应用配置
-	 */
-	appConfig?: IDifyAppItem
 	/**
 	 * Dify API 实例
 	 */
@@ -49,10 +31,6 @@ interface IChatboxWrapperProps {
 	 */
 	onAddConversation: () => void
 	/**
-	 * 应用配置加载中
-	 */
-	appConfigLoading?: boolean
-	/**
 	 * 触发配置应用事件
 	 */
 	handleStartConfig?: () => void
@@ -63,14 +41,10 @@ interface IChatboxWrapperProps {
  */
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const {
-		appConfig,
-		appInfo,
-		appParameters,
 		difyApi,
 		conversationListLoading,
 		onAddConversation,
 		conversationItemsChangeCallback,
-		appConfigLoading,
 		handleStartConfig,
 	} = props
 	const {
@@ -79,6 +53,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setConversations,
 		currentConversationInfo,
 	} = useConversationsContext()
+	const { currentAppId, currentApp, appLoading } = useAppContext()
 
 	const [entryForm] = Form.useForm()
 	const abortRef = useRef(() => {})
@@ -94,7 +69,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	// 定义 ref, 用于获取最新的 conversationId
 	const latestProps = useLatest({
 		conversationId: currentConversationId,
-		appId: appConfig?.id,
+		appId: currentAppId,
 	})
 	const latestState = useLatest({
 		inputParams: currentConversationInfo?.inputs || {},
@@ -178,7 +153,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					feedback: item.feedback,
 					workflows:
 						workflowDataStorage.get({
-							appId: appConfig?.id || '',
+							appId: currentAppId || '',
 							conversationId,
 							messageId: item.id,
 							key: 'workflows',
@@ -195,7 +170,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setHistoryMessages(newMessages)
 		if (newMessages?.length) {
 			// 如果下一步问题建议已开启，则请求接口获取
-			if (appParameters?.suggested_questions_after_answer.enabled) {
+			if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
 				getNextSuggestions(newMessages[newMessages.length - 1].id)
 			}
 		}
@@ -206,11 +181,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		latestState,
 		filesRef,
 		getNextSuggestions,
-		appParameters,
 		abortRef,
 		getConversationMessages,
 		onConversationIdChange: id => {
-			console.log('setCurrentConversationId: agent', id)
 			setCurrentConversationId(id)
 			conversationItemsChangeCallback()
 		},
@@ -244,14 +217,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}
 
 	const isFormFilled = useMemo(() => {
-		if (!appParameters?.user_input_form?.length) {
+		if (!currentApp?.parameters?.user_input_form?.length) {
 			return true
 		}
-		return appParameters.user_input_form.every(item => {
+		return currentApp?.parameters.user_input_form.every(item => {
 			const fieldInfo = Object.values(item)[0]
 			return !!currentConversationInfo?.inputs?.[fieldInfo.variable]
 		})
-	}, [appParameters, currentConversationInfo])
+	}, [currentApp?.parameters, currentConversationInfo])
 
 	const onSubmit = (
 		nextContent: string,
@@ -282,7 +255,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	}, [messages])
 
 	// 如果应用配置 / 对话列表加载中，则展示 loading
-	if (conversationListLoading || appConfigLoading) {
+	if (conversationListLoading || appLoading) {
 		return (
 			<div className="w-full h-full flex items-center justify-center">
 				<Spin spinning />
@@ -290,7 +263,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		)
 	}
 
-	if (!appConfig) {
+	if (!currentApp) {
 		return (
 			<div className="w-full h-full flex items-center justify-center">
 				<Empty description="请先配置 Dify 应用">
@@ -316,10 +289,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 				{currentConversationId ? (
 					<Chatbox
-						appInfo={appInfo}
-						appConfig={appConfig!}
 						conversationId={currentConversationId!}
-						appParameters={appParameters}
 						nextSuggestions={nextSuggestions}
 						messageItems={[...historyMessages, ...unStoredMessages4Render]}
 						isRequesting={agent.isRequesting()}

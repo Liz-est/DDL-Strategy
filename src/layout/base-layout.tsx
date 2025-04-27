@@ -1,25 +1,20 @@
-import { MenuOutlined, PlusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import {
+	EditOutlined,
+	MenuOutlined,
+	MinusCircleOutlined,
+	PlusCircleOutlined,
+	PlusOutlined,
+} from '@ant-design/icons'
 import { XProvider } from '@ant-design/x'
-import {
-	createDifyApiInstance,
-	DifyApi,
-	IConversationItem,
-	IGetAppInfoResponse,
-	IGetAppParametersResponse,
-} from '@dify-chat/api'
+import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppInfo, ConversationList } from '@dify-chat/components'
-import {
-	ConversationsContextProvider,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-} from '@dify-chat/core'
-import { useDifyChat } from '@dify-chat/core'
+import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Dropdown, Empty, message, Spin } from 'antd'
+import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Spin } from 'antd'
 import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
@@ -51,34 +46,19 @@ interface IBaseLayoutProps {
 	 */
 	renderRightHeader?: () => React.ReactNode
 	/**
-	 * 获取当前应用配置
-	 */
-	appConfig: IDifyAppItem
-	/**
-	 * 初始化应用信息
-	 */
-	useAppInit: (difyApi: DifyApi, callback: () => void) => void
-	/**
-	 * 触发配置应用事件
-	 */
-	handleStartConfig: () => void
-	/**
 	 * 是否正在加载应用配置
 	 */
 	initLoading: boolean
+	/**
+	 * Dify API 实例
+	 */
+	difyApi: DifyApi
 }
 
 const BaseLayout = (props: IBaseLayoutProps) => {
-	const {
-		extComponents,
-		appConfig,
-		useAppInit,
-		renderCenterTitle,
-		handleStartConfig,
-		initLoading,
-	} = props
-	const { ...difyChatContext } = useDifyChat()
-
+	const { extComponents, renderCenterTitle, initLoading, difyApi } = props
+	const { appLoading, currentApp } = useAppContext()
+	const [renameForm] = Form.useForm()
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
 	const [currentConversationId, setCurrentConversationId] = useState<string>('')
 	const currentConversationInfo = useMemo(() => {
@@ -86,65 +66,33 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 	}, [conversations, currentConversationId])
 	const isMobile = useIsMobile()
 
-	const { user } = difyChatContext as IDifyChatContextMultiApp
 	// 创建 Dify API 实例
 	const { styles } = useStyle()
-	const [difyApi] = useState(
-		createDifyApiInstance({
-			user,
-			apiBase: '',
-			apiKey: '',
-		}),
-	)
 	const searchParams = useSearchParams()
 	const [conversationListLoading, setCoversationListLoading] = useState<boolean>(false)
-	const [appInfo, setAppInfo] = useState<IGetAppInfoResponse>()
-	const [appParameters, setAppParameters] = useState<IGetAppParametersResponse>()
-	const [appConfigLoading, setAppConfigLoading] = useState(false)
 	const latestCurrentConversationId = useLatest(currentConversationId)
 
-	const initAppInfo = async () => {
-		setAppInfo(undefined)
-		if (!difyApi) {
+	useEffect(() => {
+		console.log('currentApp?.config change', currentApp?.config)
+		if (!currentApp?.config) {
 			return
 		}
-		setAppConfigLoading(true)
-		// 获取应用信息
-		try {
-			const baseInfo = await difyApi.getAppInfo()
-			setAppInfo({
-				...baseInfo,
-			})
-			const appParameters = await difyApi.getAppParameters()
-			setAppParameters(appParameters)
-		} catch (error) {
-			console.error('获取应用信息错误', error)
-			return Promise.reject(error)
-		} finally {
-			setAppConfigLoading(false)
-		}
-	}
-
-	useAppInit(difyApi, () => {
+		console.log('即将开始获取对话列表', difyApi.options)
 		setConversations([])
 		setCurrentConversationId('')
-		setAppInfo(undefined)
-		initAppInfo().then(() => {
-			getConversationItems().then(() => {
-				const isNewConversation = searchParams.get('isNewCvst') === '1'
-				if (isNewConversation) {
-					onAddConversation()
-				}
-			})
+		getConversationItems().then(() => {
+			const isNewConversation = searchParams.get('isNewCvst') === '1'
+			if (isNewConversation) {
+				onAddConversation()
+			}
 		})
-	})
-
-	console.log('currentConversationId in render', currentConversationId)
+	}, [currentApp?.config])
 
 	/**
 	 * 获取对话列表
 	 */
 	const getConversationItems = async (showLoading = true) => {
+		console.log('getConversationItems', showLoading)
 		if (showLoading) {
 			setCoversationListLoading(true)
 		}
@@ -182,18 +130,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 		const newKey = `temp_${Math.random()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
 		setConversations(prev => {
-			console.log('setConversations: onAddConversation', [
-				{
-					id: newKey,
-					name: DEFAULT_CONVERSATION_NAME,
-					created_at: dayjs().valueOf(),
-					inputs: {},
-					introduction: '',
-					status: 'normal',
-					updated_at: dayjs().valueOf(),
-				},
-				...prev,
-			])
+			console.log('setConversations: onAddConversation', prev)
 			return [
 				{
 					id: newKey,
@@ -204,12 +141,163 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 					status: 'normal',
 					updated_at: dayjs().valueOf(),
 				},
-				...prev,
+				...(prev || []),
 			]
 		})
 		console.log('setCurrentConversationId: onAddConversation', newKey)
 		setCurrentConversationId(newKey)
 	}
+
+	/**
+	 * 重命名对话
+	 */
+	const onRenameConversation = async (conversationId: string, name: string) => {
+		await difyApi?.renameConversation({
+			conversation_id: conversationId,
+			name,
+		})
+		getConversationItems()
+	}
+
+	/**
+	 * 重命名会话
+	 * @param conversation 会话对象
+	 */
+	const handleRenameConversation = () => {
+		renameForm.setFieldsValue({
+			name: currentConversationInfo?.name,
+		})
+		Modal.confirm({
+			centered: true,
+			destroyOnClose: true,
+			title: '编辑对话名称',
+			content: (
+				<Form
+					form={renameForm}
+					className="mt-3"
+				>
+					<Form.Item name="name">
+						<Input placeholder="请输入" />
+					</Form.Item>
+				</Form>
+			),
+			onOk: async () => {
+				await renameForm.validateFields()
+				const values = await renameForm.validateFields()
+				await onRenameConversation(currentConversationId, values.name)
+				message.success('对话重命名成功')
+			},
+		})
+	}
+
+	/**
+	 * 删除对话
+	 */
+	const onDeleteConversation = async (conversationId: string) => {
+		console.log('onDeleteConversation', conversationId, isTempId(conversationId))
+		if (isTempId(conversationId)) {
+			setConversations(prev => {
+				const newConversations = prev.filter(item => item.id !== conversationId)
+				// 删除当前对话
+				if (conversationId === currentConversationId) {
+					// 如果列表不为空，则选择第一个作为当前对话
+					if (newConversations.length) {
+						setCurrentConversationId(newConversations[0].id)
+					} else {
+						// 如果列表为空，则创建一个新的临时对话
+						onAddConversation()
+					}
+				}
+				return newConversations
+			})
+		} else {
+			await difyApi?.deleteConversation(conversationId)
+			if (conversationId === currentConversationId) {
+				setCurrentConversationId('')
+			}
+			getConversationItems()
+			return Promise.resolve()
+		}
+	}
+
+	const mobileMenuItems: GetProp<typeof Dropdown, 'menu'>['items'] = useMemo(() => {
+		const actionMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				key: 'add_conversation',
+				icon: <PlusCircleOutlined />,
+				label: '新增对话',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					onAddConversation()
+				},
+			},
+			{
+				key: 'add_conversation',
+				icon: <EditOutlined />,
+				label: '编辑对话名称',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					handleRenameConversation()
+				},
+			},
+			{
+				key: 'delete_conversation',
+				icon: <MinusCircleOutlined />,
+				label: '删除当前对话',
+				disabled: isTempId(currentConversationId),
+				danger: true,
+				onClick: () => {
+					Modal.confirm({
+						centered: true,
+						title: '确定删除当前对话？',
+						content: '删除后，聊天记录将不可恢复。',
+						okText: '删除',
+						cancelText: '取消',
+						onOk: async () => {
+							// 执行删除操作
+							await onDeleteConversation(currentConversationId)
+							message.success('删除成功')
+						},
+					})
+				},
+			},
+			{
+				type: 'divider',
+			},
+		]
+
+		const conversationListMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				type: 'group',
+				label: '对话列表',
+				children: conversations?.length
+					? conversations.map(item => {
+							return {
+								key: item.id,
+								label: item.name,
+								onClick: () => {
+									setCurrentConversationId(item.id)
+								},
+							}
+						})
+					: [
+							{
+								key: 'no_conversation',
+								label: '暂无对话',
+								disabled: true,
+							},
+						],
+			},
+		]
+
+		if (isTempId(currentConversationId)) {
+			return [...conversationListMenus]
+		}
+
+		return [...actionMenus, ...conversationListMenus]
+	}, [currentConversationId, conversations])
+
+	console.log('currentApp in render', currentApp)
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
@@ -227,45 +315,14 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 				>
 					{/* 头部 */}
 					<HeaderLayout
-						title={renderCenterTitle?.(appInfo)}
+						title={renderCenterTitle?.(currentApp?.config?.info)}
 						rightIcon={
 							isMobile ? (
 								<Dropdown
 									menu={{
-										items: [
-											{
-												key: 'add_conversation',
-												icon: <PlusCircleOutlined />,
-												label: '新建对话',
-												onClick: () => {
-													onAddConversation()
-												},
-											},
-											{
-												type: 'divider',
-											},
-											{
-												type: 'group',
-												label: '历史对话',
-												children: conversations?.length
-													? conversations.map(item => {
-															return {
-																key: item.id,
-																label: item.name,
-																onClick: () => {
-																	setCurrentConversationId(item.id)
-																},
-															}
-														})
-													: [
-															{
-																key: 'no_conversation',
-																label: '暂无历史对话',
-																disabled: true,
-															},
-														],
-											},
-										],
+										className: '!pb-3 w-[50vw]',
+										activeKey: currentConversationId,
+										items: mobileMenuItems,
 									}}
 								>
 									<MenuOutlined className="text-xl" />
@@ -276,19 +333,19 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 
 					{/* Main */}
 					<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
-						{appConfigLoading || initLoading ? (
+						{appLoading || initLoading ? (
 							<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
 								<Spin spinning />
 							</div>
-						) : appConfig ? (
+						) : currentApp?.config ? (
 							<>
 								{/* 左侧对话列表 */}
 								<div
 									className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-[#eff0f5]`}
 								>
-									{appInfo ? <AppInfo info={appInfo!} /> : null}
+									{currentApp.config.info ? <AppInfo info={currentApp.config.info!} /> : null}
 									{/* 添加会话 */}
-									{appConfig ? (
+									{currentApp ? (
 										<Button
 											onClick={() => {
 												onAddConversation()
@@ -304,40 +361,8 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 										<Spin spinning={conversationListLoading}>
 											{conversations?.length ? (
 												<ConversationList
-													renameConversationPromise={async (
-														conversationId: string,
-														name: string,
-													) => {
-														await difyApi?.renameConversation({
-															conversation_id: conversationId,
-															name,
-														})
-														getConversationItems()
-													}}
-													deleteConversationPromise={async (conversationId: string) => {
-														if (isTempId(conversationId)) {
-															setConversations(prev => {
-																const newConversations = prev.filter(
-																	item => item.id !== conversationId,
-																)
-																if (
-																	conversationId === currentConversationId &&
-																	newConversations.length
-																) {
-																	console.log(
-																		'setCurrentConversationId: deleteConversationPromise',
-																		newConversations[0].id,
-																	)
-																	setCurrentConversationId(newConversations[0].id)
-																}
-																return newConversations
-															})
-														} else {
-															await difyApi?.deleteConversation(conversationId)
-															getConversationItems()
-															return Promise.resolve()
-														}
-													}}
+													renameConversationPromise={onRenameConversation}
+													deleteConversationPromise={onDeleteConversation}
 													items={conversations.map(item => {
 														return {
 															key: item.id,
@@ -364,11 +389,7 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 								{/* 右侧聊天窗口 - 移动端全屏 */}
 								<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 									<ChatboxWrapper
-										appConfig={appConfig}
-										appConfigLoading={appConfigLoading}
-										appInfo={appInfo}
 										difyApi={difyApi}
-										appParameters={appParameters}
 										conversationListLoading={conversationListLoading}
 										onAddConversation={onAddConversation}
 										conversationItemsChangeCallback={() => getConversationItems(false)}
@@ -378,17 +399,9 @@ const BaseLayout = (props: IBaseLayoutProps) => {
 						) : (
 							<div className="w-full h-full flex items-center justify-center">
 								<Empty
-									description="暂无 Dify 应用配置"
+									description="暂无 Dify 应用配置，请联系管理员"
 									className="text-base"
-								>
-									<Button
-										size="large"
-										type="primary"
-										onClick={handleStartConfig}
-									>
-										开始配置
-									</Button>
-								</Empty>
+								/>
 							</div>
 						)}
 					</div>
