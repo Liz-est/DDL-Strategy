@@ -9,6 +9,7 @@ import {
 	SmileOutlined,
 } from '@ant-design/icons'
 import { Prompts, Welcome } from '@ant-design/x'
+import { DifyApi } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { Button, FormInstance, GetProp, message, Space } from 'antd'
@@ -17,7 +18,6 @@ import { useMemo } from 'react'
 
 import { validateAndGenErrMsgs } from '../utils'
 import AppInputWrapper from './app-input-wrapper'
-import { DifyApi } from '@dify-chat/api'
 
 const renderTitle = (icon: React.ReactElement, title: string) => (
 	<Space align="start">
@@ -109,12 +109,12 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 		if (currentApp?.parameters?.suggested_questions?.length) {
 			return [
 				{
-					key: 'remote',
+					key: 'suggested_question',
 					label: renderTitle(<FireOutlined style={{ color: '#FF4D4F' }} />, 'Hot Topics'),
 					description: 'What are you interested in?',
-					children: currentApp.parameters.suggested_questions.map(item => {
+					children: currentApp.parameters.suggested_questions.map((item, index) => {
 						return {
-							key: 'remote',
+							key: `suggested_question-${index}`,
 							description: item,
 						}
 					}),

@@ -1,35 +1,76 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, GetProp, message, Upload } from "antd";
-import { FileTypeMap, getFileExtByName, getFileTypeByName } from "../../message-sender/utils";
-import { useEffect, useMemo, useState } from "react";
-import { DifyApi, IGetAppParametersResponse } from "@dify-chat/api";
-import { RcFile, UploadFile } from "antd/es/upload";
+import { UploadOutlined } from '@ant-design/icons'
+import { DifyApi, IGetAppParametersResponse } from '@dify-chat/api'
+import { Button, GetProp, message, Upload } from 'antd'
+import { RcFile, UploadFile } from 'antd/es/upload'
+import { useEffect, useMemo, useState } from 'react'
 
-interface IFileUploadProps {
-	value?: UploadFile[]
-	onChange?: (files: UploadFile[]) => void;
+import { FileTypeMap, getFileExtByName, getFileTypeByName } from '../../message-sender/utils'
+
+interface IFileUploadCommonProps {
 	allowed_file_types: IGetAppParametersResponse['file_upload']['allowed_file_types']
 	uploadFileApi: DifyApi['uploadFile']
+	disabled?: boolean
+	maxCount: number
 }
 
+interface IFileUploadSingleProps extends IFileUploadCommonProps {
+	value?: UploadFile
+	onChange?: (file: UploadFile) => void
+	mode: 'single'
+}
+
+interface IFileUploadMultipleProps extends IFileUploadCommonProps {
+	value?: UploadFile[]
+	onChange?: (files: UploadFile[]) => void
+	mode: 'multiple'
+}
+
+type IFileUploadProps = IFileUploadSingleProps | IFileUploadMultipleProps
+
 export default function FileUpload(props: IFileUploadProps) {
-
-	const { allowed_file_types, uploadFileApi, value, onChange } = props
+	const {
+		mode = 'multiple',
+		maxCount,
+		disabled,
+		allowed_file_types,
+		uploadFileApi,
+		value,
+		onChange,
+	} = props
 	const [files, setFiles] = useState<GetProp<typeof Upload, 'fileList'>>([])
-	const [fileIdMap, setFileIdMap] = useState<Map<string, string>>(new Map())
 
-	useEffect(()=>{
-		if (value?.length) {
-			setFiles(value)
+	useEffect(() => {
+		if (mode === 'single') {
+			setFiles(value ? [value as UploadFile] : [])
+		} else {
+			const multiModeValues = value as UploadFile[] | undefined
+			if (multiModeValues?.length && multiModeValues?.length !== files.length) {
+				setFiles(multiModeValues)
+			}
 		}
 	}, [value])
 
-	console.log('files', files, 'value', value)
+	const formatFiles = (files: UploadFile[]) => {
+		return files?.map(file => {
+			const fileType = getFileTypeByName(file.name)
+			return {
+				...file,
+				type: fileType,
+			}
+		})
+	}
 
-	const updateFiles = (files: RcFile[]) => {
-		console.log('updateFiles', files)
-		setFiles(files)
-		onChange?.(files)
+	const updateFiles = (newFiles: UploadFile[]) => {
+		console.log('updateFiles', newFiles)
+		const formattedNewFiles = formatFiles(newFiles)
+		const newFilesState = mode === 'single' ? formattedNewFiles : [...files, ...formattedNewFiles]
+		setFiles(newFilesState)
+		console.log('触发 onChange', formattedNewFiles)
+		if (mode === 'single') {
+			onChange?.(newFilesState[0] as UploadFile)
+		} else {
+			onChange?.(newFilesState as UploadFile[])
+		}
 	}
 
 	const allowedFileTypes = useMemo(() => {
@@ -61,7 +102,6 @@ export default function FileUpload(props: IFileUploadProps) {
 		const mockLoadingProgress = () => {
 			let percent = 0
 			updateFiles([
-				...prevFiles,
 				{
 					...fileBaseInfo,
 					percent: percent,
@@ -74,7 +114,6 @@ export default function FileUpload(props: IFileUploadProps) {
 				}
 				percent = percent + 1
 				updateFiles([
-					...prevFiles,
 					{
 						...fileBaseInfo,
 						percent,
@@ -91,7 +130,6 @@ export default function FileUpload(props: IFileUploadProps) {
 		clear()
 		const fileType = getFileTypeByName(file.name)
 		updateFiles([
-			...prevFiles,
 			{
 				...fileBaseInfo,
 				upload_file_id: result.id,
@@ -100,27 +138,27 @@ export default function FileUpload(props: IFileUploadProps) {
 				status: 'done',
 			},
 		])
-		setFileIdMap(prevMap => {
-			const nextMap = new Map(prevMap)
-			nextMap.set(file.uid, result.id)
-			return nextMap
-		})
 	}
 
 	return (
-		<Upload beforeUpload={async file => {
-			// 校验文件类型
-			// 自定义上传
-			const ext = getFileExtByName(file.name)
-			// 校验文件类型
-			if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
-				message.error(`不支持的文件类型: ${ext}`)
-				return false
-			}
+		<Upload
+			maxCount={mode === 'single' ? 1 : maxCount}
+			disabled={disabled}
+			fileList={files}
+			beforeUpload={async file => {
+				// 校验文件类型
+				// 自定义上传
+				const ext = getFileExtByName(file.name)
+				// 校验文件类型
+				if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
+					message.error(`不支持的文件类型: ${ext}`)
+					return false
+				}
 
-			handleUpload(file)
-			return false
-		}}>
+				handleUpload(file)
+				return false
+			}}
+		>
 			<Button icon={<UploadOutlined />}>Click to Upload</Button>
 		</Upload>
 	)

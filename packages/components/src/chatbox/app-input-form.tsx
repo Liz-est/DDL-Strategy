@@ -3,9 +3,19 @@ import { DifyApi, IUserInputFormItemType, IUserInputFormItemValueBase } from '@d
 import { useAppContext, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
-import { Button, Form, FormInstance, FormItemProps, Input, InputNumber, message, Select, Upload } from 'antd'
+import {
+	Button,
+	Form,
+	FormInstance,
+	FormItemProps,
+	Input,
+	InputNumber,
+	message,
+	Select,
+} from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
+
 import FileUpload from './form-controls/file-upload'
 
 export type IConversationEntryFormItem = FormItemProps &
@@ -91,10 +101,28 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						)
 					}
 				} else {
-					entryForm.setFieldValue(
-						originalProps.variable,
-						currentConversationInfo?.inputs?.[originalProps.variable],
-					)
+					console.log('更新值?', originalProps.variable, currentConversationInfo)
+					let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
+					if (originalProps.type === 'file-list') {
+						fieldValue = fieldValue?.map(file => ({
+							...file,
+							name: file.name || file.filename,
+							url: file.url || file.remote_url,
+							status: file.status || 'done',
+							upload_file_id: file.upload_file_id || file.related_id,
+						}))
+					} else if (originalProps.type === 'file') {
+						if (fieldValue) {
+							fieldValue = {
+								...fieldValue,
+								name: fieldValue.name || fieldValue.filename,
+								url: fieldValue.url || fieldValue.remote_url,
+								status: fieldValue.status || 'done',
+								upload_file_id: fieldValue.upload_file_id || fieldValue.related_id,
+							}
+						}
+					}
+					entryForm.setFieldValue(originalProps.variable, fieldValue)
 				}
 				if (originalProps.required) {
 					baseProps.required = true
@@ -165,11 +193,11 @@ export default function AppInputForm(props: IAppInputFormProps) {
 										rules={
 											item.required
 												? [
-													{
-														required: true,
-														message: `${item.label}不能为空`,
-													},
-												]
+														{
+															required: true,
+															message: `${item.label}不能为空`,
+														},
+													]
 												: []
 										}
 									>
@@ -204,14 +232,37 @@ export default function AppInputForm(props: IAppInputFormProps) {
 												disabled={disabled}
 												className="w-full"
 											/>
-										) : item.type === 'file-list' ?
-											<FileUpload allowed_file_types={item.allowed_file_types
-											} uploadFileApi={uploadFileApi}>
-												<Button icon={<UploadOutlined />}>Click to Upload</Button>
+										) : item.type === 'file' ? (
+											<FileUpload
+												mode="single"
+												disabled={disabled}
+												allowed_file_types={item.allowed_file_types}
+												uploadFileApi={uploadFileApi}
+											>
+												<Button
+													disabled={disabled}
+													icon={<UploadOutlined />}
+												>
+													Click to Upload
+												</Button>
 											</FileUpload>
-											: (
-												`暂不支持的控件类型: ${item.type}`
-											)}
+										) : item.type === 'file-list' ? (
+											<FileUpload
+												maxCount={item.max_length!}
+												disabled={disabled}
+												allowed_file_types={item.allowed_file_types}
+												uploadFileApi={uploadFileApi}
+											>
+												<Button
+													disabled={disabled}
+													icon={<UploadOutlined />}
+												>
+													Click to Upload
+												</Button>
+											</FileUpload>
+										) : (
+											`暂不支持的控件类型: ${item.type}`
+										)}
 									</Form.Item>
 								)
 							})}
