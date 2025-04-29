@@ -34,11 +34,11 @@ export const getFileExtByName = (filename: string) => {
 	return filename.split('.').pop()
 }
 
-export const getFileTypeByName = (filename: string) => {
+export const getFileTypeByName = (filename: string): string => {
 	const ext = filename.split('.').pop()
 
 	// 使用文件扩展名和 FileTypeMap 进行匹配
-	let fileType = null
+	let fileType = ''
 	FileTypeMap.forEach((extensions, type) => {
 		if (extensions.indexOf(ext as string) > -1) {
 			fileType = type

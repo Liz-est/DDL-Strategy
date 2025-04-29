@@ -1,25 +1,15 @@
-import { UploadOutlined } from '@ant-design/icons'
 import { DifyApi, IUserInputFormItemType, IUserInputFormItemValueBase } from '@dify-chat/api'
 import { useAppContext, useDifyChat } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
-import {
-	Button,
-	Form,
-	FormInstance,
-	FormItemProps,
-	Input,
-	InputNumber,
-	message,
-	Select,
-} from 'antd'
+import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import FileUpload from './form-controls/file-upload'
+import FileUpload, { IUploadFileItem } from './form-controls/file-upload'
 
 export type IConversationEntryFormItem = FormItemProps &
-	Pick<IUserInputFormItemValueBase, 'options' | 'max_length'> & {
+	Pick<IUserInputFormItemValueBase, 'options' | 'max_length' | 'allowed_file_types'> & {
 		type: IUserInputFormItemType
 	}
 
@@ -104,7 +94,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 					console.log('更新值?', originalProps.variable, currentConversationInfo)
 					let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
 					if (originalProps.type === 'file-list') {
-						fieldValue = fieldValue?.map(file => ({
+						fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
 							...file,
 							name: file.name || file.filename,
 							url: file.url || file.remote_url,
@@ -113,13 +103,15 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						}))
 					} else if (originalProps.type === 'file') {
 						if (fieldValue) {
+							const { name, filename, url, remote_url, upload_file_id, related_id, status } =
+								fieldValue as IUploadFileItem
 							fieldValue = {
 								...fieldValue,
-								name: fieldValue.name || fieldValue.filename,
-								url: fieldValue.url || fieldValue.remote_url,
-								status: fieldValue.status || 'done',
-								upload_file_id: fieldValue.upload_file_id || fieldValue.related_id,
-							}
+								name: name || filename,
+								url: url || remote_url,
+								status: status || 'done',
+								upload_file_id: upload_file_id || related_id,
+							} as IUploadFileItem
 						}
 					}
 					entryForm.setFieldValue(originalProps.variable, fieldValue)
@@ -236,21 +228,14 @@ export default function AppInputForm(props: IAppInputFormProps) {
 											<FileUpload
 												mode="single"
 												disabled={disabled}
-												allowed_file_types={item.allowed_file_types}
+												allowed_file_types={item.allowed_file_types || []}
 												uploadFileApi={uploadFileApi}
-											>
-												<Button
-													disabled={disabled}
-													icon={<UploadOutlined />}
-												>
-													Click to Upload
-												</Button>
-											</FileUpload>
+											/>
 										) : item.type === 'file-list' ? (
 											<FileUpload
 												maxCount={item.max_length!}
 												disabled={disabled}
-												allowed_file_types={item.allowed_file_types}
+												allowed_file_types={item.allowed_file_types || []}
 												uploadFileApi={uploadFileApi}
 											/>
 										) : (

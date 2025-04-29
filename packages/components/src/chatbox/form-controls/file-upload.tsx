@@ -6,23 +6,32 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { FileTypeMap, getFileExtByName, getFileTypeByName } from '../../message-sender/utils'
 
+export interface IUploadFileItem extends UploadFile {
+	type?: string
+	transfer_method?: 'local_file' | 'remote_url'
+	upload_file_id?: string
+	related_id?: string
+	remote_url?: string
+	filename?: string
+}
+
 interface IFileUploadCommonProps {
 	allowed_file_types: IGetAppParametersResponse['file_upload']['allowed_file_types']
 	uploadFileApi: DifyApi['uploadFile']
 	disabled?: boolean
-	maxCount: number
+	maxCount?: number
 }
 
 interface IFileUploadSingleProps extends IFileUploadCommonProps {
-	value?: UploadFile
-	onChange?: (file: UploadFile) => void
+	value?: IUploadFileItem
+	onChange?: (file: IUploadFileItem) => void
 	mode: 'single'
 }
 
 interface IFileUploadMultipleProps extends IFileUploadCommonProps {
-	value?: UploadFile[]
-	onChange?: (files: UploadFile[]) => void
-	mode: 'multiple'
+	value?: IUploadFileItem[]
+	onChange?: (files: IUploadFileItem[]) => void
+	mode?: 'multiple'
 }
 
 type IFileUploadProps = IFileUploadSingleProps | IFileUploadMultipleProps
@@ -41,16 +50,16 @@ export default function FileUpload(props: IFileUploadProps) {
 
 	useEffect(() => {
 		if (mode === 'single') {
-			setFiles(value ? [value as UploadFile] : [])
+			setFiles(value ? [value as IUploadFileItem] : [])
 		} else {
-			const multiModeValues = value as UploadFile[] | undefined
+			const multiModeValues = value as IUploadFileItem[] | undefined
 			if (multiModeValues?.length && multiModeValues?.length !== files.length) {
 				setFiles(multiModeValues)
 			}
 		}
 	}, [value])
 
-	const formatFiles = (files: UploadFile[]) => {
+	const formatFiles = (files: IUploadFileItem[]) => {
 		return files?.map(file => {
 			const fileType = getFileTypeByName(file.name)
 			return {
@@ -60,16 +69,19 @@ export default function FileUpload(props: IFileUploadProps) {
 		})
 	}
 
-	const updateFiles = (newFiles: UploadFile[]) => {
-		console.log('updateFiles', newFiles)
+	const updateFiles = (newFiles: IUploadFileItem[], action: 'update' | 'remove' = 'update') => {
 		const formattedNewFiles = formatFiles(newFiles)
-		const newFilesState = mode === 'single' ? formattedNewFiles : [...files, ...formattedNewFiles]
+		const newFilesState =
+			mode === 'single'
+				? formattedNewFiles
+				: action === 'remove'
+					? newFiles
+					: [...files, ...formattedNewFiles]
 		setFiles(newFilesState)
-		console.log('触发 onChange', formattedNewFiles)
 		if (mode === 'single') {
-			onChange?.(newFilesState[0] as UploadFile)
+			;(onChange as IFileUploadSingleProps['onChange'])?.(newFilesState[0])
 		} else {
-			onChange?.(newFilesState as UploadFile[])
+			;(onChange as IFileUploadMultipleProps['onChange'])?.(newFilesState)
 		}
 	}
 
@@ -87,7 +99,7 @@ export default function FileUpload(props: IFileUploadProps) {
 		const prevFiles = [...files]
 		console.log('handleUpload', prevFiles)
 
-		const fileBaseInfo: GetProp<typeof Upload, 'fileList'>[number] = {
+		const fileBaseInfo: IUploadFileItem = {
 			uid: file.uid,
 			name: file.name,
 			status: 'uploading',
@@ -95,7 +107,6 @@ export default function FileUpload(props: IFileUploadProps) {
 			type: file.type,
 			originFileObj: file,
 			transfer_method: 'local_file',
-			// upload_file_id: fileIdMap.get(file.uid) as string,
 		}
 
 		// 模拟上传进度
@@ -157,6 +168,12 @@ export default function FileUpload(props: IFileUploadProps) {
 
 				handleUpload(file)
 				return false
+			}}
+			onRemove={file => {
+				updateFiles(
+					files.filter(item => item.uid !== file.uid),
+					'remove',
+				)
 			}}
 		>
 			<Button
