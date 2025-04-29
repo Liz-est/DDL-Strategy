@@ -10,6 +10,10 @@ const tsconfigProdPath = path.resolve(__dirname, './tsconfig.prod.json')
 export default defineConfig({
 	source: {
 		tsconfigPath: process.env.NODE_ENV === 'development' ? tsconfigDevPath : tsconfigProdPath,
+		include: [{ not: /[\\/]core-js[\\/]/ }],
+	},
+	output: {
+		polyfill: 'entry',
 	},
 	html: {
 		template: path.resolve(__dirname, './public/template.html'),
