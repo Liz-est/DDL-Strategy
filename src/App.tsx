@@ -5,7 +5,7 @@ import { useMount } from 'ahooks'
 import { BrowserRouter, type IRoute } from 'pure-react-router'
 import { useState } from 'react'
 
-import './app.css'
+import './App.css'
 import LayoutIndex from './layout'
 import AppListPage from './pages/app-list'
 import ChatPage from './pages/chat'
