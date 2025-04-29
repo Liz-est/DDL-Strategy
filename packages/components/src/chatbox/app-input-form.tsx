@@ -252,14 +252,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 												disabled={disabled}
 												allowed_file_types={item.allowed_file_types}
 												uploadFileApi={uploadFileApi}
-											>
-												<Button
-													disabled={disabled}
-													icon={<UploadOutlined />}
-												>
-													Click to Upload
-												</Button>
-											</FileUpload>
+											/>
 										) : (
 											`暂不支持的控件类型: ${item.type}`
 										)}

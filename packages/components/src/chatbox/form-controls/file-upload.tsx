@@ -159,7 +159,12 @@ export default function FileUpload(props: IFileUploadProps) {
 				return false
 			}}
 		>
-			<Button icon={<UploadOutlined />}>Click to Upload</Button>
+			<Button
+				disabled={disabled}
+				icon={<UploadOutlined />}
+			>
+				Click to Upload
+			</Button>
 		</Upload>
 	)
 }
