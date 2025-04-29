@@ -180,7 +180,7 @@ export default function FileUpload(props: IFileUploadProps) {
 				disabled={disabled}
 				icon={<UploadOutlined />}
 			>
-				Click to Upload
+				点击上传
 			</Button>
 		</Upload>
 	)
