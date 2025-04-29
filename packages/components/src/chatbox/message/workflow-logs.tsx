@@ -108,7 +108,7 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 			<Collapse
 				items={collapseItems}
 				size="small"
-				className="bg-white"
+				className="!bg-white"
 			/>
 		</div>
 	)

@@ -21,7 +21,6 @@ import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 import { colors } from '@/theme/config'
 
-import './../App.css'
 import HeaderLayout from './header'
 
 const useStyle = createStyles(({ token, css }) => {
