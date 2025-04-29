@@ -80,7 +80,7 @@ export const ConversationList = (props: IConversationListProps) => {
 
 	return (
 		<Conversations
-			className="p-0"
+			className="!p-0"
 			items={items}
 			activeKey={activeKey}
 			onActiveChange={onActiveChange}
