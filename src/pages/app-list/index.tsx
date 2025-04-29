@@ -156,7 +156,7 @@ export default function AppListPage() {
 				<Button
 					type="primary"
 					size="large"
-					className="absolute w-4/5 md:w-96 box-border bottom-4 left-1/2 rounded-3xl"
+					className="!absolute w-4/5 md:!w-96 box-border bottom-4 left-1/2 !rounded-3xl"
 					style={{
 						transform: 'translateX(-50%)',
 					}}
