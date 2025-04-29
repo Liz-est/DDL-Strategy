@@ -27,7 +27,7 @@ export interface IUserInputFormItemValueBase {
 	 */
 	max_length?: number
 	type: IUserInputFormItemType
-	allowed_file_types: IFileType[]
+	allowed_file_types?: IFileType[]
 }
 
 /**
