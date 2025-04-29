@@ -28,7 +28,7 @@ export function AppInfo(props: IAppInfoProps) {
 						return (
 							<Tag
 								key={tag}
-								className="mb-2"
+								className="!mb-2"
 							>
 								{tag}
 							</Tag>
