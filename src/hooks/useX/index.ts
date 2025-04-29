@@ -50,9 +50,10 @@ export const useX = (options: {
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
+			const inputs = message?.inputs || entryForm.getFieldsValue() || {}
 			// 发送消息
 			const response = await difyApi.sendMessage({
-				inputs: message?.inputs || entryForm.getFieldsValue() || {},
+				inputs,
 				conversation_id: !isTempId(latestProps.current.conversationId)
 					? latestProps.current.conversationId
 					: undefined,

@@ -9,6 +9,7 @@ import {
 	SmileOutlined,
 } from '@ant-design/icons'
 import { Prompts, Welcome } from '@ant-design/x'
+import { DifyApi } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { Button, FormInstance, GetProp, message, Space } from 'antd'
@@ -50,13 +51,14 @@ interface IWelcomePlaceholderProps {
 	 * 应用入参的表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
+	uploadFileApi?: DifyApi['uploadFile']
 }
 
 /**
  * 对话内容区的欢迎占位符
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
-	const { onPromptItemClick, showPrompts } = props
+	const { onPromptItemClick, showPrompts, uploadFileApi } = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
 
@@ -107,12 +109,12 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 		if (currentApp?.parameters?.suggested_questions?.length) {
 			return [
 				{
-					key: 'remote',
+					key: 'suggested_question',
 					label: renderTitle(<FireOutlined style={{ color: '#FF4D4F' }} />, 'Hot Topics'),
 					description: 'What are you interested in?',
-					children: currentApp.parameters.suggested_questions.map(item => {
+					children: currentApp.parameters.suggested_questions.map((item, index) => {
 						return {
-							key: 'remote',
+							key: `suggested_question-${index}`,
 							description: item,
 						}
 					}),
@@ -159,6 +161,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					formFilled={props.formFilled}
 					onStartConversation={props.onStartConversation}
 					entryForm={props.entryForm}
+					uploadFileApi={uploadFileApi}
 				/>
 
 				{showPrompts ? (
