@@ -51,7 +51,10 @@ interface IWelcomePlaceholderProps {
 	 * 应用入参的表单实例
 	 */
 	entryForm: FormInstance<Record<string, unknown>>
-	uploadFileApi?: DifyApi['uploadFile']
+	/**
+	 * 上传文件 API
+	 */
+	uploadFileApi: DifyApi['uploadFile']
 }
 
 /**
@@ -161,7 +164,7 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					formFilled={props.formFilled}
 					onStartConversation={props.onStartConversation}
 					entryForm={props.entryForm}
-					uploadFileApi={uploadFileApi}
+					uploadFileApi={uploadFileApi!}
 				/>
 
 				{showPrompts ? (
