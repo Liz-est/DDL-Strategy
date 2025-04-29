@@ -91,7 +91,7 @@ export default function AppListPage() {
 													<AndroidOutlined className="text-xl text-default" />
 												</div>
 												<div className="flex-1 overflow-hidden ml-3">
-													<div className="truncate font-semibold">{item.info.name}</div>
+													<div className="truncate font-semibold pr-4">{item.info.name}</div>
 													<div className="text-desc text-xs mt-0.5">Unknown</div>
 												</div>
 											</div>
