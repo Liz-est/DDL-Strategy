@@ -170,7 +170,7 @@ export const Chatbox = (props: ChatboxProps) => {
 				),
 			}
 		}) as GetProp<typeof Bubble.List, 'items'>
-	}, [messageItems, conversationId, difyApi, feedbackCallback, currentApp?.config, onSubmit])
+	}, [messageItems, conversationId, difyApi, feedbackCallback, currentApp?.parameters, onSubmit])
 
 	// 监听 items 更新，滚动到最底部
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -199,7 +199,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					onStartConversation={onStartConversation}
 					conversationId={conversationId}
 					entryForm={entryForm}
-					uploadFileApi={(...params)=>difyApi.uploadFile(...params)}
+					uploadFileApi={(...params) => difyApi.uploadFile(...params)}
 				/>
 
 				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">

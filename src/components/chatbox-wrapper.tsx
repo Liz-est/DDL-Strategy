@@ -7,7 +7,7 @@ import { useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Spin } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useLatest } from '@/hooks/use-latest'
 import { useX } from '@/hooks/useX'
@@ -80,16 +80,18 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	/**
 	 * 获取下一轮问题建议
 	 */
-	const getNextSuggestions = async (message_id: string) => {
-		const result = await difyApi.getNextSuggestions({ message_id })
-		setNextSuggestions(result.data)
-	}
+	const getNextSuggestions = useCallback(
+		async (message_id: string) => {
+			const result = await difyApi.getNextSuggestions({ message_id })
+			setNextSuggestions(result.data)
+		},
+		[difyApi],
+	)
 
-	const updateConversationInputs = (formValues: Record<string, unknown>) => {
-		setConversations(prev => {
-			console.log(
-				'setConversations: updateConversationInputs',
-				prev.map(item => {
+	const updateConversationInputs = useCallback(
+		(formValues: Record<string, unknown>) => {
+			setConversations(prev => {
+				return prev.map(item => {
 					if (item.id === currentConversationId) {
 						return {
 							...item,
@@ -97,90 +99,90 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						}
 					}
 					return item
-				}),
-			)
-			return prev.map(item => {
-				if (item.id === currentConversationId) {
-					return {
-						...item,
-						inputs: formValues,
-					}
-				}
-				return item
+				})
 			})
-		})
-	}
+		},
+		[currentConversationId, setConversations],
+	)
 
 	/**
 	 * 获取对话的历史消息
 	 */
-	const getConversationMessages = async (conversationId: string) => {
-		// 如果是临时 ID，则不获取历史消息
-		if (isTempId(conversationId)) {
-			return
-		}
-		const result = await difyApi.getConversationHistory(conversationId)
-
-		if (!result?.data?.length) {
-			return
-		}
-
-		const newMessages: IMessageItem4Render[] = []
-
-		// 只有当历史消息中的参数不为空时才更新
-		if (result?.data?.length && Object.values(result.data?.[0]?.inputs)?.length) {
-			updateConversationInputs(result.data[0]?.inputs || {})
-		}
-
-		result.data.forEach(item => {
-			const createdAt = dayjs(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss')
-			newMessages.push(
-				{
-					id: item.id,
-					content: item.query,
-					status: 'success',
-					isHistory: true,
-					files: item.message_files?.filter(item => {
-						return item.belongs_to === MessageFileBelongsToEnum.user
-					}),
-					role: 'user',
-					created_at: createdAt,
-				},
-				{
-					id: item.id,
-					content: item.answer,
-					status: item.status === 'error' ? item.status : 'success',
-					error: item.error || '',
-					isHistory: true,
-					files: item.message_files?.filter(item => {
-						return item.belongs_to === MessageFileBelongsToEnum.assistant
-					}),
-					feedback: item.feedback,
-					workflows:
-						workflowDataStorage.get({
-							appId: currentAppId || '',
-							conversationId,
-							messageId: item.id,
-							key: 'workflows',
-						}) || [],
-					agentThoughts: item.agent_thoughts || [],
-					retrieverResources: item.retriever_resources || [],
-					role: 'ai',
-					created_at: createdAt,
-				},
-			)
-		})
-
-		setMessages([])
-		setHistoryMessages(newMessages)
-		if (newMessages?.length) {
-			// 如果下一步问题建议已开启，则请求接口获取
-			if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
-				getNextSuggestions(newMessages[newMessages.length - 1].id)
+	const getConversationMessages = useCallback(
+		async (conversationId: string) => {
+			// 如果是临时 ID，则不获取历史消息
+			if (isTempId(conversationId)) {
+				return
 			}
-		}
-	}
+			const result = await difyApi.getConversationHistory(conversationId)
 
+			if (!result?.data?.length) {
+				return
+			}
+
+			const newMessages: IMessageItem4Render[] = []
+
+			// 只有当历史消息中的参数不为空时才更新
+			if (result?.data?.length && Object.values(result.data?.[0]?.inputs)?.length) {
+				updateConversationInputs(result.data[0]?.inputs || {})
+			}
+
+			result.data.forEach(item => {
+				const createdAt = dayjs(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss')
+				newMessages.push(
+					{
+						id: item.id,
+						content: item.query,
+						status: 'success',
+						isHistory: true,
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.user
+						}),
+						role: 'user',
+						created_at: createdAt,
+					},
+					{
+						id: item.id,
+						content: item.answer,
+						status: item.status === 'error' ? item.status : 'success',
+						error: item.error || '',
+						isHistory: true,
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.assistant
+						}),
+						feedback: item.feedback,
+						workflows:
+							workflowDataStorage.get({
+								appId: currentAppId || '',
+								conversationId,
+								messageId: item.id,
+								key: 'workflows',
+							}) || [],
+						agentThoughts: item.agent_thoughts || [],
+						retrieverResources: item.retriever_resources || [],
+						role: 'ai',
+						created_at: createdAt,
+					},
+				)
+			})
+
+			// setMessages([])
+			setHistoryMessages(newMessages)
+			if (newMessages?.length) {
+				// 如果下一步问题建议已开启，则请求接口获取
+				if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
+					getNextSuggestions(newMessages[newMessages.length - 1].id)
+				}
+			}
+		},
+		[
+			difyApi,
+			currentApp?.parameters?.suggested_questions_after_answer.enabled,
+			currentAppId,
+			getNextSuggestions,
+			updateConversationInputs,
+		],
+	)
 	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
 		latestProps,
 		latestState,
@@ -231,16 +233,16 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		})
 	}, [currentApp?.parameters, currentConversationInfo])
 
-	const onSubmit = (
-		nextContent: string,
-		options?: { files?: IFile[]; inputs?: Record<string, unknown> },
-	) => {
-		filesRef.current = options?.files || []
-		onRequest({
-			content: nextContent,
-			files: options?.files as IMessageFileItem[],
-		})
-	}
+	const onSubmit = useCallback(
+		(nextContent: string, options?: { files?: IFile[]; inputs?: Record<string, unknown> }) => {
+			filesRef.current = options?.files || []
+			onRequest({
+				content: nextContent,
+				files: options?.files as IMessageFileItem[],
+			})
+		},
+		[onRequest],
+	)
 
 	const unStoredMessages4Render = useMemo(() => {
 		return messages.map(item => {
@@ -258,6 +260,18 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			} as IMessageItem4Render
 		})
 	}, [messages])
+
+	const messageItems = useMemo(() => {
+		return [...historyMessages, ...unStoredMessages4Render]
+	}, [historyMessages, unStoredMessages4Render])
+
+	const fallbackCallback = useCallback(
+		(conversationId: string) => {
+			// 反馈成功后，重新获取历史消息
+			getConversationMessages(conversationId)
+		},
+		[getConversationMessages],
+	)
 
 	// 如果应用配置 / 对话列表加载中，则展示 loading
 	if (conversationListLoading || appLoading) {
@@ -296,7 +310,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					<Chatbox
 						conversationId={currentConversationId!}
 						nextSuggestions={nextSuggestions}
-						messageItems={[...historyMessages, ...unStoredMessages4Render]}
+						messageItems={messageItems}
 						isRequesting={agent.isRequesting()}
 						onPromptsItemClick={(...params) => {
 							setNextSuggestions([])
@@ -319,10 +333,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 							}
 						}}
 						feedbackApi={difyApi.feedbackMessage}
-						feedbackCallback={(conversationId: string) => {
-							// 反馈成功后，重新获取历史消息
-							getConversationMessages(conversationId)
-						}}
+						feedbackCallback={fallbackCallback}
 						uploadFileApi={difyApi.uploadFile}
 						difyApi={difyApi}
 						entryForm={entryForm}
