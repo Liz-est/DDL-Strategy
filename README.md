@@ -631,11 +631,11 @@ Q: 先运行 `COREPACK_INTEGRITY_KEYS=0 corepack prepare` 再执行 `pnpm instal
   - [x] 配置和切换功能分离，支持隐藏配置入口
 - [x] 支持单应用模式
   - [ ] 支持用户在界面上变更配置
-- [ ] 子包发布
-  - [ ] 发布 `@dify-chat/core` 包
-  - [ ] 发布 `@dify-chat/helpers` 包
-  - [ ] 发布 `@dify-chat/api` 包
-  - [ ] 发布 `@dify-chat/components` 包
+- [x] 子包发布
+  - [x] 发布 `@dify-chat/core` 包
+  - [x] 发布 `@dify-chat/helpers` 包
+  - [x] 发布 `@dify-chat/api` 包
+  - [x] 发布 `@dify-chat/components` 包
 - [ ] 国际化
 - [ ] 支持单个会话视图
 - [ ] 支持消息触顶/触底自动分页加载
