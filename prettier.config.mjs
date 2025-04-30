@@ -3,7 +3,8 @@
  * @type {import("prettier").Config}
  */
 export default {
-	plugins: ['@trivago/prettier-plugin-sort-imports'],
+	plugins: ['prettier-plugin-tailwindcss', '@trivago/prettier-plugin-sort-imports'],
+	tailwindConfig: './tailwind.config.ts',
 	printWidth: 100,
 	useTabs: true,
 	tabWidth: 2,
