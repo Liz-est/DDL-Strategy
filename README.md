@@ -38,7 +38,7 @@
 | 子包名称 | 描述 | 相关信息 | 文档 |
 | --- | --- | --- | --- |
 | `@dify-chat/api` | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api) | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api) |
-| `@dify-chat/core` | 核心包 | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core) | 敬请期待... |
+| `@dify-chat/core` | 核心包 | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core) | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core) |
 | `@dify-chat/helpers` | 工具包 | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers) | 敬请期待... |
 | `@dify-chat/components` | 核心 UI 组件库 | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待... |
 
