@@ -1,3 +1,5 @@
+import { IDifyAppItem } from '@dify-chat/core'
+
 import XRequest from './base-request'
 import { IAgentThought, IRetrieverResource } from './types'
 import { IFileType } from './types/file'
@@ -291,11 +293,7 @@ export interface IDifyApiOptions {
 	apiKey: string
 }
 
-export interface IGetAppInfoResponse {
-	name: string
-	description: string
-	tags: string[]
-}
+export type IGetAppInfoResponse = IDifyAppItem['info']
 
 export interface IGetAppMetaResponse {
 	tool_icons: {
