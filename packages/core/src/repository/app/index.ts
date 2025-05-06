@@ -1,3 +1,5 @@
+import { AppModeEnums } from '../../constants'
+
 /**
  * 应用配置 Item
  */
@@ -17,7 +19,7 @@ export interface IDifyAppItem {
 		/**
 		 * 应用类型
 		 */
-		mode?: string
+		mode?: AppModeEnums
 		/**
 		 * 应用描述
 		 */
