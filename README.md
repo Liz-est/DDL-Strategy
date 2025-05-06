@@ -8,7 +8,7 @@
 
 | 加群沟通（提需求/ bug 请带 issue 发言） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
 | --- | --- |
-| ![image](https://github.com/user-attachments/assets/7a97c792-0775-4ef6-a9e8-261d4a854363) | ![image](https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec) |
+| <img src="https://github.com/user-attachments/assets/f761021f-a890-4028-ba96-276526db0e33" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
 
 ## 🥇 Golden Sponsors
 
