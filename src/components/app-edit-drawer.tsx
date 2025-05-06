@@ -148,6 +148,12 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 							value={appItem?.info.name}
 						/>
 					</Form.Item>
+					<Form.Item label="应用类型">
+						<Input
+							disabled
+							value={appItem?.info.mode || 'Unknown'}
+						/>
+					</Form.Item>
 					<Form.Item label="应用描述">
 						<Input
 							disabled
