@@ -15,6 +15,10 @@ export interface IDifyAppItem {
 		 */
 		name: string
 		/**
+		 * 应用类型
+		 */
+		mode?: string
+		/**
 		 * 应用描述
 		 */
 		description: string
