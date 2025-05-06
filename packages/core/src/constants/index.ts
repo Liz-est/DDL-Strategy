@@ -1,3 +1,5 @@
+export * from './app'
+
 /**
  * 消息角色
  */
