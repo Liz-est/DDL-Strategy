@@ -288,7 +288,7 @@ export function MarkdownRenderer(props: {
           a: Link,
           p: Paragraph,
           form: (props) => <MarkdownForm {...props} onSend={(values: string)=>{
-						onSubmit(values)
+						onSubmit?.(values)
 					}} />,
           script: ScriptBlock as any,
           details: ThinkBlock,
