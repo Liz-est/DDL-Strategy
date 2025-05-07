@@ -23,6 +23,10 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 		}
 	}, [currentConversationId])
 
+	useEffect(() => {
+		props.entryForm.resetFields()
+	}, [currentConversationId])
+
 	if (!currentApp?.parameters.user_input_form?.length) {
 		return null
 	}

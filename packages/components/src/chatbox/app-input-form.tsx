@@ -46,9 +46,6 @@ export default function AppInputForm(props: IAppInputFormProps) {
 	const [userInputItems, setUserInputItems] = useState<IConversationEntryFormItem[]>([])
 	const cachedSearchParams = useRef<URLSearchParams>(new URLSearchParams(searchParams))
 	const { mode } = useDifyChat()
-	useEffect(() => {
-		entryForm.resetFields()
-	}, [currentConversationId])
 
 	useEffect(() => {
 		const user_input_form = currentApp?.parameters.user_input_form
@@ -91,7 +88,6 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						)
 					}
 				} else {
-					console.log('更新值?', originalProps.variable, currentConversationInfo)
 					let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
 					if (originalProps.type === 'file-list') {
 						fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
