@@ -223,7 +223,7 @@ const Link = ({ node, ...props }: any) => {
 
 export function MarkdownRenderer(props: {
 	markdownText: string; className?: string; customDisallowedElements?: string[]
-	onSubmit: (
+	onSubmit?: (
 		value: string,
 		options?: {
 			files?: IFile[]
