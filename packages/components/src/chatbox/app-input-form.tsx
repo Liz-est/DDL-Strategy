@@ -4,7 +4,7 @@ import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
 import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
 import { useHistory, useParams, useSearchParams } from 'pure-react-router'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import FileUpload, { IUploadFileItem } from './form-controls/file-upload'
 
@@ -16,6 +16,10 @@ export type IConversationEntryFormItem = FormItemProps &
 const SUPPORTED_CONTROL_TYPES = ['text-input', 'select', 'number', 'paragraph', 'file', 'file-list']
 
 export interface IAppInputFormProps {
+	/**
+	 * 表单是否禁用
+	 */
+	disabled?: boolean
 	/**
 	 * 表单是否填写
 	 */
@@ -36,7 +40,7 @@ export interface IAppInputFormProps {
  * 应用输入表单
  */
 export default function AppInputForm(props: IAppInputFormProps) {
-	const { entryForm, uploadFileApi } = props
+	const { entryForm, uploadFileApi, disabled } = props
 	const { currentApp } = useAppContext()
 	const { currentConversationId, currentConversationInfo, setConversations } =
 		useConversationsContext()
@@ -134,18 +138,6 @@ export default function AppInputForm(props: IAppInputFormProps) {
 			}
 		}
 	}, [currentApp?.parameters.user_input_form, currentConversationInfo])
-
-	/**
-	 * 是否禁用输入
-	 */
-	const disabled = useMemo(() => {
-		// 如果是临时对话，则允许输入
-		if (isTempId(currentConversationId)) {
-			return false
-		}
-		// 否则取配置值
-		return !currentApp?.config?.inputParams?.enableUpdateAfterCvstStarts
-	}, [currentConversationId])
 
 	return (
 		<>

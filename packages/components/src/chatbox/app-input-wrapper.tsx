@@ -2,7 +2,7 @@ import { CaretRightOutlined } from '@ant-design/icons'
 import { useAppContext, useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
 import { Collapse, CollapseProps, theme } from 'antd'
-import { CSSProperties, useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useMemo, useState } from 'react'
 
 import AppInputForm, { IAppInputFormProps } from './app-input-form'
 
@@ -27,6 +27,18 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 		props.entryForm.resetFields()
 	}, [currentConversationId])
 
+	/**
+	 * 是否禁用输入
+	 */
+	const disabled = useMemo(() => {
+		// 如果是临时对话，则允许输入
+		if (isTempId(currentConversationId)) {
+			return false
+		}
+		// 否则取配置值
+		return !currentApp?.config?.inputParams?.enableUpdateAfterCvstStarts
+	}, [currentConversationId])
+
 	if (!currentApp?.parameters.user_input_form?.length) {
 		return null
 	}
@@ -48,6 +60,7 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 					onStartConversation={props.onStartConversation}
 					entryForm={props.entryForm}
 					uploadFileApi={props.uploadFileApi}
+					disabled={disabled}
 				/>
 			),
 			style: panelStyle,
