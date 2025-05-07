@@ -53,7 +53,11 @@ const MainLayout = (props: IMainLayoutProps) => {
 					renderCenterTitle={props.renderCenterTitle}
 					extComponents={props.extComponents}
 				>
-					{appMode === AppModeEnums.WORKFLOW ? <WorkflowLayout /> : <div>不支持的应用类型</div>}
+					{appMode === AppModeEnums.WORKFLOW ? (
+						<WorkflowLayout difyApi={props.difyApi} />
+					) : (
+						<div>不支持的应用类型</div>
+					)}
 				</CommonLayout>
 			)}
 		</XProvider>
