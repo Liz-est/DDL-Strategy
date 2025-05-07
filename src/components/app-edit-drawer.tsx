@@ -47,6 +47,10 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				'inputParams.enableUpdateAfterCvstStarts':
 					appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
 			})
+		} else if (detailDrawerMode === AppDetailDrawerModeEnum.create) {
+			settingForm.setFieldsValue({
+				'info.mode': AppModeEnums.CHAT,
+			})
 		}
 	}, [open])
 
