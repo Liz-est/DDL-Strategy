@@ -218,7 +218,7 @@ const Paragraph = (paragraph: any) => {
 }
 
 const Link = ({ node, ...props }: any) => {
-	return <a {...props} target="_blank" className="cursor-pointer underline !decoration-primary-700 decoration-dashed">{node.children[0] ? node.children[0]?.value : 'Download'}</a>
+	return <a {...props} target="_blank" className="cursor-pointer underline !decoration-primary-700 decoration-dashed px-1">{node.children[0] ? node.children[0]?.value : 'Download'}</a>
 }
 
 export function MarkdownRenderer(props: {
@@ -252,7 +252,7 @@ export function MarkdownRenderer(props: {
 	}, [props.markdownText])
 
   return (
-    <div className='text-default'>
+    <div className='text-theme-text'>
       <ReactMarkdown
 				// urlTransform={(value: string) => defaultUrlTransform(value)}
         remarkPlugins={[

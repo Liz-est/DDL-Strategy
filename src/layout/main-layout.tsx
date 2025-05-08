@@ -42,7 +42,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 	const appMode = currentApp?.config?.info?.mode || AppModeEnums.CHAT
 
 	return (
-		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors.default } }}>
+		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors['theme-text'] }}}>
 			{[AppModeEnums.CHAT, AppModeEnums.ADVANCED_CHAT, AppModeEnums.AGENT_CHAT].includes(
 				appMode,
 			) ? (

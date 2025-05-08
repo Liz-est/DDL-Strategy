@@ -299,7 +299,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 			}}
 		>
 			<div
-				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-light-gray`}
+				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-theme-bg`}
 			>
 				{/* 头部 */}
 				<HeaderLayout
@@ -320,7 +320,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				/>
 
 				{/* Main */}
-				<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
+				<div className="flex-1 overflow-hidden flex rounded-t-3xl bg-theme-main-bg">
 					{appLoading || initLoading ? (
 						<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
 							<Spin spinning />
@@ -329,7 +329,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						<>
 							{/* 左侧对话列表 */}
 							<div
-								className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-light-gray`}
+								className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-theme-splitter`}
 							>
 								{currentApp.config.info ? <AppInfo info={currentApp.config.info!} /> : null}
 								{/* 添加会话 */}
@@ -338,8 +338,9 @@ export default function ChatLayout(props: IChatLayoutProps) {
 										onClick={() => {
 											onAddConversation()
 										}}
-										className="h-10 leading-10 rounded-lg border border-solid border-gray-200 mt-3 mx-4 text-default "
-										icon={<PlusOutlined />}
+										type='default'
+										className="h-10 leading-10 rounded-lg border border-solid border-gray-200 mt-3 mx-4 text-theme-text "
+										icon={<PlusOutlined className='' />}
 									>
 										新增对话
 									</Button>

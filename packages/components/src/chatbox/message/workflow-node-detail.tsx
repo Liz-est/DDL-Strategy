@@ -17,7 +17,7 @@ export default function WorkflowNodeDetail(props: IWorkflowNodeDetailProps) {
 			{originalContent ? (
 				<>
 					<CopyOutlined
-						className="cursor-pointer"
+						className="cursor-pointer text-theme-text"
 						onClick={async () => {
 							await copyToClipboard(JSON.stringify(originalContent, null, 2))
 							message.success('复制成功')

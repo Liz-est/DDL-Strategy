@@ -50,7 +50,7 @@ export default function AppListPage() {
 	}, [])
 
 	return (
-		<div className="h-screen relative overflow-hidden flex flex-col bg-[#f2f4f7] w-full">
+		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
 			<HeaderLayout
 				title={
 					<div>
@@ -59,7 +59,7 @@ export default function AppListPage() {
 					</div>
 				}
 			/>
-			<div className="flex-1 bg-white rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
+			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{list?.length ? (
 					<Row
 						gutter={[16, 16]}
@@ -74,7 +74,7 @@ export default function AppListPage() {
 								>
 									<div
 										key={item.id}
-										className={`relative group p-3 bg-white border border-solid border-gray-200 rounded-2xl cursor-pointer hover:border-primary hover:text-primary`}
+										className={`relative group p-3 bg-theme-btn-bg border border-solid border-theme-border rounded-2xl cursor-pointer hover:border-primary hover:text-primary`}
 									>
 										<div
 											onClick={() => {
@@ -82,15 +82,15 @@ export default function AppListPage() {
 											}}
 										>
 											<div className="flex items-center overflow-hidden">
-												<div className="h-10 w-10 bg-[#ffead5] rounded-lg flex items-center justify-center">
-													<AndroidOutlined className="text-xl text-default" />
+												<div className="h-10 w-10 bg-[#ffead5] dark:bg-transparent border border-solid border-transparent dark:border-theme-border rounded-lg flex items-center justify-center">
+													<AndroidOutlined className="text-xl text-theme-text" />
 												</div>
-												<div className="flex-1 overflow-hidden ml-3">
+												<div className="flex-1 overflow-hidden ml-3 text-theme-text">
 													<div className="truncate font-semibold pr-4">{item.info.name}</div>
-													<div className="text-desc text-xs mt-0.5">Unknown</div>
+													<div className="text-theme-desc text-xs mt-0.5">Unknown</div>
 												</div>
 											</div>
-											<div className="text-sm mt-3 h-10 overflow-hidden text-ellipsis leading-5 whitespace-normal line-clamp-2">
+											<div className="text-sm mt-3 h-10 overflow-hidden text-ellipsis leading-5 whitespace-normal line-clamp-2 text-theme-desc">
 												{item.info.description || '暂无描述'}
 											</div>
 										</div>

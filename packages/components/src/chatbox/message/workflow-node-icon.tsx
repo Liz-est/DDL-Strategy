@@ -7,14 +7,14 @@ interface IWorkflowNodeIconProps {
 }
 
 const iconMap: Record<IIconType, React.ReactNode> = {
-	start: <HomeFilled />,
-	'question-classifier': <FilterFilled />,
-	llm: <RobotFilled />,
+	start: <HomeFilled className="!text-theme-text" />,
+	'question-classifier': <FilterFilled className="!text-theme-text" />,
+	llm: <RobotFilled className="!text-theme-text" />,
 }
 
 /**
  * 工作流节点图标
  */
 export default function WorkflowNodeIcon(props: IWorkflowNodeIconProps) {
-	return iconMap[props.type] || <RobotFilled />
+	return iconMap[props.type] || <RobotFilled className="!text-theme-text" />
 }

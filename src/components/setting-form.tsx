@@ -100,7 +100,7 @@ export default function SettingForm(props: ISettingFormProps) {
 				hidden={mode === AppDetailDrawerModeEnum.create}
 			>
 				{appItem?.info.tags?.length ? (
-					<div className="text-default">{appItem.info.tags.join(', ')}</div>
+					<div className="text-theme-text">{appItem.info.tags.join(', ')}</div>
 				) : (
 					<>无</>
 				)}

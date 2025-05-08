@@ -1,4 +1,5 @@
 import { Button, Spin } from 'antd'
+import classNames from 'classnames'
 import React from 'react'
 
 interface IActionButtonProps {
@@ -27,7 +28,10 @@ export default function ActionButton(props: IActionButtonProps) {
 	const { icon, loading = false, active = false, onClick } = props
 
 	const Icon = React.cloneElement(icon, {
-		className: active ? 'text-primary' : '',
+		className: classNames({
+			'!text-primary': active,
+			'text-theme-text': true,
+		}),
 	})
 
 	return (
@@ -40,9 +44,9 @@ export default function ActionButton(props: IActionButtonProps) {
 				onClick={onClick}
 			/>
 			<Spin
-				className="absolute left-0 top-0 w-full h-full"
+				className="!absolute left-0 top-0 w-full h-full"
 				spinning={loading}
-			></Spin>
+			/>
 		</div>
 	)
 }

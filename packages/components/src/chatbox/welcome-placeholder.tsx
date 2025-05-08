@@ -144,8 +144,8 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					<Welcome
 						variant="borderless"
 						icon={
-							<div className="flex items-center justify-center rounded-[50%] w-16 h-16 border-gray-100 border-solid border-[1px] bg-light-gray">
-								<AndroidFilled className="text-3xl text-primary" />
+							<div className="flex items-center justify-center rounded-[50%] w-16 h-16 border-theme-border border-solid border-[1px] bg-theme-bg">
+								<AndroidFilled className="text-3xl text-primary dark:text-theme-text" />
 							</div>
 						}
 						title={currentApp?.parameters?.opening_statement || "Hello, I'm Dify Chat"}
@@ -180,9 +180,11 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 							item: isMobile
 								? {
 										width: '100%',
+										color: 'var(--theme-text-color)',
 									}
 								: {
 										flex: 1,
+										color: 'var(--theme-text-color)',
 									},
 						}}
 						onItemClick={async (...params) => {
