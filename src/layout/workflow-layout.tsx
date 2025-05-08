@@ -152,8 +152,9 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 	}
 
 	return (
-		<div className="flex items-stretch w-full">
-			<div className="flex-1 overflow-hidden border-0 border-r border-solid border-[#eff0f5]">
+		<div className="block md:flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden bg-gray-50">
+			{/* 参数填写区域 */}
+			<div className="md:flex-1 overflow-hidden border-0 border-r border-solid border-[#eff0f5] bg-white pb-6 md:pb-0">
 				<div className="font-semibold text-lg px-6 pt-6">运行工作流</div>
 				<div className="px-2">
 					<AppInfo info={currentApp?.config.info as NonNullable<IDifyAppItem['info']>} />
@@ -185,7 +186,9 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 					</Button>
 				</div>
 			</div>
-			<div className="flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+
+			{/* 工作流执行输出区域 */}
+			<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
 				{!text && !workflowItems?.length && workflowStatus !== 'running' ? (
 					<div className="w-full h-full flex items-center justify-center">
 						<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
