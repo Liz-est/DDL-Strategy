@@ -6,6 +6,7 @@ import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
 import { useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { useThemeContext } from '@dify-chat/theme'
 
 import { FileTypeMap, getFileExtByName, getFileTypeByName } from './utils'
 
@@ -58,6 +59,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const [audio2TextLoading, setAudio2TextLoading] = useState(false)
 	const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
 	const senderRef = useRef<GetRef<typeof Sender>>(null)
+	const { theme } = useThemeContext()
 
 	const onChange = (value: string) => {
 		setContent(value)
@@ -262,13 +264,13 @@ export const MessageSender = (props: IMessageSenderProps) => {
 					<Badge dot={files.length > 0 && !open}>
 						<Button
 							onClick={() => setOpen(!open)}
-							icon={<LinkOutlined />}
+							icon={<LinkOutlined className='text-theme-text' />}
 						/>
 					</Badge>
 				) : null
 			}
 			style={{
-				boxShadow: '0px -2px 12px 4px #efefef',
+				boxShadow: theme === 'light' ? '0px -2px 12px 4px var(--theme-border-color)' : 'none',
 			}}
 			loading={isRequesting}
 			disabled={audio2TextLoading}

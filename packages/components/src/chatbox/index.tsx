@@ -1,8 +1,9 @@
-import { ArrowRightOutlined, RobotOutlined, UserOutlined } from '@ant-design/icons'
+import { AndroidOutlined, ArrowRightOutlined, UserOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
+import { useTheme } from 'ahooks'
 import { FormInstance, GetProp, message } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 
@@ -99,11 +100,22 @@ export const Chatbox = (props: ChatboxProps) => {
 	} = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
+	const { theme } = useTheme()
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
 		ai: {
 			placement: 'start',
-			avatar: !isMobile ? { icon: <RobotOutlined />, style: { background: '#fde3cf' } } : undefined,
+			avatar: !isMobile
+				? {
+						icon: <AndroidOutlined />,
+						style: {
+							background: theme === 'dark' ? 'transparent' : '#fde3cf',
+							opacity: 0.75,
+							border: theme === 'dark' ? '1px solid var(--theme-border-color)' : 'none',
+							color: theme === 'dark' ? 'var(--theme-text-color)' :  '#666',
+						},
+					}
+				: undefined,
 			style: isMobile
 				? undefined
 				: {
@@ -186,7 +198,7 @@ export const Chatbox = (props: ChatboxProps) => {
 	}, [deferredItems])
 
 	return (
-		<div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative bg-white">
+		<div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative">
 			<div
 				className="w-full h-full overflow-auto pt-4 pb-48"
 				ref={scrollContainerRef}
@@ -221,7 +233,7 @@ export const Chatbox = (props: ChatboxProps) => {
 											className="mt-3 flex items-center"
 										>
 											<div
-												className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-light-gray text-sm max-w-full"
+												className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-theme-border text-sm max-w-full text-theme-desc"
 												onClick={() => {
 													onPromptsItemClick({
 														data: {
@@ -243,7 +255,7 @@ export const Chatbox = (props: ChatboxProps) => {
 				</div>
 
 				<div
-					className="absolute bottom-0 bg-white w-full md:!w-3/4 left-1/2"
+					className="absolute bottom-0 bg-theme-main-bg w-full md:!w-3/4 left-1/2"
 					style={{
 						transform: 'translateX(-50%)',
 					}}
@@ -262,7 +274,7 @@ export const Chatbox = (props: ChatboxProps) => {
 								})
 							}}
 							isRequesting={isRequesting}
-							className="w-full"
+							className="w-full !text-theme-text"
 							uploadFileApi={(...params) => {
 								return difyApi.uploadFile(...params)
 							}}
@@ -270,7 +282,7 @@ export const Chatbox = (props: ChatboxProps) => {
 							onCancel={onCancel}
 						/>
 					</div>
-					<div className="text-gray-400 text-sm text-center h-8 leading-8">
+					<div className="text-theme-desc text-sm text-center h-8 leading-8">
 						内容由 AI 生成, 仅供参考
 					</div>
 				</div>

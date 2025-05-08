@@ -25,12 +25,12 @@ export default function CommonLayout(props: ICommonLayoutProps) {
 	const { styles } = useStyle()
 
 	return (
-		<div className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-light-gray`}>
+		<div className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-theme-bg`}>
 			{/* 头部 */}
 			<HeaderLayout title={renderCenterTitle?.(currentApp?.config?.info)} />
 
 			{/* Main */}
-			<div className="flex-1 overflow-hidden flex rounded-3xl bg-white">
+			<div className="flex-1 overflow-hidden flex rounded-t-3xl bg-theme-main-bg">
 				{appLoading || initLoading ? (
 					<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
 						<Spin spinning />

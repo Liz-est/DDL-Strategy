@@ -20,6 +20,7 @@
 		"@dify-chat/components": "workspace:^",
 		"@dify-chat/core": "workspace:^",
 		"@dify-chat/helpers": "workspace:^",
+		"@dify-chat/theme": "workspace:^",
 		"@toolkit-fe/clipboard": "catalog:",
 		"@toolkit-fe/where-am-i": "catalog:",
 		"@types/pako": "catalog:",
