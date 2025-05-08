@@ -40,7 +40,7 @@
 		"eslint": "catalog:",
 		"globals": "catalog:",
 		"prettier": "catalog:",
-		"react": "catalog:v",
+		"react": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	},
