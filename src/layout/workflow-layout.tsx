@@ -99,7 +99,6 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 						const innerData = parsedData.data
 
 						if (parsedData.event === 'text_chunk') {
-							console.log('文本消息', parsedData)
 							setText(prev => {
 								return prev + parsedData.data.text
 							})
@@ -111,7 +110,6 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 							setWorkflowStatus('running')
 							setWorkflowItems([])
 						} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
-							console.log('工作流结束', parsedData)
 							workflows.status = 'finished'
 							setWorkflowStatus('finished')
 						} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
