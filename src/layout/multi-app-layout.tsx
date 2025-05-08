@@ -91,13 +91,21 @@ const MultiAppLayout: React.FC = () => {
 		})
 		setInitLoading(true)
 		// 获取应用参数
-		getAppParameters(difyApi).then(res => {
-			setInitLoading(false)
-			setCurrentApp({
-				config: appItem,
-				parameters: res!,
+		getAppParameters(difyApi)
+			.then(res => {
+				setCurrentApp({
+					config: appItem,
+					parameters: res!,
+				})
 			})
-		})
+			.catch(err => {
+				message.error(`获取应用参数失败: ${err}`)
+				console.error(err)
+				setCurrentApp(undefined)
+			})
+			.finally(() => {
+				setInitLoading(false)
+			})
 	}
 
 	useEffect(() => {
@@ -110,14 +118,6 @@ const MultiAppLayout: React.FC = () => {
 	useMount(() => {
 		getAppList()
 	})
-
-	// if (initLoading) {
-	// 	return (
-	// 		<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
-	// 			<Spin spinning />
-	// 		</div>
-	// 	)
-	// }
 
 	return (
 		<AppContextProvider
