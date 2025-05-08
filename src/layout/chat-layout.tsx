@@ -303,7 +303,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 			}}
 		>
 			<div
-				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-[#eff0f5]`}
+				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-light-gray`}
 			>
 				{/* 头部 */}
 				<HeaderLayout
@@ -333,7 +333,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						<>
 							{/* 左侧对话列表 */}
 							<div
-								className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-[#eff0f5]`}
+								className={`hidden md:!flex w-72 h-full flex-col border-0 border-r border-solid border-r-light-gray`}
 							>
 								{currentApp.config.info ? <AppInfo info={currentApp.config.info!} /> : null}
 								{/* 添加会话 */}
