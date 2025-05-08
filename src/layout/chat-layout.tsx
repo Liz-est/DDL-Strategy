@@ -70,11 +70,9 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	const latestCurrentConversationId = useLatest(currentConversationId)
 
 	useEffect(() => {
-		console.log('currentApp?.config change', currentApp?.config)
 		if (!currentApp?.config) {
 			return
 		}
-		console.log('即将开始获取对话列表', difyApi.options)
 		setConversations([])
 		setCurrentConversationId('')
 		getConversationItems().then(() => {
@@ -89,7 +87,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	 * 获取对话列表
 	 */
 	const getConversationItems = async (showLoading = true) => {
-		console.log('getConversationItems', showLoading)
 		if (showLoading) {
 			setCoversationListLoading(true)
 		}
@@ -127,7 +124,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		const newKey = `temp_${Math.random()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
 		setConversations(prev => {
-			console.log('setConversations: onAddConversation', prev)
 			return [
 				{
 					id: newKey,
