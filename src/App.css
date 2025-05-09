@@ -10,10 +10,12 @@
 	--theme-border-color: #eff0f5;
 	--theme-splitter-color: #eff0f5;
 	--theme-button-border-color: #c9c9c9;
+	--theme-primary-color: #1669ee;
 	--theme-success-color: #52c41a;
 	--theme-warning-color: #faad14;
 	--theme-danger-color: #ff4d4f;
 	--theme-bubble-bg-color: #efeffd;
+	--theme-code-block-bg-color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -73,6 +75,16 @@
 		pre {
 			border-radius: 8px;
 			color: var(--theme-text-color);
+		}
+	}
+}
+
+:not(.dark) {
+	.ant-bubble-list {
+		.ant-bubble {
+			pre {
+				background-color: var(--theme-code-block-bg-color);
+			}
 		}
 	}
 }
