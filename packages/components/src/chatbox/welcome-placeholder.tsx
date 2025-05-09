@@ -1,5 +1,4 @@
 import {
-	AndroidFilled,
 	CommentOutlined,
 	EllipsisOutlined,
 	FireOutlined,
@@ -16,6 +15,7 @@ import { Button, FormInstance, GetProp, message, Space } from 'antd'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
+import LucideIcon from '../lucide-icon'
 import { validateAndGenErrMsgs } from '../utils'
 import AppInputWrapper from './app-input-wrapper'
 
@@ -145,7 +145,11 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 						variant="borderless"
 						icon={
 							<div className="flex items-center justify-center rounded-[50%] w-16 h-16 border-theme-border border-solid border-[1px] bg-theme-bg">
-								<AndroidFilled className="text-3xl text-primary dark:text-theme-text" />
+								<LucideIcon
+									name="bot"
+									size={30}
+									className="text-3xl text-primary dark:text-theme-text"
+								/>
 							</div>
 						}
 						title={currentApp?.parameters?.opening_statement || "Hello, I'm Dify Chat"}

@@ -1,4 +1,4 @@
-import { FilterFilled, HomeFilled, RobotFilled } from '@ant-design/icons'
+import LucideIcon from '../../lucide-icon'
 
 type IIconType = 'start' | 'question-classifier' | 'llm'
 
@@ -7,14 +7,36 @@ interface IWorkflowNodeIconProps {
 }
 
 const iconMap: Record<IIconType, React.ReactNode> = {
-	start: <HomeFilled className="!text-theme-text" />,
-	'question-classifier': <FilterFilled className="!text-theme-text" />,
-	llm: <RobotFilled className="!text-theme-text" />,
+	start: (
+		<LucideIcon
+			name="play"
+			className="!text-theme-text"
+		/>
+	),
+	'question-classifier': (
+		<LucideIcon
+			name="network"
+			className="!text-theme-text"
+		/>
+	),
+	llm: (
+		<LucideIcon
+			name="bot"
+			className="!text-theme-text"
+		/>
+	),
 }
 
 /**
  * 工作流节点图标
  */
 export default function WorkflowNodeIcon(props: IWorkflowNodeIconProps) {
-	return iconMap[props.type] || <RobotFilled className="!text-theme-text" />
+	return (
+		iconMap[props.type] || (
+			<LucideIcon
+				name="bot"
+				className="!text-theme-text"
+			/>
+		)
+	)
 }

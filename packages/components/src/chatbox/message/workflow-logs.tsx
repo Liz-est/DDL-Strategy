@@ -49,7 +49,7 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 							label: (
 								<div className="flex items-center justify-between w-full">
 									<div className="flex items-center">
-										<div className="mr-2">
+										<div className="mr-2 flex items-center">
 											<WorkflowNodeIcon type={item.type} />
 										</div>
 										<div className="text-theme-text">{item.title}</div>

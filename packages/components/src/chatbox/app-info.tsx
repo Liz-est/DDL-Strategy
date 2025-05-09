@@ -1,5 +1,5 @@
-import { AndroidFilled } from '@ant-design/icons'
 import { Tag } from 'antd'
+import { Bot } from 'lucide-react'
 
 interface IAppInfoProps {
 	info: {
@@ -17,8 +17,8 @@ export function AppInfo(props: IAppInfoProps) {
 	return (
 		<div className="text-theme-text pt-3">
 			<div className="flex items-center px-4 mt-3">
-				<div className="bg-[#ffead5] dark:bg-transparent border border-solid border-transparent dark:border-theme-border rounded-lg p-2">
-					<AndroidFilled className="text-theme-text" />
+				<div className="bg-[#ffead5] dark:bg-transparent border border-solid border-transparent dark:border-theme-border rounded-lg p-2 flex items-center">
+					<Bot className="text-theme-text" />
 				</div>
 				<div className="ml-3 text-theme-text text-sm truncate">{info.name}</div>
 			</div>

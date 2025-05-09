@@ -1,4 +1,4 @@
-import { AndroidOutlined, ArrowRightOutlined, UserOutlined } from '@ant-design/icons'
+import { ArrowRightOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { Roles, useAppContext } from '@dify-chat/core'
@@ -7,6 +7,7 @@ import { useTheme } from 'ahooks'
 import { FormInstance, GetProp, message } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 
+import LucideIcon from '../lucide-icon'
 import { MessageSender } from '../message-sender'
 import { validateAndGenErrMsgs } from '../utils'
 import MessageContent from './message/content'
@@ -107,12 +108,17 @@ export const Chatbox = (props: ChatboxProps) => {
 			placement: 'start',
 			avatar: !isMobile
 				? {
-						icon: <AndroidOutlined />,
+						icon: (
+							<LucideIcon
+								name="bot"
+								size={18}
+							/>
+						),
 						style: {
 							background: theme === 'dark' ? 'transparent' : '#fde3cf',
-							opacity: 0.75,
+							// opacity: 0.9,
 							border: theme === 'dark' ? '1px solid var(--theme-border-color)' : 'none',
-							color: theme === 'dark' ? 'var(--theme-text-color)' :  '#666',
+							color: theme === 'dark' ? 'var(--theme-text-color)' : '#666',
 						},
 					}
 				: undefined,
@@ -127,7 +133,12 @@ export const Chatbox = (props: ChatboxProps) => {
 			placement: 'end',
 			avatar: !isMobile
 				? {
-						icon: <UserOutlined />,
+						icon: (
+							<LucideIcon
+								name="user"
+								size={18}
+							/>
+						),
 						style: {
 							background: '#87d068',
 						},

@@ -35,7 +35,7 @@ export default function ActionButton(props: IActionButtonProps) {
 	})
 
 	return (
-		<div className="relative">
+		<div className="relative flex items-center">
 			<Button
 				color="default"
 				variant="text"

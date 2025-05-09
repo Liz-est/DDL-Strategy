@@ -1,5 +1,6 @@
-import { DownCircleTwoTone, RobotFilled } from '@ant-design/icons'
+import { DownCircleTwoTone } from '@ant-design/icons'
 import { createDifyApiInstance, DifyApi } from '@dify-chat/api'
+import { LucideIcon } from '@dify-chat/components'
 import {
 	AppContextProvider,
 	ICurrentApp,
@@ -135,7 +136,11 @@ const MultiAppLayout: React.FC = () => {
 				renderCenterTitle={() => {
 					return (
 						<div className="flex items-center overflow-hidden">
-							<RobotFilled className="mr-2" />
+							<LucideIcon
+								name="bot"
+								size={16}
+								className="mr-1"
+							/>
 							<span
 								className="cursor-pointer inline-block shrink-0"
 								onClick={() => {
@@ -167,7 +172,12 @@ const MultiAppLayout: React.FC = () => {
 															history.push(`/app/${item.id}`)
 															setSelectedAppId(item.id)
 														},
-														icon: <RobotFilled />,
+														icon: (
+															<LucideIcon
+																name="bot"
+																size={18}
+															/>
+														),
 													}
 												}) || []),
 											],

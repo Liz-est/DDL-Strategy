@@ -1,11 +1,5 @@
-import {
-	AndroidOutlined,
-	DeleteOutlined,
-	EditOutlined,
-	MoreOutlined,
-	RobotFilled,
-	TagOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, MoreOutlined, TagOutlined } from '@ant-design/icons'
+import { LucideIcon } from '@dify-chat/components'
 import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
@@ -53,8 +47,12 @@ export default function AppListPage() {
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
 			<HeaderLayout
 				title={
-					<div>
-						<RobotFilled className="mr-2" />
+					<div className="flex items-center">
+						<LucideIcon
+							name="layout-grid"
+							size={16}
+							className="mr-1"
+						/>
 						应用列表
 					</div>
 				}
@@ -83,7 +81,10 @@ export default function AppListPage() {
 										>
 											<div className="flex items-center overflow-hidden">
 												<div className="h-10 w-10 bg-[#ffead5] dark:bg-transparent border border-solid border-transparent dark:border-theme-border rounded-lg flex items-center justify-center">
-													<AndroidOutlined className="text-xl text-theme-text" />
+													<LucideIcon
+														name="bot"
+														className="text-xl text-theme-text"
+													/>
 												</div>
 												<div className="flex-1 overflow-hidden ml-3 text-theme-text">
 													<div className="truncate font-semibold pr-4">{item.info.name}</div>
