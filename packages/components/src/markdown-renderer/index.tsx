@@ -16,7 +16,6 @@ import { flow } from 'lodash-es'
 import Flowchart from './blocks/mermaid'
 import ThinkBlock from './blocks/think-block'
 import SVGRenderer from './blocks/svg-renderer'
-import { CopyOutlined } from '@ant-design/icons'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import SVGBtn from './blocks/svg-button'
 import { Button, message } from 'antd'
@@ -25,6 +24,7 @@ import MarkdownForm from './blocks/form'
 import { IFile } from '@dify-chat/api'
 import VideoBlock from './blocks/video'
 import ImageBlock from './blocks/image'
+import LucideIcon from '../lucide-icon'
 
 // Available language https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_HLJS.MD
 const capitalizationLanguageNameMap: Record<string, string> = {
@@ -182,7 +182,7 @@ const CodeBlock: any = memo(({ inline, className, children, ...props }: any) => 
         <div className='flex items-center gap-1'>
           {(['mermaid', 'svg']).includes(language!) && <SVGBtn isSVG={isSVG} setIsSVG={setIsSVG} />}
           <Button>
-            <CopyOutlined onClick={async()=>{
+            <LucideIcon name='copy' onClick={async()=>{
 							await copyToClipboard(String(children).replace(/\n$/, ''))
 							message.success('复制成功')
 						}} />
