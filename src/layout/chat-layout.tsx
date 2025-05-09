@@ -10,7 +10,6 @@ import { AppInfo, ConversationList } from '@dify-chat/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Spin } from 'antd'
-import { createStyles } from 'antd-style'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -20,14 +19,6 @@ import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
 
 import HeaderLayout from './header'
-
-const useStyle = createStyles(({ token, css }) => {
-	return {
-		layout: css`
-			font-family: AlibabaPuHuiTi, ${token.fontFamily}, sans-serif;
-		`,
-	}
-})
 
 interface IChatLayoutProps {
 	/**
@@ -64,7 +55,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	const isMobile = useIsMobile()
 
 	// 创建 Dify API 实例
-	const { styles } = useStyle()
 	const searchParams = useSearchParams()
 	const [conversationListLoading, setCoversationListLoading] = useState<boolean>(false)
 	const latestCurrentConversationId = useLatest(currentConversationId)
@@ -298,9 +288,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				currentConversationInfo,
 			}}
 		>
-			<div
-				className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-theme-bg`}
-			>
+			<div className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}>
 				{/* 头部 */}
 				<HeaderLayout
 					title={renderCenterTitle?.(currentApp?.config?.info)}
@@ -338,9 +326,9 @@ export default function ChatLayout(props: IChatLayoutProps) {
 										onClick={() => {
 											onAddConversation()
 										}}
-										type='default'
+										type="default"
 										className="h-10 leading-10 rounded-lg border border-solid border-gray-200 mt-3 mx-4 text-theme-text "
-										icon={<PlusOutlined className='' />}
+										icon={<PlusOutlined className="" />}
 									>
 										新增对话
 									</Button>

@@ -137,7 +137,7 @@ const MultiAppLayout: React.FC = () => {
 					return (
 						<div className="flex items-center overflow-hidden">
 							<LucideIcon
-								name="bot"
+								name="layout-grid"
 								size={16}
 								className="mr-1"
 							/>

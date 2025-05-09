@@ -1,6 +1,5 @@
 import { IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { Empty, Spin } from 'antd'
-import { createStyles } from 'antd-style'
 
 import HeaderLayout from './header'
 
@@ -11,21 +10,12 @@ interface ICommonLayoutProps {
 	extComponents?: React.ReactNode
 }
 
-const useStyle = createStyles(({ token, css }) => {
-	return {
-		layout: css`
-			font-family: AlibabaPuHuiTi, ${token.fontFamily}, sans-serif;
-		`,
-	}
-})
-
 export default function CommonLayout(props: ICommonLayoutProps) {
 	const { initLoading, renderCenterTitle, children, extComponents } = props
 	const { appLoading, currentApp } = useAppContext()
-	const { styles } = useStyle()
 
 	return (
-		<div className={`w-full h-screen ${styles.layout} flex flex-col overflow-hidden bg-theme-bg`}>
+		<div className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}>
 			{/* 头部 */}
 			<HeaderLayout title={renderCenterTitle?.(currentApp?.config?.info)} />
 
