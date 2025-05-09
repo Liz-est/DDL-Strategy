@@ -87,6 +87,7 @@
 		"echarts-for-react": "catalog:",
 		"katex": "catalog:",
 		"lodash-es": "catalog:",
+		"lucide-react": "catalog:",
 		"markdown-it": "catalog:",
 		"markdown-it-katex-gpt": "catalog:",
 		"mermaid": "catalog:",
