@@ -111,7 +111,7 @@ body {
 }
 
 a {
-	color: var(----theme-text-color);
+	color: var(--theme-text-color);
 }
 
 .content {
