@@ -18,6 +18,7 @@ catalog:
   '@rsbuild/plugin-less': ^1.2.2
   '@rsbuild/plugin-react': ^1.2.0
   '@rslib/core': ^0.6.4
+  '@rybbit/js': ^0.1.0
   '@storybook/addon-essentials': ^8.6.12
   '@storybook/addon-interactions': ^8.6.12
   '@storybook/addon-links': ^8.6.12
