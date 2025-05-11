@@ -5,11 +5,11 @@ export enum AppModeEnums {
 	/**
 	 * 文本生成
 	 */
-	TextGeneration = 'completion',
+	TEXT_GENERATOR = 'completion',
 	/**
 	 * 聊天助手
 	 */
-	CHAT = 'chat',
+	CHATBOT = 'chat',
 	/**
 	 * 工作流
 	 */
@@ -17,11 +17,22 @@ export enum AppModeEnums {
 	/**
 	 * 支持工作流编排的聊天助手
 	 */
-	ADVANCED_CHAT = 'advanced-chat',
+	CHATFLOW = 'advanced-chat',
 	/**
 	 * 具备推理和自主调用能力的聊天助手
 	 */
-	AGENT_CHAT = 'agent-chat',
+	AGENT = 'agent-chat',
+}
+
+/**
+ * 应用类型的展示文本
+ */
+export const AppModeLabels = {
+	[AppModeEnums.TEXT_GENERATOR]: 'Text Generator',
+	[AppModeEnums.CHATBOT]: 'Chatbox',
+	[AppModeEnums.WORKFLOW]: 'Workflow',
+	[AppModeEnums.CHATFLOW]: 'Chatflow',
+	[AppModeEnums.AGENT]: 'Agent',
 }
 
 /**
@@ -30,7 +41,7 @@ export enum AppModeEnums {
 export const AppModeOptions = [
 	{
 		label: '聊天助手',
-		value: AppModeEnums.CHAT,
+		value: AppModeEnums.CHATBOT,
 	},
 	{
 		label: '工作流',
@@ -38,14 +49,14 @@ export const AppModeOptions = [
 	},
 	{
 		label: '支持工作流编排的聊天助手',
-		value: AppModeEnums.ADVANCED_CHAT,
+		value: AppModeEnums.CHATFLOW,
 	},
 	{
 		label: '具备推理和自主调用能力的聊天助手',
-		value: AppModeEnums.AGENT_CHAT,
+		value: AppModeEnums.AGENT,
 	},
 	{
 		label: '文本生成',
-		value: AppModeEnums.TextGeneration,
+		value: AppModeEnums.TEXT_GENERATOR,
 	},
 ]
