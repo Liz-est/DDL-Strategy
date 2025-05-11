@@ -29,6 +29,7 @@
 	--theme-splitter-color: #55555555;
 	--theme-button-border-color: #c9c9c9;
 	--theme-bubble-bg-color: #424242;
+	--theme-code-block-bg-color: transparent;
 }
 
 .ant-collapse {
@@ -74,16 +75,7 @@
 		pre {
 			border-radius: 8px;
 			color: var(--theme-text-color);
-		}
-	}
-}
-
-:not(.dark) {
-	.ant-bubble-list {
-		.ant-bubble {
-			pre {
-				background-color: var(--theme-code-block-bg-color);
-			}
+			background-color: var(--theme-code-block-bg-color);
 		}
 	}
 }
