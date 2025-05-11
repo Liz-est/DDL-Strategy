@@ -1,6 +1,6 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined, TagOutlined } from '@ant-design/icons'
 import { LucideIcon } from '@dify-chat/components'
-import { IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
+import { AppModeLabels, IDifyAppItem, IDifyChatContextMultiApp, useDifyChat } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Col, Dropdown, Empty, message, Row } from 'antd'
@@ -86,9 +86,11 @@ export default function AppListPage() {
 														className="text-xl text-theme-text"
 													/>
 												</div>
-												<div className="flex-1 overflow-hidden ml-3 text-theme-text">
+												<div className="flex-1 overflow-hidden ml-3 text-theme-text h-10 flex flex-col justify-between">
 													<div className="truncate font-semibold pr-4">{item.info.name}</div>
-													<div className="text-theme-desc text-xs mt-0.5">Unknown</div>
+													<div className="text-theme-desc text-xs mt-0.5">
+														{item.info.mode ? AppModeLabels[item.info.mode] : 'unknown'}
+													</div>
 												</div>
 											</div>
 											<div className="text-sm mt-3 h-10 overflow-hidden text-ellipsis leading-5 whitespace-normal line-clamp-2 text-theme-desc">
