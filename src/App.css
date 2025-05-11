@@ -3,7 +3,7 @@
 
 :root {
 	--theme-text-color: #333;
-	--theme-desc-color: #9ca3b3;
+	--theme-desc-color: #898989;
 	--theme-bg-color: #f2f4f7;
 	--theme-btn-bg-color: #fff;
 	--theme-main-bg-color: #fff;
@@ -14,8 +14,8 @@
 	--theme-success-color: #52c41a;
 	--theme-warning-color: #faad14;
 	--theme-danger-color: #ff4d4f;
-	--theme-bubble-bg-color: #efeffd;
-	--theme-code-block-bg-color: #fff;
+	--theme-bubble-bg-color: #f2f4f7;
+	--theme-code-block-bg-color: transparent;
 }
 
 /* 夜间模式类名 */
@@ -50,13 +50,13 @@
 			padding-bottom: 0;
 			min-height: auto;
 			overflow: hidden;
+			background-color: var(--theme-bubble-bg-color);
 
 			think,
 			details {
 				background-color: transparent !important;
 				padding: 0 !important;
 				margin-bottom: 0.25rem;
-				color: gray;
 			}
 		}
 
