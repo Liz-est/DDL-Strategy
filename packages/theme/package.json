@@ -42,9 +42,13 @@
 		"prettier": "catalog:",
 		"react": "catalog:",
 		"typescript": "catalog:",
-		"typescript-eslint": "catalog:"
+		"typescript-eslint": "catalog:",
+		"antd": "catalog:",
+		"lucide-react": "catalog:"
 	},
 	"peerDependencies": {
+		"lucide-react": "catalog:",
+		"antd": ">=5.0.0",
 		"react": ">=16.9.0",
 		"react-dom": ">=16.9.0"
 	},
