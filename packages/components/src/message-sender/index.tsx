@@ -217,7 +217,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 						}
 
 						mediaRecorder.current.onstop = () => {
-							console.log('停止了', recordedChunks)
+							console.log('停止录音', recordedChunks)
 							const blob = new Blob(recordedChunks.current, { type: 'audio/webm' })
 							setAudio2TextLoading(true)
 							setContent('正在识别...')

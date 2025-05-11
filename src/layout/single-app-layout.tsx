@@ -32,11 +32,6 @@ const SingleAppLayout: React.FC = () => {
 	)
 
 	const initInSingleMode = async () => {
-		console.log('即将更新 options', {
-			user,
-			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiBase,
-			apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiKey,
-		})
 		difyApi.updateOptions({
 			user,
 			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiBase,
