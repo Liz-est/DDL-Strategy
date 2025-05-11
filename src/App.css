@@ -18,18 +18,17 @@
 	--theme-code-block-bg-color: #fff;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--theme-text-color: #c9c9c9;
-		--theme-desc-color: #aaa;
-		--theme-bg-color: #000;
-		--theme-btn-bg-color: #333;
-		--theme-main-bg-color: #222;
-		--theme-border-color: #797979;
-		--theme-splitter-color: #55555555;
-		--theme-button-border-color: #c9c9c9;
-		--theme-bubble-bg-color: #424242;
-	}
+/* 夜间模式类名 */
+.dark {
+	--theme-text-color: #c9c9c9;
+	--theme-desc-color: #aaa;
+	--theme-bg-color: #000;
+	--theme-btn-bg-color: #333;
+	--theme-main-bg-color: #222;
+	--theme-border-color: #797979;
+	--theme-splitter-color: #55555555;
+	--theme-button-border-color: #c9c9c9;
+	--theme-bubble-bg-color: #424242;
 }
 
 .ant-collapse {
@@ -104,7 +103,7 @@ h3 {
 
 body {
 	margin: 0;
-	color: var(--default-text);
+	color: var(--theme-text-color);
 
 	font-family: AibabaPuHuiTi, sans-serif;
 	background: white;

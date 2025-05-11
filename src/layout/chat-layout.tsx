@@ -9,7 +9,8 @@ import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppInfo, ConversationList } from '@dify-chat/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Spin } from 'antd'
+import { ThemeTypeEnum, ThemeTypeLabelEnum } from '@dify-chat/theme'
+import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Radio, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -249,6 +250,20 @@ export default function ChatLayout(props: IChatLayoutProps) {
 
 		const conversationListMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
 			{
+				key: 'view-mode',
+				type: 'item',
+				label: (
+					<Radio.Group
+						key="view-mode"
+						optionType="button"
+					>
+						<Radio value={ThemeTypeEnum.SYSTEM}>{ThemeTypeLabelEnum.SYSTEM}</Radio>
+						<Radio value={ThemeTypeEnum.LIGHT}>{ThemeTypeLabelEnum.LIGHT}</Radio>
+						<Radio value={ThemeTypeEnum.DARK}>{ThemeTypeLabelEnum.DARK}</Radio>
+					</Radio.Group>
+				),
+			},
+			{
 				type: 'group',
 				label: '对话列表',
 				children: conversations?.length
@@ -296,7 +311,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						isMobile ? (
 							<Dropdown
 								menu={{
-									className: '!pb-3 w-[50vw]',
+									className: '!pb-3 w-[80vw]',
 									activeKey: currentConversationId,
 									items: mobileMenuItems,
 								}}
