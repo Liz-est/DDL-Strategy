@@ -89,7 +89,7 @@ export const ThinkBlock = ({ children, ...props }: any) => {
           {isComplete ? `已深度思考(${elapsedTime.toFixed(1)}s)` : `深度思考中...(${elapsedTime.toFixed(1)}s)`}
         </div>
       </summary>
-      <div className={`border-l mt-1 rounded-lg border-gray-300 text-gray-500 p-3 bg-gray-50`}>
+      <div className={`border-l mt-1 rounded-lg border-gray-300 text-gray-500 ml-5 bg-theme-block-bg`}>
         {displayContent}
       </div>
     </details>

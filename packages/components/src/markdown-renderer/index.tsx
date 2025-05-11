@@ -252,7 +252,7 @@ export function MarkdownRenderer(props: {
 	}, [props.markdownText])
 
   return (
-    <div className='text-theme-text'>
+    <div className='text-theme-text py-1.5'>
       <ReactMarkdown
 				// urlTransform={(value: string) => defaultUrlTransform(value)}
         remarkPlugins={[
