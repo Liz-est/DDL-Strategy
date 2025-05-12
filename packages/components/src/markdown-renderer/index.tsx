@@ -1,4 +1,5 @@
 import { IFile } from '@dify-chat/api'
+import { useThemeContext } from '@dify-chat/theme'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { Button, message } from 'antd'
 import ReactEcharts from 'echarts-for-react'
@@ -8,7 +9,7 @@ import { flow } from 'lodash-es'
 import React, { AnchorHTMLAttributes, Component, memo, useMemo, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { atelierHeathDark, atelierHeathLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { atomOneDark, atomOneLight } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import RehypeKatex from 'rehype-katex'
 import RehypeRaw from 'rehype-raw'
 import RemarkBreaks from 'remark-breaks'
@@ -117,7 +118,7 @@ interface ICodeBlockProps {
 }
 
 const CodeBlock = memo(({ inline, className, children, ...props }: ICodeBlockProps) => {
-	const theme = 'light'
+	const { isLight } = useThemeContext()
 	const [isSVG, setIsSVG] = useState(true)
 	const match = /language-(\w+)/.exec(className || '')
 	const language = match?.[1]
@@ -158,12 +159,11 @@ const CodeBlock = memo(({ inline, className, children, ...props }: ICodeBlockPro
 			return (
 				<SyntaxHighlighter
 					{...props}
-					style={theme === 'light' ? atelierHeathLight : atelierHeathDark}
+					style={isLight ? atomOneLight : atomOneDark}
 					customStyle={{
 						paddingLeft: 12,
 						borderBottomLeftRadius: '10px',
 						borderBottomRightRadius: '10px',
-						backgroundColor: 'var(--color-components-input-bg-normal)',
 					}}
 					language={match?.[1]}
 					showLineNumbers
