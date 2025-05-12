@@ -69,7 +69,7 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 
 	const panelStyle: React.CSSProperties = {
 		color: token.colorText,
-		border: `1px solid #eff0f5`,
+		border: `1px solid var(--theme-border-color)`,
 		borderRadius: '8px',
 	}
 
