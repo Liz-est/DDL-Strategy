@@ -3,7 +3,7 @@ import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { useTheme } from 'ahooks'
+import { useThemeContext } from '@dify-chat/theme'
 import { FormInstance, GetProp, message } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 
@@ -101,7 +101,7 @@ export const Chatbox = (props: ChatboxProps) => {
 	} = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
-	const { theme } = useTheme()
+	const { isDark } = useThemeContext()
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
 		ai: {
@@ -115,10 +115,10 @@ export const Chatbox = (props: ChatboxProps) => {
 							/>
 						),
 						style: {
-							background: theme === 'dark' ? 'transparent' : '#fde3cf',
+							background: isDark ? 'transparent' : '#fde3cf',
 							// opacity: 0.9,
-							border: theme === 'dark' ? '1px solid var(--theme-border-color)' : 'none',
-							color: theme === 'dark' ? 'var(--theme-text-color)' : '#666',
+							border: isDark ? '1px solid var(--theme-border-color)' : 'none',
+							color: isDark ? 'var(--theme-text-color)' : '#666',
 						},
 					}
 				: undefined,

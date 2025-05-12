@@ -38,12 +38,12 @@ export default function App() {
 		loadFP()
 	})
 
-	const { theme } = useThemeContext()
+	const { isDark } = useThemeContext()
 
 	return (
 		<ConfigProvider
 			theme={{
-				algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+				algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
 			}}
 		>
 			<BrowserRouter
