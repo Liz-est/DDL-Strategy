@@ -90,6 +90,9 @@ export default function AppManageDrawer(props: IAppManagerDrawerProps) {
 														'answerForm.feedbackText': item.answerForm?.feedbackText || '',
 														'inputParams.enableUpdateAfterCvstStarts':
 															item.inputParams?.enableUpdateAfterCvstStarts || false,
+														'extConfig.conversation.openingStatement.displayMode':
+															item.extConfig?.conversation?.openingStatement?.displayMode ||
+															'default',
 													})
 													setDetailDrawerMode(AppDetailDrawerModeEnum.edit)
 													setDetailDrawerVisible(true)
