@@ -60,3 +60,25 @@ export const AppModeOptions = [
 		value: AppModeEnums.TEXT_GENERATOR,
 	},
 ]
+
+/**
+ * 开场白展示模式
+ */
+export const OpeningStatementDisplayMode = {
+	Default: 'default',
+	Always: 'always',
+}
+
+/**
+ * 开场白展示模式选项
+ */
+export const OpeningStatementDisplayModeOptions = [
+	{
+		label: '默认（开始对话前展示）',
+		value: OpeningStatementDisplayMode.Default,
+	},
+	{
+		label: '总是展示',
+		value: OpeningStatementDisplayMode.Always,
+	},
+]
