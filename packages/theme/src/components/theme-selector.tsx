@@ -1,6 +1,6 @@
 import { Dropdown } from 'antd';
 import { useThemeContext } from '../hooks';
-import { ThemeTypeEnum, ThemeTypeLabelEnum } from '../constants';
+import { ThemeModeEnum, ThemeModeLabelEnum } from '../constants';
 import { DynamicIcon } from 'lucide-react/dynamic';
 
 interface IThemeSelectorProps {
@@ -12,35 +12,35 @@ interface IThemeSelectorProps {
  */
 export default function ThemeSelector(props: IThemeSelectorProps) {
 	const { children } = props;
-	const { themeType, setTheme } = useThemeContext();
+	const { themeMode, setThemeMode } = useThemeContext();
 
 	return (
 		<Dropdown
 			placement="bottomRight"
 			menu={{
-				selectedKeys: [themeType],
+				selectedKeys: [themeMode],
 				items: [
 					{
 						type: 'item',
-						key: ThemeTypeEnum.SYSTEM,
-						label: ThemeTypeLabelEnum.SYSTEM,
+						key: ThemeModeEnum.SYSTEM,
+						label: ThemeModeLabelEnum.SYSTEM,
 						icon: <DynamicIcon name="screen-share" />,
 					},
 					{
 						type: 'item',
-						key: ThemeTypeEnum.LIGHT,
-						label: ThemeTypeLabelEnum.LIGHT,
+						key: ThemeModeEnum.LIGHT,
+						label: ThemeModeLabelEnum.LIGHT,
 						icon: <DynamicIcon name="sun" />,
 					},
 					{
 						type: 'item',
-						key: ThemeTypeEnum.DARK,
-						label: ThemeTypeLabelEnum.DARK,
+						key: ThemeModeEnum.DARK,
+						label: ThemeModeLabelEnum.DARK,
 						icon: <DynamicIcon name="moon-star" />,
 					},
 				],
 				onClick: (item) => {
-					setTheme(item.key as ThemeTypeEnum);
+					setThemeMode(item.key as ThemeModeEnum);
 				},
 			}}
 		>

@@ -7,37 +7,37 @@ export enum ThemeEnum {
 }
 
 /**
- * 主题类型枚举
+ * 主题模式枚举
  */
-export enum ThemeTypeEnum {
+export enum ThemeModeEnum {
 	SYSTEM = 'system',
 	LIGHT = 'light',
 	DARK = 'dark',
 }
 
 /**
- * 主题类型文本枚举
+ * 主题模式文本枚举
  */
-export enum ThemeTypeLabelEnum {
+export enum ThemeModeLabelEnum {
 	SYSTEM = '跟随系统',
 	LIGHT = '浅色',
 	DARK = '深色',
 }
 
 /**
- * 主题类型常量对应的选项
+ * 主题模式常量对应的选项
  */
-export const ThemeTypeOptions = [
+export const ThemeModeOptions = [
 	{
-		label: ThemeTypeLabelEnum.SYSTEM,
-		value: ThemeTypeEnum.SYSTEM,
+		label: ThemeModeLabelEnum.SYSTEM,
+		value: ThemeModeEnum.SYSTEM,
 	},
 	{
-		label: ThemeTypeLabelEnum.LIGHT,
-		value: ThemeTypeEnum.LIGHT,
+		label: ThemeModeLabelEnum.LIGHT,
+		value: ThemeModeEnum.LIGHT,
 	},
 	{
-		label: ThemeTypeLabelEnum.DARK,
-		value: ThemeTypeEnum.DARK,
+		label: ThemeModeLabelEnum.DARK,
+		value: ThemeModeEnum.DARK,
 	},
 ];

@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ThemeEnum, ThemeTypeEnum } from '../constants';
+import { ThemeEnum, ThemeModeEnum } from '../constants';
 
 /**
- * 主题类型，用于用户手动切换， light-固定浅色 dark-固定深色，system-跟随系统
+ * 主题模式，用于用户手动切换， light-固定浅色 dark-固定深色，system-跟随系统
  */
-export type IThemeType = 'light' | 'dark' | 'system';
+export type IThemeMode = 'light' | 'dark' | 'system';
 
 /**
  * 实际应用的主题
@@ -20,13 +20,13 @@ interface IThemeContext {
 	 */
 	theme: ThemeEnum;
 	/**
-	 * 手动设置主题类型类型
+	 * 当前主题模式
 	 */
-	setTheme: (theme: ThemeTypeEnum) => void;
+	themeMode: ThemeModeEnum;
 	/**
-	 * 当前主题类型
+	 * 手动设置主题模式
 	 */
-	themeType: ThemeTypeEnum;
+	setThemeMode: (theme: ThemeModeEnum) => void;
 }
 
 /**
@@ -34,8 +34,8 @@ interface IThemeContext {
  */
 export const ThemeContext = React.createContext<IThemeContext>({
 	theme: ThemeEnum.LIGHT,
-	setTheme: () => {},
-	themeType: ThemeTypeEnum.SYSTEM,
+	setThemeMode: () => {},
+	themeMode: ThemeModeEnum.SYSTEM,
 });
 
 /**
@@ -48,8 +48,8 @@ export const DARK_CLASS_NAME = 'dark';
  */
 export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	const { children } = props;
-	const [themeType, setThemeType] = useState<ThemeTypeEnum>(
-		ThemeTypeEnum.SYSTEM,
+	const [themeMode, setThemeMode] = useState<ThemeModeEnum>(
+		ThemeModeEnum.SYSTEM,
 	);
 	const [themeState, setThemeState] = React.useState<ThemeEnum>(
 		ThemeEnum.LIGHT,
@@ -78,7 +78,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 		handleColorSchemeChange(mediaQuery);
 		// 只有跟随系统时才监听媒体查询
-		if (themeType === ThemeTypeEnum.SYSTEM) {
+		if (themeMode === ThemeModeEnum.SYSTEM) {
 			// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
 			mediaQuery.addEventListener('change', handleColorSchemeChange);
 		}
@@ -88,18 +88,18 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 		initThemeListener();
 	}, []);
 
-	const handleUserSelect = (themeType: ThemeTypeEnum) => {
-		setThemeType(themeType);
-		if (themeType === ThemeTypeEnum.SYSTEM) {
+	const handleUserSelect = (themeMode: ThemeModeEnum) => {
+		setThemeMode(themeMode);
+		if (themeMode === ThemeModeEnum.SYSTEM) {
 			initThemeListener();
 		} else {
 			const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			// @ts-expect-error 移除监听媒体查询的变化, FIXME: 类型错误, 待优化
 			mediaQuery.removeEventListener('change', handleColorSchemeChange);
-			if (themeType === ThemeTypeEnum.DARK) {
+			if (themeMode === ThemeModeEnum.DARK) {
 				setThemeState(ThemeEnum.DARK);
 				document.body.classList.add(DARK_CLASS_NAME);
-			} else if (themeType === ThemeTypeEnum.LIGHT) {
+			} else if (themeMode === ThemeModeEnum.LIGHT) {
 				setThemeState(ThemeEnum.LIGHT);
 				document.body.classList.remove(DARK_CLASS_NAME);
 			}
@@ -108,7 +108,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 
 	return (
 		<ThemeContext.Provider
-			value={{ theme: themeState, setTheme: handleUserSelect, themeType }}
+			value={{ theme: themeState, themeMode, setThemeMode: handleUserSelect }}
 		>
 			{children}
 		</ThemeContext.Provider>
@@ -121,6 +121,6 @@ export const useThemeContext = () => {
 		...context,
 		isDark: context.theme === ThemeEnum.DARK,
 		isLight: context.theme === ThemeEnum.LIGHT,
-		isSystemMode: context.themeType === ThemeTypeEnum.SYSTEM,
+		isSystemMode: context.themeMode === ThemeModeEnum.SYSTEM,
 	};
 };

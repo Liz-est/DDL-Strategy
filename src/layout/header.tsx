@@ -33,7 +33,7 @@ const HeaderSiderIcon = (props: { align: 'left' | 'right'; children: React.React
  */
 export default function HeaderLayout(props: IHeaderLayoutProps) {
 	const { title, rightIcon } = props
-	const { themeType } = useThemeContext()
+	const { themeMode } = useThemeContext()
 	const isMobile = useIsMobile()
 	return (
 		<div className="h-16 flex items-center justify-between px-4">
@@ -55,9 +55,9 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 							<div className="flex items-center cursor-pointer">
 								<LucideIcon
 									name={
-										themeType === 'dark'
+										themeMode === 'dark'
 											? 'moon-star'
-											: themeType === 'light'
+											: themeMode === 'light'
 												? 'sun'
 												: 'screen-share'
 									}
