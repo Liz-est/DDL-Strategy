@@ -67,19 +67,19 @@ export interface IDifyAppItem {
 	/**
 	 * 其他扩展配置
 	 */
-	extConfig: {
+	extConfig?: {
 		/**
 		 * 对话相关配置
 		 */
-		conversation: {
+		conversation?: {
 			/**
 			 * 开场白配置
 			 */
-			openingStatement: {
+			openingStatement?: {
 				/**
 				 * 展示模式 default-默认（对话开始后不展示） always-固定展示
 				 */
-				displayMode: 'default' | 'always'
+				displayMode?: 'default' | 'always'
 			}
 		}
 	}
