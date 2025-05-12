@@ -419,7 +419,7 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 
 ![应用输入参数-默认](./docs/sample_app_input_disabled.png)
 
-### 5.1 支持在对话开始后更新参数
+#### 5.1 支持在对话开始后更新参数
 
 在应用配置中，你可以选择是否允许用户在对话开始后更新参数值：
 
@@ -454,7 +454,7 @@ export default function App() {
 
 ![应用输入参数-配置](./docs/sample_app_input_setting.png)
 
-### 5.2 读取 URL 作为应用参数
+#### 5.2 读取 URL 作为应用参数
 
 在实际应用场景下，我们可能有需要在 URL 中动态传入参数值，填入表单。
 
@@ -506,6 +506,49 @@ zlib.gzip(buffer, (err, compressedBuffer) => {
 将 `encodedValue` 填入链接后访问，可以看到我们定义的 `orderNo: 123456` 已经被填入表单：
 
 ![读取 URL 作为应用参数-结果](./docs/sample_app_input_filled.jpg)
+
+### 6. 其他配置
+
+#### 6.1 开场白
+
+Dify 应用支持配置开场白。
+
+默认情况下，开场白在每个新对话开始前展示，当用户发送消息（即对话开始）后，开场白将被隐藏。
+
+如果你希望在对话开始后展示开场白，可以在应用配置中进行配置：
+
+**单应用模式**：
+
+在入口文件中，添加对应的属性即可：
+
+```tsx
+export default function App() {
+  return (
+    <DifyChatProvider
+      value={{
+        ...其他配置,
+        appConfig: {
+          ...其他配置,
+          extConfig: {
+            conversation: {
+              openingStatement: {
+                // 配置开场白总是展示
+                displayMode: 'always'
+              }
+            }
+          },
+        },
+      }}
+    </DifyChatProvider>
+  )
+}
+```
+
+**多应用模式**：
+
+在界面上编辑应用配置，将 "对话配置" 中的 "开场白展示场景" 设为 "总是展示" 即可。
+
+![alt text](./docs/guide_app_config_opening_statement_display_always.png)
 
 ## 本地开发
 

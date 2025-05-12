@@ -63,7 +63,6 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 					disabled={disabled}
 				/>
 			),
-			className: 'rounded-lg',
 			style: panelStyle,
 		},
 	]
@@ -71,17 +70,16 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 	const panelStyle: React.CSSProperties = {
 		color: token.colorText,
 		border: `1px solid #eff0f5`,
+		borderRadius: '8px',
 	}
 
 	return (
 		<Collapse
-			className="mt-3 bg-primary"
 			bordered={false}
 			activeKey={activeKey}
 			onChange={value => setActiveKey(value)}
 			expandIconPosition="end"
 			expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
-			style={{ background: token.colorBgContainer, borderColor: token.colorPrimary }}
 			items={getItems(panelStyle)}
 		/>
 	)
