@@ -25,7 +25,7 @@ export enum AppModeEnums {
 }
 
 /**
- * 应用类型的展示文本
+ * 应用类型的展示标签
  */
 export const AppModeLabels = {
 	[AppModeEnums.TEXT_GENERATOR]: 'Text Generator',
@@ -36,30 +36,38 @@ export const AppModeLabels = {
 }
 
 /**
+ * 应用类型的展示名称
+ */
+export const AppModeNames = {
+	[AppModeEnums.TEXT_GENERATOR]: '文本生成',
+	[AppModeEnums.CHATBOT]: '聊天助手',
+	[AppModeEnums.WORKFLOW]: '工作流',
+	[AppModeEnums.CHATFLOW]: '支持工作流编排的聊天助手',
+	[AppModeEnums.AGENT]: '具备推理和自主调用能力的聊天助手',
+}
+
+/**
+ * 获取应用类型的完整名称
+ */
+const getAppModelFullName = (mode: AppModeEnums) => {
+	return `${AppModeLabels[mode]}（${AppModeNames[mode]}）`
+}
+
+/**
  * 应用类型选项
  */
 export const AppModeOptions = [
-	{
-		label: '聊天助手',
-		value: AppModeEnums.CHATBOT,
-	},
-	{
-		label: '工作流',
-		value: AppModeEnums.WORKFLOW,
-	},
-	{
-		label: '支持工作流编排的聊天助手',
-		value: AppModeEnums.CHATFLOW,
-	},
-	{
-		label: '具备推理和自主调用能力的聊天助手',
-		value: AppModeEnums.AGENT,
-	},
-	{
-		label: '文本生成',
-		value: AppModeEnums.TEXT_GENERATOR,
-	},
-]
+	AppModeEnums.CHATBOT,
+	AppModeEnums.WORKFLOW,
+	AppModeEnums.CHATFLOW,
+	AppModeEnums.AGENT,
+	AppModeEnums.TEXT_GENERATOR,
+].map(mode => {
+	return {
+		label: getAppModelFullName(mode),
+		value: mode,
+	}
+})
 
 /**
  * 开场白展示模式
