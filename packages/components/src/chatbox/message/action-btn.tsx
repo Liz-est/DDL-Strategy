@@ -4,6 +4,10 @@ import React from 'react'
 
 interface IActionButtonProps {
 	/**
+	 * 是否禁用
+	 */
+	disabled?: boolean
+	/**
 	 * 是否激活
 	 */
 	active?: boolean
@@ -25,7 +29,7 @@ interface IActionButtonProps {
  * 操作按钮
  */
 export default function ActionButton(props: IActionButtonProps) {
-	const { icon, loading = false, active = false, onClick } = props
+	const { disabled, icon, loading = false, active = false, onClick } = props
 
 	const Icon = React.cloneElement(icon, {
 		className: classNames({
@@ -42,6 +46,7 @@ export default function ActionButton(props: IActionButtonProps) {
 				size="small"
 				icon={Icon}
 				onClick={onClick}
+				disabled={disabled}
 			/>
 			<Spin
 				className="!absolute left-0 top-0 w-full h-full"
