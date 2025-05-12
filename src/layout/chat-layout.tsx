@@ -9,7 +9,7 @@ import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppInfo, ConversationList } from '@dify-chat/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { ThemeTypeEnum, ThemeTypeLabelEnum } from '@dify-chat/theme'
+import { ThemeModeEnum, ThemeModeLabelEnum, useThemeContext } from '@dify-chat/theme'
 import { Button, Dropdown, Empty, Form, GetProp, Input, message, Modal, Radio, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'pure-react-router'
@@ -46,6 +46,7 @@ interface IChatLayoutProps {
 
 export default function ChatLayout(props: IChatLayoutProps) {
 	const { extComponents, renderCenterTitle, initLoading, difyApi } = props
+	const { themeMode, setThemeMode } = useThemeContext()
 	const { appLoading, currentApp } = useAppContext()
 	const [renameForm] = Form.useForm()
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
@@ -251,17 +252,30 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		const conversationListMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
 			{
 				key: 'view-mode',
-				type: 'item',
-				label: (
-					<Radio.Group
-						key="view-mode"
-						optionType="button"
-					>
-						<Radio value={ThemeTypeEnum.SYSTEM}>{ThemeTypeLabelEnum.SYSTEM}</Radio>
-						<Radio value={ThemeTypeEnum.LIGHT}>{ThemeTypeLabelEnum.LIGHT}</Radio>
-						<Radio value={ThemeTypeEnum.DARK}>{ThemeTypeLabelEnum.DARK}</Radio>
-					</Radio.Group>
-				),
+				type: 'group',
+				children: [
+					{
+						key: 'light',
+						label: (
+							<Radio.Group
+								key="view-mode"
+								optionType="button"
+								value={themeMode}
+								onChange={e => {
+									setThemeMode(e.target.value as ThemeModeEnum)
+								}}
+							>
+								<Radio value={ThemeModeEnum.SYSTEM}>{ThemeModeLabelEnum.SYSTEM}</Radio>
+								<Radio value={ThemeModeEnum.LIGHT}>{ThemeModeLabelEnum.LIGHT}</Radio>
+								<Radio value={ThemeModeEnum.DARK}>{ThemeModeLabelEnum.DARK}</Radio>
+							</Radio.Group>
+						),
+					},
+				],
+				label: '主题',
+			},
+			{
+				type: 'divider',
 			},
 			{
 				type: 'group',
@@ -291,7 +305,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		}
 
 		return [...actionMenus, ...conversationListMenus]
-	}, [currentConversationId, conversations])
+	}, [currentConversationId, conversations, themeMode, setThemeMode])
 
 	return (
 		<ConversationsContextProvider
