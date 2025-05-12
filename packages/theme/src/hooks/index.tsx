@@ -121,6 +121,6 @@ export const useThemeContext = () => {
 		...context,
 		isDark: context.theme === ThemeEnum.DARK,
 		isLight: context.theme === ThemeEnum.LIGHT,
-		isSystem: context.themeType === ThemeTypeEnum.SYSTEM,
+		isSystemMode: context.themeType === ThemeTypeEnum.SYSTEM,
 	};
 };
