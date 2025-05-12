@@ -215,7 +215,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				},
 			},
 			{
-				key: 'add_conversation',
+				key: 'rename_conversation',
 				icon: <EditOutlined />,
 				label: '编辑对话名称',
 				disabled: isTempId(currentConversationId),
