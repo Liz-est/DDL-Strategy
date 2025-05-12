@@ -29,7 +29,7 @@ export enum AppModeEnums {
  */
 export const AppModeLabels = {
 	[AppModeEnums.TEXT_GENERATOR]: 'Text Generator',
-	[AppModeEnums.CHATBOT]: 'Chatbox',
+	[AppModeEnums.CHATBOT]: 'Chatbot',
 	[AppModeEnums.WORKFLOW]: 'Workflow',
 	[AppModeEnums.CHATFLOW]: 'Chatflow',
 	[AppModeEnums.AGENT]: 'Agent',
