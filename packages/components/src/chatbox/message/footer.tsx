@@ -2,13 +2,16 @@ import { DifyApi, IGetAppParametersResponse, IRating } from '@dify-chat/api'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { useRequest, useSetState } from 'ahooks'
 import { message as antdMessage, Space } from 'antd'
-import { RefreshCcw } from 'lucide-react'
 import { useState } from 'react'
 
 import LucideIcon from '../../lucide-icon'
 import ActionButton from './action-btn'
 
 interface IMessageFooterProps {
+	/**
+	 * 是否正在对话中
+	 */
+	isRequesting?: boolean
 	/**
 	 * 反馈 API
 	 */
@@ -55,6 +58,10 @@ interface IMessageFooterProps {
 	 * TTS 配置
 	 */
 	ttsConfig?: IGetAppParametersResponse['text_to_speech']
+	/**
+	 * 触发重新生成消息
+	 */
+	onRegenerateMessage?: () => void
 }
 
 /**
@@ -62,12 +69,14 @@ interface IMessageFooterProps {
  */
 export default function MessageFooter(props: IMessageFooterProps) {
 	const {
+		isRequesting,
 		messageId,
 		messageContent,
 		feedback: { rating, callback },
 		feedbackApi,
 		ttsApi,
 		ttsConfig,
+		onRegenerateMessage,
 	} = props
 
 	const isLiked = rating === 'like'
@@ -147,8 +156,11 @@ export default function MessageFooter(props: IMessageFooterProps) {
 	const actionButtons = [
 		// 重新生成回复
 		{
-			icon: <RefreshCcw />,
-			hidden: true,
+			icon: <LucideIcon name="refresh-ccw" />,
+			hidden: false,
+			onClick: () => {
+				onRegenerateMessage?.()
+			},
 		},
 		// 复制内容
 		{
@@ -191,7 +203,13 @@ export default function MessageFooter(props: IMessageFooterProps) {
 		{
 			icon: (
 				<LucideIcon
-					color={ttsPlaying ? 'var(--theme-primary-color)' : 'var(--theme-text-color)'}
+					color={
+						isRequesting
+							? undefined
+							: ttsPlaying
+								? 'var(--theme-primary-color)'
+								: 'var(--theme-text-color)'
+					}
 					name={ttsPlaying ? 'volume-2' : 'volume-1'}
 					size={18}
 					strokeWidth={1.75}
@@ -221,6 +239,7 @@ export default function MessageFooter(props: IMessageFooterProps) {
 							onClick={buttonProps.onClick}
 							active={buttonProps.active}
 							loading={buttonProps.loading}
+							disabled={isRequesting}
 						/>
 					),
 			)}

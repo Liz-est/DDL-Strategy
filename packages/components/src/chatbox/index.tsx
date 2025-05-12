@@ -185,6 +185,19 @@ export const Chatbox = (props: ChatboxProps) => {
 									feedbackCallback?.(conversationId!)
 								},
 							}}
+							isRequesting={isRequesting}
+							onRegenerateMessage={() => {
+								// 直接通过遍历找到当前消息的用户子消息，取其内容发送消息
+								const currentItem = messageItems.find(item => item.id === messageItem.id)
+								if (!currentItem) {
+									console.error('消息不存在:', messageItem.id)
+									message.error('消息不存在')
+									return
+								}
+								onSubmit(currentItem.content, {
+									inputs: entryForm.getFieldsValue(),
+								})
+							}}
 						/>
 						{messageItem.created_at && (
 							<div className="ml-3 text-sm text-desc">回复时间：{messageItem.created_at}</div>
@@ -193,7 +206,15 @@ export const Chatbox = (props: ChatboxProps) => {
 				),
 			}
 		}) as GetProp<typeof Bubble.List, 'items'>
-	}, [messageItems, conversationId, difyApi, feedbackCallback, currentApp?.parameters, onSubmit])
+	}, [
+		messageItems,
+		conversationId,
+		difyApi,
+		feedbackCallback,
+		currentApp?.parameters,
+		onSubmit,
+		isRequesting,
+	])
 
 	// 监听 items 更新，滚动到最底部
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
