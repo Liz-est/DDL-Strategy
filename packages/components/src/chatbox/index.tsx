@@ -1,7 +1,7 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
-import { Roles, useAppContext } from '@dify-chat/core'
+import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { useThemeContext } from '@dify-chat/theme'
 import { FormInstance, GetProp, message } from 'antd'
@@ -208,6 +208,18 @@ export const Chatbox = (props: ChatboxProps) => {
 		}
 	}, [deferredItems])
 
+	// 获取应用的对话开场白展示模式
+	const openingStatementMode =
+		currentApp?.config?.extConfig?.conversation?.openingStatement?.displayMode
+
+	// 是否展示开场白
+	const promptsVisible = useMemo(() => {
+		if (openingStatementMode === OpeningStatementDisplayMode.Always) {
+			return true
+		}
+		return !items?.length && isTempId(conversationId)
+	}, [openingStatementMode, items, conversationId])
+
 	return (
 		<div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative">
 			<div
@@ -216,7 +228,7 @@ export const Chatbox = (props: ChatboxProps) => {
 			>
 				{/* 🌟 欢迎占位 + 对话参数 */}
 				<WelcomePlaceholder
-					showPrompts={!items?.length && isTempId(conversationId)}
+					showPrompts={promptsVisible}
 					onPromptItemClick={onPromptsItemClick}
 					formFilled={isFormFilled}
 					onStartConversation={onStartConversation}
@@ -232,8 +244,8 @@ export const Chatbox = (props: ChatboxProps) => {
 						roles={roles}
 					/>
 
-					{/* 下一步问题建议 */}
-					{nextSuggestions?.length ? (
+					{/* 下一步问题建议 当存在消息列表，且非正在对话时才展示 */}
+					{nextSuggestions?.length && items.length && !isRequesting ? (
 						<div className="p-3 md:pl-[44px] mt-3">
 							<div className="text-desc">🤔 你可能还想问:</div>
 							<div>
