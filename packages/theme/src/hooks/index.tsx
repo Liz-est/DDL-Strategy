@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ThemeEnum, ThemeTypeEnum } from '../constants';
 
 /**
- * 主题类型，用于用户手动切换， light-始终白色 dark-始终夜间，system-跟随系统
+ * 主题类型，用于用户手动切换， light-固定浅色 dark-固定深色，system-跟随系统
  */
 export type IThemeType = 'light' | 'dark' | 'system';
 
@@ -75,14 +75,13 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	 * 初始化主题监听
 	 */
 	const initThemeListener = () => {
-		// 如果不是系统主题，则不需要监听
-		if (themeType !== ThemeTypeEnum.SYSTEM) {
-			return;
-		}
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 		handleColorSchemeChange(mediaQuery);
-		// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
-		mediaQuery.addEventListener('change', handleColorSchemeChange);
+		// 只有跟随系统时才监听媒体查询
+		if (themeType === ThemeTypeEnum.SYSTEM) {
+			// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
+			mediaQuery.addEventListener('change', handleColorSchemeChange);
+		}
 	};
 
 	useEffect(() => {
