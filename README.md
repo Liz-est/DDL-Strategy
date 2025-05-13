@@ -24,6 +24,7 @@
 | <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" /> | <a target="blank" href="https://github.com/HowieSh">HowieSh</a> | Github |
 | <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼 | Wechat |
 | <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" /> | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan | Wechat |
 | None | 匿名慈善家 | Wechat |
 
 ## Repobeats
