@@ -162,6 +162,8 @@ Chatflow 工作流：
 只需简单修改 `src/App.tsx` 中 `DifyChatProvider` 的属性即可：
 
 ```tsx
+import { AppModeEnums } from '@dify-chat/core'
+
 export default function App() {
   return (
     <DifyChatProvider
@@ -175,6 +177,10 @@ export default function App() {
           requestConfig: {
             apiBase: '上一步中获取到的 API Base',
             apiKey: '上一步中获取到的 API Key',
+          },
+          // 如果你使用的是聊天类型应用 (Chatbot/Chatflow/Agent), 则不需要定义 info.mode
+          info: {
+            mode: AppModeEnums.WORKFLOW,
           },
         },
       }}
@@ -199,9 +205,11 @@ export default function App() {
 
 ![添加应用配置抽屉](./docs/guide_mtapp_setting_add.png)
 
-依次填入在上一步中获取的 API Base 和 API Secret：
+依次填入应用信息：
 
-> 注：其他配置非必需，保持默认值即可。
+- 请求配置：在上一步中获取的 API Base 和 API Secret
+- 应用类型：默认是聊天助手，如果是其他类型应用，需要切换到对应的类型
+- 其他配置非必需，先保持默认值，后续需要再编辑即可
 
 ![添加应用配置抽屉-已填入信息](./docs/guide_mtapp_setting_add_fulfilled.png)
 
