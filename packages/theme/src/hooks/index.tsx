@@ -14,7 +14,7 @@ export type ICurrentTheme = 'light' | 'dark';
 /**
  * 主题上下文类型定义
  */
-interface IThemeContext {
+export interface IThemeContext {
 	/**
 	 * 当前主题
 	 */
