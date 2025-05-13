@@ -69,6 +69,8 @@ interface IDifyApiOptions {
 
 ## API 方法
 
+> 注意：开发此包的初衷是为了实现主项目 Dify Chat 的相关功能，所以并不是所有的官方 API 都会存在对应的方法。如需调用其他 API，请自行参考官方文档。
+
 ### 更新 API 配置
 
 当需要切换应用时，可以更新 API 配置。
