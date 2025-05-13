@@ -6,6 +6,8 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react'
 
 import AppInputForm, { IAppInputFormProps } from './app-input-form'
 
+const COLLAPSE_KEY = 'conversation-input-params-setting'
+
 /**
  * 应用输入参数管理容器
  */
@@ -16,11 +18,8 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 	const [activeKey, setActiveKey] = useState<string[]>([])
 
 	useEffect(() => {
-		if (isTempId(currentConversationId)) {
-			setActiveKey(['1'])
-		} else {
-			setActiveKey([])
-		}
+		// 每当切换对话时，都默认打开 Collapse，目的是渲染一遍表单（Collpase 后续关掉了也不会清除 form），以便 entryForm 能获取到表单值
+		setActiveKey([COLLAPSE_KEY])
 	}, [currentConversationId])
 
 	useEffect(() => {
@@ -45,7 +44,7 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 
 	const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = panelStyle => [
 		{
-			key: '1',
+			key: COLLAPSE_KEY,
 			label: (
 				<div className="flex items-center">
 					<div className="font-semibold text-base">对话参数设置</div>
