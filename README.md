@@ -163,25 +163,25 @@ Chatflow 工作流：
 
 ```tsx
 export default function App() {
-	return (
-		<DifyChatProvider
-			value={{
-				// 修改为单应用模式
-				mode: 'singleApp',
-				// 用户id，可以获取业务系统的用户 ID，动态传入
-				user: USER,
-				// 单应用模式下，需要传入 appConfig 配置
-				appConfig: {
-					requestConfig: {
-						apiBase: '上一步中获取到的 API Base',
-						apiKey: '上一步中获取到的 API Key',
-					},
-				},
-			}}
-		>
-			子组件
-		</DifyChatProvider>
-	)
+  return (
+    <DifyChatProvider
+      value={{
+        // 修改为单应用模式
+        mode: 'singleApp',
+        // 用户id，可以获取业务系统的用户 ID，动态传入
+        user: USER,
+        // 单应用模式下，需要传入 appConfig 配置
+        appConfig: {
+          requestConfig: {
+            apiBase: '上一步中获取到的 API Base',
+            apiKey: '上一步中获取到的 API Key',
+          },
+        },
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
 }
 ```
 
@@ -234,16 +234,16 @@ import { DifyChatProvider } from '@dify-chat/core'
 import DifyAppService from './services/app/localstorage'
 
 export default function App() {
-	return (
-		<DifyChatProvider
-			value={{
-				...其他属性,
-				appService: new DifyAppService(),
-			}}
-		>
-			子组件
-		</DifyChatProvider>
-	)
+  return (
+    <DifyChatProvider
+      value={{
+        ...其他属性,
+        appService: new DifyAppService(),
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
 }
 ```
 
@@ -282,16 +282,16 @@ import { DifyChatProvider } from '@dify-chat/core'
 import DifyAppService from './services/app/localstorage'
 
 export default function App() {
-	return (
-		<DifyChatProvider
-			value={{
-				...其他配置,
-				enableSetting: false,
-			}}
-		>
-			子组件
-		</DifyChatProvider>
-	)
+  return (
+    <DifyChatProvider
+      value={{
+        ...其他配置,
+        enableSetting: false,
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
 }
 ```
 
@@ -326,26 +326,26 @@ Dify Chatflow 编排的回复内容示例：
 
 ```html
 <form data-format="json">
-	<label for="username">用户名字:</label>
-	<input
-		type="text"
-		name="username"
-		value="{{ username }}"
-	/>
-	<label for="phone">联系电话:</label>
-	<input
-		type="text"
-		name="phone"
-		value="{{ phone }}"
-	/>
-	<label for="content">投诉内容:</label>
-	<textarea name="content"></textarea>
-	<button
-		data-size="small"
-		data-variant="primary"
-	>
-		提交
-	</button>
+  <label for="username">用户名字:</label>
+  <input
+    type="text"
+    name="username"
+    value="{{ username }}"
+  />
+  <label for="phone">联系电话:</label>
+  <input
+    type="text"
+    name="phone"
+    value="{{ phone }}"
+  />
+  <label for="content">投诉内容:</label>
+  <textarea name="content"></textarea>
+  <button
+    data-size="small"
+    data-variant="primary"
+  >
+    提交
+  </button>
 </form>
 ```
 
@@ -358,10 +358,10 @@ Dify Chatflow 编排的回复内容示例：
 
 ```json
 {
-	"username": "lexmin",
-	"phone": "13123456789",
-	"content": "快递太慢啦，我要举报",
-	"isFormSubmit": true
+  "username": "lexmin",
+  "phone": "13123456789",
+  "content": "快递太慢啦，我要举报",
+  "isFormSubmit": true
 }
 ```
 
@@ -388,26 +388,26 @@ Dify Chatflow 编排的回复内容示例：
 
 ```tsx
 export default function App() {
-	return (
-		<DifyChatProvider
-			value={{
-				mode: 'singleApp',
-				user: USER,
-				appConfig: {
-					requestConfig: {
-						apiBase: '你的 API Base',
-						apiKey: '你的 API Secret',
-					},
-					answerForm: {
-						enabled: true,
-						feedbackText: '我提交了一个表单',
-					},
-				},
-			}}
-		>
-			子组件
-		</DifyChatProvider>
-	)
+  return (
+    <DifyChatProvider
+      value={{
+        mode: 'singleApp',
+        user: USER,
+        appConfig: {
+          requestConfig: {
+            apiBase: '你的 API Base',
+            apiKey: '你的 API Secret',
+          },
+          answerForm: {
+            enabled: true,
+            feedbackText: '我提交了一个表单',
+          },
+        },
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
 }
 ```
 
@@ -433,22 +433,22 @@ Dify 应用支持配置初始参数，在对话开启时，展示在界面上供
 
 ```tsx
 export default function App() {
-	return (
-		<DifyChatProvider
-			value={{
-				...其他配置,
-				appConfig: {
-					...其他配置,
-					inputParams: {
-						// 是否允许用户在对话中更新参数值
-						enableUpdateAfterCvstStarts: false,
-					},
-				},
-			}}
-		>
-			子组件
-		</DifyChatProvider>
-	)
+  return (
+    <DifyChatProvider
+      value={{
+        ...其他配置,
+        appConfig: {
+          ...其他配置,
+          inputParams: {
+            // 是否允许用户在对话中更新参数值
+            enableUpdateAfterCvstStarts: false,
+          },
+        },
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  )
 }
 ```
 
@@ -498,12 +498,12 @@ const buffer = Buffer.from(originalString, 'utf8')
 let encodedValue = ''
 
 zlib.gzip(buffer, (err, compressedBuffer) => {
-	if (err) {
-		console.error('压缩时出错:', err)
-		return
-	}
-	const encodedString = compressedBuffer.toString('base64')
-	encodedValue = encodeURIComponent(encodedString)
+  if (err) {
+    console.error('压缩时出错:', err)
+    return
+  }
+  const encodedString = compressedBuffer.toString('base64')
+  encodedValue = encodeURIComponent(encodedString)
 })
 ```
 
