@@ -115,6 +115,9 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	);
 };
 
+/**
+ * 获取主题上下文 hook
+ */
 export const useThemeContext = () => {
 	const context = React.useContext(ThemeContext);
 	return {
