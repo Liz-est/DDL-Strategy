@@ -24,7 +24,7 @@ export const staticAppList: IDifyAppItem[] = [
 			name: 'My Workflow APP',
 			description: '我的 Workflow 应用',
 			tags: [],
-			mode: AppModeEnums.CHATFLOW,
+			mode: AppModeEnums.WORKFLOW,
 		},
 		requestConfig: {
 			apiBase: 'http://127.0.0.1:5001/v1',
