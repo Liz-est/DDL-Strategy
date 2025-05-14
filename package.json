@@ -37,7 +37,7 @@
 		"semver": "catalog:"
 	},
 	"devDependencies": {
-		"@changesets/cli": "^2.29.2",
+		"@changesets/cli": "catalog:",
 		"@eslint/compat": "catalog:",
 		"@eslint/js": "catalog:",
 		"@fingerprintjs/fingerprintjs": "catalog:",
