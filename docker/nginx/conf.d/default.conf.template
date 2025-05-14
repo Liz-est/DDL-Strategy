@@ -9,10 +9,17 @@ server {
         autoindex_localtime on;
     }
 
-    location ^~ /dify-chat {
+    #Dify-chat 应用路由配置
+    location = /dify-chat {
+        return 301 /dify-chat/;
+    }
+
+    location ^~ /dify-chat/ {
         root /app;
         index index.html;
-        rewrite /dify-chat/chat /dify-chat/ last;
+        rewrite ^/dify-chat/(apps|chat|app/[^/]+)(/.*)?$ /dify-chat/ last;
+        # 安全控制
+        disable_symlinks on;
     }
 
     ${HTTPS_CONFIG}
