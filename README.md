@@ -72,6 +72,10 @@ Chatflow 工作流：
 
 ![Screen Shot](./docs/sample_workflow.png)
 
+Agent 调用工具：
+
+![Agent 调用工具截图](./docs/guide_app_agent.png)
+
 知识库引用链接：
 
 ![Screen Shot](./docs/sample_knowledge_base_link.png)
