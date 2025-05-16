@@ -34,7 +34,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 				return difyApi.runWorkflow({
 					inputs: values,
 				})
-			} else if (appMode === AppModeEnums.TextGeneration) {
+			} else if (appMode === AppModeEnums.TEXT_GENERATOR) {
 				return difyApi.completion({
 					inputs: values,
 				})
