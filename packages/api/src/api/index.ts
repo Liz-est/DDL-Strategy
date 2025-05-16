@@ -1,4 +1,4 @@
-import { IDifyAppItem } from '@dify-chat/core'
+import { IDifyAppItem, IDifyAppSiteSetting } from '@dify-chat/core'
 
 import XRequest from './../base-request'
 import { IAgentThought, IRetrieverResource } from './../types'
@@ -432,6 +432,13 @@ export class DifyApi {
 	 */
 	getAppParameters = () => {
 		return this.baseRequest.get('/parameters') as Promise<IGetAppParametersResponse>
+	}
+
+	/**
+	 * 获取应用 WebAPP 设置
+	 */
+	getAppSiteSetting = () => {
+		return this.baseRequest.get('/site') as Promise<IDifyAppSiteSetting>
 	}
 
 	/**
