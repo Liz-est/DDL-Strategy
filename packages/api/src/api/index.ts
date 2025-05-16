@@ -436,6 +436,7 @@ export class DifyApi {
 
 	/**
 	 * 获取应用 WebAPP 设置
+	 * @Limited Dify v1.4.0 版本开始支持
 	 */
 	getAppSiteSetting = () => {
 		return this.baseRequest.get('/site') as Promise<IDifyAppSiteSetting>
