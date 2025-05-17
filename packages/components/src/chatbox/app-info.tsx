@@ -1,5 +1,6 @@
 import { Tag } from 'antd'
-import { Bot } from 'lucide-react'
+
+import AppIcon from './app-icon'
 
 interface IAppInfoProps {
 	info: {
@@ -17,9 +18,7 @@ export function AppInfo(props: IAppInfoProps) {
 	return (
 		<div className="text-theme-text pt-3">
 			<div className="flex items-center px-4 mt-3">
-				<div className="bg-[#ffead5] dark:bg-transparent border border-solid border-transparent dark:border-theme-border rounded-lg p-2 flex items-center">
-					<Bot className="text-theme-text" />
-				</div>
+				<AppIcon />
 				<div className="ml-3 text-theme-text text-sm truncate">{info.name}</div>
 			</div>
 			{info.tags ? (
