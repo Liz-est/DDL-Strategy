@@ -27,7 +27,18 @@ export interface IUserInputFormItemValueBase {
 	 * 最大长度
 	 */
 	max_length?: number
+	/**
+	 * 输入参数类型
+	 */
 	type: IUserInputFormItemType
+	/**
+	 * 允许的文件类型
+	 */
+	allowed_file_types?: IFileType[]
+	/**
+	 * 允许的文件后缀名
+	 */
+	allowed_file_extensions?: string[]
 }
 
 /**
