@@ -5,7 +5,7 @@ import { Button, GetProp, message, Upload } from 'antd'
 import { RcFile, UploadFile } from 'antd/es/upload'
 import { useEffect, useMemo, useState } from 'react'
 
-import { FileTypeMap, getFileExtByName, getFileTypeByName } from '../../message-sender/utils'
+import { FileTypeMap, getDifyFileType, getFileExtByName } from '../../message-sender/utils'
 import { completeFileUrl } from '../../utils'
 
 export interface IUploadFileItem extends UploadFile {
@@ -64,7 +64,7 @@ export default function FileUpload(props: IFileUploadProps) {
 
 	const formatFiles = (files: IUploadFileItem[]) => {
 		return files?.map(file => {
-			const fileType = getFileTypeByName(file.name)
+			const fileType = getDifyFileType(file.name, allowed_file_types)
 			return {
 				...file,
 				type: fileType,
@@ -139,12 +139,12 @@ export default function FileUpload(props: IFileUploadProps) {
 
 		const result = await uploadFileApi(file)
 		clear()
-		const fileType = getFileTypeByName(file.name)
+		const fileType = getDifyFileType(file.name, allowed_file_types)
 		updateFiles([
 			{
 				...fileBaseInfo,
 				upload_file_id: result.id,
-				type: fileType || 'document',
+				type: fileType || 'custom',
 				percent: 100,
 				status: 'done',
 			},
