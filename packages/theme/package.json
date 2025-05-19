@@ -18,10 +18,12 @@
 	},
 	"exports": {
 		".": {
+			"source": "./src/index.ts",
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		}
 	},
+	"source": "./src/index.ts",
 	"types": "./dist/index.d.ts",
 	"files": [
 		"dist"
