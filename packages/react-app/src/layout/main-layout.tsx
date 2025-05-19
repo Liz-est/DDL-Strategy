@@ -41,6 +41,8 @@ const MainLayout = (props: IMainLayoutProps) => {
 	// FIXME: 去掉这里的默认值
 	const appMode = currentApp?.config?.info?.mode || AppModeEnums.CHATBOT
 
+	console.log('currentApp in mainn-layout', currentApp)
+
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors['theme-text'] } }}>
 			{[AppModeEnums.CHATBOT, AppModeEnums.CHATFLOW, AppModeEnums.AGENT].includes(appMode) ? (
