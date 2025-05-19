@@ -18,11 +18,13 @@
 	},
 	"exports": {
 		".": {
+			"source": "./src/index.ts",
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
 			"require": "./dist/index.cjs"
 		}
 	},
+	"source": "./src/index.ts",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -53,6 +55,7 @@
 	},
 	"peerDependencies": {
 		"react": ">=16.9.0",
-		"react-dom": ">=16.9.0"
+		"react-dom": ">=16.9.0",
+		"antd": ">=5.0.0"
 	}
 }

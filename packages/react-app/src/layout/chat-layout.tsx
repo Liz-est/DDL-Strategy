@@ -363,7 +363,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 							>
 								{sidebarOpen ? (
 									<>
-										{currentApp.config.info ? <AppInfo info={currentApp.config.info!} /> : null}
+										{currentApp.config.info ? <AppInfo /> : null}
 										{/* 添加会话 */}
 										{currentApp ? (
 											<Button

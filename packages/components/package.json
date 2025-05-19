@@ -24,10 +24,12 @@
 	"type": "module",
 	"exports": {
 		".": {
+			"source": "./src/index.tsx",
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		}
 	},
+	"source": "./src/index.tsx",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"files": [
@@ -58,6 +60,7 @@
 		"@testing-library/react": "catalog:",
 		"@types/hast": "catalog:",
 		"@types/lodash-es": "catalog:",
+		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"jsdom": "catalog:",
@@ -75,6 +78,8 @@
 		"react-dom": ">=16.9.0"
 	},
 	"dependencies": {
+		"@ant-design/icons": "catalog:",
+		"@ant-design/x": "catalog:",
 		"@dify-chat/api": "workspace:^",
 		"@dify-chat/core": "workspace:^",
 		"@dify-chat/helpers": "workspace:^",
@@ -82,7 +87,10 @@
 		"@heroicons/react": "catalog:",
 		"@lexmin0412/markdown-it-echarts": "catalog:",
 		"@svgdotjs/svg.js": "catalog:",
+		"@toolkit-fe/clipboard": "catalog:",
 		"@types/react-syntax-highlighter": "catalog:",
+		"ahooks": "catalog:",
+		"antd": "catalog:",
 		"classnames": "catalog:",
 		"dompurify": "catalog:",
 		"echarts-for-react": "catalog:",
