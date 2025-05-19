@@ -41,6 +41,8 @@
 		"@biomejs/biome": "catalog:",
 		"@rslib/core": "catalog:",
 		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
 		"typescript": "catalog:",
