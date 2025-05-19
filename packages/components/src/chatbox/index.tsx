@@ -327,8 +327,8 @@ export const Chatbox = (props: ChatboxProps) => {
 							onCancel={onCancel}
 						/>
 					</div>
-					<div className="text-theme-desc text-sm text-center h-8 leading-8">
-						内容由 AI 生成, 仅供参考
+					<div className="text-theme-desc text-sm text-center h-8 leading-8 truncate">
+						{currentApp?.site?.custom_disclaimer || '内容由 AI 生成, 仅供参考'}
 					</div>
 				</div>
 			</div>
