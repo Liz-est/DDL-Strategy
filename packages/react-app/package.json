@@ -3,9 +3,7 @@
 	"private": true,
 	"version": "0.2.0",
 	"scripts": {
-		"build:pkgs": "pnpm --filter @dify-chat/* build",
-		"build:app": "rsbuild build",
-		"build": "pnpm build:pkgs && pnpm build:app",
+		"build": "rsbuild build",
 		"dev": "rsbuild dev",
 		"format": "prettier --write .",
 		"lint": "eslint .",
