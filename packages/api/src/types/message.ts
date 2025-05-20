@@ -33,7 +33,7 @@ export interface IWorkflowNode {
 	/**
 	 * 节点输出 序列化的 JSON 数据
 	 */
-	outputs: string;
+	outputs: unknown;
 	/**
 	 * 耗时 单位秒
 	 */
