@@ -19,6 +19,7 @@ import {
 	Input,
 	message,
 	Modal,
+	Popover,
 	Radio,
 	Spin,
 	Tooltip,
@@ -320,6 +321,37 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		return [...actionMenus, ...conversationListMenus]
 	}, [currentConversationId, conversations, themeMode, setThemeMode])
 
+	// 对话列表（包括加载和缺省状态）
+	const conversationListWithEmpty = useMemo(() => {
+		return (
+			<Spin spinning={conversationListLoading}>
+				{conversations?.length ? (
+					<ConversationList
+						renameConversationPromise={onRenameConversation}
+						deleteConversationPromise={onDeleteConversation}
+						items={conversations.map(item => {
+							return {
+								key: item.id,
+								label: item.name,
+							}
+						})}
+						activeKey={currentConversationId}
+						onActiveChange={id => {
+							setCurrentConversationId(id)
+						}}
+					/>
+				) : (
+					<div className="w-full h-full flex items-center justify-center">
+						<Empty
+							className="pt-6"
+							description="暂无会话"
+						/>
+					</div>
+				)}
+			</Spin>
+		)
+	}, [conversations, onRenameConversation, onDeleteConversation, setCurrentConversationId])
+
 	return (
 		<ConversationsContextProvider
 			value={{
@@ -378,45 +410,21 @@ export default function ChatLayout(props: IChatLayoutProps) {
 											</Button>
 										) : null}
 										{/* 🌟 对话管理 */}
-										<div className="px-4 mt-3 flex-1">
-											<Spin spinning={conversationListLoading}>
-												{conversations?.length ? (
-													<ConversationList
-														renameConversationPromise={onRenameConversation}
-														deleteConversationPromise={onDeleteConversation}
-														items={conversations.map(item => {
-															return {
-																key: item.id,
-																label: item.name,
-															}
-														})}
-														activeKey={currentConversationId}
-														onActiveChange={id => {
-															setCurrentConversationId(id)
-														}}
-													/>
-												) : (
-													<div className="w-full h-full flex items-center justify-center">
-														<Empty
-															className="pt-6"
-															description="暂无会话"
-														/>
-													</div>
-												)}
-											</Spin>
-										</div>
+										<div className="px-4 mt-3 flex-1">{conversationListWithEmpty}</div>
 									</>
 								) : (
 									<div className="flex flex-col justify-start items-center flex-1 pt-6">
 										{/* 应用图标 */}
-										<AppIcon size="small" />
+										<div className="mb-1.5 flex items-center justify-center">
+											<AppIcon size="small" />
+										</div>
 
 										{/* 新增对话 */}
 										<Tooltip
 											title="新增对话"
 											placement="right"
 										>
-											<div className="text-theme-text mt-3 hover:text-primary flex items-center">
+											<div className="text-theme-text my-1.5 hover:text-primary flex items-center">
 												<LucideIcon
 													name="plus-circle"
 													strokeWidth={1.25}
@@ -428,6 +436,26 @@ export default function ChatLayout(props: IChatLayoutProps) {
 												/>
 											</div>
 										</Tooltip>
+
+										<Popover
+											content={
+												<div className="max-h-[50vh] overflow-auto pr-3">
+													{conversationListWithEmpty}
+												</div>
+											}
+											title="对话列表"
+											placement="rightTop"
+										>
+											{/* 必须包裹一个 HTML 标签才能正常展示 Popover */}
+											<div className="flex items-center justify-center">
+												<LucideIcon
+													className="my-1.5 cursor-pointer hover:text-primary"
+													strokeWidth={1.25}
+													size={28}
+													name="menu"
+												/>
+											</div>
+										</Popover>
 									</div>
 								)}
 
