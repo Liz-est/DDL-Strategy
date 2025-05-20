@@ -1,5 +1,17 @@
 # @dify-chat/api
 
+## 0.3.0
+
+### Minor Changes
+
+- 7fca918: 工作流支持通过 Dify WebApp 设置进行显示隐藏, 老版本默认隐藏
+
+### Patch Changes
+
+- Updated dependencies [7fca918]
+  - @dify-chat/core@0.3.0
+  - @dify-chat/helpers@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
