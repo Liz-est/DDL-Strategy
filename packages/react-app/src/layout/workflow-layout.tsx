@@ -7,9 +7,16 @@ import {
 	IErrorEvent,
 	IWorkflowNode,
 } from '@dify-chat/api'
-import { AppInfo, AppInputForm, MarkdownRenderer, WorkflowLogs } from '@dify-chat/components'
+import {
+	AppInfo,
+	AppInputForm,
+	LucideIcon,
+	MarkdownRenderer,
+	WorkflowLogs,
+} from '@dify-chat/components'
 import { AppModeEnums, useAppContext } from '@dify-chat/core'
-import { Button, Empty, Form, message } from 'antd'
+import { copyToClipboard } from '@toolkit-fe/clipboard'
+import { Button, Empty, Form, message, Tabs } from 'antd'
 import { useState } from 'react'
 
 interface IWorkflowLayoutProps {
@@ -26,6 +33,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 	const [text, setText] = useState('')
 	const [workflowStatus, setWorkflowStatus] = useState<'running' | 'finished'>()
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([])
+	const [resultDetail, setResultDetail] = useState<Record<string, string>>({})
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
 		const runner = () => {
@@ -83,7 +91,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 								node_type: IWorkflowNode['type']
 								title: string
 								inputs: string
-								outputs: string
+								outputs: Record<string, string>
 								process_data: string
 								elapsed_time: number
 								execution_metadata: IWorkflowNode['execution_metadata']
@@ -111,6 +119,15 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 							setWorkflowItems([])
 						} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
 							workflows.status = 'finished'
+							const { outputs } = parsedData.data || {}
+							const outputsLength = Object.keys(outputs)?.length
+							if (outputsLength > 0) {
+								setResultDetail(outputs)
+							}
+							// 如果返回的对象只有一个属性, 则在 "结果" Tab 中渲染其值
+							if (outputsLength === 1) {
+								setText(Object.values(outputs)[0] as string)
+							}
 							setWorkflowStatus('finished')
 						} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
 							setWorkflowItems(prev => {
@@ -165,6 +182,41 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 			})
 	}
 
+	const resultDetailLength = Object.keys(resultDetail).length
+
+	const resultItems = [
+		{
+			key: 'result',
+			label: '结果',
+			children: (
+				<div className="w-full h-full overflow-x-hidden overflow-y-auto">
+					<MarkdownRenderer markdownText={text} />
+				</div>
+			),
+			visible: resultDetailLength === 1,
+		},
+		{
+			key: 'detail',
+			label: '详情',
+			children: (
+				<div className="w-full">
+					<LucideIcon
+						className="cursor-pointer"
+						name="copy"
+						onClick={async () => {
+							await copyToClipboard(JSON.stringify(resultDetail, null, 2))
+							message.success('已复制到剪贴板')
+						}}
+					/>
+					<pre className="w-full overflow-auto bg-theme-code-block-bg p-3 box-border rounded-lg">
+						{JSON.stringify(resultDetail, null, 2)}
+					</pre>
+				</div>
+			),
+			visible: resultDetailLength > 0,
+		},
+	].filter(item => item.visible)
+
 	return (
 		<div className="block md:flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden bg-gray-50">
 			{/* 参数填写区域 */}
@@ -188,6 +240,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 						onClick={async () => {
 							await entryForm.validateFields()
 							const values = await entryForm.getFieldsValue()
+							setResultDetail({})
 							setWorkflowItems([])
 							setWorkflowStatus('running')
 							setText('')
@@ -213,7 +266,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 							status={workflowStatus}
 							items={workflowItems}
 						/>
-						<MarkdownRenderer markdownText={text} />
+						{resultItems?.length ? <Tabs items={resultItems} /> : null}
 					</>
 				)}
 			</div>
