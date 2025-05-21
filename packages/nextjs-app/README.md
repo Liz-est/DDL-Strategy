@@ -16,3 +16,7 @@ yarn dev
 # or
 pnpm dev
 ```
+
+## Roadmap
+
+- [ ] 把 react-app 以及其他子包的依赖升级到 react 19
