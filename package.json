@@ -6,6 +6,7 @@
 		"build:pkgs": "pnpm --filter @dify-chat/* build",
 		"build": "pnpm build:pkgs && pnpm --filter dify-chat-app-react build",
 		"dev": "pnpm --filter dify-chat-app-react dev",
+		"dev:next": "cd packages/nextjs-app && pnpm dev",
 		"format": "prettier --write .",
 		"lint": "eslint .",
 		"preview": "pnpm --filter dify-chat-app-react preview",
