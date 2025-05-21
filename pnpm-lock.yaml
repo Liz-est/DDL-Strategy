@@ -106,11 +106,11 @@ catalogs:
       specifier: ^2.0.3
       version: 2.0.3
     "@types/react":
-      specifier: ^18.3.12
-      version: 18.3.21
+      specifier: ^19.1.5
+      version: 19.1.5
     "@types/react-dom":
-      specifier: ^18.3.1
-      version: 18.3.7
+      specifier: ^19.1.5
+      version: 19.1.5
     "@types/react-syntax-highlighter":
       specifier: ^15.5.13
       version: 15.5.13
@@ -202,11 +202,11 @@ catalogs:
       specifier: ^0.2.3
       version: 0.2.3
     react:
-      specifier: ^18.3.1
-      version: 18.3.1
+      specifier: ^19.1.0
+      version: 19.1.0
     react-dom:
-      specifier: ^18.3.1
-      version: 18.3.1
+      specifier: ^19.1.0
+      version: 19.1.0
     react-markdown:
       specifier: ^10.1.0
       version: 10.1.0
@@ -318,7 +318,7 @@ importers:
         version: link:../helpers
       antd:
         specifier: ">=5.0.0"
-        version: 5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       "@biomejs/biome":
         specifier: "catalog:"
@@ -331,16 +331,16 @@ importers:
         version: 22.15.21
       "@types/react":
         specifier: "catalog:"
-        version: 18.3.21
+        version: 19.1.5
       "@types/react-dom":
         specifier: "catalog:"
-        version: 18.3.7(@types/react@18.3.21)
+        version: 19.1.5(@types/react@19.1.5)
       react:
         specifier: "catalog:"
-        version: 18.3.1
+        version: 19.1.0
       react-dom:
         specifier: "catalog:"
-        version: 18.3.1(react@18.3.1)
+        version: 19.1.0(react@19.1.0)
       typescript:
         specifier: "catalog:"
         version: 5.8.3
@@ -352,10 +352,10 @@ importers:
     dependencies:
       "@ant-design/icons":
         specifier: "catalog:"
-        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@ant-design/x":
         specifier: "catalog:"
-        version: 1.2.0(antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@dify-chat/api":
         specifier: workspace:^
         version: link:../api
@@ -370,7 +370,7 @@ importers:
         version: link:../theme
       "@heroicons/react":
         specifier: "catalog:"
-        version: 2.2.0(react@18.3.1)
+        version: 2.2.0(react@19.1.0)
       "@lexmin0412/markdown-it-echarts":
         specifier: "catalog:"
         version: 0.1.5
@@ -385,10 +385,10 @@ importers:
         version: 15.5.13
       ahooks:
         specifier: "catalog:"
-        version: 3.8.5(react@18.3.1)
+        version: 3.8.5(react@19.1.0)
       antd:
         specifier: "catalog:"
-        version: 5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames:
         specifier: "catalog:"
         version: 2.5.1
@@ -397,7 +397,7 @@ importers:
         version: 3.2.6
       echarts-for-react:
         specifier: "catalog:"
-        version: 3.0.2(echarts@5.6.0)(react@18.3.1)
+        version: 3.0.2(echarts@5.6.0)(react@19.1.0)
       hast:
         specifier: "catalog:"
         version: 1.0.0
@@ -409,7 +409,7 @@ importers:
         version: 4.17.21
       lucide-react:
         specifier: "catalog:"
-        version: 0.508.0(react@18.3.1)
+        version: 0.508.0(react@19.1.0)
       markdown-it:
         specifier: "catalog:"
         version: 14.1.0
@@ -421,16 +421,16 @@ importers:
         version: 11.6.0
       pure-react-router:
         specifier: "catalog:"
-        version: 0.2.3(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.2.3(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-markdown:
         specifier: "catalog:"
-        version: 10.1.0(@types/react@18.3.21)(react@18.3.1)
+        version: 10.1.0(@types/react@19.1.5)(react@19.1.0)
       react-photo-view:
         specifier: "catalog:"
-        version: 1.2.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-syntax-highlighter:
         specifier: "catalog:"
-        version: 15.6.1(react@18.3.1)
+        version: 15.6.1(react@19.1.0)
       rehype-katex:
         specifier: "catalog:"
         version: 7.0.1
@@ -467,22 +467,22 @@ importers:
         version: 0.7.1(typescript@5.8.3)
       "@storybook/addon-essentials":
         specifier: "catalog:"
-        version: 8.6.14(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-interactions":
         specifier: "catalog:"
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-links":
         specifier: "catalog:"
-        version: 8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-onboarding":
         specifier: "catalog:"
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/blocks":
         specifier: "catalog:"
-        version: 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+        version: 8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/react":
         specifier: "catalog:"
-        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+        version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
       "@storybook/test":
         specifier: "catalog:"
         version: 8.6.14(storybook@8.6.14(prettier@3.5.3))
@@ -491,7 +491,7 @@ importers:
         version: 6.6.3
       "@testing-library/react":
         specifier: "catalog:"
-        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.7(@types/react@18.3.21))(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@types/hast":
         specifier: "catalog:"
         version: 3.0.4
@@ -503,28 +503,28 @@ importers:
         version: 22.15.21
       "@types/react":
         specifier: "catalog:"
-        version: 18.3.21
+        version: 19.1.5
       "@types/react-dom":
         specifier: "catalog:"
-        version: 18.3.7(@types/react@18.3.21)
+        version: 19.1.5(@types/react@19.1.5)
       jsdom:
         specifier: "catalog:"
         version: 26.1.0
       react:
         specifier: "catalog:"
-        version: 18.3.1
+        version: 19.1.0
       react-dom:
         specifier: "catalog:"
-        version: 18.3.1(react@18.3.1)
+        version: 19.1.0(react@19.1.0)
       storybook:
         specifier: "catalog:"
         version: 8.6.14(prettier@3.5.3)
       storybook-addon-rslib:
         specifier: "catalog:"
-        version: 1.0.1(@rsbuild/core@1.3.21)(@rslib/core@0.7.1(typescript@5.8.3))(storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3))(typescript@5.8.3)
+        version: 1.0.1(@rsbuild/core@1.3.21)(@rslib/core@0.7.1(typescript@5.8.3))(storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3))(typescript@5.8.3)
       storybook-react-rsbuild:
         specifier: "catalog:"
-        version: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.41.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.4))
+        version: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rollup@4.41.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.4))
       tailwindcss:
         specifier: "catalog:"
         version: 3.4.17
@@ -548,16 +548,16 @@ importers:
         version: 22.15.21
       "@types/react":
         specifier: "catalog:"
-        version: 18.3.21
+        version: 19.1.5
       "@types/react-dom":
         specifier: "catalog:"
-        version: 18.3.7(@types/react@18.3.21)
+        version: 19.1.5(@types/react@19.1.5)
       react:
         specifier: "catalog:"
-        version: 18.3.1
+        version: 19.1.0
       react-dom:
         specifier: "catalog:"
-        version: 18.3.1(react@18.3.1)
+        version: 19.1.0(react@19.1.0)
       typescript:
         specifier: "catalog:"
         version: 5.8.3
@@ -569,7 +569,7 @@ importers:
     dependencies:
       ahooks:
         specifier: "catalog:"
-        version: 3.8.5(react@18.3.1)
+        version: 3.8.5(react@19.1.0)
       pako:
         specifier: "catalog:"
         version: 2.1.0
@@ -597,13 +597,13 @@ importers:
     dependencies:
       "@ant-design/cssinjs":
         specifier: "catalog:"
-        version: 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@ant-design/icons":
         specifier: "catalog:"
-        version: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@ant-design/x":
         specifier: "catalog:"
-        version: 1.2.0(antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@dify-chat/api":
         specifier: workspace:^
         version: link:../api
@@ -633,31 +633,31 @@ importers:
         version: 2.0.3
       ahooks:
         specifier: "catalog:"
-        version: 3.8.5(react@18.3.1)
+        version: 3.8.5(react@19.1.0)
       antd:
         specifier: "catalog:"
-        version: 5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       antd-style:
         specifier: "catalog:"
-        version: 3.7.1(@types/react@18.3.21)(antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.7.1(@types/react@19.1.5)(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames:
         specifier: "catalog:"
         version: 2.5.1
       lucide-react:
         specifier: "catalog:"
-        version: 0.508.0(react@18.3.1)
+        version: 0.508.0(react@19.1.0)
       markdown-it:
         specifier: "catalog:"
         version: 14.1.0
       pure-react-router:
         specifier: "catalog:"
-        version: 0.2.3(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 0.2.3(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
         specifier: "catalog:"
-        version: 18.3.1
+        version: 19.1.0
       react-dom:
         specifier: "catalog:"
-        version: 18.3.1(react@18.3.1)
+        version: 19.1.0(react@19.1.0)
       semver:
         specifier: "catalog:"
         version: 7.7.1
@@ -697,10 +697,10 @@ importers:
         version: 22.15.21
       "@types/react":
         specifier: "catalog:"
-        version: 18.3.21
+        version: 19.1.5
       "@types/react-dom":
         specifier: "catalog:"
-        version: 18.3.7(@types/react@18.3.21)
+        version: 19.1.5(@types/react@19.1.5)
       "@types/semver":
         specifier: "catalog:"
         version: 7.7.0
@@ -757,7 +757,7 @@ importers:
     dependencies:
       react-dom:
         specifier: ">=16.9.0"
-        version: 19.1.0(react@18.3.1)
+        version: 19.1.0(react@19.1.0)
     devDependencies:
       "@eslint/js":
         specifier: "catalog:"
@@ -770,10 +770,10 @@ importers:
         version: 0.7.1(typescript@5.8.3)
       "@types/react":
         specifier: "catalog:"
-        version: 18.3.21
+        version: 19.1.5
       antd:
         specifier: "catalog:"
-        version: 5.25.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
+        version: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       eslint:
         specifier: "catalog:"
         version: 9.26.0(jiti@2.4.2)
@@ -782,13 +782,13 @@ importers:
         version: 16.0.0
       lucide-react:
         specifier: "catalog:"
-        version: 0.508.0(react@18.3.1)
+        version: 0.508.0(react@19.1.0)
       prettier:
         specifier: "catalog:"
         version: 3.5.3
       react:
         specifier: "catalog:"
-        version: 18.3.1
+        version: 19.1.0
       typescript:
         specifier: "catalog:"
         version: 5.8.3
@@ -3341,19 +3341,13 @@ packages:
         integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==,
       }
 
-  "@types/prop-types@15.7.14":
+  "@types/react-dom@19.1.5":
     resolution:
       {
-        integrity: sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==,
-      }
-
-  "@types/react-dom@18.3.7":
-    resolution:
-      {
-        integrity: sha512-MEe3UeoENYVFXzoXEWsvcpg6ZvlrFNlOQ7EOsvhI3CfAXwzPfO8Qwuxd40nepsYKqyyVQnTdEfv68q91yLcKrQ==,
+        integrity: sha512-CMCjrWucUBZvohgZxkjd6S9h0nZxXjzus6yDfUb+xLxYM7VvjKNH1tQrE9GWLql1XoOP4/Ds3bwFqShHUYraGg==,
       }
     peerDependencies:
-      "@types/react": ^18.0.0
+      "@types/react": ^19.0.0
 
   "@types/react-syntax-highlighter@15.5.13":
     resolution:
@@ -3361,10 +3355,10 @@ packages:
         integrity: sha512-uLGJ87j6Sz8UaBAooU0T6lWJ0dBmjZgN1PZTrj05TNql2/XpC6+4HhMT5syIdFUUt+FASfCeLLv4kBygNU+8qA==,
       }
 
-  "@types/react@18.3.21":
+  "@types/react@19.1.5":
     resolution:
       {
-        integrity: sha512-gXLBtmlcRJeT09/sI4PxVwyrku6SaNUj/6cMubjE6T6XdY1fDmBL7r0nX0jbSZPU/Xr0KuwLLZh6aOYY5d91Xw==,
+        integrity: sha512-piErsCVVbpMMT2r7wbawdZsq4xMvIAhQuac2gedQHysu1TZYEigE6pnFfgZT+/jQnrRuF5r+SHzuehFjfRjr4g==,
       }
 
   "@types/resolve@1.20.6":
@@ -8943,14 +8937,6 @@ packages:
       }
     engines: { node: ">=16.14.0" }
 
-  react-dom@18.3.1:
-    resolution:
-      {
-        integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==,
-      }
-    peerDependencies:
-      react: ^18.3.1
-
   react-dom@19.1.0:
     resolution:
       {
@@ -9016,10 +9002,10 @@ packages:
     peerDependencies:
       react: ">= 0.14.0"
 
-  react@18.3.1:
+  react@19.1.0:
     resolution:
       {
-        integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==,
+        integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==,
       }
     engines: { node: ">=0.10.0" }
 
@@ -9347,12 +9333,6 @@ packages:
         integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==,
       }
     engines: { node: ">=v12.22.7" }
-
-  scheduler@0.23.2:
-    resolution:
-      {
-        integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==,
-      }
 
   scheduler@0.26.0:
     resolution:
@@ -10934,44 +10914,24 @@ snapshots:
     dependencies:
       "@ant-design/fast-color": 2.0.6
 
-  "@ant-design/cssinjs-utils@1.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@ant-design/cssinjs-utils@1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
-      "@ant-design/cssinjs": 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@babel/runtime": 7.27.0
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@ant-design/cssinjs-utils@1.1.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@babel/runtime": 7.27.0
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  "@ant-design/cssinjs@1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@ant-design/cssinjs@1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       "@emotion/hash": 0.8.0
       "@emotion/unitless": 0.7.5
       classnames: 2.5.1
       csstype: 3.1.3
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      stylis: 4.3.6
-
-  "@ant-design/cssinjs@1.23.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@emotion/hash": 0.8.0
-      "@emotion/unitless": 0.7.5
-      classnames: 2.5.1
-      csstype: 3.1.3
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       stylis: 4.3.6
 
   "@ant-design/fast-color@2.0.6":
@@ -10980,49 +10940,39 @@ snapshots:
 
   "@ant-design/icons-svg@4.4.2": {}
 
-  "@ant-design/icons@5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@ant-design/icons@5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@ant-design/colors": 7.2.1
       "@ant-design/icons-svg": 4.4.2
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@ant-design/icons@5.6.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@ant-design/colors": 7.2.1
-      "@ant-design/icons-svg": 4.4.2
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  "@ant-design/react-slick@1.1.2(react@18.3.1)":
+  "@ant-design/react-slick@1.1.2(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
       json2mq: 0.2.0
-      react: 18.3.1
+      react: 19.1.0
       resize-observer-polyfill: 1.5.1
       throttle-debounce: 5.0.2
 
-  "@ant-design/x@1.2.0(antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@ant-design/x@1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@ant-design/colors": 7.2.1
-      "@ant-design/cssinjs": 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@ant-design/cssinjs-utils": 1.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@ant-design/cssinjs-utils": 1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@ant-design/fast-color": 2.0.6
-      "@ant-design/icons": 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@ant-design/icons": 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@babel/runtime": 7.27.0
-      antd: 5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   "@antfu/install-pkg@1.1.0":
     dependencies:
@@ -11483,19 +11433,19 @@ snapshots:
 
   "@emotion/memoize@0.9.0": {}
 
-  "@emotion/react@11.14.0(@types/react@18.3.21)(react@18.3.1)":
+  "@emotion/react@11.14.0(@types/react@19.1.5)(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       "@emotion/babel-plugin": 11.13.5
       "@emotion/cache": 11.14.0
       "@emotion/serialize": 1.3.3
-      "@emotion/use-insertion-effect-with-fallbacks": 1.2.0(react@18.3.1)
+      "@emotion/use-insertion-effect-with-fallbacks": 1.2.0(react@19.1.0)
       "@emotion/utils": 1.4.2
       "@emotion/weak-memoize": 0.4.0
       hoist-non-react-statics: 3.3.2
-      react: 18.3.1
+      react: 19.1.0
     optionalDependencies:
-      "@types/react": 18.3.21
+      "@types/react": 19.1.5
     transitivePeerDependencies:
       - supports-color
 
@@ -11513,9 +11463,9 @@ snapshots:
 
   "@emotion/unitless@0.7.5": {}
 
-  "@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@18.3.1)":
+  "@emotion/use-insertion-effect-with-fallbacks@1.2.0(react@19.1.0)":
     dependencies:
-      react: 18.3.1
+      react: 19.1.0
 
   "@emotion/utils@1.4.2": {}
 
@@ -11650,9 +11600,9 @@ snapshots:
 
   "@hapi/bourne@3.0.0": {}
 
-  "@heroicons/react@2.2.0(react@18.3.1)":
+  "@heroicons/react@2.2.0(react@19.1.0)":
     dependencies:
-      react: 18.3.1
+      react: 19.1.0
 
   "@humanfs/core@0.19.1": {}
 
@@ -11750,11 +11700,11 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  "@mdx-js/react@3.1.0(@types/react@18.3.21)(react@18.3.1)":
+  "@mdx-js/react@3.1.0(@types/react@19.1.5)(react@19.1.0)":
     dependencies:
       "@types/mdx": 2.0.13
-      "@types/react": 18.3.21
-      react: 18.3.1
+      "@types/react": 19.1.5
+      react: 19.1.0
 
   "@mermaid-js/parser@0.4.0":
     dependencies:
@@ -11836,131 +11786,70 @@ snapshots:
     dependencies:
       "@babel/runtime": 7.27.0
 
-  "@rc-component/color-picker@2.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@rc-component/color-picker@2.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@ant-design/fast-color": 2.0.6
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@rc-component/color-picker@2.0.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@ant-design/fast-color": 2.0.6
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  "@rc-component/context@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@rc-component/context@1.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  "@rc-component/context@1.4.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   "@rc-component/mini-decimal@1.1.0":
     dependencies:
       "@babel/runtime": 7.27.0
 
-  "@rc-component/mutate-observer@1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@rc-component/mutate-observer@1.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@rc-component/mutate-observer@1.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
+  "@rc-component/portal@1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@rc-component/portal@1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@rc-component/qrcode@1.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@rc-component/portal@1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
+  "@rc-component/tour@1.15.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  "@rc-component/qrcode@1.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@rc-component/trigger@2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  "@rc-component/qrcode@1.0.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  "@rc-component/tour@1.15.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  "@rc-component/tour@1.15.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  "@rc-component/trigger@2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  "@rc-component/trigger@2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)":
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   "@rollup/pluginutils@5.1.4(rollup@4.41.0)":
     dependencies:
@@ -12217,25 +12106,25 @@ snapshots:
       storybook: 8.6.14(prettier@3.5.3)
       ts-dedent: 2.2.0
 
-  "@storybook/addon-docs@8.6.14(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))":
+  "@storybook/addon-docs@8.6.14(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
-      "@mdx-js/react": 3.1.0(@types/react@18.3.21)(react@18.3.1)
-      "@storybook/blocks": 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+      "@mdx-js/react": 3.1.0(@types/react@19.1.5)(react@19.1.0)
+      "@storybook/blocks": 8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/csf-plugin": 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      "@storybook/react-dom-shim": 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      "@storybook/react-dom-shim": 8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       storybook: 8.6.14(prettier@3.5.3)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
       - "@types/react"
 
-  "@storybook/addon-essentials@8.6.14(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))":
+  "@storybook/addon-essentials@8.6.14(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
       "@storybook/addon-actions": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-backgrounds": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-controls": 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      "@storybook/addon-docs": 8.6.14(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))
+      "@storybook/addon-docs": 8.6.14(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-highlight": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-measure": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/addon-outline": 8.6.14(storybook@8.6.14(prettier@3.5.3))
@@ -12260,13 +12149,13 @@ snapshots:
       storybook: 8.6.14(prettier@3.5.3)
       ts-dedent: 2.2.0
 
-  "@storybook/addon-links@8.6.14(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))":
+  "@storybook/addon-links@8.6.14(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
       "@storybook/global": 5.0.0
       storybook: 8.6.14(prettier@3.5.3)
       ts-dedent: 2.2.0
     optionalDependencies:
-      react: 18.3.1
+      react: 19.1.0
 
   "@storybook/addon-measure@8.6.14(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
@@ -12293,14 +12182,14 @@ snapshots:
       memoizerific: 1.11.3
       storybook: 8.6.14(prettier@3.5.3)
 
-  "@storybook/blocks@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))":
+  "@storybook/blocks@8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
-      "@storybook/icons": 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@storybook/icons": 1.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       storybook: 8.6.14(prettier@3.5.3)
       ts-dedent: 2.2.0
     optionalDependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   "@storybook/components@8.6.14(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
@@ -12339,10 +12228,10 @@ snapshots:
 
   "@storybook/global@5.0.0": {}
 
-  "@storybook/icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@storybook/icons@1.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   "@storybook/instrumenter@8.6.14(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
@@ -12372,22 +12261,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  "@storybook/react-dom-shim@8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))":
+  "@storybook/react-dom-shim@8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))":
     dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       storybook: 8.6.14(prettier@3.5.3)
 
-  "@storybook/react@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)":
+  "@storybook/react@8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)":
     dependencies:
       "@storybook/components": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/global": 5.0.0
       "@storybook/manager-api": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       "@storybook/preview-api": 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      "@storybook/react-dom-shim": 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))
+      "@storybook/react-dom-shim": 8.6.14(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/theming": 8.6.14(storybook@8.6.14(prettier@3.5.3))
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       storybook: 8.6.14(prettier@3.5.3)
     optionalDependencies:
       "@storybook/test": 8.6.14(storybook@8.6.14(prettier@3.5.3))
@@ -12445,15 +12334,15 @@ snapshots:
       lodash: 4.17.21
       redent: 3.0.0
 
-  "@testing-library/react@16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.7(@types/react@18.3.21))(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+  "@testing-library/react@16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@19.1.5(@types/react@19.1.5))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)":
     dependencies:
       "@babel/runtime": 7.27.0
       "@testing-library/dom": 10.4.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
     optionalDependencies:
-      "@types/react": 18.3.21
-      "@types/react-dom": 18.3.7(@types/react@18.3.21)
+      "@types/react": 19.1.5
+      "@types/react-dom": 19.1.5(@types/react@19.1.5)
 
   "@testing-library/user-event@14.5.2(@testing-library/dom@10.4.0)":
     dependencies:
@@ -12696,19 +12585,16 @@ snapshots:
 
   "@types/parse-json@4.0.2": {}
 
-  "@types/prop-types@15.7.14": {}
-
-  "@types/react-dom@18.3.7(@types/react@18.3.21)":
+  "@types/react-dom@19.1.5(@types/react@19.1.5)":
     dependencies:
-      "@types/react": 18.3.21
+      "@types/react": 19.1.5
 
   "@types/react-syntax-highlighter@15.5.13":
     dependencies:
-      "@types/react": 18.3.21
+      "@types/react": 19.1.5
 
-  "@types/react@18.3.21":
+  "@types/react@19.1.5":
     dependencies:
-      "@types/prop-types": 15.7.14
       csstype: 3.1.3
 
   "@types/resolve@1.20.6": {}
@@ -12984,14 +12870,14 @@ snapshots:
 
   agent-base@7.1.3: {}
 
-  ahooks@3.8.5(react@18.3.1):
+  ahooks@3.8.5(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       dayjs: 1.11.13
       intersection-observer: 0.12.2
       js-cookie: 3.0.5
       lodash: 4.17.21
-      react: 18.3.1
+      react: 19.1.0
       react-fast-compare: 3.2.2
       resize-observer-polyfill: 1.5.1
       screenfull: 5.2.0
@@ -13038,132 +12924,74 @@ snapshots:
 
   ansi-styles@6.2.1: {}
 
-  antd-style@3.7.1(@types/react@18.3.21)(antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  antd-style@3.7.1(@types/react@19.1.5)(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      "@ant-design/cssinjs": 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@babel/runtime": 7.27.0
       "@emotion/cache": 11.14.0
       "@emotion/css": 11.13.5
-      "@emotion/react": 11.14.0(@types/react@18.3.21)(react@18.3.1)
+      "@emotion/react": 11.14.0(@types/react@19.1.5)(react@19.1.0)
       "@emotion/serialize": 1.3.3
       "@emotion/utils": 1.4.2
-      antd: 5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      use-merge-value: 1.2.0(react@18.3.1)
+      antd: 5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      use-merge-value: 1.2.0(react@19.1.0)
     transitivePeerDependencies:
       - "@types/react"
       - react-dom
       - supports-color
 
-  antd@5.25.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@ant-design/colors": 7.2.1
-      "@ant-design/cssinjs": 1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@ant-design/cssinjs-utils": 1.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@ant-design/cssinjs-utils": 1.1.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       "@ant-design/fast-color": 2.0.6
-      "@ant-design/icons": 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@ant-design/react-slick": 1.1.2(react@18.3.1)
+      "@ant-design/icons": 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@ant-design/react-slick": 1.1.2(react@19.1.0)
       "@babel/runtime": 7.27.0
-      "@rc-component/color-picker": 2.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@rc-component/mutate-observer": 1.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@rc-component/qrcode": 1.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@rc-component/tour": 1.15.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@rc-component/color-picker": 2.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@rc-component/mutate-observer": 1.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@rc-component/qrcode": 1.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@rc-component/tour": 1.15.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
       copy-to-clipboard: 3.3.3
       dayjs: 1.11.13
-      rc-cascader: 3.34.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-checkbox: 3.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-collapse: 3.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-dialog: 9.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-drawer: 7.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-dropdown: 4.2.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-field-form: 2.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-image: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-input: 1.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-input-number: 9.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-mentions: 2.20.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-notification: 5.6.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-pagination: 5.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-picker: 4.11.3(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-progress: 4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-rate: 2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-segmented: 2.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-select: 14.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-slider: 11.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-steps: 6.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-switch: 4.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-table: 7.50.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tabs: 15.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-textarea: 1.10.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tooltip: 6.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tree-select: 5.27.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-upload: 4.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      scroll-into-view-if-needed: 3.1.0
-      throttle-debounce: 5.0.2
-    transitivePeerDependencies:
-      - date-fns
-      - luxon
-      - moment
-
-  antd@5.25.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@ant-design/colors": 7.2.1
-      "@ant-design/cssinjs": 1.23.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@ant-design/cssinjs-utils": 1.1.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@ant-design/fast-color": 2.0.6
-      "@ant-design/icons": 5.6.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@ant-design/react-slick": 1.1.2(react@18.3.1)
-      "@babel/runtime": 7.27.0
-      "@rc-component/color-picker": 2.0.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@rc-component/mutate-observer": 1.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@rc-component/qrcode": 1.0.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@rc-component/tour": 1.15.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      copy-to-clipboard: 3.3.3
-      dayjs: 1.11.13
-      rc-cascader: 3.34.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-checkbox: 3.5.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-collapse: 3.9.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-dialog: 9.6.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-drawer: 7.2.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-dropdown: 4.2.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-field-form: 2.7.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-image: 7.12.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-input: 1.8.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-input-number: 9.5.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-mentions: 2.20.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-notification: 5.6.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-pagination: 5.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-picker: 4.11.3(dayjs@1.11.13)(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-progress: 4.0.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-rate: 2.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-segmented: 2.7.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-select: 14.16.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-slider: 11.1.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-steps: 6.0.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-switch: 4.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-table: 7.50.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tabs: 15.6.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-textarea: 1.10.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tooltip: 6.4.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tree-select: 5.27.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-upload: 4.9.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-cascader: 3.34.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-checkbox: 3.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-collapse: 3.9.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-dialog: 9.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-drawer: 7.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-dropdown: 4.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-field-form: 2.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-image: 7.12.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-input: 1.8.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-input-number: 9.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-mentions: 2.20.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-menu: 9.16.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-notification: 5.6.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-pagination: 5.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-picker: 4.11.3(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-progress: 4.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-rate: 2.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-segmented: 2.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-select: 14.16.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-slider: 11.1.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-steps: 6.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-switch: 4.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-table: 7.50.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tabs: 15.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-textarea: 1.10.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tooltip: 6.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tree: 5.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tree-select: 5.27.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-upload: 4.9.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       scroll-into-view-if-needed: 3.1.0
       throttle-debounce: 5.0.2
     transitivePeerDependencies:
@@ -13953,11 +13781,11 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  echarts-for-react@3.0.2(echarts@5.6.0)(react@18.3.1):
+  echarts-for-react@3.0.2(echarts@5.6.0)(react@19.1.0):
     dependencies:
       echarts: 5.6.0
       fast-deep-equal: 3.1.3
-      react: 18.3.1
+      react: 19.1.0
       size-sensor: 1.0.2
 
   echarts@5.6.0:
@@ -15081,7 +14909,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      "@types/node": 12.20.55
+      "@types/node": 22.15.21
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -15343,9 +15171,9 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@0.508.0(react@18.3.1):
+  lucide-react@0.508.0(react@19.1.0):
     dependencies:
-      react: 18.3.1
+      react: 19.1.0
 
   lz-string@1.5.0: {}
 
@@ -16286,11 +16114,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  pure-react-router@0.2.3(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  pure-react-router@0.2.3(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      "@types/react": 18.3.21
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      "@types/react": 19.1.5
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   qs@6.14.0:
     dependencies:
@@ -16320,643 +16148,324 @@ snapshots:
       iconv-lite: 0.6.3
       unpipe: 1.0.0
 
-  rc-cascader@3.34.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-cascader@3.34.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-select: 14.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-select: 14.16.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tree: 5.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-cascader@3.34.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-checkbox@3.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-select: 14.16.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-checkbox@3.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-collapse@3.9.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-checkbox@3.5.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-dialog@9.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-collapse@3.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-drawer@7.2.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-collapse@3.9.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-dropdown@4.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-dialog@9.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-dialog@9.6.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-drawer@7.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-drawer@7.2.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-dropdown@4.2.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-dropdown@4.2.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-field-form@2.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-field-form@2.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       "@rc-component/async-validator": 5.0.4
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-field-form@2.7.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-image@7.12.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
-      "@rc-component/async-validator": 5.0.4
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-image@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-dialog: 9.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-dialog: 9.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-image@7.12.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/portal": 1.1.2(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-dialog: 9.6.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-input-number@9.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-input-number@9.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       "@rc-component/mini-decimal": 1.1.0
       classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-input: 1.8.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-input-number@9.5.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/mini-decimal": 1.1.0
-      classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-input@1.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-input@1.8.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-input@1.8.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-mentions@2.20.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      classnames: 2.5.1
+      rc-input: 1.8.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-menu: 9.16.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-textarea: 1.10.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  rc-menu@9.16.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      classnames: 2.5.1
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-overflow: 1.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  rc-motion@2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-mentions@2.20.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-textarea: 1.10.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-mentions@2.20.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-textarea: 1.10.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-menu@9.16.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-overflow: 1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-menu@9.16.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-overflow: 1.4.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-motion@2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-notification@5.6.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-motion@2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-overflow@1.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-notification@5.6.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-pagination@5.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-notification@5.6.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-picker@4.11.3(dayjs@1.11.13)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-overflow@1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-overflow@1.4.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-pagination@5.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-pagination@5.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-picker@4.11.3(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-overflow: 1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-overflow: 1.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
     optionalDependencies:
       dayjs: 1.11.13
 
-  rc-picker@4.11.3(dayjs@1.11.13)(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-progress@4.0.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
       classnames: 2.5.1
-      rc-overflow: 1.4.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-    optionalDependencies:
-      dayjs: 1.11.13
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-progress@4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-rate@2.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-progress@4.0.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-resize-observer@1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-rate@2.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-rate@2.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-resize-observer@1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       resize-observer-polyfill: 1.5.1
 
-  rc-resize-observer@1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-segmented@2.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-      resize-observer-polyfill: 1.5.1
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-segmented@2.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-select@14.16.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      classnames: 2.5.1
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-overflow: 1.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  rc-slider@11.1.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-segmented@2.7.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-steps@6.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-select@14.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-overflow: 1.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-select@14.16.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-overflow: 1.4.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-slider@11.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-switch@4.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-slider@11.1.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-table@7.50.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.0
+      "@rc-component/context": 1.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      classnames: 2.5.1
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  rc-tabs@15.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-dropdown: 4.2.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-menu: 9.16.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-steps@6.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-textarea@1.10.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-input: 1.8.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-steps@6.0.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-tooltip@6.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      "@babel/runtime": 7.27.0
+      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      classnames: 2.5.1
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
+  rc-tree-select@5.27.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-select: 14.16.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-tree: 5.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-switch@4.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-tree@5.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      rc-motion: 2.9.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-switch@4.1.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
+  rc-upload@4.9.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
-  rc-table@7.50.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-util@5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
-      "@rc-component/context": 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-table@7.50.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/context": 1.4.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-tabs@15.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-dropdown: 4.2.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-tabs@15.6.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-dropdown: 4.2.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-menu: 9.16.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-textarea@1.10.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-textarea@1.10.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-input: 1.8.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-tooltip@6.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-tooltip@6.4.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      "@rc-component/trigger": 2.2.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-tree-select@5.27.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-select: 14.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-tree-select@5.27.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-select: 14.16.8(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-tree: 5.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-tree@5.13.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-tree@5.13.1(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-motion: 2.9.5(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-virtual-list: 3.18.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-upload@4.9.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-upload@4.9.0(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-
-  rc-util@5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
       react-is: 18.3.1
 
-  rc-util@5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
-      react-is: 18.3.1
-
-  rc-virtual-list@3.18.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  rc-virtual-list@3.18.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  rc-virtual-list@3.18.6(react-dom@19.1.0(react@18.3.1))(react@18.3.1):
-    dependencies:
-      "@babel/runtime": 7.27.0
-      classnames: 2.5.1
-      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      rc-util: 5.44.4(react-dom@19.1.0(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 19.1.0(react@18.3.1)
+      rc-resize-observer: 1.4.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-docgen-typescript@2.2.2(typescript@5.8.3):
     dependencies:
@@ -16977,15 +16486,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-dom@18.3.1(react@18.3.1):
+  react-dom@19.1.0(react@19.1.0):
     dependencies:
-      loose-envify: 1.4.0
-      react: 18.3.1
-      scheduler: 0.23.2
-
-  react-dom@19.1.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
+      react: 19.1.0
       scheduler: 0.26.0
 
   react-fast-compare@3.2.2: {}
@@ -16996,16 +16499,16 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-markdown@10.1.0(@types/react@18.3.21)(react@18.3.1):
+  react-markdown@10.1.0(@types/react@19.1.5)(react@19.1.0):
     dependencies:
       "@types/hast": 3.0.4
       "@types/mdast": 4.0.4
-      "@types/react": 18.3.21
+      "@types/react": 19.1.5
       devlop: 1.1.0
       hast-util-to-jsx-runtime: 2.3.6
       html-url-attributes: 3.0.1
       mdast-util-to-hast: 13.2.0
-      react: 18.3.1
+      react: 19.1.0
       remark-parse: 11.0.0
       remark-rehype: 11.1.2
       unified: 11.0.5
@@ -17014,26 +16517,24 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  react-photo-view@1.2.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-photo-view@1.2.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-refresh@0.17.0: {}
 
-  react-syntax-highlighter@15.6.1(react@18.3.1):
+  react-syntax-highlighter@15.6.1(react@19.1.0):
     dependencies:
       "@babel/runtime": 7.27.0
       highlight.js: 10.7.3
       highlightjs-vue: 1.0.0
       lowlight: 1.20.0
       prismjs: 1.30.0
-      react: 18.3.1
+      react: 19.1.0
       refractor: 3.6.0
 
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
+  react@19.1.0: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -17318,10 +16819,6 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  scheduler@0.23.2:
-    dependencies:
-      loose-envify: 1.4.0
-
   scheduler@0.26.0: {}
 
   schema-utils@4.3.2:
@@ -17484,19 +16981,19 @@ snapshots:
 
   std-env@3.9.0: {}
 
-  storybook-addon-rslib@1.0.1(@rsbuild/core@1.3.21)(@rslib/core@0.7.1(typescript@5.8.3))(storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3))(typescript@5.8.3):
+  storybook-addon-rslib@1.0.1(@rsbuild/core@1.3.21)(@rslib/core@0.7.1(typescript@5.8.3))(storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3))(typescript@5.8.3):
     dependencies:
       "@rsbuild/core": 1.3.21
       "@rslib/core": 0.7.1(typescript@5.8.3)
-      storybook-builder-rsbuild: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+      storybook-builder-rsbuild: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
     optionalDependencies:
       typescript: 5.8.3
 
-  storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3):
+  storybook-builder-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3):
     dependencies:
       "@rsbuild/core": 1.3.21
       "@rsbuild/plugin-type-check": 1.2.2(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(typescript@5.8.3)
-      "@storybook/addon-docs": 8.6.14(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))
+      "@storybook/addon-docs": 8.6.14(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))
       "@storybook/core-webpack": 8.6.14(storybook@8.6.14(prettier@3.5.3))
       browser-assert: 1.2.1
       case-sensitive-paths-webpack-plugin: 2.4.0
@@ -17521,22 +17018,22 @@ snapshots:
       - "@rspack/core"
       - "@types/react"
 
-  storybook-react-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.41.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.4)):
+  storybook-react-rsbuild@1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(@types/react@19.1.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rollup@4.41.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.4)):
     dependencies:
       "@rollup/pluginutils": 5.1.4(rollup@4.41.0)
       "@rsbuild/core": 1.3.21
-      "@storybook/react": 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+      "@storybook/react": 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.5.3)))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
       "@storybook/react-docgen-typescript-plugin": 1.0.1(typescript@5.8.3)(webpack@5.99.9(esbuild@0.25.4))
       "@types/node": 18.19.103
       find-up: 5.0.0
       magic-string: 0.30.17
-      react: 18.3.1
+      react: 19.1.0
       react-docgen: 7.1.1
       react-docgen-typescript: 2.2.2(typescript@5.8.3)
-      react-dom: 18.3.1(react@18.3.1)
+      react-dom: 19.1.0(react@19.1.0)
       resolve: 1.22.10
       storybook: 8.6.14(prettier@3.5.3)
-      storybook-builder-rsbuild: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@18.3.21)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
+      storybook-builder-rsbuild: 1.0.1(@rsbuild/core@1.3.21)(@rspack/core@1.3.11(@swc/helpers@0.5.17))(@types/react@19.1.5)(storybook@8.6.14(prettier@3.5.3))(typescript@5.8.3)
       tsconfig-paths: 4.2.0
     optionalDependencies:
       typescript: 5.8.3
@@ -18051,9 +17548,9 @@ snapshots:
       punycode: 1.4.1
       qs: 6.14.0
 
-  use-merge-value@1.2.0(react@18.3.1):
+  use-merge-value@1.2.0(react@19.1.0):
     dependencies:
-      react: 18.3.1
+      react: 19.1.0
 
   util-deprecate@1.0.2: {}
 
