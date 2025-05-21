@@ -33,11 +33,11 @@ const removeEndThink = (children: any): any => {
   return children
 }
 
-const useThinkTimer = (children: JSX.Element) => {
+const useThinkTimer = (children: React.JSX.Element) => {
   const [startTime] = useState(Date.now())
   const [elapsedTime, setElapsedTime] = useState(0)
   const [isComplete, setIsComplete] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout>()
+  const timerRef = useRef<NodeJS.Timeout>(null)
 
   useEffect(() => {
     timerRef.current = setInterval(() => {
