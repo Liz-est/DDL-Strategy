@@ -6,31 +6,31 @@
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
-| 加群沟通（提需求/ bug 请带 issue 发言） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
-| --- | --- |
+| 加群沟通（提需求/ bug 请带 issue 发言）                                                                                                              | 喂我花生（请在留言中备注自己的 Github 用户名哦）                                                                                                |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://github.com/user-attachments/assets/e2ad49bd-9dc9-44a8-96ee-cca7c9e6183c" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
 
 ## 🥇 Golden Sponsors
 
 > 注：每日手动更新
 
-| Avatar | Name | Type |
-| --- | --- | --- |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" /> | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" /> | <a target="blank" href="https://github.com/unmurphy">unmurphy</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" /> | <a target="blank" href="https://github.com/wallowbear">打豆豆</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" /> | <a target="blank" href="https://github.com/tangzp">tangzp</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1 | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" /> | <a target="blank" href="https://github.com/HowieSh">HowieSh</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼 | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" /> | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" /> | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a> | Github |
-| None | 匿名慈善家 | Wechat |
+| Avatar                                                                                                                          | Name                                                                          | Type   |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>     | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                 | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                            | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>               | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                          | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>           | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                        | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" />                            | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a> | Github |
+| None                                                                                                                            | 匿名慈善家                                                                    | Wechat |
 
 ## Repobeats
 
-![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg 'Repobeats analytics image')
+![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg "Repobeats analytics image")
 
 ## 特性
 
@@ -43,13 +43,13 @@
 
 ## 子包列表
 
-| 子包名称 | 描述 | 相关信息 | 文档 |
-| --- | --- | --- | --- |
-| `@dify-chat/api` | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api) | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api) |
-| `@dify-chat/core` | 核心包 | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core) | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core) |
-| `@dify-chat/theme` | 主题包 | ![version](https://img.shields.io/npm/v/@dify-chat/theme) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/theme) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/theme) | [packages/theme/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/theme) |
-| `@dify-chat/helpers` | 工具包 | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers) | 敬请期待... |
-| `@dify-chat/components` | 核心 UI 组件库 | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待... |
+| 子包名称                | 描述            | 相关信息                                                                                                                                                                                                              | 文档                                                                                         |
+| ----------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `@dify-chat/api`        | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api)                      | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api)     |
+| `@dify-chat/core`       | 核心包          | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core)                   | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core)   |
+| `@dify-chat/theme`      | 主题包          | ![version](https://img.shields.io/npm/v/@dify-chat/theme) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/theme) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/theme)                | [packages/theme/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/theme) |
+| `@dify-chat/helpers`    | 工具包          | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers)          | 敬请期待...                                                                                  |
+| `@dify-chat/components` | 核心 UI 组件库  | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待...                                                                                  |
 
 ## 运行截图
 
@@ -134,10 +134,10 @@ Agent 调用工具：
 
 无论使用哪种模式，我们都需要对接 Dify API，你需要在 Dify 控制台获取几个关键变量：
 
-| 变量 | 说明 |
-| --- | --- |
+| 变量     | 说明                                                                                   |
+| -------- | -------------------------------------------------------------------------------------- |
 | API Base | Dify API 请求前缀, 如果你使用的是 Dify 官方提供的云服务，则为 `https://api.dify.ai/v1` |
-| Api Key | Dify API 密钥，用于访问对应应用的 API, Dify 应用和 API 密钥是一对多的关系 |
+| Api Key  | Dify API 密钥，用于访问对应应用的 API, Dify 应用和 API 密钥是一对多的关系              |
 
 进入 Dify 的应用详情，点击左侧的 `访问 API`：
 
@@ -167,21 +167,21 @@ Agent 调用工具：
 只需简单修改 `src/App.tsx` 中 `DifyChatProvider` 的属性即可：
 
 ```tsx
-import { AppModeEnums } from '@dify-chat/core'
+import { AppModeEnums } from "@dify-chat/core";
 
 export default function App() {
   return (
     <DifyChatProvider
       value={{
         // 修改为单应用模式
-        mode: 'singleApp',
+        mode: "singleApp",
         // 用户id，可以获取业务系统的用户 ID，动态传入
         user: USER,
         // 单应用模式下，需要传入 appConfig 配置
         appConfig: {
           requestConfig: {
-            apiBase: '上一步中获取到的 API Base',
-            apiKey: '上一步中获取到的 API Key',
+            apiBase: "上一步中获取到的 API Base",
+            apiKey: "上一步中获取到的 API Key",
           },
           // 如果你使用的是聊天类型应用 (Chatbot/Chatflow/Agent), 则不需要定义 info.mode
           info: {
@@ -192,7 +192,7 @@ export default function App() {
     >
       子组件
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -242,9 +242,9 @@ export default function App() {
 
 ```tsx
 // src/App.tsx
-import { DifyChatProvider } from '@dify-chat/core'
+import { DifyChatProvider } from "@dify-chat/core";
 
-import DifyAppService from './services/app/localstorage'
+import DifyAppService from "./services/app/localstorage";
 
 export default function App() {
   return (
@@ -256,7 +256,7 @@ export default function App() {
     >
       子组件
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -292,13 +292,13 @@ export default function App() {
 
 ```tsx
 // src/App.tsx
-import DifyAppService from './services/app/static-readonly'
+import DifyAppService from "./services/app/static-readonly";
 
 export default function App() {
   return (
     <DifyChatProvider
       value={{
-        mode: 'multiApp',
+        mode: "multiApp",
         user: userId,
         appService: new DifyAppService(),
         // 固定数据不支持增删改，所以需要禁用应用配置权限
@@ -307,7 +307,7 @@ export default function App() {
     >
       <LayoutIndex />
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -317,7 +317,7 @@ export default function App() {
 
 ```ts
 // src/services/app/static-readonly/data.ts
-import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
+import { AppModeEnums, IDifyAppItem } from "@dify-chat/core";
 
 /**
  * 静态的应用列表，用于演示
@@ -325,32 +325,32 @@ import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
  */
 export const staticAppList: IDifyAppItem[] = [
   {
-    id: '0.270357011315995',
+    id: "0.270357011315995",
     info: {
-      name: 'My Chatflow APP',
-      description: '我的 Chatflow 应用',
+      name: "My Chatflow APP",
+      description: "我的 Chatflow 应用",
       tags: [],
       mode: AppModeEnums.CHATFLOW,
     },
     requestConfig: {
-      apiBase: 'https://api.dify.ai/v1',
-      apiKey: 'app-xxxxxxx',
+      apiBase: "https://api.dify.ai/v1",
+      apiKey: "app-xxxxxxx",
     },
   },
   {
-    id: '0.28936574761079314',
+    id: "0.28936574761079314",
     info: {
-      name: 'My Workflow APP',
-      description: '我的 Workflow 应用',
+      name: "My Workflow APP",
+      description: "我的 Workflow 应用",
       tags: [],
       mode: AppModeEnums.WORKFLOW,
     },
     requestConfig: {
-      apiBase: 'http://127.0.0.1:5001/v1',
-      apiKey: 'app-xxxxxxx',
+      apiBase: "http://127.0.0.1:5001/v1",
+      apiKey: "app-xxxxxxx",
     },
   },
-]
+];
 ```
 
 关键属性说明：
@@ -378,9 +378,9 @@ export const staticAppList: IDifyAppItem[] = [
 
 ```tsx
 // src/App.tsx
-import { DifyChatProvider } from '@dify-chat/core'
+import { DifyChatProvider } from "@dify-chat/core";
 
-import DifyAppService from './services/app/localstorage'
+import DifyAppService from "./services/app/localstorage";
 
 export default function App() {
   return (
@@ -392,7 +392,7 @@ export default function App() {
     >
       子组件
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -428,25 +428,12 @@ Dify Chatflow 编排的回复内容示例：
 ```html
 <form data-format="json">
   <label for="username">用户名字:</label>
-  <input
-    type="text"
-    name="username"
-    value="{{ username }}"
-  />
+  <input type="text" name="username" value="{{ username }}" />
   <label for="phone">联系电话:</label>
-  <input
-    type="text"
-    name="phone"
-    value="{{ phone }}"
-  />
+  <input type="text" name="phone" value="{{ phone }}" />
   <label for="content">投诉内容:</label>
   <textarea name="content"></textarea>
-  <button
-    data-size="small"
-    data-variant="primary"
-  >
-    提交
-  </button>
+  <button data-size="small" data-variant="primary">提交</button>
 </form>
 ```
 
@@ -492,23 +479,23 @@ export default function App() {
   return (
     <DifyChatProvider
       value={{
-        mode: 'singleApp',
+        mode: "singleApp",
         user: USER,
         appConfig: {
           requestConfig: {
-            apiBase: '你的 API Base',
-            apiKey: '你的 API Secret',
+            apiBase: "你的 API Base",
+            apiKey: "你的 API Secret",
           },
           answerForm: {
             enabled: true,
-            feedbackText: '我提交了一个表单',
+            feedbackText: "我提交了一个表单",
           },
         },
       }}
     >
       子组件
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -549,7 +536,7 @@ export default function App() {
     >
       子组件
     </DifyChatProvider>
-  )
+  );
 }
 ```
 
@@ -592,20 +579,20 @@ http://localhost:5200/dify-chat/app/${appId}?orderNo=${encodedValue}&isNewCvst=1
 `encodedValue` 生成方式（NodeJS）：
 
 ```javascript
-const zlib = require('zlib')
+const zlib = require("zlib");
 
-const originalOrderNo = '123456'
-const buffer = Buffer.from(originalString, 'utf8')
-let encodedValue = ''
+const originalOrderNo = "123456";
+const buffer = Buffer.from(originalString, "utf8");
+let encodedValue = "";
 
 zlib.gzip(buffer, (err, compressedBuffer) => {
   if (err) {
-    console.error('压缩时出错:', err)
-    return
+    console.error("压缩时出错:", err);
+    return;
   }
-  const encodedString = compressedBuffer.toString('base64')
-  encodedValue = encodeURIComponent(encodedString)
-})
+  const encodedString = compressedBuffer.toString("base64");
+  encodedValue = encodeURIComponent(encodedString);
+});
 ```
 
 将 `encodedValue` 填入链接后访问，可以看到我们定义的 `orderNo: 123456` 已经被填入表单：
@@ -791,7 +778,7 @@ Q: 先运行 `COREPACK_INTEGRITY_KEYS=0 corepack prepare` 再执行 `pnpm instal
 - [ ] 国际化
 - [ ] 支持单个会话视图
 - [ ] 支持消息触顶/触底自动分页加载
-- [ ] 支持回复重新生成、父级消息
+- [x] 支持回复重新生成
 - [x] 支持夜间模式
 - [ ] 支持自定义主题
 - [ ] 补充不同类型应用场景的最佳实践
