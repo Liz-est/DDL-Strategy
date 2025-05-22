@@ -125,6 +125,8 @@ Agent 调用工具：
 
 ## 开始使用
 
+**注意：下文和文件路径相关的说明，均基于 packages/react-app 目录，如 `src/App.tsx`，实际路径为 `packages/react-app/src/App.tsx`。**
+
 本项目支持两种开箱即用的使用方式：
 
 - 单应用模式: 全局只有一个 Dify 应用，用户无需选择，可直接开始对话
