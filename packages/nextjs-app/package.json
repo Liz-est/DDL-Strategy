@@ -1,5 +1,5 @@
 {
-	"name": "nextjs-app",
+	"name": "dify-chat-app-nextjs",
 	"version": "0.3.0",
 	"private": true,
 	"scripts": {
