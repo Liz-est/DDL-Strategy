@@ -42,7 +42,7 @@
 		"@rsbuild/core": "catalog:",
 		"@rsbuild/plugin-less": "catalog:",
 		"@rsbuild/plugin-react": "catalog:",
-		"@rsbuild/plugin-source-build": "^1.0.2",
+		"@rsbuild/plugin-source-build": "catalog:",
 		"@trivago/prettier-plugin-sort-imports": "catalog:",
 		"@types/markdown-it": "catalog:",
 		"@types/node": "catalog:",
