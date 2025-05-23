@@ -9,19 +9,19 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
-		"next": "15.3.2"
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"next": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "^5",
-		"@types/node": "^20",
-		"@types/react": "^19",
-		"@types/react-dom": "^19",
+		"typescript": "catalog:",
+		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
 		"@tailwindcss/postcss": "^4",
 		"tailwindcss": "^4",
-		"eslint": "^9",
-		"eslint-config-next": "15.3.2",
-		"@eslint/eslintrc": "^3"
+		"eslint": "catalog:",
+		"eslint-config-next": "catalog:",
+		"@eslint/eslintrc": "catalog:"
 	}
 }

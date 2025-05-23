@@ -1,6 +1,5 @@
 packages:
   - "packages/*"
-  - "!packages/nextjs-app"
 onlyBuiltDependencies:
   - "@biomejs/biome"
   - core-js
@@ -12,6 +11,7 @@ catalog:
   "@biomejs/biome": ^1.9.4
   "@changesets/cli": ^2.29.2
   "@eslint/compat": ^1.2.8
+  "@eslint/eslintrc": ^3.3.1
   "@eslint/js": ^9.24.0
   "@fingerprintjs/fingerprintjs": ^4.6.2
   "@heroicons/react": ^2.2.0
@@ -52,6 +52,7 @@ catalog:
   dompurify: ^3.2.5
   echarts-for-react: ^3.0.2
   eslint: ^9.26.0
+  eslint-config-next: ^15.3.2
   eslint-plugin-react: ^7.37.5
   eslint-plugin-react-hooks: ^5.2.0
   globals: ^16.0.0
@@ -69,6 +70,7 @@ catalog:
   markdown-it: ^14.1.0
   markdown-it-katex-gpt: ^1.1.1
   mermaid: ^11.6.0
+  next: ^15.3.2
   pako: ^2.1.0
   prettier: ^3.5.3
   pure-react-router: ^0.2.3
