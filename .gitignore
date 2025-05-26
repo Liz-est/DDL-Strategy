@@ -14,3 +14,6 @@ dist/
 
 # 子包 ts 构建的临时文件
 *.tsbuildinfo
+
+# 框架临时文件
+.next
