@@ -1,4 +1,5 @@
 import { legacyLogicalPropertiesTransformer, StyleProvider } from '@ant-design/cssinjs'
+import '@ant-design/v5-patch-for-react-19'
 import { ThemeContextProvider } from '@dify-chat/theme'
 import rybbit from '@rybbit/js'
 import ReactDOM from 'react-dom/client'
