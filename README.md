@@ -402,24 +402,44 @@ export default function App() {
 
 ![应用切换按钮](./docs/guide_mtapp_setting_hidden.png)
 
-### 3. 跨域处理
+### 3. 自定义 `sys.user_id`
 
-Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
+在 Dify 应用中，存在一个名为 `sys.user_id` 的变量，用于标识当前用户的 ID。
 
-在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-Chat 应用的部署域名访问，以 nginx 为例：
+![user_id](./docs/guide_chatflow_param_userid.jpg)
 
-```bash
-# nginx.conf
-server {
-  listen 443;
-  server_name dify-chat.com # 这里换成你的前端部署域名
+在本项目中，默认使用了 `FingerPrintJS` 来生成浏览器唯一的用户 ID，你可以在 `src/App.tsx` 中看到它的具体实现：
 
-  location / {
-    add_header Access-Control-Allow-Origin https://dify-chat.com; # 这里换成你的前端部署协议+域名
-    add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
-  }
+```tsx
+import FingerPrintJS from "@fingerprintjs/fingerprintjs";
+
+export default function App() {
+  const [userId, setUserId] = useState<string>("");
+
+  useMount(() => {
+    // 模拟登录过程获取用户唯一标识
+    const loadFP = async () => {
+      const fp = await FingerPrintJS.load();
+      const result = await fp.get();
+      setUserId(result.visitorId);
+    };
+    loadFP();
+  });
+
+  return (
+    <DifyChatProvider
+      value={{
+        // 用户id，可以获取业务系统的用户 ID，动态传入
+        user: USER,
+      }}
+    >
+      子组件
+    </DifyChatProvider>
+  );
 }
 ```
+
+当然，如果你的业务系统中已经有了用户 ID，你可以自行修改 `DifyChatProvider` 的 `user` 属性赋值逻辑。
 
 ### 4. 支持表单
 
@@ -643,6 +663,25 @@ export default function App() {
 在界面上编辑应用配置，将 "对话配置" 中的 "开场白展示场景" 设为 "总是展示" 即可。
 
 ![alt text](./docs/guide_app_config_opening_statement_display_always.png)
+
+### 7. 跨域处理
+
+Dify Cloud 以及私有化部署的 Dify 服务本身均支持跨域请求，无需额外处理，但如果你的私有化部署环境还存在额外的网关层，且对跨域资源访问有严格的限制，可能就会导致跨域问题，处理方式如下：
+
+在你的网关层的响应 Header 处理中，增加 `Access-Control-Allow-Origin` 字段，允许 Dify-Chat 应用的部署域名访问，以 nginx 为例：
+
+```bash
+# nginx.conf
+server {
+  listen 443;
+  server_name dify-chat.com # 这里换成你的前端部署域名
+
+  location / {
+    add_header Access-Control-Allow-Origin https://dify-chat.com; # 这里换成你的前端部署协议+域名
+    add_header Access-Control-Allow-Methods 'GET, POST, PUT, DELETE, OPTIONS';
+  }
+}
+```
 
 ## 本地开发
 
