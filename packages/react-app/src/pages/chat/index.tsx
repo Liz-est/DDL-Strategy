@@ -1,7 +1,7 @@
+import { Logo } from '@dify-chat/components'
 import { useDifyChat } from '@dify-chat/core'
 import { Spin } from 'antd'
 
-import { Logo } from '@/components/logo'
 import MultiAppLayout from '@/layout/multi-app-layout'
 import SingleAppLayout from '@/layout/single-app-layout'
 

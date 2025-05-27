@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons'
 import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppIcon, AppInfo, ConversationList, LucideIcon } from '@dify-chat/components'
+import { HeaderLayout } from '@dify-chat/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { ThemeModeEnum, ThemeModeLabelEnum, useThemeContext } from '@dify-chat/theme'
@@ -31,8 +32,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import ChatboxWrapper from '@/components/chatbox-wrapper'
 import { DEFAULT_CONVERSATION_NAME } from '@/constants'
 import { useLatest } from '@/hooks/use-latest'
-
-import HeaderLayout from './header'
 
 interface IChatLayoutProps {
 	/**

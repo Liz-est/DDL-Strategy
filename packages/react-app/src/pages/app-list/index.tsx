@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined, TagOutlined } from '@ant-design/icons'
-import { LucideIcon } from '@dify-chat/components'
+import { HeaderLayout, LucideIcon } from '@dify-chat/components'
 import {
 	AppModeLabels,
 	DifyAppStore,
@@ -15,7 +15,6 @@ import { useEffect, useState } from 'react'
 
 import { AppEditDrawer } from '@/components/app-edit-drawer'
 import { AppDetailDrawerModeEnum } from '@/components/app-manage-drawer'
-import HeaderLayout from '@/layout/header'
 
 export default function AppListPage() {
 	const history = useHistory()

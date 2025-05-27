@@ -1,13 +1,13 @@
+import { GithubIcon, LogoIcon } from '@dify-chat/components'
 import { useDifyChat } from '@dify-chat/core'
 import { Link } from 'pure-react-router'
-
-import { GithubIcon, LogoIcon } from '@/components/logo'
+import React from 'react'
 
 interface IMobileHeaderProps {
 	/**
 	 * 自定义中间部分内容
 	 */
-	centerChildren: JSX.Element
+	centerChildren: React.ReactNode
 }
 
 /**

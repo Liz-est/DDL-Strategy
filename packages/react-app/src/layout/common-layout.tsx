@@ -1,7 +1,6 @@
+import { HeaderLayout } from '@dify-chat/components'
 import { IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { Empty, Spin } from 'antd'
-
-import HeaderLayout from './header'
 
 interface ICommonLayoutProps {
 	initLoading: boolean
