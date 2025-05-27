@@ -9,19 +9,22 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@ant-design/nextjs-registry": "catalog:",
+		"@dify-chat/components": "workspace:^",
+		"antd": "catalog:",
+		"next": "catalog:",
 		"react": "catalog:",
-		"react-dom": "catalog:",
-		"next": "catalog:"
+		"react-dom": "catalog:"
 	},
 	"devDependencies": {
-		"typescript": "catalog:",
+		"@eslint/eslintrc": "catalog:",
+		"@tailwindcss/postcss": "^4",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"@tailwindcss/postcss": "^4",
-		"tailwindcss": "^4",
 		"eslint": "catalog:",
 		"eslint-config-next": "catalog:",
-		"@eslint/eslintrc": "catalog:"
+		"tailwindcss": "^4",
+		"typescript": "catalog:"
 	}
 }
