@@ -16,17 +16,19 @@
 
 | Avatar                                                                                                                          | Name                                                                          | Type   |
 | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>     | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>             | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>             | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                 | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                            | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>               | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                          | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>           | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                        | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/ce9ee0e1-d3ff-469d-a52d-16f00890dd25" /> | 果冻                                                                          | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/df21bfee-a552-49ca-9a58-20311c87560d" /> | VincentX                                                                      | Wechat |
 | <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" />                            | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a> | Github |
-| None                                                                                                                            | 匿名慈善家                                                                    | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                        | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>           | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                          | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>               | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                            | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                 | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>     | Github |
+| None                                                                                                                            | 匿名慈善家                                                                     | Wechat |
 
 ## Repobeats
 
