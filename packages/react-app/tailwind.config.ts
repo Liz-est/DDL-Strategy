@@ -11,7 +11,7 @@ const minWidth = {
 
 const content = ['./src/**/*.{html,js,ts,jsx,tsx}']
 
-// 则添加 packages/components 目录
+// 添加 packages/components 目录
 content.push('../components/src/**/*.{html,js,ts,jsx,tsx}')
 
 const config: Config = {
