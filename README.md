@@ -6,6 +6,8 @@
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
+> ⚠️ 当前处于 v0.4.0 的早期开发阶段，发布目标为新增 Next.js 的 MVP 版本，对应现有的 react-app 和其他子包也会完成 react 升级和大规模的代码重构，在 v0.4.0 发布之前，main 分支将处于不稳定状态，部分功能可能无法使用，如需稳定使用请拉取 v0.3.0。
+
 | 加群沟通（提需求/ bug 请带 issue 发言）                                                                                                              | 喂我花生（请在留言中备注自己的 Github 用户名哦）                                                                                                |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | <img src="https://github.com/user-attachments/assets/f52039d1-8232-456d-b9a6-18a9d553feb6" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
@@ -16,17 +18,19 @@
 
 | Avatar                                                                                                                          | Name                                                                          | Type   |
 | ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------ |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>     | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>             | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>             | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                 | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                            | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>               | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                          | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>           | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                        | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/ce9ee0e1-d3ff-469d-a52d-16f00890dd25" /> | 果冻                                                                          | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/df21bfee-a552-49ca-9a58-20311c87560d" /> | VincentX                                                                      | Wechat |
 | <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" />                            | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a> | Github |
-| None                                                                                                                            | 匿名慈善家                                                                    | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                        | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>           | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                          | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>               | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                            | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                 | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>             | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>     | Github |
+| None                                                                                                                            | 匿名慈善家                                                                     | Wechat |
 
 ## Repobeats
 
