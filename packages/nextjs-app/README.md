@@ -19,4 +19,5 @@ pnpm dev
 
 ## Roadmap
 
-- [ ] 把 react-app 以及其他子包的依赖升级到 react 19
+- [x] 把 react-app 以及其他子包的依赖升级到 react 19
+- [ ] 子包依赖本地开发热更新
