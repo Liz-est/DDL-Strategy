@@ -9,10 +9,14 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@ant-design/icons": "catalog:",
 		"@ant-design/nextjs-registry": "catalog:",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
 		"@dify-chat/components": "workspace:^",
+		"@dify-chat/helpers": "workspace:^",
+		"@dify-chat/theme": "workspace:^",
 		"antd": "catalog:",
+		"classnames": "catalog:",
 		"next": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
