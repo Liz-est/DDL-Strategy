@@ -1,11 +1,18 @@
-import { Button } from "antd";
+"use client";
+import { HeaderLayout } from "@/components";
+import { LucideIcon } from "@dify-chat/components";
 
 export default function AppsPage() {
 	return (
 		<div>
-			<div className="flex items-center">应用列表</div>
-			应用列表
-			<Button type="primary">创建应用</Button>
+			<HeaderLayout
+				title={
+					<div className="flex items-center">
+						<LucideIcon name="layout-grid" size={16} className="mr-1" />
+						应用列表
+					</div>
+				}
+			/>
 		</div>
 	);
 }
