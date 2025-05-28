@@ -13,6 +13,7 @@
 		"@ant-design/nextjs-registry": "catalog:",
 		"@ant-design/v5-patch-for-react-19": "^1.0.3",
 		"@dify-chat/components": "workspace:^",
+		"@dify-chat/core": "workspace:^",
 		"@dify-chat/helpers": "workspace:^",
 		"@dify-chat/theme": "workspace:^",
 		"antd": "catalog:",

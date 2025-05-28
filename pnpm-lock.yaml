@@ -622,6 +622,9 @@ importers:
       "@dify-chat/components":
         specifier: workspace:^
         version: link:../components
+      "@dify-chat/core":
+        specifier: workspace:^
+        version: link:../core
       "@dify-chat/helpers":
         specifier: workspace:^
         version: link:../helpers
