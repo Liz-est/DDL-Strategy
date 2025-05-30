@@ -7,14 +7,14 @@ export class BaseRequest {
 		baseURL: string;
 	};
 
-	async baseRequest(url: string, options: RequestInit) {
+	baseRequest = async (url: string, options: RequestInit) => {
 		const result = await fetch(`${this.options.baseURL}${url}`, {
 			...options,
 		});
 		return result;
-	}
+	};
 
-	async jsonRequest(url: string, options: RequestInit) {
+	jsonRequest = async (url: string, options: RequestInit) => {
 		const result = await this.baseRequest(url, {
 			...options,
 			headers: {
@@ -23,13 +23,13 @@ export class BaseRequest {
 			},
 		});
 		return result.json();
-	}
+	};
 
-	async get(
+	get = async (
 		url: string,
 		params: Record<string, string> = {},
 		headers: Record<string, string> = {},
-	) {
+	) => {
 		const queryString =
 			params && Object.keys(params).length > 0
 				? `?${new URLSearchParams(params).toString()}`
@@ -39,39 +39,39 @@ export class BaseRequest {
 			headers,
 		});
 		return result;
-	}
+	};
 
-	async post(
+	post = async (
 		url: string,
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
-	) {
+	) => {
 		const result = await this.jsonRequest(url, {
 			method: "POST",
 			body: JSON.stringify(params),
 			headers,
 		});
 		return result;
-	}
+	};
 
-	async put(
+	put = async (
 		url: string,
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
-	) {
+	) => {
 		const result = await this.jsonRequest(url, {
 			method: "PUT",
 			body: JSON.stringify(params),
 			headers,
 		});
 		return result;
-	}
+	};
 
-	async delete(
+	delete = async (
 		url: string,
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
-	) {
+	) => {
 		const result = await this.baseRequest(url, {
 			method: "DELETE",
 			body: JSON.stringify(params),
@@ -81,5 +81,5 @@ export class BaseRequest {
 			},
 		});
 		return result;
-	}
+	};
 }
