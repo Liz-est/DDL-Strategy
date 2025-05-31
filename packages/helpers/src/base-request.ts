@@ -1,15 +1,20 @@
 export class BaseRequest {
-	constructor(options: { baseURL: string }) {
+	constructor(options: { baseURL: string; headers?: Record<string, string> }) {
 		this.options = options;
 	}
 
 	options: {
 		baseURL: string;
+		headers?: Record<string, string>;
 	};
 
 	baseRequest = async (url: string, options: RequestInit) => {
 		const result = await fetch(`${this.options.baseURL}${url}`, {
 			...options,
+			headers: {
+				...this.options.headers,
+				...options.headers,
+			},
 		});
 		return result;
 	};
