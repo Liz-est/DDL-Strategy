@@ -19,7 +19,7 @@ class DifyAppService extends DifyAppStore {
 
 	async getApp(id: string): Promise<IDifyAppItem | undefined> {
 		try {
-			const response = await request.get(`/app/${id}`);
+			const response = await request.get(`/apps/${id}`);
 			return response;
 		} catch (error) {
 			console.error("Failed to fetch app:", error);
@@ -28,18 +28,18 @@ class DifyAppService extends DifyAppStore {
 	}
 
 	async addApp(config: IDifyAppItem): Promise<void> {
-		return request.post(`/app`, config as unknown as Record<string, unknown>);
+		return request.post(`/apps`, config as unknown as Record<string, unknown>);
 	}
 
 	async updateApp(config: IDifyAppItem): Promise<void> {
 		return request.put(
-			`/app/${config.id}`,
+			`/apps/${config.id}`,
 			config as unknown as Record<string, unknown>,
 		);
 	}
 
 	async deleteApp(id: string): Promise<void> {
-		await request.delete(`/app/${id}`);
+		await request.delete(`/apps/${id}`);
 	}
 }
 
