@@ -314,6 +314,10 @@ export interface IDifyApiOptions {
 	 * 用户
 	 */
 	user: string;
+	/**
+	 * 应用 ID
+	 */
+	appId: string;
 }
 
 export type IGetAppInfoResponse = IDifyAppItem["info"];
@@ -410,23 +414,27 @@ export class DifyApi {
 	 * 获取应用基本信息
 	 */
 	getAppInfo = async () => {
-		return this.baseRequest.get("/info") as Promise<IGetAppInfoResponse>;
+		return this.baseRequest
+			.get(`/${this.options.appId}/info`)
+			.then((res) => res.data) as Promise<IGetAppInfoResponse>;
 	};
 
 	/**
 	 * 获取应用 Meta 信息
 	 */
 	getAppMeta = async () => {
-		return this.baseRequest.get("/meta") as Promise<IGetAppMetaResponse>;
+		return this.baseRequest
+			.get(`${this.options.appId}/meta`)
+			.then((res) => res.data) as Promise<IGetAppMetaResponse>;
 	};
 
 	/**
 	 * 获取应用参数
 	 */
 	getAppParameters = () => {
-		return this.baseRequest.get(
-			"/parameters",
-		) as Promise<IGetAppParametersResponse>;
+		return this.baseRequest
+			.get(`/${this.options.appId}/parameters`)
+			.then((res) => res.data) as Promise<IGetAppParametersResponse>;
 	};
 
 	/**
@@ -434,17 +442,26 @@ export class DifyApi {
 	 * @Limited Dify v1.4.0 版本开始支持
 	 */
 	getAppSiteSetting = () => {
-		return this.baseRequest.get("/site") as Promise<IDifyAppSiteSetting>;
+		return this.baseRequest
+			.get(`/${this.options.appId}/site`)
+			.then((res) => res.data) as Promise<IDifyAppSiteSetting>;
 	};
 
 	/**
 	 * 获取当前用户的会话列表（默认返回最近20条）
 	 */
 	getConversationList = (params?: IGetConversationListRequest) => {
-		return this.baseRequest.get("/conversations", {
-			user: this.options.user,
-			limit: (params?.limit || 100).toString(),
-		}) as Promise<IGetConversationListResponse>;
+		return this.baseRequest
+			.get(
+				`/${this.options.appId}/conversations`,
+				{
+					limit: (params?.limit || 100).toString(),
+				},
+				{
+					"dc-user": this.options.user,
+				},
+			)
+			.then((res) => res.data) as Promise<IGetConversationListResponse>;
 	};
 
 	/**
@@ -465,10 +482,15 @@ export class DifyApi {
 		auto_generate?: boolean;
 	}) => {
 		const { conversation_id, ...restParams } = params;
-		return this.baseRequest.post(`/conversations/${conversation_id}/name`, {
-			...restParams,
-			user: this.options.user,
-		});
+		return this.baseRequest.post(
+			`/conversations/${conversation_id}/name`,
+			{
+				...restParams,
+			},
+			{
+				"dc-user": this.options.user,
+			},
+		);
 	};
 
 	/**
