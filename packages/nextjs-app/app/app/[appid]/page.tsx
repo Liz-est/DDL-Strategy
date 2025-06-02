@@ -1,11 +1,22 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { DifyChatProvider } from "@dify-chat/core";
+import DifyAppService from "@/services/app/apps";
+import MultiAppLayout from "./layout/multi-app-layout";
+import { useUserId } from "@/hooks/useUserId";
 
 export default function AppPage() {
-	const params = useParams();
-
-	console.log("params", params);
-
-	return <div>AppPage</div>;
+	const user = useUserId();
+	return (
+		<DifyChatProvider
+			value={{
+				mode: "multiApp",
+				appService: new DifyAppService(),
+				enableSetting: true,
+				user,
+			}}
+		>
+			<MultiAppLayout />
+		</DifyChatProvider>
+	);
 }
