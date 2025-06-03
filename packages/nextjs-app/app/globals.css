@@ -5,6 +5,28 @@
 	--foreground: #171717;
 }
 
+@theme {
+	--theme-text-color: #333;
+	--theme-desc-color: #898989;
+	--theme-bg-color: #f2f4f7;
+	--theme-btn-bg-color: #fff;
+	--theme-main-bg-color: #fff;
+	--theme-border-color: #eff0f5;
+	--theme-splitter-color: #eff0f5;
+	--theme-button-border-color: #c9c9c9;
+	--theme-primary-color: #1669ee;
+	--theme-success-color: #52c41a;
+	--theme-warning-color: #faad14;
+	--theme-danger-color: #ff4d4f;
+	--theme-bubble-bg-color: #f2f4f7;
+	--theme-code-block-bg-color: #fff;
+	--desc-color: #9ca3b3;
+	--eb-color: #ebebeb;
+	--warning-color: #ff5a07;
+	--primary-color: #1669ee;
+	--light-gray-color: #eff0f5;
+}
+
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
