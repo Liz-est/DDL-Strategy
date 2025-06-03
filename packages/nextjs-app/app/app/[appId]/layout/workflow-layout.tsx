@@ -1,5 +1,4 @@
 import { useDifyApi } from "@/hooks/useApi";
-import { useUserId } from "@/hooks/useUserId";
 import { XStream } from "@ant-design/x";
 import {
 	EventEnum,
@@ -15,7 +14,7 @@ import {
 	MarkdownRenderer,
 	WorkflowLogs,
 } from "@dify-chat/components";
-import { AppModeEnums, useAppContext } from "@dify-chat/core";
+import { AppModeEnums, useAppContext, useDifyChat } from "@dify-chat/core";
 import { copyToClipboard } from "@toolkit-fe/clipboard";
 import { Button, Empty, Form, message, Tabs } from "antd";
 import { useParams } from "next/navigation";
@@ -33,7 +32,7 @@ export default function WorkflowLayout() {
 	>();
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([]);
 	const [resultDetail, setResultDetail] = useState<Record<string, string>>({});
-	const user = useUserId();
+	const { user } = useDifyChat()
 	const { appId } = useParams<{ appId: string }>();
 	const difyApi = useDifyApi({
 		user,
@@ -177,7 +176,6 @@ export default function WorkflowLayout() {
 						if (parsedData.event === EventEnum.ERROR) {
 							message.error((parsedData as unknown as IErrorEvent).message);
 						}
-						console.log("result", result);
 					}
 				}
 			})

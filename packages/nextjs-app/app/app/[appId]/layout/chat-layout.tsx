@@ -17,6 +17,7 @@ import {
 	ConversationsContextProvider,
 	IDifyAppItem,
 	useAppContext,
+	useDifyChat,
 } from "@dify-chat/core";
 import { isTempId, useIsMobile } from "@dify-chat/helpers";
 import {
@@ -45,7 +46,6 @@ import ChatboxWrapper from "@/app/app/[appId]/components/chatbox-wrapper";
 import { DEFAULT_CONVERSATION_NAME } from "@/config";
 import { useLatest } from "@/hooks/use-latest";
 import { useParams, useSearchParams } from "next/navigation";
-import { useUserId } from "@/hooks/useUserId";
 import { useDifyApi } from "@/hooks/useApi";
 
 interface IChatLayoutProps {
@@ -81,7 +81,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	}, [conversations, currentConversationId]);
 	const isMobile = useIsMobile();
 	const { appId } = useParams<{ appId: string }>();
-	const user = useUserId();
+	const { user } = useDifyChat()
 	const difyApi = useDifyApi({
 		user,
 		appId,
