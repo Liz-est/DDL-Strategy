@@ -506,10 +506,15 @@ export class DifyApi {
 	 * 获取会话历史消息
 	 */
 	getConversationHistory = (conversation_id: string) => {
-		return this.baseRequest.get(`/messages`, {
-			user: this.options.user,
-			conversation_id,
-		}) as Promise<IGetConversationHistoryResponse>;
+		return this.baseRequest
+			.get(
+				`/${this.options.appId}/conversation/${conversation_id}/messages`,
+				{},
+				{
+					"dc-user": this.options.user,
+				},
+			)
+			.then((res) => res.data) as Promise<IGetConversationHistoryResponse>;
 	};
 
 	/**
@@ -587,9 +592,17 @@ export class DifyApi {
 		 */
 		message_id: string;
 	}) => {
-		return this.baseRequest.get(`/messages/${params.message_id}/suggested`, {
-			user: this.options.user,
-		}) as Promise<{
+		return this.baseRequest
+			.get(
+				`/${this.options.appId}/messages/${params.message_id}/suggested`,
+				{
+					user: this.options.user,
+				},
+				{
+					"dc-user": this.options.user,
+				},
+			)
+			.then((res) => res.data) as Promise<{
 			data: string[];
 		}>;
 	};
@@ -611,11 +624,17 @@ export class DifyApi {
 		 */
 		content: string;
 	}) => {
-		const { messageId, ...restParams } = params;
-		return this.baseRequest.post(`/messages/${messageId}/feedbacks`, {
-			...restParams,
-			user: this.options.user,
-		}) as Promise<{
+		const { ...restParams } = params;
+		return this.baseRequest.post(
+			`/${this.options.appId}/feedback`,
+			{
+				...restParams,
+				user: this.options.user,
+			},
+			{
+				"dc-user": this.options.user,
+			},
+		) as Promise<{
 			// 固定返回 success
 			result: "success";
 		}>;
@@ -639,14 +658,15 @@ export class DifyApi {
 					text: string;
 			  },
 	) => {
-		return this.baseRequest.baseRequest("/text-to-audio", {
+		return this.baseRequest.baseRequest(`/${this.options.appId}/text2audio`, {
 			method: "POST",
 			body: JSON.stringify({
 				...params,
-				user: this.options.user,
+				// user: this.options.user,
 			}),
 			headers: {
 				"Content-Type": "application/json",
+				"dc-user": this.options.user,
 			},
 		});
 	};
@@ -660,9 +680,12 @@ export class DifyApi {
 		formData.append("file", file);
 		formData.append("user", this.options.user);
 		return this.baseRequest
-			.baseRequest("/audio-to-text", {
+			.baseRequest(`/${this.options.appId}/audio2text`, {
 				method: "POST",
 				body: formData,
+				headers: {
+					"dc-user": this.options.user,
+				},
 			})
 			.then((res) => res.json()) as Promise<IAudio2TextResponse>;
 	};
