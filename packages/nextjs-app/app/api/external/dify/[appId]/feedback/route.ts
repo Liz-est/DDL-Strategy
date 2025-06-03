@@ -7,8 +7,8 @@ const POST = async (
 		params,
 	}: { params: { appId: string; conversationId: string; messageId: string } },
 ) => {
-	const { appId, messageId } = await params;
-	const { rating, content } = await _request.json();
+	const { appId } = await params;
+	const { rating, content, messageId } = await _request.json();
 	const user = _request.headers.get("dc-user") as string;
 	if (!user) {
 		return NextResponse.json({
