@@ -541,13 +541,17 @@ export class DifyApi {
 		 */
 		query: string;
 	}) => {
-		return this.baseRequest.baseRequest("/chat-messages", {
-			method: "POST",
-			body: JSON.stringify(params),
-			headers: {
-				"Content-Type": "application/json",
+		return this.baseRequest.baseRequest(
+			`/${this.options.appId}/chat-messages`,
+			{
+				method: "POST",
+				body: JSON.stringify(params),
+				headers: {
+					"Content-Type": "application/json",
+					"dc-user": this.options.user,
+				},
 			},
-		});
+		);
 	};
 
 	/**
