@@ -10,7 +10,7 @@ export const APPS_JSON_PATH = path.resolve(
 	"apps.json",
 );
 
-export const RESPONSE_MODE = "blocking";
+export const RESPONSE_MODE = "streaming";
 
 /**
  * 默认对话名称
