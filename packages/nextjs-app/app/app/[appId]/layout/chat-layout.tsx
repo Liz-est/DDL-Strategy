@@ -426,7 +426,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						<>
 							{/* 左侧对话列表 */}
 							<div
-								className={`hidden md:!flex ${sidebarOpen ? "w-72" : "w-14"} transition-all h-full flex-col border-0 border-r border-solid border-r-theme-splitter`}
+								className={`hidden md:!flex ${sidebarOpen ? "w-72" : "w-14"} transition-all h-full flex-col border-r border-solid border-r-(--theme-splitter-color)`}
 							>
 								{sidebarOpen ? (
 									<>
