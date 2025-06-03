@@ -1,6 +1,5 @@
 import { Prompts } from "@ant-design/x";
 import {
-	DifyApi,
 	IFile,
 	IMessageFileItem,
 	MessageFileBelongsToEnum,
@@ -17,12 +16,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLatest } from "@/hooks/use-latest";
 import { useX } from "@/hooks/useX";
 import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
+import { useDifyApi } from "@/hooks/useApi";
+import { useUserId } from "@/hooks/useUserId";
+import { useParams } from "next/navigation";
 
 interface IChatboxWrapperProps {
-	/**
-	 * Dify API 实例
-	 */
-	difyApi: DifyApi;
 	/**
 	 * 对话列表 loading
 	 */
@@ -46,12 +44,17 @@ interface IChatboxWrapperProps {
  */
 export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const {
-		difyApi,
 		conversationListLoading,
 		onAddConversation,
 		conversationItemsChangeCallback,
 		handleStartConfig,
 	} = props;
+	const user = useUserId();
+	const { appId } = useParams<{ appId: string }>();
+	const difyApi = useDifyApi({
+		user,
+		appId,
+	});
 	const {
 		currentConversationId,
 		setCurrentConversationId,

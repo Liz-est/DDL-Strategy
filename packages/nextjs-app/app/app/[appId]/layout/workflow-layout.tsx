@@ -1,6 +1,7 @@
+import { useDifyApi } from "@/hooks/useApi";
+import { useUserId } from "@/hooks/useUserId";
 import { XStream } from "@ant-design/x";
 import {
-	DifyApi,
 	EventEnum,
 	IAgentMessage,
 	IChunkChatCompletionResponse,
@@ -17,17 +18,13 @@ import {
 import { AppModeEnums, useAppContext } from "@dify-chat/core";
 import { copyToClipboard } from "@toolkit-fe/clipboard";
 import { Button, Empty, Form, message, Tabs } from "antd";
+import { useParams } from "next/navigation";
 import { useState } from "react";
-
-interface IWorkflowLayoutProps {
-	difyApi: DifyApi;
-}
 
 /**
  * 工作流应用详情布局
  */
-export default function WorkflowLayout(props: IWorkflowLayoutProps) {
-	const { difyApi } = props;
+export default function WorkflowLayout() {
 	const [entryForm] = Form.useForm();
 	const { currentApp } = useAppContext();
 	const [text, setText] = useState("");
@@ -36,6 +33,12 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 	>();
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([]);
 	const [resultDetail, setResultDetail] = useState<Record<string, string>>({});
+	const user = useUserId();
+	const { appId } = useParams<{ appId: string }>();
+	const difyApi = useDifyApi({
+		user,
+		appId,
+	});
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
 		const runner = () => {

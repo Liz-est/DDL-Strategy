@@ -5,7 +5,7 @@ import {
 	PlusCircleOutlined,
 	PlusOutlined,
 } from "@ant-design/icons";
-import { DifyApi, IConversationItem } from "@dify-chat/api";
+import { IConversationItem } from "@dify-chat/api";
 import {
 	AppIcon,
 	AppInfo,
@@ -65,10 +65,6 @@ interface IChatLayoutProps {
 	 * 是否正在加载应用配置
 	 */
 	initLoading: boolean;
-	/**
-	 * Dify API 实例
-	 */
-	difyApi: DifyApi;
 }
 
 export default function ChatLayout(props: IChatLayoutProps) {
@@ -120,7 +116,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		}
 		try {
 			const result = await difyApi?.getConversationList({
-				user,
 				limit: 100,
 			});
 			const newItems =
@@ -520,7 +515,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 							{/* 右侧聊天窗口 - 移动端全屏 */}
 							<div className="flex-1 min-w-0 flex flex-col overflow-hidden">
 								<ChatboxWrapper
-									difyApi={difyApi}
 									conversationListLoading={conversationListLoading}
 									onAddConversation={onAddConversation}
 									conversationItemsChangeCallback={() =>

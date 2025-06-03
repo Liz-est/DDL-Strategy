@@ -7,9 +7,6 @@ import { colors } from "@/config/theme";
 import ChatLayout from "./chat-layout";
 import CommonLayout from "./common-layout";
 import WorkflowLayout from "./workflow-layout";
-import { useDifyApi } from "@/hooks/useApi";
-import { useUserId } from "@/hooks/useUserId";
-import { useParams } from "next/navigation";
 
 interface IMainLayoutProps {
 	/**
@@ -35,12 +32,6 @@ interface IMainLayoutProps {
  */
 const MainLayout = (props: IMainLayoutProps) => {
 	const { currentApp } = useAppContext();
-	const user = useUserId();
-	const { appId } = useParams<{ appId: string }>();
-	const difyApi = useDifyApi({
-		user,
-		appId,
-	});
 
 	// FIXME: 去掉这里的默认值
 	const appMode = currentApp?.config?.info?.mode || AppModeEnums.CHATBOT;
@@ -61,7 +52,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 				AppModeEnums.CHATFLOW,
 				AppModeEnums.AGENT,
 			].includes(appMode) ? (
-				<ChatLayout {...props} difyApi={difyApi} />
+				<ChatLayout {...props} />
 			) : (
 				<CommonLayout
 					initLoading={props.initLoading}
@@ -71,7 +62,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 					{[AppModeEnums.WORKFLOW, AppModeEnums.TEXT_GENERATOR].includes(
 						appMode,
 					) ? (
-						<WorkflowLayout difyApi={difyApi} />
+						<WorkflowLayout />
 					) : (
 						<div>不支持的应用类型</div>
 					)}
