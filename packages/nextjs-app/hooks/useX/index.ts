@@ -16,6 +16,8 @@ import { useState } from "react";
 import { RESPONSE_MODE } from "@/config";
 
 import workflowDataStorage from "./workflow-data-storage";
+import { useDifyApi } from "../useApi";
+import { useParams } from "next/navigation";
 
 export const useX = (options: {
 	difyApi: DifyApi;
@@ -41,11 +43,15 @@ export const useX = (options: {
 		getConversationMessages,
 		onConversationIdChange,
 		entryForm,
-		difyApi,
 	} = options;
 	const { currentApp } = useAppContext();
 	const { user } = useDifyChat();
+	const { appId } = useParams<{ appId: string }>();
 	const [currentTaskId, setCurrentTaskId] = useState("");
+	const difyApi = useDifyApi({
+		user,
+		appId,
+	});
 
 	const [agent] = useXAgent<IAgentMessage>({
 		request: async ({ message }, { onSuccess, onUpdate, onError }) => {
