@@ -45,7 +45,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import ChatboxWrapper from "@/app/app/[appId]/components/chatbox-wrapper";
 import { DEFAULT_CONVERSATION_NAME } from "@/config";
 import { useLatest } from "@/hooks/use-latest";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useDifyApi } from "@/hooks/useApi";
 
 interface IChatLayoutProps {
@@ -80,11 +80,11 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		return conversations.find((item) => item.id === currentConversationId);
 	}, [conversations, currentConversationId]);
 	const isMobile = useIsMobile();
-	const { appId } = useParams<{ appId: string }>();
-	const { user } = useDifyChat()
+	const { currentAppId } = useAppContext();
+	const { user } = useDifyChat();
 	const difyApi = useDifyApi({
 		user,
-		appId,
+		appId: currentAppId!,
 	});
 
 	// 创建 Dify API 实例

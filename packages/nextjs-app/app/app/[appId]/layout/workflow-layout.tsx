@@ -17,7 +17,6 @@ import {
 import { AppModeEnums, useAppContext, useDifyChat } from "@dify-chat/core";
 import { copyToClipboard } from "@toolkit-fe/clipboard";
 import { Button, Empty, Form, message, Tabs } from "antd";
-import { useParams } from "next/navigation";
 import { useState } from "react";
 
 /**
@@ -32,11 +31,11 @@ export default function WorkflowLayout() {
 	>();
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([]);
 	const [resultDetail, setResultDetail] = useState<Record<string, string>>({});
-	const { user } = useDifyChat()
-	const { appId } = useParams<{ appId: string }>();
+	const { user } = useDifyChat();
+	const { currentAppId } = useAppContext();
 	const difyApi = useDifyApi({
 		user,
-		appId,
+		appId: currentAppId!,
 	});
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
@@ -173,6 +172,7 @@ export default function WorkflowLayout() {
 							});
 							result += text;
 						}
+						console.log("result", result);
 						if (parsedData.event === EventEnum.ERROR) {
 							message.error((parsedData as unknown as IErrorEvent).message);
 						}

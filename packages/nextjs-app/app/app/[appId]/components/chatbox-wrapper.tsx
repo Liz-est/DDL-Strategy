@@ -17,7 +17,6 @@ import { useLatest } from "@/hooks/use-latest";
 import { useX } from "@/hooks/useX";
 import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
 import { useDifyApi } from "@/hooks/useApi";
-import { useParams } from "next/navigation";
 
 interface IChatboxWrapperProps {
 	/**
@@ -48,11 +47,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationItemsChangeCallback,
 		handleStartConfig,
 	} = props;
-	const {user} = useDifyChat();
-	const { appId } = useParams<{ appId: string }>();
+	const { user } = useDifyChat();
+	const { currentAppId, currentApp, appLoading } = useAppContext();
 	const difyApi = useDifyApi({
 		user,
-		appId,
+		appId: currentAppId!,
 	});
 	const {
 		currentConversationId,
@@ -60,7 +59,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		setConversations,
 		currentConversationInfo,
 	} = useConversationsContext();
-	const { currentAppId, currentApp, appLoading } = useAppContext();
 
 	const [entryForm] = Form.useForm();
 	const abortRef = useRef(() => {});
