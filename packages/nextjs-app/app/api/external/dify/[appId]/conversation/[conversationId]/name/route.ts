@@ -3,12 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PUT = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: { appId: string; conversationId: string } },
 ) => {
-	const { appId } = await params;
+	const { appId, conversationId } = await params;
 	// 获取 body 中的参数
-	const { conversation_id, name, auto_generate } = await _request.json();
-	if (!conversation_id) {
+	const { name, auto_generate } = await _request.json();
+	if (!conversationId) {
 		return NextResponse.json({
 			code: 400,
 			message:
@@ -17,9 +17,9 @@ const PUT = async (
 	}
 	const difyRequest = await genDifyRequest(appId);
 	const result = await difyRequest.post(
-		`/conversations/${conversation_id}/name`,
+		`/conversations/${conversationId}/name`,
 		{
-			conversation_id,
+			conversation_id: conversationId,
 			name,
 			auto_generate,
 			user: _request.headers.get("dc-user") as string,

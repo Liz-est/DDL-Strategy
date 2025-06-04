@@ -7,7 +7,9 @@ const DELETE = async (
 ) => {
 	const { appId, conversationId } = await params;
 	const difyRequest = await genDifyRequest(appId);
-	const result = await difyRequest.delete(`/conversations/${conversationId}`);
+	const result = await difyRequest.delete(`/conversations/${conversationId}`, {
+		user: _request.headers.get("dc-user") as string,
+	});
 	return NextResponse.json({
 		code: 200,
 		data: result,
