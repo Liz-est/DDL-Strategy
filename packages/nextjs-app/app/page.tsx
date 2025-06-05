@@ -2,6 +2,7 @@ import { getConfigs } from "@/config";
 import Image from "next/image";
 import SingleAppLayoutWrapper from "@/components/layout/single-layout-wrapper";
 import { getAppList } from "./api-utils";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
 	const { runningMode } = getConfigs();
@@ -11,6 +12,9 @@ export default async function Home() {
 		const apps = await getAppList();
 
 		return <SingleAppLayoutWrapper app={apps[0]} />;
+	} else if (runningMode === "multiApp") {
+		// TODO 后续通过中间件处理
+		redirect("/apps");
 	}
 
 	return (
