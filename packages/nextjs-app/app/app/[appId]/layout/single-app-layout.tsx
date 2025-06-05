@@ -1,4 +1,4 @@
-import { createDifyApiInstance, DifyApi } from "@dify-chat/api";
+"use client";
 import {
 	AppContextProvider,
 	ICurrentApp,
@@ -9,7 +9,7 @@ import { useMount, useRequest } from "ahooks";
 import { Spin } from "antd";
 import React, { useState } from "react";
 
-import { useAppSiteSetting } from "@/hooks/useApi";
+import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
 import MainLayout from "./main-layout";
 
@@ -20,16 +20,15 @@ const SingleAppLayout: React.FC = () => {
 	const [initLoading, setInitLoading] = useState(false);
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>(); // 新增 currentApp 状态用于保存当前应用的 inf
 
-	const [difyApi] = useState(
-		createDifyApiInstance({
-			user,
-			apiBase: "",
-			apiKey: "",
-		}),
-	);
+	console.log("appConfigappConfig", appConfig.id);
+
+	const difyApi = useDifyApi({
+		user,
+		appId: appConfig.id,
+	});
 
 	const { runAsync: getAppParameters } = useRequest(
-		(difyApi: DifyApi) => {
+		() => {
 			return difyApi.getAppParameters();
 		},
 		{
@@ -40,23 +39,24 @@ const SingleAppLayout: React.FC = () => {
 	const { getAppSiteSettting } = useAppSiteSetting();
 
 	const initInSingleMode = async () => {
-		difyApi.updateOptions({
-			user,
-			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig
-				.requestConfig.apiBase,
-			apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig
-				.requestConfig.apiKey,
-		});
+		setSelectedAppId(appConfig.id);
+		// difyApi.updateOptions({
+		// 	user,
+		// 	apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig
+		// 		.requestConfig.apiBase,
+		// 	apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig
+		// 		.requestConfig.apiKey,
+		// });
 		setInitLoading(true);
 		const [difyAppInfo, appParameters, appSiteSetting] = await Promise.all([
 			difyApi.getAppInfo(),
-			getAppParameters(difyApi),
+			getAppParameters(),
 			getAppSiteSettting(difyApi),
 		]);
 		// 获取应用信息
 		setCurrentApp({
 			config: {
-				id: Math.random().toString(),
+				id: appConfig.id,
 				...appConfig,
 				info: {
 					...difyAppInfo,
@@ -83,7 +83,7 @@ const SingleAppLayout: React.FC = () => {
 		);
 	}
 
-	return currentApp ? (
+	return currentApp && selectedAppId ? (
 		<AppContextProvider
 			value={{
 				appLoading: initLoading,
@@ -94,7 +94,7 @@ const SingleAppLayout: React.FC = () => {
 			}}
 		>
 			<MainLayout
-				difyApi={difyApi}
+				// difyApi={difyApi}
 				initLoading={false}
 				renderCenterTitle={(appInfo) => {
 					return <>{appInfo?.name}</>;
