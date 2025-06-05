@@ -1,25 +1,10 @@
-import { DifyAppService } from "@/domain/app";
-import { NextRequest, NextResponse } from "next/server";
-
-const appService = new DifyAppService();
+import { getAppList } from "@/app/api-utils";
+import { NextResponse } from "next/server";
 
 /**
  * 获取应用列表
  */
 export async function GET() {
-	const result = await appService.getApps();
-	return NextResponse.json(result);
-}
-
-/**
- * 创建应用
- */
-export async function POST(request: NextRequest) {
-	// 获取 body
-	const body = await request.json();
-	const result = await appService.addApp({
-		...body,
-		id: Date.now().toString(),
-	});
+	const result = await getAppList();
 	return NextResponse.json(result);
 }
