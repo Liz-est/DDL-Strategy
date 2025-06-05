@@ -1,3 +1,4 @@
+"use client";
 import { Prompts } from "@ant-design/x";
 import {
 	IFile,

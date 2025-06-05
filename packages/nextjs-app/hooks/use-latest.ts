@@ -1,3 +1,4 @@
+"use client";
 import { useRef } from "react";
 
 // 可以提取到公共 hooks

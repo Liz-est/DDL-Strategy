@@ -1,3 +1,4 @@
+"use client";
 import { useXAgent, useXChat, XStream } from "@ant-design/x";
 import {
 	DifyApi,

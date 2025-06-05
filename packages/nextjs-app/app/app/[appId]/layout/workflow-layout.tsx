@@ -1,3 +1,4 @@
+"use client";
 import { useDifyApi } from "@/hooks/useApi";
 import { XStream } from "@ant-design/x";
 import {
