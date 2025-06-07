@@ -181,7 +181,7 @@ export default function WorkflowLayout() {
 				}
 			})
 			.catch((err) => {
-				console.log("runWorkflow err", err);
+				console.error("runWorkflow err", err);
 				setWorkflowStatus(undefined);
 			});
 	};

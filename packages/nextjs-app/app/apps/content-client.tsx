@@ -46,9 +46,6 @@ export default function AppListPage() {
 		},
 		{
 			manual: true,
-			onSuccess: (data) => {
-				console.log("返回数据", data);
-			},
 			onError: (error) => {
 				message.error(`获取应用列表失败: ${error}`);
 				console.error(error);

@@ -20,8 +20,6 @@ const SingleAppLayout: React.FC = () => {
 	const [initLoading, setInitLoading] = useState(false);
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>(); // 新增 currentApp 状态用于保存当前应用的 inf
 
-	console.log("appConfigappConfig", appConfig.id);
-
 	const difyApi = useDifyApi({
 		user,
 		appId: appConfig.id,
@@ -40,13 +38,6 @@ const SingleAppLayout: React.FC = () => {
 
 	const initInSingleMode = async () => {
 		setSelectedAppId(appConfig.id);
-		// difyApi.updateOptions({
-		// 	user,
-		// 	apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig
-		// 		.requestConfig.apiBase,
-		// 	apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig
-		// 		.requestConfig.apiKey,
-		// });
 		setInitLoading(true);
 		const [difyAppInfo, appParameters, appSiteSetting] = await Promise.all([
 			difyApi.getAppInfo(),

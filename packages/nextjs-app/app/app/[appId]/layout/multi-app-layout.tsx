@@ -84,7 +84,6 @@ const MultiAppLayout: React.FC = () => {
 	 */
 	const initApp = async () => {
 		const appItem = appList?.find((item) => item.id === selectedAppId);
-		console.log("appItem", appItem);
 		if (!appItem) {
 			return;
 		}
@@ -96,7 +95,6 @@ const MultiAppLayout: React.FC = () => {
 		Promise.all(promises)
 			.then((res) => {
 				const [parameters, siteSetting] = res;
-				console.log("更新一下", appItem);
 				setCurrentApp({
 					config: appItem,
 					parameters: parameters!,
