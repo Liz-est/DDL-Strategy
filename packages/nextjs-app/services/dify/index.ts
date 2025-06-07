@@ -569,9 +569,12 @@ export class DifyApi {
 	 * 停止对话流式响应
 	 */
 	stopTask = async (taskId: string) => {
-		return this.baseRequest.post(`/chat-messages/${taskId}/stop`, {
-			user: this.options.user,
-		});
+		return this.baseRequest.post(
+			`/${this.options.appId}/chat-messages/${taskId}/stop`,
+			{
+				user: this.options.user,
+			},
+		);
 	};
 
 	/**
