@@ -57,23 +57,14 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	);
 
 	useEffect(() => {
-		localStorage.setItem('DC_THEME_MODE', themeMode);
-	}, [themeMode]);
-
-	useEffect(() => {
 		localStorage.setItem('DC_THEME', themeState);
 	}, [themeState]);
 
 	/**
-	 * 监听主题变化
+	 * 监听主题变化，更新状态并给 body 添加类名
 	 */
 	const handleColorSchemeChange = useCallback(
 		(event: MediaQueryList) => {
-			// 如果不是跟随系统, 则不进行任何处理
-			if (themeMode !== ThemeModeEnum.SYSTEM) {
-				return;
-			}
-
 			if (event.matches) {
 				setThemeState(ThemeEnum.DARK);
 				document.body.classList.add(DARK_CLASS_NAME);
@@ -85,32 +76,15 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 		[setThemeState, themeMode],
 	);
 
-	/**
-	 * 初始化主题监听
-	 */
-	const initThemeListener = () => {
+	useEffect(() => {
+		localStorage.setItem('DC_THEME_MODE', themeMode);
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		handleColorSchemeChange(mediaQuery);
-		// 只有跟随系统时才监听媒体查询
 		if (themeMode === ThemeModeEnum.SYSTEM) {
+			// 从其他模式切换到系统主题时，先调用一次
+			handleColorSchemeChange(mediaQuery);
 			// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
 			mediaQuery.addEventListener('change', handleColorSchemeChange);
 		} else {
-			// @ts-expect-error 移除监听媒体查询的变化, FIXME: 类型错误, 待优化
-			mediaQuery.removeEventListener('change', handleColorSchemeChange);
-		}
-	};
-
-	useEffect(() => {
-		initThemeListener();
-	}, [themeMode]);
-
-	const handleUserSelect = (themeMode: ThemeModeEnum) => {
-		setThemeMode(themeMode);
-		if (themeMode === ThemeModeEnum.SYSTEM) {
-			initThemeListener();
-		} else {
-			const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 			// @ts-expect-error 移除监听媒体查询的变化, FIXME: 类型错误, 待优化
 			mediaQuery.removeEventListener('change', handleColorSchemeChange);
 			if (themeMode === ThemeModeEnum.DARK) {
@@ -121,11 +95,11 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 				document.body.classList.remove(DARK_CLASS_NAME);
 			}
 		}
-	};
+	}, [themeMode]);
 
 	return (
 		<ThemeContext.Provider
-			value={{ theme: themeState, themeMode, setThemeMode: handleUserSelect }}
+			value={{ theme: themeState, themeMode, setThemeMode }}
 		>
 			{children}
 		</ThemeContext.Provider>
