@@ -49,12 +49,16 @@ export const DARK_CLASS_NAME = 'dark';
 export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	const { children } = props;
 	const [themeMode, setThemeMode] = useState<ThemeModeEnum>(
-		(localStorage.getItem('DC_THEME_MODE') as ThemeModeEnum) ||
-			ThemeModeEnum.SYSTEM,
+		ThemeModeEnum.SYSTEM,
 	);
 	const [themeState, setThemeState] = React.useState<ThemeEnum>(
-		(localStorage.getItem('DC_THEME') as ThemeEnum) || ThemeEnum.LIGHT,
+		ThemeEnum.LIGHT,
 	);
+
+	useEffect(() => {
+		const themeModeInStorage = localStorage.getItem('DC_THEME_MODE');
+		setThemeMode((themeModeInStorage as ThemeModeEnum) || ThemeModeEnum.SYSTEM);
+	}, []);
 
 	useEffect(() => {
 		localStorage.setItem('DC_THEME', themeState);
