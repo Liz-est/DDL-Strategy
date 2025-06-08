@@ -40,4 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.dify-chat
+# 应用列表存储文件
+.dify-chat/storage/apps.json
