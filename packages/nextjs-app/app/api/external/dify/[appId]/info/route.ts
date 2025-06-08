@@ -3,7 +3,7 @@ import { genDifyRequest } from "@/app/api/utils";
 
 const GET = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: Promise<{ appId: string }> },
 ) => {
 	const { appId } = await params;
 	// 实例化 Dify 请求类

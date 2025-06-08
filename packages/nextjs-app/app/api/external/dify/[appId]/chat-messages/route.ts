@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 
 const POST = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: Promise<{ appId: string }> },
 ) => {
 	const { appId } = await params;
 	// 获取 body 中的参数

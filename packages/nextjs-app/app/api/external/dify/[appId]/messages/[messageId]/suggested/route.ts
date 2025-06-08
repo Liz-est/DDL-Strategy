@@ -5,7 +5,13 @@ const GET = async (
 	request: NextRequest,
 	{
 		params,
-	}: { params: { appId: string; conversationId: string; messageId: string } },
+	}: {
+		params: Promise<{
+			appId: string;
+			conversationId: string;
+			messageId: string;
+		}>;
+	},
 ) => {
 	const { appId, messageId } = await params;
 	const user = request.headers.get("dc-user") as string;

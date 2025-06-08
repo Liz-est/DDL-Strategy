@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const GET = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string; conversationId: string } },
+	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) => {
 	const { appId, conversationId } = await params;
 	const user = _request.headers.get("dc-user") as string;

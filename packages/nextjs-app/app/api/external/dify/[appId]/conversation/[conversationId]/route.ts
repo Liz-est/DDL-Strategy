@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const DELETE = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string; conversationId: string } },
+	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) => {
 	const { appId, conversationId } = await params;
 	const difyRequest = await genDifyRequest(appId);

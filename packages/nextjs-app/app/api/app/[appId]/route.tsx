@@ -7,7 +7,7 @@ import { IDifyAppItem } from "@dify-chat/core";
  */
 export async function GET(
 	_request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: Promise<{ appId: string }> },
 ) {
 	const { appId } = await params;
 	const app = await getAppItem(appId);
@@ -24,7 +24,7 @@ export async function GET(
  */
 export async function PUT(
 	request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: Promise<{ appId: string }> },
 ) {
 	const { appId } = await params;
 	const newAppItem = (await request.json()) as Omit<IDifyAppItem, "id">;
@@ -55,7 +55,7 @@ export async function PUT(
  */
 export async function DELETE(
 	_request: NextRequest,
-	{ params }: { params: { appId: string } },
+	{ params }: { params: Promise<{ appId: string }> },
 ) {
 	const { appId } = await params;
 	const apps = await getAppList();

@@ -5,7 +5,13 @@ const POST = async (
 	_request: NextRequest,
 	{
 		params,
-	}: { params: { appId: string; conversationId: string; messageId: string } },
+	}: {
+		params: Promise<{
+			appId: string;
+			conversationId: string;
+			messageId: string;
+		}>;
+	},
 ) => {
 	const { appId } = await params;
 	const { rating, content, messageId } = await _request.json();

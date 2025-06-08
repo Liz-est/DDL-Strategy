@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const POST = async (
 	_request: NextRequest,
-	{ params }: { params: { appId: string; taskId: string } },
+	{ params }: { params: Promise<{ appId: string; taskId: string }> },
 ) => {
 	const { appId, taskId } = await params;
 	const user = _request.headers.get("dc-user") as string;
