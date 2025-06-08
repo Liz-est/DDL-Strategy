@@ -2,9 +2,13 @@
 import { ThemeContextProvider, useThemeContext } from "@dify-chat/theme";
 import { ConfigProvider, theme } from "antd";
 import React from "react";
+import { initResponsiveConfig } from "@dify-chat/helpers";
+
+initResponsiveConfig();
 
 const ThemeContextWrapper = ({ children }: { children: React.ReactNode }) => {
 	const { isDark } = useThemeContext();
+
 	return (
 		<ConfigProvider
 			theme={{
