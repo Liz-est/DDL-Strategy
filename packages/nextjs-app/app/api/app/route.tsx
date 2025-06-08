@@ -1,5 +1,4 @@
-import { updateApps } from "@/app/api-utils";
-import { getAppList } from "@/repository/app";
+import { getAppList, updateApps } from "@/app/api-utils";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
