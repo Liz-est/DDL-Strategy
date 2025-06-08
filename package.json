@@ -5,6 +5,7 @@
 	"scripts": {
 		"build:pkgs": "pnpm --filter @dify-chat/* build",
 		"build": "pnpm build:pkgs && pnpm --filter dify-chat-app-react build",
+		"build:next": "pnpm build:pkgs && pnpm --filter dify-chat-app-nextjs build",
 		"dev": "pnpm --filter dify-chat-app-react dev",
 		"dev:next": "cd packages/nextjs-app && pnpm dev",
 		"format": "prettier --write .",
