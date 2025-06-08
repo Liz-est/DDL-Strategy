@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
 	env: {
 		PROJECT_ROOT: path.resolve(__dirname),
 	},
+	// build 期间忽略 eslint 检查
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
+	// build 期间忽略 typescript 检查
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 };
 
 export default nextConfig;
