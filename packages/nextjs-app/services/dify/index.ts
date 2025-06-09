@@ -400,16 +400,6 @@ export class DifyApi {
 	options: IDifyApiOptions;
 	baseRequest: XRequest;
 
-	// /**
-	//  * 更新 API 配置, 一般在切换应用时调用
-	//  */
-	// updateOptions = (options: IDifyApiOptions) => {
-	// 	this.options = options
-	// 	this.baseRequest = new XRequest({
-	// 		baseURL: '/api/external/dify',
-	// 	})
-	// }
-
 	/**
 	 * 获取应用基本信息
 	 */
