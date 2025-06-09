@@ -1,5 +1,16 @@
 import { AppModeEnums } from "../../constants";
 
+export interface IDifyAppRequestConfig {
+	/**
+	 * 请求地址
+	 */
+	apiBase: string;
+	/**
+	 * Dify APP API 密钥
+	 */
+	apiKey: string;
+}
+
 /**
  * 应用配置 Item
  */
@@ -32,16 +43,7 @@ export interface IDifyAppItem {
 	/**
 	 * 请求配置
 	 */
-	requestConfig: {
-		/**
-		 * 请求地址
-		 */
-		apiBase: string;
-		/**
-		 * Dify APP API 密钥
-		 */
-		apiKey: string;
-	};
+	requestConfig: IDifyAppRequestConfig;
 	/**
 	 * 回复表单配置
 	 */
