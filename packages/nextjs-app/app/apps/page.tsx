@@ -1,22 +1,10 @@
-"use client";
-
-import { DifyChatProvider } from "@dify-chat/core";
 import AppsPageMain from "./content-client";
-import DifyAppService from "@/services/app/apps";
-import { useUserId } from "@/hooks/useUserId";
+import { getUser } from "../actions";
+import { getAppList } from "./actions";
 
 export default function AppsPage() {
-	const user = useUserId();
-	return (
-		<DifyChatProvider
-			value={{
-				mode: "multiApp",
-				appService: new DifyAppService(),
-				enableSetting: true,
-				user,
-			}}
-		>
-			<AppsPageMain />
-		</DifyChatProvider>
-	);
+	// 定义用于 Client 组件的 Promise 请求
+	const user = getUser();
+	const getApps = getAppList();
+	return <AppsPageMain user={user} getApps={getApps} />;
 }

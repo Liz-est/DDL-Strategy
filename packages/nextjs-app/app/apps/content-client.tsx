@@ -7,31 +7,30 @@ import {
 } from "@ant-design/icons";
 import { LucideIcon } from "@dify-chat/components";
 import { HeaderLayout } from "@/components";
-import {
-	AppModeLabels,
-	DifyAppStore,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-	useDifyChat,
-} from "@dify-chat/core";
+import { AppModeLabels, DifyAppStore, IDifyAppItem } from "@dify-chat/core";
 import { useIsMobile } from "@dify-chat/helpers";
-import { useRequest } from "ahooks";
 
 import { Button, Col, Dropdown, Empty, message, Row } from "antd";
-// import { useHistory } from 'pure-react-router'
-import { useEffect, useState } from "react";
+import { use, useState } from "react";
 
 import { AppEditDrawer } from "./components/app-edit-drawer";
 import { useRouter } from "next/navigation";
+
+const appService = {};
 
 export enum AppDetailDrawerModeEnum {
 	create = "create",
 	edit = "edit",
 }
 
-export default function AppListPage() {
-	const { appService, mode, enableSetting } =
-		useDifyChat() as IDifyChatContextMultiApp;
+export default function AppListPage(props: {
+	user: Promise<{
+		enableSetting: boolean;
+		mode: string;
+		userId: string;
+	}>;
+	getApps: Promise<IDifyAppItem[]>;
+}) {
 	const isMobile = useIsMobile();
 	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false);
 	const [appEditDrawerMode, setAppEditDrawerMode] =
@@ -39,30 +38,10 @@ export default function AppListPage() {
 	const [appEditDrawerAppItem, setAppEditDrawerAppItem] =
 		useState<IDifyAppItem>();
 	const router = useRouter();
+	const { enableSetting } = use(props.user);
+	const list = use(props.getApps);
 
-	const { runAsync: getAppList, data: list } = useRequest(
-		() => {
-			return appService.getApps();
-		},
-		{
-			manual: true,
-			onError: (error) => {
-				message.error(`获取应用列表失败: ${error}`);
-				console.error(error);
-			},
-		},
-	);
-
-	useEffect(() => {
-		if (mode === "multiApp") {
-			getAppList();
-		} else {
-			// FIXME: 若不加定时器，URL 会更新但是页面 UI 仍然停在当前页面
-			// setTimeout(() => {
-			// 	history.push('/chat')
-			// }, 200)
-		}
-	}, []);
+	console.log("list", list);
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
