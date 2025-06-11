@@ -1,3 +1,4 @@
+"use client";
 import { DifyApi } from "@dify-chat/api";
 import {
 	AppModeEnums,
@@ -10,8 +11,9 @@ import { useRequest } from "ahooks";
 import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
 import { useEffect, useState } from "react";
 
-import { AppDetailDrawerModeEnum } from "./../content-client";
+import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 import SettingForm from "./setting-form";
+import { createApp as createAppAction } from "../actions";
 
 interface IAppEditDrawerProps extends DrawerProps {
 	detailDrawerMode: AppDetailDrawerModeEnum;
@@ -65,7 +67,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	const { runAsync: createApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return (appService as DifyAppStore).addApp(appInfo);
+			return createAppAction(appInfo);
 		},
 		{
 			manual: true,

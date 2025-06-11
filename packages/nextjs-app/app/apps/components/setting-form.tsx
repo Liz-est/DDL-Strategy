@@ -5,7 +5,7 @@ import {
 } from "@dify-chat/core";
 import { Form, FormInstance, Input, Select } from "antd";
 
-import { AppDetailDrawerModeEnum } from "../content-client";
+import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 
 interface ISettingFormProps {
 	formInstance: FormInstance<Record<string, unknown>>;
