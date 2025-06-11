@@ -6,11 +6,9 @@ import { Dropdown, message } from "antd";
 import { useAppEditDrawer } from "../hooks/use-app-edit-drawer";
 import { AppDetailDrawerModeEnum } from "../enums";
 import { deleteApp } from "../actions";
+import { redirect } from "next/navigation";
 
-export default function AppItemActionButton(props: {
-	item: IDifyAppItem;
-	// deleteApp: Promise<void>;
-}) {
+export default function AppItemActionButton(props: { item: IDifyAppItem }) {
 	const { item } = props;
 	const {
 		setAppEditDrawerMode,
@@ -40,9 +38,15 @@ export default function AppItemActionButton(props: {
 							danger: true,
 							onClick: async () => {
 								await deleteApp(item.id);
+								await fetch(`/api/app/${item.id}`, {
+									method: "DELETE",
+									headers: {
+										"Content-Type": "application/json",
+									},
+								});
 								message.success("删除应用成功");
-								// TODO: 刷新应用列表
-								// getAppList();
+								// 重新加载列表页
+								redirect("/apps");
 							},
 						},
 					],

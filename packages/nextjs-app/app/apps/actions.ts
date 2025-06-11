@@ -39,6 +39,20 @@ export async function createApp(appItem: Omit<IDifyAppItem, "id">) {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify(appItem),
-	}).then((res) => res.json());
-	return res;
+	});
+	return res.json();
+}
+
+export async function updateApp(appItem: IDifyAppItem) {
+	const res = await fetch(
+		`${process.env.__NEXT_PRIVATE_ORIGIN}/api/app/${appItem.id}`,
+		{
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(appItem),
+		},
+	);
+	return res.json();
 }

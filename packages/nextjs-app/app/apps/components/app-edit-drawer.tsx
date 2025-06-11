@@ -1,19 +1,19 @@
 "use client";
+import "@ant-design/v5-patch-for-react-19";
 import { DifyApi } from "@dify-chat/api";
-import {
-	AppModeEnums,
-	DifyAppStore,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-	useDifyChat,
-} from "@dify-chat/core";
-import { useRequest } from "ahooks";
+import { AppModeEnums, IDifyAppItem } from "@dify-chat/core";
+import { useMount, useRequest } from "ahooks";
 import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
 import { useEffect, useState } from "react";
 
 import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 import SettingForm from "./setting-form";
-import { createApp as createAppAction } from "../actions";
+import {
+	createApp as createAppAction,
+	updateApp as updateAppAction,
+} from "../actions";
+import { redirect } from "next/navigation";
+import { getUser } from "@/app/actions";
 
 interface IAppEditDrawerProps extends DrawerProps {
 	detailDrawerMode: AppDetailDrawerModeEnum;
@@ -28,9 +28,23 @@ interface IAppEditDrawerProps extends DrawerProps {
  */
 export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	const { detailDrawerMode, appItem, open, onClose, confirmCallback } = props;
-	const { user, appService } = useDifyChat() as IDifyChatContextMultiApp;
 	const [settingForm] = Form.useForm();
 	const [confirmLoading, setConfirmBtnLoading] = useState(false);
+	const [user, setUser] = useState<{
+		enableSetting: boolean;
+		mode: string;
+		userId: string;
+	}>();
+
+	const initUser = () => {
+		getUser().then((user) => {
+			setUser(user);
+		});
+	};
+
+	useMount(() => {
+		initUser();
+	});
 
 	useEffect(() => {
 		if (appItem?.info.mode) {
@@ -74,19 +88,25 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 			onSuccess: () => {
 				onClose?.();
 				message.success("新增应用配置成功");
+				setTimeout(() => {
+					redirect("/apps");
+				}, 1200);
 			},
 		},
 	);
 
 	const { runAsync: updateApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return (appService as DifyAppStore).updateApp(appInfo);
+			return updateAppAction(appInfo);
 		},
 		{
 			manual: true,
 			onSuccess: () => {
 				onClose?.();
 				message.success("编辑应用配置成功");
+				setTimeout(() => {
+					redirect("/apps");
+				}, 1200);
 			},
 		},
 	);
@@ -113,7 +133,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 								// 获取 Dify 应用信息
 								const newDifyApiInstance = new DifyApi({
-									user,
+									user: user?.userId as string,
 									apiBase: values.apiBase,
 									apiKey: values.apiKey,
 								});
