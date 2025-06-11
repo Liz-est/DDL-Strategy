@@ -1,7 +1,11 @@
-export default function AppsLayout({
+"use client";
+import PageLayoutWrapper from "@/components/layout/page-layout-wrapper";
+import React from "react";
+
+export default function AppsPageLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	return children;
+	return <PageLayoutWrapper>{children}</PageLayoutWrapper>;
 }

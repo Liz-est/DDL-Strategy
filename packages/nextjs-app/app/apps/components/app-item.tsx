@@ -6,22 +6,15 @@ import { useIsMobile } from "@dify-chat/helpers";
 
 import { Col } from "antd";
 import { useRouter } from "next/navigation";
-import AppItemActionButton from "./app-item-action-button";
 
 interface IAppItemProps {
 	item: IDifyAppItem;
-	user: {
-		enableSetting: boolean;
-		userId: string;
-	};
+	user: string;
 }
 
 export default function AppItem(props: IAppItemProps) {
 	const router = useRouter();
-	const {
-		item,
-		user: { enableSetting },
-	} = props;
+	const { item } = props;
 	const isMobile = useIsMobile();
 	const hasTags = item.info.tags?.length;
 	return (
@@ -60,9 +53,6 @@ export default function AppItem(props: IAppItemProps) {
 						</>
 					) : null}
 				</div>
-
-				{/* 操作图标 */}
-				{enableSetting ? <AppItemActionButton item={item} /> : null}
 			</div>
 		</Col>
 	);

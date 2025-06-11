@@ -1,17 +1,28 @@
+"use client";
 import { getUser } from "@/app/actions";
 import { getAppList } from "@/app/apps/actions";
 
 import { Empty, Row } from "antd";
 
-import AddButton from "@/app/apps/components/add-button";
 import AppItem from "@/app/apps/components/app-item";
 import Header from "@/app/apps/components/header";
+import { useMount } from "ahooks";
+import { useState } from "react";
+import { IDifyAppItem } from "../api-utils";
 
-export default async function AppsPage() {
-	const user = await getUser();
-	const apps = await getAppList();
+export default function AppsPage() {
+	const [user, setUser] = useState<string>("");
+	const [apps, setApps] = useState<IDifyAppItem[]>();
 
-	const refreshApps = getAppList;
+	const initData = async () => {
+		const [userRes, appsRes] = await Promise.all([getUser(), getAppList()]);
+		setUser(userRes.userId);
+		setApps(appsRes);
+	};
+
+	useMount(() => {
+		initData();
+	});
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
@@ -29,8 +40,6 @@ export default async function AppsPage() {
 					</div>
 				)}
 			</div>
-
-			{user.enableSetting ? <AddButton refreshApps={refreshApps} /> : null}
 		</div>
 	);
 }
