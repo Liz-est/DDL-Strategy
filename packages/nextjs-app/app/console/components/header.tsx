@@ -8,7 +8,7 @@ export default function Header() {
 			title={
 				<div className="flex items-center">
 					<LucideIcon name="layout-grid" size={16} className="mr-1" />
-					应用列表
+					控制台
 				</div>
 			}
 		/>
