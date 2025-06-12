@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAppItem, getAppList, updateApps } from "@/app/api-utils";
+import { deleteApp, getAppItem, updateApp } from "@/lib/repository";
 import { IDifyAppItem } from "@dify-chat/core";
 
 /**
@@ -28,26 +28,23 @@ export async function PUT(
 ) {
 	const { appId } = await params;
 	const newAppItem = (await request.json()) as Omit<IDifyAppItem, "id">;
-
-	const apps = await getAppList();
-	const index = apps.findIndex((item) => item.id === appId);
-	if (index < -1) {
+	try {
+		await updateApp({
+			...newAppItem,
+			id: appId,
+		});
+		return NextResponse.json({
+			code: 0,
+			data: null,
+			message: "success",
+		});
+	} catch (error) {
 		return NextResponse.json({
 			code: 1,
 			data: null,
-			message: "应用不存在",
+			message: `更新应用出错：${error}`,
 		});
 	}
-	apps[index] = {
-		id: appId,
-		...newAppItem,
-	};
-	await updateApps(apps);
-	return NextResponse.json({
-		code: 0,
-		data: null,
-		message: "success",
-	});
 }
 
 /**
@@ -58,9 +55,7 @@ export async function DELETE(
 	{ params }: { params: Promise<{ appId: string }> },
 ) {
 	const { appId } = await params;
-	const apps = await getAppList();
-	const newApps = apps.filter((item) => item.id !== appId);
-	await updateApps(newApps);
+	await deleteApp(appId);
 	return NextResponse.json({
 		code: 0,
 		data: null,

@@ -1,4 +1,4 @@
-import { getAppList, updateApps } from "@/app/api-utils";
+import { addApp } from "@/lib/repository/fs/app";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -7,14 +7,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
 	// 获取 body
 	const body = await request.json();
-	const apps = await getAppList();
-	const newApps = [
-		...apps,
-		{
-			...body,
-			id: Date.now().toString(),
-		},
-	];
-	updateApps(newApps);
-	return NextResponse.json(newApps);
+	await addApp(body);
+	return NextResponse.json({
+		code: 0,
+		data: null,
+		message: "success",
+	});
 }

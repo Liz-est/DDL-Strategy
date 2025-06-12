@@ -1,5 +1,5 @@
 "use server";
-import { IDifyAppItem } from "@/app/api-utils";
+import { IDifyAppItem } from "@/types";
 import { GET } from "@/app/api/apps/route";
 
 export async function getAppList() {

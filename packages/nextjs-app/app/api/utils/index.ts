@@ -1,4 +1,4 @@
-import { getAppItem } from "@/app/api-utils";
+import { getAppItem } from "@/lib/repository";
 
 import { BaseRequest } from "@dify-chat/helpers";
 
