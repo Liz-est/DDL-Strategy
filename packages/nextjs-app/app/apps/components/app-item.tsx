@@ -1,14 +1,15 @@
 "use client";
+import { IDifyAppItem4View } from "@/types";
 import { TagOutlined } from "@ant-design/icons";
 import { LucideIcon } from "@dify-chat/components";
-import { AppModeLabels, IDifyAppItem } from "@dify-chat/core";
+import { AppModeLabels } from "@dify-chat/core";
 import { useIsMobile } from "@dify-chat/helpers";
 
 import { Col } from "antd";
 import { useRouter } from "next/navigation";
 
 interface IAppItemProps {
-	item: IDifyAppItem;
+	item: IDifyAppItem4View;
 	user: string;
 }
 

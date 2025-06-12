@@ -8,11 +8,11 @@ import AppItem from "@/app/apps/components/app-item";
 import Header from "@/app/apps/components/header";
 import { useMount } from "ahooks";
 import { useState } from "react";
-import { IDifyAppItem } from "../api-utils";
+import { IDifyAppItem4View } from "@/types";
 
 export default function AppsPage() {
 	const [user, setUser] = useState<string>("");
-	const [apps, setApps] = useState<IDifyAppItem[]>();
+	const [apps, setApps] = useState<IDifyAppItem4View[]>();
 
 	const initData = async () => {
 		const [userRes, appsRes] = await Promise.all([getUser(), getAppList()]);
