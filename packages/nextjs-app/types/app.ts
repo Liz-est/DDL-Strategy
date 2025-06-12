@@ -35,10 +35,7 @@ export enum AppModeEnums {
 	AGENT = "agent-chat",
 }
 
-/**
- * 应用配置 Item
- */
-export interface IDifyAppItem {
+export interface IDifyAppItem4View {
 	/**
 	 * 唯一标识
 	 */
@@ -64,6 +61,12 @@ export interface IDifyAppItem {
 		 */
 		tags: string[];
 	};
+}
+
+/**
+ * 应用配置 Item
+ */
+export interface IDifyAppItem extends IDifyAppItem4View {
 	/**
 	 * 请求配置
 	 */
