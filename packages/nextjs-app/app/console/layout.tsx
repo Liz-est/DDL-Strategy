@@ -1,7 +1,9 @@
-export default function AppsLayout({
+import PageLayoutWrapper from "@/components/layout/page-layout-wrapper";
+
+export default function ConsoleAppsLayout({
 	children,
 }: {
 	children: React.ReactNode;
 }) {
-	return children;
+	return <PageLayoutWrapper>{children}</PageLayoutWrapper>;
 }
