@@ -1,7 +1,7 @@
 import { getConfigs } from "@/config";
 import Image from "next/image";
 import SingleAppLayoutWrapper from "@/components/layout/single-layout-wrapper";
-import { getAppList } from "./api-utils";
+import { getAppList } from "@/lib/repository";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
