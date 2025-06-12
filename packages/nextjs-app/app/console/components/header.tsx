@@ -7,7 +7,7 @@ export default function Header() {
 		<HeaderLayout
 			title={
 				<div className="flex items-center">
-					<LucideIcon name="layout-grid" size={16} className="mr-1" />
+					<LucideIcon name="square-chevron-right" size={16} className="mr-1" />
 					控制台
 				</div>
 			}
