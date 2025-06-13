@@ -19,10 +19,12 @@
 		"@dify-chat/helpers": "workspace:^",
 		"@dify-chat/theme": "workspace:^",
 		"@fingerprintjs/fingerprintjs": "catalog:",
+		"@toolkit-fe/clipboard": "catalog:",
 		"ahooks": "catalog:",
 		"antd": "catalog:",
 		"classnames": "catalog:",
 		"dayjs": "catalog:",
+		"jose": "^6.0.11",
 		"next": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
