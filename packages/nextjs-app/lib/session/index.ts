@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 
 export interface SessionPayload extends JWTPayload {
 	userId: string;
-	expiresAt: Date;
 }
 
 const secretKey = process.env.SESSION_SECRET;
@@ -31,7 +30,9 @@ export async function decrypt(session: string | undefined = "") {
 		});
 		return payload;
 	} catch (error) {
-		console.log("Failed to verify session", error);
+		return {
+			error,
+		};
 	}
 }
 
@@ -41,7 +42,7 @@ export async function decrypt(session: string | undefined = "") {
 export async function createSession(userId: string) {
 	// 设置 7 天过期
 	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-	const session = await encrypt({ userId, expiresAt });
+	const session = await encrypt({ userId });
 	const cookieStore = await cookies();
 
 	cookieStore.set("session", session, {
