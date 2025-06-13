@@ -16,8 +16,8 @@ catalogs:
       specifier: ^1.0.2
       version: 1.0.2
     '@ant-design/x':
-      specifier: ^1.2.0
-      version: 1.2.0
+      specifier: ^1.4.0
+      version: 1.4.0
     '@biomejs/biome':
       specifier: ^1.9.4
       version: 1.9.4
@@ -371,7 +371,7 @@ importers:
         version: 5.6.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ant-design/x':
         specifier: 'catalog:'
-        version: 1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 1.4.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@dify-chat/api':
         specifier: workspace:^
         version: link:../api
@@ -626,7 +626,7 @@ importers:
         version: 1.0.3(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ant-design/x':
         specifier: 'catalog:'
-        version: 1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 1.4.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@dify-chat/api':
         specifier: workspace:^
         version: link:../api
@@ -708,7 +708,7 @@ importers:
         version: 1.0.3(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ant-design/x':
         specifier: 'catalog:'
-        version: 1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        version: 1.4.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@dify-chat/api':
         specifier: workspace:^
         version: link:../api
@@ -965,8 +965,8 @@ packages:
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
 
-  '@ant-design/x@1.2.0':
-    resolution: {integrity: sha512-sV+C6ER+xn6XQF3gYN3Ma9MnK8Bcfj+5C4cRvtKNvzExHwC6laBD1g6TWHH7vFPDOQUhYlJT4tw+NdcvZJx/ZA==}
+  '@ant-design/x@1.4.0':
+    resolution: {integrity: sha512-0zoCzjrvHtopGvztOOuSlXGaSOBykWLkcNUfuicX59gJCPyiShALY1FHhd5EM6/uSvAf2MQdmQNR3WJUNjfZ3g==}
     peerDependencies:
       antd: ^5.20.3
       react: '>=18.0.0'
@@ -7539,7 +7539,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@ant-design/x@1.2.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@ant-design/x@1.4.0(antd@5.25.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@ant-design/colors': 7.2.1
       '@ant-design/cssinjs': 1.23.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
