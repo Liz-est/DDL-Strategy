@@ -7,6 +7,22 @@
 - 通过服务端调用 Dify API，密钥信息不会暴露在客户端
 - 应用列表 CRUD 默认实现调整为服务端存储，跨客户端不丢失，真正实现开箱即用
 
+## 环境变量配置
+
+第一步，生成 session 密钥：
+
+```bash
+openssl rand -base64 32
+```
+
+在根目录新增 `.env.local`，增加如下配置项：
+
+```bash
+# .env.local
+RUNNING_MODE=multiApp # 多应用模式
+SESSION_SECRET=xxx # Session 密钥
+```
+
 ## 本地开发
 
 ```bash
