@@ -1,10 +1,16 @@
 // type IOpeningStatementDisplayMode = "default" | "always";
 
+import { IRunningMode } from "@/types";
+
 /**
  * 所有的配置项
  */
 export interface IConfig {
-	runningMode: string;
+	runningMode: IRunningMode;
+	/**
+	 * Session 密钥
+	 */
+	secretKey: string;
 	// apiBase: string;
 	// apiSecret: string;
 	// appMode: string;
@@ -17,6 +23,7 @@ export interface IConfig {
 export const getConfigs = (): IConfig => {
 	return {
 		runningMode: process.env.RUNNING_MODE,
+		secretKey: process.env.SESSION_SECRET,
 		// apiBase: process.env.DIFY_API_BASE || "",
 		// apiSecret: process.env.DIFY_API_SECRET || "",
 		// appMode: process.env.DIFY_APP_MODE || "chat",
