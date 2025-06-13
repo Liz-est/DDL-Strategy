@@ -2,6 +2,7 @@
 import { IDifyAppItem } from "@/types";
 import {
 	addApp,
+	updateApp as updateAppItem,
 	deleteApp as deleteAppItem,
 	getAppList as getAppListFromRepository,
 } from "@/lib/repository";
@@ -24,15 +25,6 @@ export async function createApp(appItem: Omit<IDifyAppItem, "id">) {
 }
 
 export async function updateApp(appItem: IDifyAppItem) {
-	const res = await fetch(
-		`${process.env.__NEXT_PRIVATE_ORIGIN}/api/app/${appItem.id}`,
-		{
-			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(appItem),
-		},
-	);
-	return res.json();
+	const res = await updateAppItem(appItem);
+	return res;
 }
