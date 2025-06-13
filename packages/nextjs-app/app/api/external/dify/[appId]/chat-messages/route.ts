@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest } from "next/server";
 
 const POST = async (
@@ -10,7 +11,8 @@ const POST = async (
 	const { conversation_id, inputs, files, query, response_mode } =
 		await _request.json();
 	const difyRequest = await genDifyRequest(appId);
-	const user = _request.headers.get("dc-user") as string;
+	const userId = await getUserIdFromNextRequest(_request);
+
 	const response = await difyRequest.baseRequest(`/chat-messages`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -18,7 +20,7 @@ const POST = async (
 			inputs,
 			files,
 			response_mode,
-			user,
+			user: userId,
 			query,
 		}),
 		headers: {

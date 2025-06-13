@@ -5,7 +5,7 @@ import DifyAppService from "@/services/app/apps";
 import MultiAppLayout from "./layout/multi-app-layout";
 
 export default function AppPage() {
-	const userInfo = JSON.parse(localStorage.getItem("user") || "{}");
+	const userInfo = JSON.parse(localStorage.getItem("__DC_USER") || "{}");
 	return (
 		<DifyChatProvider
 			value={{

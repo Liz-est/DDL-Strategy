@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const PUT = async (
@@ -16,13 +17,14 @@ const PUT = async (
 		});
 	}
 	const difyRequest = await genDifyRequest(appId);
+	const user = await getUserIdFromNextRequest(_request);
 	const result = await difyRequest.post(
 		`/conversations/${conversationId}/name`,
 		{
 			conversation_id: conversationId,
 			name,
 			auto_generate,
-			user: _request.headers.get("dc-user") as string,
+			user,
 		},
 	);
 	return NextResponse.json({

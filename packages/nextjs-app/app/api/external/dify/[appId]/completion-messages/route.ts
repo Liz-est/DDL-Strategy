@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const POST = async (
@@ -8,6 +9,7 @@ const POST = async (
 	const { appId } = await params;
 	const { inputs } = await _request.json();
 	const difyRequest = await genDifyRequest(appId);
+	const user = await getUserIdFromNextRequest(_request);
 	const result = await difyRequest.baseRequest(`/completion-messages`, {
 		method: "POST",
 		headers: {
@@ -15,7 +17,7 @@ const POST = async (
 		},
 		body: JSON.stringify({
 			response_mode: "blocking",
-			user: _request.headers.get("dc-user") as string,
+			user,
 			inputs,
 		}),
 	});

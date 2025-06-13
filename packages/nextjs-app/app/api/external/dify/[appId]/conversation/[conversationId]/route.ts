@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const DELETE = async (
@@ -7,8 +8,9 @@ const DELETE = async (
 ) => {
 	const { appId, conversationId } = await params;
 	const difyRequest = await genDifyRequest(appId);
+	const user = await getUserIdFromNextRequest(_request);
 	const result = await difyRequest.delete(`/conversations/${conversationId}`, {
-		user: _request.headers.get("dc-user") as string,
+		user,
 	});
 	return NextResponse.json({
 		code: 200,

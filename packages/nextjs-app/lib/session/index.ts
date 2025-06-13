@@ -1,6 +1,7 @@
 import "server-only";
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 
 export interface SessionPayload extends JWTPayload {
 	userId: string;
@@ -34,6 +35,18 @@ export async function decrypt(session: string | undefined = "") {
 			error,
 		};
 	}
+}
+
+/**
+ * 从 NextRequest 中解析 session
+ */
+export async function getUserIdFromNextRequest(request: NextRequest) {
+	const session = request.cookies.get("session")?.value;
+	const result = await decrypt(session);
+	if (result.error) {
+		return "";
+	}
+	return result.userId as string;
 }
 
 /**

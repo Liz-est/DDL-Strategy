@@ -442,15 +442,9 @@ export class DifyApi {
 	 */
 	getConversationList = (params?: IGetConversationListRequest) => {
 		return this.baseRequest
-			.get(
-				`/${this.options.appId}/conversations`,
-				{
-					limit: (params?.limit || 100).toString(),
-				},
-				{
-					"dc-user": this.options.user,
-				},
-			)
+			.get(`/${this.options.appId}/conversations`, {
+				limit: (params?.limit || 100).toString(),
+			})
 			.then((res) => res.data) as Promise<IGetConversationListResponse>;
 	};
 
@@ -477,9 +471,6 @@ export class DifyApi {
 			{
 				...restParams,
 			},
-			{
-				"dc-user": this.options.user,
-			},
 		);
 	};
 
@@ -492,9 +483,6 @@ export class DifyApi {
 			{
 				user: this.options.user,
 			},
-			{
-				"dc-user": this.options.user,
-			},
 		);
 	};
 
@@ -506,9 +494,6 @@ export class DifyApi {
 			.get(
 				`/${this.options.appId}/conversation/${conversation_id}/messages`,
 				{},
-				{
-					"dc-user": this.options.user,
-				},
 			)
 			.then((res) => res.data) as Promise<IGetConversationHistoryResponse>;
 	};
@@ -549,7 +534,6 @@ export class DifyApi {
 				body: JSON.stringify(params),
 				headers: {
 					"Content-Type": "application/json",
-					"dc-user": this.options.user,
 				},
 			},
 		);
@@ -592,15 +576,9 @@ export class DifyApi {
 		message_id: string;
 	}) => {
 		return this.baseRequest
-			.get(
-				`/${this.options.appId}/messages/${params.message_id}/suggested`,
-				{
-					user: this.options.user,
-				},
-				{
-					"dc-user": this.options.user,
-				},
-			)
+			.get(`/${this.options.appId}/messages/${params.message_id}/suggested`, {
+				user: this.options.user,
+			})
 			.then((res) => res.data) as Promise<{
 			data: string[];
 		}>;
@@ -624,16 +602,10 @@ export class DifyApi {
 		content: string;
 	}) => {
 		const { ...restParams } = params;
-		return this.baseRequest.post(
-			`/${this.options.appId}/feedback`,
-			{
-				...restParams,
-				user: this.options.user,
-			},
-			{
-				"dc-user": this.options.user,
-			},
-		) as Promise<{
+		return this.baseRequest.post(`/${this.options.appId}/feedback`, {
+			...restParams,
+			user: this.options.user,
+		}) as Promise<{
 			// 固定返回 success
 			result: "success";
 		}>;
@@ -665,7 +637,6 @@ export class DifyApi {
 			}),
 			headers: {
 				"Content-Type": "application/json",
-				"dc-user": this.options.user,
 			},
 		});
 	};
@@ -682,9 +653,6 @@ export class DifyApi {
 			.baseRequest(`/${this.options.appId}/audio2text`, {
 				method: "POST",
 				body: formData,
-				headers: {
-					"dc-user": this.options.user,
-				},
 			})
 			.then((res) => res.json()) as Promise<IAudio2TextResponse>;
 	};

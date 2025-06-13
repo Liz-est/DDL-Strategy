@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest } from "next/server";
 
 const POST = async (
@@ -8,13 +9,14 @@ const POST = async (
 	const { appId } = await params;
 	const body = await _request.json();
 	const { message_id, text } = body;
+	const user = await getUserIdFromNextRequest(_request);
 	const difyRequest = await genDifyRequest(appId);
 	const result = await difyRequest.baseRequest(`/text-to-audio`, {
 		method: "POST",
 		body: JSON.stringify({
 			message_id,
 			text,
-			user: _request.headers.get("dc-user") as string,
+			user,
 		}),
 		headers: {
 			"Content-Type": "application/json",

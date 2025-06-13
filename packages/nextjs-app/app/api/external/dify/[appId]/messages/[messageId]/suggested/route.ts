@@ -1,4 +1,5 @@
 import { genDifyRequest } from "@/app/api/utils";
+import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const GET = async (
@@ -14,14 +15,7 @@ const GET = async (
 	},
 ) => {
 	const { appId, messageId } = await params;
-	const user = request.headers.get("dc-user") as string;
-	if (!user) {
-		return NextResponse.json({
-			code: 401,
-			message:
-				'Unauthorized: lack of user. Please provide the "dc-user" header in your request.',
-		});
-	}
+	const user = await getUserIdFromNextRequest(request);
 	const difyRequest = await genDifyRequest(appId);
 	const result = await difyRequest.get(`/messages/${messageId}/suggested`, {
 		user,
