@@ -1,5 +1,4 @@
 "use client";
-import { getUser } from "@/app/actions";
 import { getAppList } from "@/app/apps/actions";
 
 import { Empty, Row } from "antd";
@@ -11,12 +10,10 @@ import { useState } from "react";
 import { IDifyAppItem4View } from "@/types";
 
 export default function AppsPage() {
-	const [user, setUser] = useState<string>("");
 	const [apps, setApps] = useState<IDifyAppItem4View[]>();
 
 	const initData = async () => {
-		const [userRes, appsRes] = await Promise.all([getUser(), getAppList()]);
-		setUser(userRes.userId);
+		const appsRes = await getAppList();
 		setApps(appsRes);
 	};
 
@@ -31,7 +28,7 @@ export default function AppsPage() {
 				{apps?.length ? (
 					<Row gutter={[16, 16]} className="px-3 md:px-6">
 						{apps.map((item) => {
-							return <AppItem key={item.id} item={item} user={user} />;
+							return <AppItem key={item.id} item={item} />;
 						})}
 					</Row>
 				) : (

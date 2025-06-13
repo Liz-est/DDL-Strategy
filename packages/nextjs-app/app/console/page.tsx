@@ -1,4 +1,4 @@
-import { getUser } from "@/app/actions";
+import { getUserAction } from "@/app/actions";
 import { getAppList } from "@/app/console/actions";
 
 import { Empty, Row } from "antd";
@@ -8,7 +8,7 @@ import AppItem from "@/app/console/components/app-item";
 import Header from "@/app/console/components/header";
 
 export default async function AppsPage() {
-	const user = await getUser();
+	const user = await getUserAction();
 	const apps = await getAppList();
 
 	const refreshApps = getAppList;
@@ -20,7 +20,13 @@ export default async function AppsPage() {
 				{apps?.length ? (
 					<Row gutter={[16, 16]} className="px-3 md:px-6">
 						{apps.map((item) => {
-							return <AppItem key={item.id} item={item} user={user} />;
+							return (
+								<AppItem
+									key={item.id}
+									item={item}
+									enableSetting={user.enableSetting}
+								/>
+							);
 						})}
 					</Row>
 				) : (

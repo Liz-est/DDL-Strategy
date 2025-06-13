@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 
 interface IAppItemProps {
 	item: IDifyAppItem4View;
-	user: string;
 }
 
 export default function AppItem(props: IAppItemProps) {

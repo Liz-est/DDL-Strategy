@@ -2,7 +2,7 @@
 import "@ant-design/v5-patch-for-react-19";
 import { DifyApi } from "@dify-chat/api";
 import { AppModeEnums, IDifyAppItem } from "@dify-chat/core";
-import { useMount, useRequest } from "ahooks";
+import { useRequest } from "ahooks";
 import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
 import { useEffect, useState } from "react";
 
@@ -13,7 +13,6 @@ import {
 	updateApp as updateAppAction,
 } from "../actions";
 import { redirect } from "next/navigation";
-import { getUser } from "@/app/actions";
 
 interface IAppEditDrawerProps extends DrawerProps {
 	detailDrawerMode: AppDetailDrawerModeEnum;
@@ -30,21 +29,6 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	const { detailDrawerMode, appItem, open, onClose, confirmCallback } = props;
 	const [settingForm] = Form.useForm();
 	const [confirmLoading, setConfirmBtnLoading] = useState(false);
-	const [user, setUser] = useState<{
-		enableSetting: boolean;
-		mode: string;
-		userId: string;
-	}>();
-
-	const initUser = () => {
-		getUser().then((user) => {
-			setUser(user);
-		});
-	};
-
-	useMount(() => {
-		initUser();
-	});
 
 	useEffect(() => {
 		if (appItem?.info.mode) {
@@ -131,9 +115,12 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 								const values = settingForm.getFieldsValue();
 								const updatingItem = appItem;
 
+								const userId = JSON.parse(
+									localStorage.getItem("__DC_USER") || "{}",
+								).userId as string;
 								// 获取 Dify 应用信息
 								const newDifyApiInstance = new DifyApi({
-									user: user?.userId as string,
+									user: userId as string,
 									apiBase: values.apiBase,
 									apiKey: values.apiKey,
 								});

@@ -10,18 +10,12 @@ import AppItemActionButton from "./app-item-action-button";
 
 interface IAppItemProps {
 	item: IDifyAppItem;
-	user: {
-		enableSetting: boolean;
-		userId: string;
-	};
+	enableSetting: boolean;
 }
 
 export default function AppItem(props: IAppItemProps) {
 	const router = useRouter();
-	const {
-		item,
-		user: { enableSetting },
-	} = props;
+	const { item, enableSetting } = props;
 	const isMobile = useIsMobile();
 	const hasTags = item.info.tags?.length;
 	return (
