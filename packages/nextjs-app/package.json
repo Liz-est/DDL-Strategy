@@ -24,7 +24,7 @@
 		"antd": "catalog:",
 		"classnames": "catalog:",
 		"dayjs": "catalog:",
-		"jose": "^6.0.11",
+		"jose": "catalog:",
 		"next": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
