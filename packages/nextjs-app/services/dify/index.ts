@@ -480,9 +480,6 @@ export class DifyApi {
 	deleteConversation = (conversation_id: string) => {
 		return this.baseRequest.delete(
 			`/${this.options.appId}/conversation/${conversation_id}`,
-			{
-				user: this.options.user,
-			},
 		);
 	};
 
@@ -545,9 +542,6 @@ export class DifyApi {
 	stopTask = async (taskId: string) => {
 		return this.baseRequest.post(
 			`/${this.options.appId}/chat-messages/${taskId}/stop`,
-			{
-				user: this.options.user,
-			},
 		);
 	};
 
@@ -576,9 +570,7 @@ export class DifyApi {
 		message_id: string;
 	}) => {
 		return this.baseRequest
-			.get(`/${this.options.appId}/messages/${params.message_id}/suggested`, {
-				user: this.options.user,
-			})
+			.get(`/${this.options.appId}/messages/${params.message_id}/suggested`)
 			.then((res) => res.data) as Promise<{
 			data: string[];
 		}>;
@@ -604,7 +596,6 @@ export class DifyApi {
 		const { ...restParams } = params;
 		return this.baseRequest.post(`/${this.options.appId}/feedback`, {
 			...restParams,
-			user: this.options.user,
 		}) as Promise<{
 			// 固定返回 success
 			result: "success";
@@ -631,10 +622,7 @@ export class DifyApi {
 	) => {
 		return this.baseRequest.baseRequest(`/${this.options.appId}/text2audio`, {
 			method: "POST",
-			body: JSON.stringify({
-				...params,
-				// user: this.options.user,
-			}),
+			body: JSON.stringify(params),
 			headers: {
 				"Content-Type": "application/json",
 			},
@@ -668,7 +656,6 @@ export class DifyApi {
 			body: JSON.stringify({
 				...params,
 				response_mode: "streaming",
-				user: this.options.user,
 			}),
 			headers: {
 				"Content-Type": "application/json",
@@ -696,7 +683,6 @@ export class DifyApi {
 			body: JSON.stringify({
 				...params,
 				response_mode: "streaming",
-				user: this.options.user,
 			}),
 			headers: {
 				"Content-Type": "application/json",
