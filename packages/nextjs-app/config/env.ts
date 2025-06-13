@@ -1,37 +1,22 @@
-// type IOpeningStatementDisplayMode = "default" | "always";
-
 import { IRunningMode } from "@/types";
 
 /**
  * 所有的配置项
  */
 export interface IConfig {
+	/**
+	 * 运行模式
+	 */
 	runningMode: IRunningMode;
 	/**
 	 * Session 密钥
 	 */
 	secretKey: string;
-	// apiBase: string;
-	// apiSecret: string;
-	// appMode: string;
-	// answerFormEnabled: boolean;
-	// answerFormFeedbackText: string;
-	// enableUpdateInputAfterCvstStarts: boolean;
-	// openingStatementDisplayMode: IOpeningStatementDisplayMode;
 }
 
 export const getConfigs = (): IConfig => {
 	return {
 		runningMode: process.env.RUNNING_MODE,
 		secretKey: process.env.SESSION_SECRET,
-		// apiBase: process.env.DIFY_API_BASE || "",
-		// apiSecret: process.env.DIFY_API_SECRET || "",
-		// appMode: process.env.DIFY_APP_MODE || "chat",
-		// answerFormEnabled: process.env.ANSWER_FORM_ENABLED === "true",
-		// answerFormFeedbackText: process.env.ANSWER_FORM_FEEDBACK_TEXT || "",
-		// enableUpdateInputAfterCvstStarts:
-		// 	process.env.ENABLE_UPDATE_INPUT_AFTER_CVST_STARTS === "true",
-		// openingStatementDisplayMode:
-		// 	process.env.OPENING_STATEMENT_DISPLAY_MODE || "default",
 	} as IConfig;
 };
