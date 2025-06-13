@@ -1,14 +1,21 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getConfigs } from "./config/env";
+import { decrypt } from "./lib/session";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	// 对所有资源访问进行 session 非空校验
 	const session = request.cookies.get("session");
 	// 如果不存在则重定向到登录页
-	if (!session) {
+	if (!session?.value) {
+		return NextResponse.redirect(new URL("/auth/login", request.url));
+	}
+	// 验证 Session
+	const decodedSession = await decrypt(session.value);
+	if (decodedSession.error) {
+		// Session 验证失败，重定向到登录页
 		return NextResponse.redirect(new URL("/auth/login", request.url));
 	}
 
@@ -20,3 +27,7 @@ export function middleware(request: NextRequest) {
 		}
 	}
 }
+
+export const config = {
+	matcher: ["/", "/api/:path*", "/app/:path*", "/apps", "/console"],
+};
