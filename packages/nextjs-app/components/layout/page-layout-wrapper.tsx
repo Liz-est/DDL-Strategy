@@ -3,6 +3,7 @@ import { ThemeContextProvider, useThemeContext } from "@dify-chat/theme";
 import { ConfigProvider, theme } from "antd";
 import React from "react";
 import { initResponsiveConfig } from "@dify-chat/helpers";
+import "@ant-design/v5-patch-for-react-19";
 
 initResponsiveConfig();
 
