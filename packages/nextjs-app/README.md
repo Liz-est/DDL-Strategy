@@ -33,11 +33,12 @@ yarn dev
 pnpm dev
 ```
 
-## Roadmap
+## Todos
 
 - [x] 把 react-app 以及其他子包的依赖升级到 react 19
 - [ ] 子包依赖本地开发热更新
 - [x] 移除 DC-User 机制，通过 cookie 解析 jwt token 获取 userId
+- [ ] 上传文件支持（Dify UploadFile API）
 
 ## Project Tree
 
