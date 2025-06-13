@@ -1,7 +1,7 @@
 "use client";
 import { Logo } from "@/components";
 import { message, Spin } from "antd";
-import { getRunningModeAction, loginAction } from "./actions";
+import { getRunningModeAction, loginAction } from "@/app/actions";
 import { useUserId } from "@/hooks/useUserId";
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
@@ -15,7 +15,7 @@ export default function LoginPage() {
 	 */
 	const authLogin = async (userId: string) => {
 		// 登录
-		await loginAction(userId);
+		const userInfo = await loginAction(userId);
 
 		// 获取应用运行模式
 		const runningMode = await getRunningModeAction();
@@ -24,6 +24,9 @@ export default function LoginPage() {
 			message.error("获取运行模式失败，请检查配置");
 			return;
 		}
+
+		localStorage.setItem("__DC_RUNNING_MODE", runningMode);
+		localStorage.setItem("__DC_USER", JSON.stringify(userInfo));
 
 		message.success("登录成功");
 
