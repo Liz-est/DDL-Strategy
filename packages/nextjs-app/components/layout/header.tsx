@@ -1,4 +1,5 @@
-import { LucideIcon } from "@dify-chat/components";
+"use client";
+import { ILucideIconProps, LucideIcon } from "@dify-chat/components";
 import { useIsMobile } from "@dify-chat/helpers";
 import { ThemeSelector, useThemeContext } from "@dify-chat/theme";
 import { Space } from "antd";
@@ -7,11 +8,16 @@ import React from "react";
 
 import { Logo } from "./logo";
 
-import { CenterTitleWrapper, GithubIcon } from "@dify-chat/components";
+import { CenterTitleWrapper } from "@dify-chat/components";
+import Link from "next/link";
 
-interface IHeaderLayoutProps {
+export interface IHeaderLayoutProps {
 	title: React.ReactNode;
 	rightIcon?: React.ReactNode;
+	rightLink: {
+		icon: ILucideIconProps["name"];
+		href: string;
+	};
 }
 
 const HeaderSiderIcon = (props: {
@@ -35,7 +41,7 @@ const HeaderSiderIcon = (props: {
  * 头部布局组件
  */
 export default function HeaderLayout(props: IHeaderLayoutProps) {
-	const { title, rightIcon } = props;
+	const { title, rightIcon, rightLink } = props;
 	const { themeMode } = useThemeContext();
 	const isMobile = useIsMobile();
 	return (
@@ -50,7 +56,15 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 			{/* 右侧图标 */}
 			<HeaderSiderIcon align="right">
 				{rightIcon || (
-					<Space className="flex items-center">
+					<Space size="middle" className="flex items-center">
+						<Link href={rightLink.href} title="控制台">
+							<LucideIcon
+								className="cursor-pointer"
+								name={rightLink.icon}
+								size={20}
+								color="var(--theme-text-color)"
+							/>
+						</Link>
 						<ThemeSelector>
 							<div className="flex items-center cursor-pointer">
 								<LucideIcon
@@ -65,7 +79,17 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 								/>
 							</div>
 						</ThemeSelector>
-						<GithubIcon />
+						<Link
+							href="https://github.com/lexmin0412/dify-chat"
+							target="_blank"
+							title="Github"
+						>
+							<LucideIcon
+								name="github"
+								size={20}
+								color="var(--theme-text-color)"
+							/>
+						</Link>
 					</Space>
 				)}
 			</HeaderSiderIcon>
