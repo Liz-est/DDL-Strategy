@@ -4,7 +4,7 @@ import { getAppList } from "@/app/apps/actions";
 import { Empty, Row } from "antd";
 
 import AppItem from "@/app/apps/components/app-item";
-import Header from "@/app/apps/components/header";
+import HeaderWrapper from "@/components/layout/header-wrapper";
 import { useMount } from "ahooks";
 import { useState } from "react";
 import { IDifyAppItem4View } from "@/types";
@@ -23,7 +23,16 @@ export default function AppsPage() {
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
-			<Header />
+			<HeaderWrapper
+				centerTitle={{
+					icon: "layout-grid",
+					title: "应用列表",
+				}}
+				rightLink={{
+					icon: "square-chevron-right",
+					href: "/console",
+				}}
+			/>
 			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{apps?.length ? (
 					<Row gutter={[16, 16]} className="px-3 md:px-6">

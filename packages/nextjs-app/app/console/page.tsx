@@ -5,7 +5,7 @@ import { Empty, Row } from "antd";
 
 import AddButton from "@/app/console/components/add-button";
 import AppItem from "@/app/console/components/app-item";
-import Header from "@/app/console/components/header";
+import Header from "@/components/layout/header-wrapper";
 
 export default async function AppsPage() {
 	const user = await getUserAction();
@@ -15,7 +15,16 @@ export default async function AppsPage() {
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
-			<Header />
+			<Header
+				centerTitle={{
+					title: "控制台",
+					icon: "square-chevron-right",
+				}}
+				rightLink={{
+					icon: "layout-grid",
+					href: "/apps",
+				}}
+			/>
 			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{apps?.length ? (
 					<Row gutter={[16, 16]} className="px-3 md:px-6">
