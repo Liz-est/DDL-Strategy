@@ -1,5 +1,4 @@
 import { genDifyRequest } from "@/app/api/utils";
-import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const POST = async (
@@ -7,10 +6,14 @@ const POST = async (
 	{ params }: { params: Promise<{ appId: string }> },
 ) => {
 	const { appId } = await params;
-	const user = await getUserIdFromNextRequest(_request);
+	const formData = await _request.formData();
 	const difyRequest = await genDifyRequest(appId);
-	const result = await difyRequest.post(`/files/upload`, {
-		user,
+	const result = await difyRequest.baseRequest(`/files/upload`, {
+		method: "POST",
+		body: formData,
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
 	});
 	return NextResponse.json({
 		code: 200,

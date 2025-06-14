@@ -553,7 +553,7 @@ export class DifyApi {
 		formData.append("file", file);
 		formData.append("user", this.options.user);
 		return this.baseRequest
-			.baseRequest("/files/upload", {
+			.baseRequest(`/${this.options.appId}/files/upload`, {
 				method: "POST",
 				body: formData,
 			})
