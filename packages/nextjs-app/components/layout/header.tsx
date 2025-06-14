@@ -14,9 +14,10 @@ import Link from "next/link";
 export interface IHeaderLayoutProps {
 	title: React.ReactNode;
 	rightIcon?: React.ReactNode;
-	rightLink: {
+	rightLink?: {
 		icon: ILucideIconProps["name"];
 		href: string;
+		title: string;
 	};
 }
 
@@ -57,14 +58,16 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 			<HeaderSiderIcon align="right">
 				{rightIcon || (
 					<Space size="middle" className="flex items-center">
-						<Link href={rightLink.href} title="控制台">
-							<LucideIcon
-								className="cursor-pointer"
-								name={rightLink.icon}
-								size={20}
-								color="var(--theme-text-color)"
-							/>
-						</Link>
+						{rightLink ? (
+							<Link href={rightLink.href} title={rightLink.title}>
+								<LucideIcon
+									className="cursor-pointer"
+									name={rightLink.icon}
+									size={20}
+									color="var(--theme-text-color)"
+								/>
+							</Link>
+						) : null}
 						<ThemeSelector>
 							<div className="flex items-center cursor-pointer">
 								<LucideIcon
