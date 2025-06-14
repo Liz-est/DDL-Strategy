@@ -20,9 +20,9 @@ export const GithubIcon = () => {
 			type="link"
 			href="https://github.com/lexmin0412/dify-chat"
 			target="_blank"
-			className="px-0"
+			className="!px-0"
 		>
-			<GithubOutlined className="text-xl cursor-pointer text-theme-text" />
+			<GithubOutlined className="text-xl cursor-pointer" />
 		</Button>
 	);
 };
