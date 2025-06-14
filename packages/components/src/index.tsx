@@ -8,6 +8,6 @@ export { MessageSender } from "./message-sender";
 export { default as AppIcon } from "./chatbox/app-icon";
 export { AppInfo } from "./chatbox/app-info";
 export { default as AppInputForm } from "./chatbox/app-input-form";
-export { default as LucideIcon } from "./lucide-icon";
+export { type ILucideIconProps, default as LucideIcon } from "./lucide-icon";
 export { default as WorkflowLogs } from "./chatbox/message/workflow-logs";
 export * from "./layout";
