@@ -3,9 +3,10 @@
 import { DifyChatProvider } from "@dify-chat/core";
 import DifyAppService from "@/services/app/apps";
 import MultiAppLayout from "./layout/multi-app-layout";
+import { getAllState } from "@/store";
 
 export default function AppPage() {
-	const userInfo = JSON.parse(localStorage.getItem("__DC_USER") || "{}");
+	const userInfo = getAllState().user;
 	return (
 		<DifyChatProvider
 			value={{

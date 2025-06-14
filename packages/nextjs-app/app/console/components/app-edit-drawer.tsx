@@ -13,6 +13,7 @@ import {
 	updateApp as updateAppAction,
 } from "../actions";
 import { redirect } from "next/navigation";
+import { getAllState } from "@/store";
 
 interface IAppEditDrawerProps extends DrawerProps {
 	detailDrawerMode: AppDetailDrawerModeEnum;
@@ -115,9 +116,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 								const values = settingForm.getFieldsValue();
 								const updatingItem = appItem;
 
-								const userId = JSON.parse(
-									localStorage.getItem("__DC_USER") || "{}",
-								).userId as string;
+								const userId = getAllState().user?.userId;
 								// 获取 Dify 应用信息
 								const newDifyApiInstance = new DifyApi({
 									user: userId as string,

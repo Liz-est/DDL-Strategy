@@ -23,6 +23,7 @@ export default async function AppsPage() {
 				rightLink={{
 					icon: "layout-grid",
 					href: "/apps",
+					title: "应用列表",
 				}}
 			/>
 			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
