@@ -27,9 +27,9 @@ export const getAllState = (): IAllState => {
 	}
 	return {
 		themeState:
-			(localStorage.getItem("DC_THEME") as ThemeEnum) || ThemeEnum.LIGHT,
+			(localStorage.getItem("__DC_THEME") as ThemeEnum) || ThemeEnum.LIGHT,
 		themeMode:
-			(localStorage.getItem("DC_THEME_MODE") as ThemeModeEnum) ||
+			(localStorage.getItem("__DC_THEME_MODE") as ThemeModeEnum) ||
 			ThemeModeEnum.SYSTEM,
 		user: JSON.parse(localStorage.getItem("__DC_USER") || "{}") as {
 			userId: string;

@@ -53,7 +53,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 			return ThemeModeEnum.SYSTEM;
 		}
 		return (
-			(localStorage.getItem('DC_THEME_MODE') as ThemeModeEnum) ||
+			(localStorage.getItem('__DC_THEME_MODE') as ThemeModeEnum) ||
 			ThemeModeEnum.SYSTEM
 		);
 	});
@@ -61,11 +61,11 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 		if (typeof window === 'undefined') {
 			return ThemeEnum.LIGHT;
 		}
-		return (localStorage.getItem('DC_THEME') as ThemeEnum) || ThemeEnum.LIGHT;
+		return (localStorage.getItem('__DC_THEME') as ThemeEnum) || ThemeEnum.LIGHT;
 	});
 
 	useEffect(() => {
-		localStorage.setItem('DC_THEME', themeState);
+		localStorage.setItem('__DC_THEME', themeState);
 	}, [themeState]);
 
 	/**
@@ -85,7 +85,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	);
 
 	useEffect(() => {
-		localStorage.setItem('DC_THEME_MODE', themeMode);
+		localStorage.setItem('__DC_THEME_MODE', themeMode);
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 		if (themeMode === ThemeModeEnum.SYSTEM) {
 			// 从其他模式切换到系统主题时，先调用一次
