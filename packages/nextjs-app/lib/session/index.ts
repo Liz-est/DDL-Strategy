@@ -11,6 +11,11 @@ const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 /**
+ * Session Key
+ */
+export const SESSION_KEY_NAME = "__DC_SESSION";
+
+/**
  * 生成 session
  */
 export async function encrypt(payload: SessionPayload) {
@@ -41,7 +46,7 @@ export async function decrypt(session: string | undefined = "") {
  * 从 NextRequest 中解析 session
  */
 export async function getUserIdFromNextRequest(request: NextRequest) {
-	const session = request.cookies.get("session")?.value;
+	const session = request.cookies.get(SESSION_KEY_NAME)?.value;
 	const result = await decrypt(session);
 	if (result.error) {
 		return "";
@@ -58,7 +63,7 @@ export async function createSession(userId: string) {
 	const session = await encrypt({ userId });
 	const cookieStore = await cookies();
 
-	cookieStore.set("session", session, {
+	cookieStore.set(SESSION_KEY_NAME, session, {
 		httpOnly: true,
 		secure: true,
 		expires: expiresAt,

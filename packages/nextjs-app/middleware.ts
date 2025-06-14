@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getConfigs } from "./config/env";
-import { decrypt } from "./lib/session";
+import { decrypt, SESSION_KEY_NAME } from "./lib/session";
 
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 
 	// 对所有资源访问进行 session 非空校验
-	const session = request.cookies.get("session");
+	const session = request.cookies.get(SESSION_KEY_NAME);
 	// 如果不存在则重定向到登录页
 	if (!session?.value) {
 		return NextResponse.redirect(new URL("/auth/login", request.url));
