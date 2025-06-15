@@ -11,7 +11,7 @@ import React, { useState } from "react";
 
 import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
-import MainLayout from "./main-layout";
+import MainLayout from "@/app/app/[appId]/layout/main-layout";
 
 const SingleAppLayout: React.FC = () => {
 	const difyChatContext = useDifyChat();

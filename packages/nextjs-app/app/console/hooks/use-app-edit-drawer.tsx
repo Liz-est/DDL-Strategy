@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { AppDetailDrawerModeEnum } from "../enums";
+import { AppDetailDrawerModeEnum } from "@/app/console/enums";
 import { IDifyAppItem } from "@dify-chat/core";
-import { AppEditDrawer } from "../components/app-edit-drawer";
+import { AppEditDrawer } from "@/app/console/components/app-edit-drawer";
 
 export const useAppEditDrawer = (callbacks?: {
 	successCallback?: () => void;

@@ -4,9 +4,9 @@ import React from "react";
 
 import { colors } from "@/config/theme";
 
-import ChatLayout from "./chat-layout";
-import CommonLayout from "./common-layout";
-import WorkflowLayout from "./workflow-layout";
+import ChatLayout from "@/app/app/[appId]/layout/chat-layout";
+import CommonLayout from "@/app/app/[appId]/layout/common-layout";
+import WorkflowLayout from "@/app/app/[appId]/layout/workflow-layout";
 
 interface IMainLayoutProps {
 	/**

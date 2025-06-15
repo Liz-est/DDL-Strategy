@@ -7,11 +7,11 @@ import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
 import { useEffect, useState } from "react";
 
 import { AppDetailDrawerModeEnum } from "@/app/console/enums";
-import SettingForm from "./setting-form";
+import SettingForm from "@/app/console/components/setting-form";
 import {
 	createApp as createAppAction,
 	updateApp as updateAppAction,
-} from "../actions";
+} from "@/app/console/actions";
 import { redirect } from "next/navigation";
 import { getAllState } from "@/store";
 

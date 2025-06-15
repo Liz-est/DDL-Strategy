@@ -16,8 +16,8 @@ import { useState } from "react";
 
 import { RESPONSE_MODE } from "@/config";
 
-import workflowDataStorage from "./workflow-data-storage";
-import { useDifyApi } from "../useApi";
+import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
+import { useDifyApi } from "@/hooks/useApi";
 
 export const useX = (options: {
 	difyApi: DifyApi;

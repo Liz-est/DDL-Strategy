@@ -6,7 +6,7 @@ import { useIsMobile } from "@dify-chat/helpers";
 
 import { Col } from "antd";
 import { useRouter } from "next/navigation";
-import AppItemActionButton from "./app-item-action-button";
+import AppItemActionButton from "@/app/console/components/app-item-action-button";
 
 interface IAppItemProps {
 	item: IDifyAppItem;

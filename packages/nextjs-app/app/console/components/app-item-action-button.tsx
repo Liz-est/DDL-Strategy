@@ -3,9 +3,9 @@ import { DeleteOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
 import { IDifyAppItem } from "@dify-chat/core";
 
 import { Dropdown, message } from "antd";
-import { useAppEditDrawer } from "../hooks/use-app-edit-drawer";
-import { AppDetailDrawerModeEnum } from "../enums";
-import { deleteApp } from "../actions";
+import { useAppEditDrawer } from "@/app/console/hooks/use-app-edit-drawer";
+import { AppDetailDrawerModeEnum } from "@/app/console/enums";
+import { deleteApp } from "@/app/console/actions";
 import { redirect } from "next/navigation";
 
 export default function AppItemActionButton(props: { item: IDifyAppItem }) {

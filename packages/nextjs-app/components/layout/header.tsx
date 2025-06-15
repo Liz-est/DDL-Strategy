@@ -6,7 +6,7 @@ import { Space } from "antd";
 import classNames from "classnames";
 import React from "react";
 
-import { Logo } from "./logo";
+import { Logo } from "@/components/layout/logo";
 
 import { CenterTitleWrapper } from "@dify-chat/components";
 import Link from "next/link";

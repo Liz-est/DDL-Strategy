@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "antd";
-import { useAppEditDrawer } from "../hooks/use-app-edit-drawer";
+import { useAppEditDrawer } from "@/app/console/hooks/use-app-edit-drawer";
 import { AppDetailDrawerModeEnum } from "@/app/console/enums";
 
 interface IAddButtonProps {

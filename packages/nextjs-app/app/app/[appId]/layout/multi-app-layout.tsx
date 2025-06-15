@@ -16,7 +16,7 @@ import { flushSync } from "react-dom";
 
 import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
-import MainLayout from "./main-layout";
+import MainLayout from "@/app/app/[appId]/layout/main-layout";
 import { useParams, useRouter } from "next/navigation";
 
 const MultiAppLayout: React.FC = () => {
