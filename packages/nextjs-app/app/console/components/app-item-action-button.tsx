@@ -38,12 +38,6 @@ export default function AppItemActionButton(props: { item: IDifyAppItem }) {
 							danger: true,
 							onClick: async () => {
 								await deleteApp(item.id);
-								await fetch(`/api/app/${item.id}`, {
-									method: "DELETE",
-									headers: {
-										"Content-Type": "application/json",
-									},
-								});
 								message.success("删除应用成功");
 								// 重新加载列表页
 								redirect("/console");
