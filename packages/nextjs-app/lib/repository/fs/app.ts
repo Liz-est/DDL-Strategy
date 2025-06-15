@@ -62,5 +62,6 @@ export const updateApp = async (app: IDifyAppItem) => {
 export const deleteApp = async (id: string) => {
 	const apps = await getAppList();
 	const newApps = apps.filter((item) => item.id !== id);
-	return updateApps(newApps);
+	const result = await updateApps(newApps);
+	return result;
 };
