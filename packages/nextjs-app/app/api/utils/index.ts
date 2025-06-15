@@ -1,6 +1,7 @@
 import { getAppItem } from "@/lib/repository";
 
 import { BaseRequest } from "@dify-chat/helpers";
+import { NextRequest } from "next/server";
 
 export interface IDifyAppRequestConfig {
 	/**
@@ -41,4 +42,29 @@ export const genDifyRequest = async (appId: string) => {
 		appItem?.requestConfig as IDifyAppRequestConfig,
 	);
 	return request;
+};
+
+/**
+ * 生成 FormData 代理
+ * @param request NextRequest
+ * @returns FormData
+ */
+export const genFormDataProxy = async (request: NextRequest) => {
+	// 构建新的 formData 以便转发到第三方
+	const proxyFormData = new FormData();
+	const formData = await request.formData();
+	for (const [key, value] of formData.entries()) {
+		// node 环境没有 File 构造函数，判断 value 是否为文件对象
+		if (
+			typeof value === "object" &&
+			value !== null &&
+			typeof value.arrayBuffer === "function" &&
+			"name" in value // 一般文件对象有 name 属性
+		) {
+			proxyFormData.append(key, value, value.name);
+		} else {
+			proxyFormData.append(key, value as string);
+		}
+	}
+	return proxyFormData;
 };
