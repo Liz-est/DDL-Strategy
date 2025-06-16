@@ -42,3 +42,6 @@ next-env.d.ts
 
 # 应用列表存储文件
 .dify-chat/storage/apps.json
+
+# prisma
+/lib/generated/prisma

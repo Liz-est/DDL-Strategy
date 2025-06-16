@@ -19,6 +19,7 @@
 		"@dify-chat/helpers": "workspace:^",
 		"@dify-chat/theme": "workspace:^",
 		"@fingerprintjs/fingerprintjs": "catalog:",
+		"@prisma/client": "catalog:",
 		"@toolkit-fe/clipboard": "catalog:",
 		"ahooks": "catalog:",
 		"antd": "catalog:",
@@ -26,6 +27,7 @@
 		"dayjs": "catalog:",
 		"jose": "catalog:",
 		"next": "catalog:",
+		"prisma": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
 	},

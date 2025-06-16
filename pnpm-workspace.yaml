@@ -3,9 +3,12 @@ packages:
 
 onlyBuiltDependencies:
   - "@biomejs/biome"
+  - "@prisma/client"
+  - "@prisma/engines"
   - "@tailwindcss/oxide"
   - core-js
   - esbuild
+  - prisma
   - sharp
   - unrs-resolver
 
@@ -22,6 +25,7 @@ catalog:
   "@fingerprintjs/fingerprintjs": ^4.6.2
   "@heroicons/react": ^2.2.0
   "@lexmin0412/markdown-it-echarts": ^0.1.5
+  "@prisma/client": ^6.9.0
   "@rsbuild/core": ^1.3.22
   "@rsbuild/plugin-less": ^1.2.2
   "@rsbuild/plugin-react": ^1.2.0
@@ -80,6 +84,7 @@ catalog:
   next: ^15.3.2
   pako: ^2.1.0
   prettier: ^3.5.3
+  prisma: ^6.9.0
   pure-react-router: ^0.2.3
   react: ^19.1.0
   react-dom: ^19.1.0

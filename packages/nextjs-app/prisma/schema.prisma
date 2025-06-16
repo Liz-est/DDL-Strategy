@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model app {
+	id String @id @default(uuid()) @db.VarChar(36)
+	api_base String @db.VarChar(255)
+	api_key String @db.VarChar(255)
+	name String @db.VarChar(255)
+	description String @db.VarChar(255)
+	tags String @default("")
+	mode String @default("chat") @db.VarChar(20)
+	answer_form_enabled Boolean @default(false)
+	answer_form_feedback_text String @db.VarChar(255)
+	update_inputs_after_started Boolean @default(false)
+	opening_statement_mode String @default("default") @db.VarChar(255)
+}
