@@ -1,6 +1,7 @@
-import { genDifyRequest } from "@/app/api/utils";
+import { genDifyRequest, genDifyResponseProxy } from "@/app/api/utils";
+import { RESPONSE_MODE } from "@/config";
 import { getUserIdFromNextRequest } from "@/lib/session";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 const POST = async (
 	_request: NextRequest,
@@ -10,21 +11,18 @@ const POST = async (
 	const { inputs } = await _request.json();
 	const difyRequest = await genDifyRequest(appId);
 	const user = await getUserIdFromNextRequest(_request);
-	const result = await difyRequest.baseRequest(`/completion-messages`, {
+	const response = await difyRequest.baseRequest(`/completion-messages`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			response_mode: "blocking",
+			response_mode: RESPONSE_MODE,
 			user,
 			inputs,
 		}),
 	});
-	return NextResponse.json({
-		code: 200,
-		data: result,
-	});
+	return genDifyResponseProxy(response);
 };
 
 export { POST };

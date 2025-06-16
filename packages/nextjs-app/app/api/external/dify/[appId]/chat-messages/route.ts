@@ -1,4 +1,4 @@
-import { genDifyRequest } from "@/app/api/utils";
+import { genDifyRequest, genDifyResponseProxy } from "@/app/api/utils";
 import { getUserIdFromNextRequest } from "@/lib/session";
 import { NextRequest } from "next/server";
 
@@ -28,19 +28,7 @@ const POST = async (
 		},
 	});
 
-	// 直接将原始响应“透传”给客户端
-	return new Response(response.body, {
-		status: response.status,
-		headers: {
-			// 允许流式响应
-			"Content-Type":
-				response.headers.get("Content-Type") || "application/json",
-			// 允许 CORS 或其他你需要的 header
-			"X-Version": response.headers.get("X-Version") || "",
-			// 允许获取 Dify 版本
-			"Access-Control-Allow-Headers": "X-Version, Authorization, Content-Type",
-		},
-	});
+	return genDifyResponseProxy(response);
 };
 
 export { POST };
