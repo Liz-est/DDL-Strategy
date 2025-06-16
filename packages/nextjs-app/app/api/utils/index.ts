@@ -68,3 +68,22 @@ export const genFormDataProxy = async (request: NextRequest) => {
 	}
 	return proxyFormData;
 };
+
+/**
+ * 生成原始响应的代理
+ * @param response fetch 的原始 response
+ */
+export const genDifyResponseProxy = (response: Response) => {
+	return new Response(response.body, {
+		status: response.status,
+		headers: {
+			// 允许流式响应
+			"Content-Type":
+				response.headers.get("Content-Type") || "application/json",
+			// 允许 CORS 或其他你需要的 header
+			"X-Version": response.headers.get("X-Version") || "",
+			// 允许获取 Dify 版本
+			"Access-Control-Allow-Headers": "X-Version, Authorization, Content-Type",
+		},
+	});
+};
