@@ -1,15 +1,14 @@
 import { DifyChatProvider } from '@dify-chat/core'
 import { initResponsiveConfig } from '@dify-chat/helpers'
 import { useThemeContext } from '@dify-chat/theme'
-import FingerPrintJS from '@fingerprintjs/fingerprintjs'
-import { useMount } from 'ahooks'
 import { theme as antdTheme, ConfigProvider } from 'antd'
 import { BrowserRouter, type IRoute } from 'pure-react-router'
-import { useState } from 'react'
 
 import './App.css'
+import { useAuth } from './hooks/use-auth'
 import LayoutIndex from './layout'
 import AppListPage from './pages/app-list'
+import AuthPage from './pages/auth'
 import ChatPage from './pages/chat'
 import DifyAppService from './services/app/localstorage'
 
@@ -17,6 +16,7 @@ import DifyAppService from './services/app/localstorage'
 initResponsiveConfig()
 
 const routes: IRoute[] = [
+	{ path: '/auth', component: () => <AuthPage /> },
 	{ path: '/chat', component: () => <ChatPage /> },
 	{ path: '/app/:appId', component: () => <ChatPage /> },
 	{ path: '/apps', component: () => <AppListPage /> },
@@ -26,19 +26,8 @@ const routes: IRoute[] = [
  * Dify Chat 的最小应用实例
  */
 export default function App() {
-	const [userId, setUserId] = useState<string>('')
-
-	useMount(() => {
-		// 模拟登录过程获取用户唯一标识
-		const loadFP = async () => {
-			const fp = await FingerPrintJS.load()
-			const result = await fp.get()
-			setUserId(result.visitorId)
-		}
-		loadFP()
-	})
-
 	const { isDark } = useThemeContext()
+	const { userId } = useAuth()
 
 	return (
 		<ConfigProvider
