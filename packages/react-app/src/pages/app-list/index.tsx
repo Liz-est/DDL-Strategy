@@ -1,12 +1,6 @@
 import { DeleteOutlined, EditOutlined, MoreOutlined, TagOutlined } from '@ant-design/icons'
 import { HeaderLayout, LucideIcon } from '@dify-chat/components'
-import {
-	AppModeLabels,
-	DifyAppStore,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-	useDifyChat,
-} from '@dify-chat/core'
+import { AppModeLabels, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Col, Dropdown, Empty, message, Row } from 'antd'
@@ -14,11 +8,17 @@ import { useHistory } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 
 import { AppEditDrawer } from '@/components/app-edit-drawer'
-import { AppDetailDrawerModeEnum } from '@/components/app-manage-drawer'
+import { difyChatRuntimeConfig } from '@/config/global'
+import { AppDetailDrawerModeEnum } from '@/enums'
+import { useAuth } from '@/hooks/use-auth'
+import DifyAppService from '@/services/app/multiApp/localstorage'
+
+const appService = new DifyAppService()
 
 export default function AppListPage() {
 	const history = useHistory()
-	const { appService, mode, enableSetting } = useDifyChat() as IDifyChatContextMultiApp
+	const mode = difyChatRuntimeConfig.get().runningMode
+	const { enableSetting } = useAuth()
 	const isMobile = useIsMobile()
 	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
 	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum>()
@@ -181,6 +181,8 @@ export default function AppListPage() {
 				confirmCallback={() => {
 					getAppList()
 				}}
+				addApi={(appService as DifyAppStore).addApp}
+				updateApi={(appService as DifyAppStore).updateApp}
 			/>
 		</div>
 	)

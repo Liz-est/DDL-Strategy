@@ -1,7 +1,7 @@
-import { useDifyChat } from '@dify-chat/core'
 import { Route, useHistory } from 'pure-react-router'
 import { useEffect } from 'react'
 
+import { difyChatRuntimeConfig } from '@/config/global'
 import { useAuth } from '@/hooks/use-auth'
 import { useRedirect2Index } from '@/hooks/use-jump'
 
@@ -10,7 +10,7 @@ import { useRedirect2Index } from '@/hooks/use-jump'
  */
 export default function LayoutIndex() {
 	const history = useHistory()
-	const { mode } = useDifyChat()
+	const mode = difyChatRuntimeConfig.get().runningMode
 	const { isAuthorized, goAuthorize } = useAuth()
 	const redirect2Index = useRedirect2Index(mode)
 
@@ -26,7 +26,7 @@ export default function LayoutIndex() {
 		if (pathname === '' || pathname === '/') {
 			redirect2Index()
 		}
-	}, [history, mode, isAuthorized])
+	}, [history.location.pathname, mode, isAuthorized])
 
 	return <Route />
 }

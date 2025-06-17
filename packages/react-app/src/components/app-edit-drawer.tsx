@@ -1,16 +1,12 @@
 import { DifyApi } from '@dify-chat/api'
-import {
-	AppModeEnums,
-	DifyAppStore,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-	useDifyChat,
-} from '@dify-chat/core'
+import { AppModeEnums, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
 import { useRequest } from 'ahooks'
 import { Button, Drawer, DrawerProps, Form, message, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
-import { AppDetailDrawerModeEnum } from './app-manage-drawer'
+import { AppDetailDrawerModeEnum } from '@/enums'
+import { useAuth } from '@/hooks/use-auth'
+
 import SettingForm from './setting-form'
 
 interface IAppEditDrawerProps extends DrawerProps {
@@ -19,16 +15,18 @@ interface IAppEditDrawerProps extends DrawerProps {
 	appItem?: IDifyAppItem
 	onClose?: () => void
 	confirmCallback?: () => void
+	addApi: DifyAppStore['addApp']
+	updateApi: DifyAppStore['updateApp']
 }
 
 /**
  * 应用配置编辑抽屉
  */
 export const AppEditDrawer = (props: IAppEditDrawerProps) => {
-	const { detailDrawerMode, appItem, open, onClose, confirmCallback } = props
-	const { user, appService } = useDifyChat() as IDifyChatContextMultiApp
+	const { detailDrawerMode, appItem, open, onClose, confirmCallback, addApi, updateApi } = props
 	const [settingForm] = Form.useForm()
 	const [confirmLoading, setConfirmBtnLoading] = useState(false)
+	const { userId } = useAuth()
 
 	useEffect(() => {
 		if (appItem?.info.mode) {
@@ -64,7 +62,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	const { runAsync: createApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return (appService as DifyAppStore).addApp(appInfo)
+			return addApi(appInfo)
 		},
 		{
 			manual: true,
@@ -77,7 +75,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	const { runAsync: updateApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return (appService as DifyAppStore).updateApp(appInfo)
+			return updateApi(appInfo)
 		},
 		{
 			manual: true,
@@ -110,7 +108,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 								// 获取 Dify 应用信息
 								const newDifyApiInstance = new DifyApi({
-									user,
+									user: userId,
 									apiBase: values.apiBase,
 									apiKey: values.apiKey,
 								})

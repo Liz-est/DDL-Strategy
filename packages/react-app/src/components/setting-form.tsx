@@ -1,7 +1,7 @@
 import { AppModeOptions, IDifyAppItem, OpeningStatementDisplayModeOptions } from '@dify-chat/core'
 import { Form, FormInstance, Input, Select } from 'antd'
 
-import { AppDetailDrawerModeEnum } from './app-manage-drawer'
+import { AppDetailDrawerModeEnum } from '@/enums'
 
 interface ISettingFormProps {
 	formInstance: FormInstance<Record<string, unknown>>

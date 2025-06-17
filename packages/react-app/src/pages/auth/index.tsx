@@ -1,16 +1,16 @@
 import { Logo } from '@dify-chat/components'
-import { useDifyChat } from '@dify-chat/core'
 import { LocalStorageKeys, LocalStorageStore } from '@dify-chat/helpers'
 import FingerPrintJS from '@fingerprintjs/fingerprintjs'
 import { useMount } from 'ahooks'
 import { Spin } from 'antd'
 
+import { difyChatRuntimeConfig } from '@/config/global'
 import { useAuth } from '@/hooks/use-auth'
 import { useRedirect2Index } from '@/hooks/use-jump'
 
 export default function AuthPage() {
 	const { userId } = useAuth()
-	const { mode } = useDifyChat()
+	const mode = difyChatRuntimeConfig.get().runningMode
 	const redirect2Index = useRedirect2Index(mode)
 
 	/**
@@ -28,6 +28,7 @@ export default function AuthPage() {
 	const handleLogin = async () => {
 		const userId = await mockLogin()
 		LocalStorageStore.set(LocalStorageKeys.USER_ID, userId)
+		LocalStorageStore.set(LocalStorageKeys.ENABLE_SETTING, 'true')
 		redirect2Index()
 	}
 

@@ -3,7 +3,7 @@ import {
 	IUserInputFormItemType,
 	IUserInputFormItemValueBase,
 } from "@dify-chat/api";
-import { useAppContext, useDifyChat } from "@dify-chat/core";
+import { useAppContext } from "@dify-chat/core";
 import { useConversationsContext } from "@dify-chat/core";
 import { isTempId, unParseGzipString } from "@dify-chat/helpers";
 import {
@@ -67,15 +67,16 @@ export default function AppInputForm(props: IAppInputFormProps) {
 	const { currentConversationId, currentConversationInfo, setConversations } =
 		useConversationsContext();
 	const history = useHistory();
-	const { currentAppId } = useAppContext();
 	const searchParams = useSearchParams();
+	const {
+		location: { pathname },
+	} = useHistory();
 	const [userInputItems, setUserInputItems] = useState<
 		IConversationEntryFormItem[]
 	>([]);
 	const cachedSearchParams = useRef<URLSearchParams>(
 		new URLSearchParams(searchParams),
 	);
-	const { mode } = useDifyChat();
 
 	useEffect(() => {
 		const user_input_form = currentApp?.parameters.user_input_form;
@@ -170,11 +171,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 			const searchString = cachedSearchParams.current.size
 				? `?${cachedSearchParams.current.toString()}`
 				: "";
-			if (mode === "multiApp") {
-				history.push(`/app/${currentAppId}${searchString}`);
-			} else {
-				history.push(`/chat${searchString}`);
-			}
+			history.push(`${pathname}${searchString}`);
 		}
 	}, [currentApp?.parameters.user_input_form, currentConversationInfo]);
 

@@ -1,24 +1,28 @@
 import { createDifyApiInstance, DifyApi } from '@dify-chat/api'
-import { AppContextProvider, ICurrentApp, IDifyChatContextSingleApp } from '@dify-chat/core'
-import { useDifyChat } from '@dify-chat/core'
+import { AppContextProvider, ICurrentApp, IDifyAppItem } from '@dify-chat/core'
 import { useMount, useRequest } from 'ahooks'
 import { Spin } from 'antd'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
+import { useAuth } from '@/hooks/use-auth'
 import { useAppSiteSetting } from '@/hooks/useApi'
 
 import MainLayout from './main-layout'
 
-const SingleAppLayout: React.FC = () => {
-	const difyChatContext = useDifyChat()
-	const { user, appConfig } = difyChatContext as IDifyChatContextSingleApp
+interface ISingleAppLayoutProps {
+	getAppConfig: () => Promise<IDifyAppItem | undefined>
+}
+
+const SingleAppLayout = (props: ISingleAppLayoutProps) => {
+	const { getAppConfig } = props
 	const [selectedAppId, setSelectedAppId] = useState('')
 	const [initLoading, setInitLoading] = useState(false)
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>() // 新增 currentApp 状态用于保存当前应用的 inf
+	const { userId } = useAuth()
 
 	const [difyApi] = useState(
 		createDifyApiInstance({
-			user,
+			user: userId,
 			apiBase: '',
 			apiKey: '',
 		}),
@@ -36,10 +40,11 @@ const SingleAppLayout: React.FC = () => {
 	const { getAppSiteSettting } = useAppSiteSetting()
 
 	const initInSingleMode = async () => {
+		const appConfig = (await getAppConfig()) as IDifyAppItem
 		difyApi.updateOptions({
-			user,
-			apiBase: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiBase,
-			apiKey: (difyChatContext as IDifyChatContextSingleApp).appConfig.requestConfig.apiKey,
+			user: userId,
+			apiBase: appConfig.requestConfig.apiBase,
+			apiKey: appConfig.requestConfig.apiKey,
 		})
 		setInitLoading(true)
 		const [difyAppInfo, appParameters, appSiteSetting] = await Promise.all([
@@ -50,7 +55,6 @@ const SingleAppLayout: React.FC = () => {
 		// 获取应用信息
 		setCurrentApp({
 			config: {
-				id: Math.random().toString(),
 				...appConfig,
 				info: {
 					...difyAppInfo,
