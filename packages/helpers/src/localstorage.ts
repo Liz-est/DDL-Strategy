@@ -3,7 +3,7 @@
  */
 const KEY_PREFIX = '__DC__'
 
-const LocalStorageKeyList = ['USER_ID', 'THEME', 'THEME_MODE'] as const
+const LocalStorageKeyList = ['USER_ID', 'ENABLE_SETTING', 'THEME', 'THEME_MODE'] as const
 
 export const LocalStorageKeys = LocalStorageKeyList.reduce((acc, key) => {
 	acc[key] = key
