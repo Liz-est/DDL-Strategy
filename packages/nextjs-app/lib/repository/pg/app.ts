@@ -1,5 +1,5 @@
 import { PrismaClient } from "@/lib/generated/prisma";
-import { IDifyAppItem } from "@/types";
+import { AppModeEnums, IDifyAppItem } from "@/types";
 
 const prisma = new PrismaClient();
 
@@ -50,17 +50,18 @@ export const db2Data = (item: IDifyAppItem4DB) => {
 const data2db = (item: Omit<IDifyAppItem, "id"> & { id?: string }) => {
 	return {
 		id: item.id,
-		name: item.info.name,
-		description: item.info.description,
-		mode: item.info.mode,
+		name: item.info.name || "",
+		description: item.info.description || "",
+		mode: item.info.mode || AppModeEnums.CHATBOT,
 		tags: item.info.tags?.join(",") || "",
-		api_base: item.requestConfig.apiBase,
-		api_key: item.requestConfig.apiKey,
-		answer_form_enabled: item.answerForm?.enabled,
-		answer_form_feedback_text: item.answerForm?.feedbackText,
-		update_inputs_after_started: item.inputParams?.enableUpdateAfterCvstStarts,
+		api_base: item.requestConfig.apiBase || "",
+		api_key: item.requestConfig.apiKey || "",
+		answer_form_enabled: item.answerForm?.enabled || false,
+		answer_form_feedback_text: item.answerForm?.feedbackText || "",
+		update_inputs_after_started:
+			item.inputParams?.enableUpdateAfterCvstStarts || false,
 		opening_statement_mode:
-			item.extConfig?.conversation?.openingStatement?.displayMode,
+			item.extConfig?.conversation?.openingStatement?.displayMode || "default",
 	} as IDifyAppItem4DB;
 };
 
