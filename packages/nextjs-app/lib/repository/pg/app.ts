@@ -1,7 +1,5 @@
-import { PrismaClient } from "@/lib/generated/prisma";
+import prisma from "@/lib/prisma";
 import { AppModeEnums, IDifyAppItem } from "@/types";
-
-const prisma = new PrismaClient();
 
 interface IDifyAppItem4DB {
 	id: string;
