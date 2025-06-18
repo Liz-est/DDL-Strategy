@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ThemeEnum, ThemeModeEnum } from '../constants';
+import { LocalStorageKeys, LocalStorageStore } from '@dify-chat/helpers';
 
 /**
  * 主题模式，用于用户手动切换， light-固定浅色 dark-固定深色，system-跟随系统
@@ -53,19 +54,21 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 			return ThemeModeEnum.SYSTEM;
 		}
 		return (
-			(localStorage.getItem('__DC_THEME_MODE') as ThemeModeEnum) ||
-			ThemeModeEnum.SYSTEM
+			LocalStorageStore.get(LocalStorageKeys.THEME_MODE) || ThemeModeEnum.SYSTEM
 		);
 	});
 	const [themeState, setThemeState] = React.useState<ThemeEnum>(() => {
 		if (typeof window === 'undefined') {
 			return ThemeEnum.LIGHT;
 		}
-		return (localStorage.getItem('__DC_THEME') as ThemeEnum) || ThemeEnum.LIGHT;
+		return (
+			(LocalStorageStore.get(LocalStorageKeys.THEME) as ThemeEnum) ||
+			ThemeEnum.LIGHT
+		);
 	});
 
 	useEffect(() => {
-		localStorage.setItem('__DC_THEME', themeState);
+		LocalStorageStore.set(LocalStorageKeys.THEME, themeMode);
 	}, [themeState]);
 
 	/**
@@ -85,7 +88,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	);
 
 	useEffect(() => {
-		localStorage.setItem('__DC_THEME_MODE', themeMode);
+		LocalStorageStore.set(LocalStorageKeys.THEME_MODE, themeMode);
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 		if (themeMode === ThemeModeEnum.SYSTEM) {
 			// 从其他模式切换到系统主题时，先调用一次

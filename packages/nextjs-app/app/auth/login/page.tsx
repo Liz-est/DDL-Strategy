@@ -5,6 +5,7 @@ import { getRunningModeAction, loginAction } from "@/app/actions";
 import { useUserId } from "@/hooks/useUserId";
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
+import { LocalStorageKeys, LocalStorageStore } from "@dify-chat/helpers";
 
 export default function LoginPage() {
 	// 获取 userId
@@ -25,8 +26,12 @@ export default function LoginPage() {
 			return;
 		}
 
-		localStorage.setItem("__DC_RUNNING_MODE", runningMode);
-		localStorage.setItem("__DC_USER", JSON.stringify(userInfo));
+		LocalStorageStore.set(LocalStorageKeys.RUNNING_MODE, runningMode);
+		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId);
+		LocalStorageStore.set(
+			LocalStorageKeys.ENABLE_SETTING,
+			String(userInfo.enableSetting),
+		);
 
 		message.success("登录成功");
 

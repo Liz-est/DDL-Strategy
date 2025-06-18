@@ -1,4 +1,5 @@
 import { IRunningMode } from "@/types";
+import { LocalStorageKeys, LocalStorageStore } from "@dify-chat/helpers";
 import { ThemeEnum, ThemeModeEnum } from "@dify-chat/theme";
 
 // 定义 IAllState 接口，仅描述状态的类型，不包含具体取值逻辑
@@ -27,15 +28,18 @@ export const getAllState = (): IAllState => {
 	}
 	return {
 		themeState:
-			(localStorage.getItem("__DC_THEME") as ThemeEnum) || ThemeEnum.LIGHT,
+			(LocalStorageStore.get(LocalStorageKeys.THEME) as ThemeEnum) ||
+			ThemeEnum.LIGHT,
 		themeMode:
-			(localStorage.getItem("__DC_THEME_MODE") as ThemeModeEnum) ||
+			(LocalStorageStore.get(LocalStorageKeys.THEME_MODE) as ThemeModeEnum) ||
 			ThemeModeEnum.SYSTEM,
-		user: JSON.parse(localStorage.getItem("__DC_USER") || "{}") as {
-			userId: string;
-			enableSetting: boolean;
+		user: {
+			userId: LocalStorageStore.get(LocalStorageKeys.USER_ID) || "",
+			enableSetting: !!LocalStorageStore.get(LocalStorageKeys.ENABLE_SETTING),
 		},
-		runningMode: localStorage.getItem("DC_RUNNING_MODE") as IRunningMode,
+		runningMode: LocalStorageStore.get(
+			LocalStorageKeys.RUNNING_MODE,
+		) as IRunningMode,
 	} as const;
 };
 
