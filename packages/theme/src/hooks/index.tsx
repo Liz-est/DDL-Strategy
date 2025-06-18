@@ -93,11 +93,21 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 		if (themeMode === ThemeModeEnum.SYSTEM) {
 			// 从其他模式切换到系统主题时，先调用一次
 			handleColorSchemeChange(mediaQuery);
-			// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
-			mediaQuery.addEventListener('change', handleColorSchemeChange);
+			if (mediaQuery.addEventListener) {
+				// @ts-expect-error 监听媒体查询的变化, FIXME: 类型错误, 待优化
+				mediaQuery.addEventListener('change', handleColorSchemeChange);
+			} else if (mediaQuery.addListener) {
+				// @ts-expect-error 旧版本浏览器兼容
+				mediaQuery.addListener(handleColorSchemeChange);
+			}
 		} else {
-			// @ts-expect-error 移除监听媒体查询的变化, FIXME: 类型错误, 待优化
-			mediaQuery.removeEventListener('change', handleColorSchemeChange);
+			if (mediaQuery.removeEventListener) {
+				// @ts-expect-error 移除监听媒体查询的变化, FIXME: 类型错误, 待优化
+				mediaQuery.removeEventListener('change', handleColorSchemeChange);
+			} else if (mediaQuery.removeListener) {
+				// @ts-expect-error 旧版本浏览器兼容
+				mediaQuery.removeListener(handleColorSchemeChange);
+			}
 			if (themeMode === ThemeModeEnum.DARK) {
 				setThemeState(ThemeEnum.DARK);
 				document.body.classList.add(DARK_CLASS_NAME);
