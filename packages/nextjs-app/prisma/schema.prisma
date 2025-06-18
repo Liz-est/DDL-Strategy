@@ -26,4 +26,7 @@ model app {
 	answer_form_feedback_text String @db.VarChar(255)
 	update_inputs_after_started Boolean @default(false)
 	opening_statement_mode String @default("default") @db.VarChar(255)
+	is_enabled Boolean @default(true)
+	created_at DateTime @default(now())
+	updated_at DateTime @default(now()) @updatedAt
 }
