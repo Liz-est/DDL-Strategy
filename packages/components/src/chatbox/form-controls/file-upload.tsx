@@ -1,199 +1,206 @@
-import { UploadOutlined } from '@ant-design/icons'
-import { DifyApi, IGetAppParametersResponse } from '@dify-chat/api'
-import { useAppContext } from '@dify-chat/core'
-import { Button, GetProp, message, Upload } from 'antd'
-import { RcFile, UploadFile } from 'antd/es/upload'
-import { useEffect, useMemo, useState } from 'react'
+import { UploadOutlined } from "@ant-design/icons";
+import { DifyApi, IGetAppParametersResponse } from "@dify-chat/api";
+import { useAppContext } from "@dify-chat/core";
+import { Button, GetProp, message, Upload } from "antd";
+import { RcFile, UploadFile } from "antd/es/upload";
+import { useEffect, useMemo, useState } from "react";
 
-import { FileTypeMap, getDifyFileType, getFileExtByName } from '../../message-sender/utils'
-import { completeFileUrl } from '../../utils'
+import {
+	FileTypeMap,
+	getDifyFileType,
+	getFileExtByName,
+} from "@/message-sender/utils";
+import { completeFileUrl } from "@/utils";
 
 export interface IUploadFileItem extends UploadFile {
-	type?: string
-	transfer_method?: 'local_file' | 'remote_url'
-	upload_file_id?: string
-	related_id?: string
-	remote_url?: string
-	filename?: string
+	type?: string;
+	transfer_method?: "local_file" | "remote_url";
+	upload_file_id?: string;
+	related_id?: string;
+	remote_url?: string;
+	filename?: string;
 }
 
 interface IFileUploadCommonProps {
-	allowed_file_types: IGetAppParametersResponse['file_upload']['allowed_file_types']
-	uploadFileApi: DifyApi['uploadFile']
-	disabled?: boolean
-	maxCount?: number
+	allowed_file_types: IGetAppParametersResponse["file_upload"]["allowed_file_types"];
+	uploadFileApi: DifyApi["uploadFile"];
+	disabled?: boolean;
+	maxCount?: number;
 }
 
 interface IFileUploadSingleProps extends IFileUploadCommonProps {
-	value?: IUploadFileItem
-	onChange?: (file: IUploadFileItem) => void
-	mode: 'single'
+	value?: IUploadFileItem;
+	onChange?: (file: IUploadFileItem) => void;
+	mode: "single";
 }
 
 interface IFileUploadMultipleProps extends IFileUploadCommonProps {
-	value?: IUploadFileItem[]
-	onChange?: (files: IUploadFileItem[]) => void
-	mode?: 'multiple'
+	value?: IUploadFileItem[];
+	onChange?: (files: IUploadFileItem[]) => void;
+	mode?: "multiple";
 }
 
-type IFileUploadProps = IFileUploadSingleProps | IFileUploadMultipleProps
+type IFileUploadProps = IFileUploadSingleProps | IFileUploadMultipleProps;
 
 export default function FileUpload(props: IFileUploadProps) {
 	const {
-		mode = 'multiple',
+		mode = "multiple",
 		maxCount,
 		disabled,
 		allowed_file_types,
 		uploadFileApi,
 		value,
 		onChange,
-	} = props
-	const [files, setFiles] = useState<GetProp<typeof Upload, 'fileList'>>([])
-	const { currentApp } = useAppContext()
+	} = props;
+	const [files, setFiles] = useState<GetProp<typeof Upload, "fileList">>([]);
+	const { currentApp } = useAppContext();
 
 	useEffect(() => {
-		if (mode === 'single') {
-			setFiles(value ? [value as IUploadFileItem] : [])
+		if (mode === "single") {
+			setFiles(value ? [value as IUploadFileItem] : []);
 		} else {
-			const multiModeValues = value as IUploadFileItem[] | undefined
+			const multiModeValues = value as IUploadFileItem[] | undefined;
 			if (multiModeValues?.length && multiModeValues?.length !== files.length) {
-				setFiles(multiModeValues)
+				setFiles(multiModeValues);
 			}
 		}
-	}, [value])
+	}, [value]);
 
 	const formatFiles = (files: IUploadFileItem[]) => {
-		return files?.map(file => {
-			const fileType = getDifyFileType(file.name, allowed_file_types)
+		return files?.map((file) => {
+			const fileType = getDifyFileType(file.name, allowed_file_types);
 			return {
 				...file,
 				type: fileType,
-			}
-		})
-	}
+			};
+		});
+	};
 
-	const updateFiles = (newFiles: IUploadFileItem[], action: 'update' | 'remove' = 'update') => {
-		const formattedNewFiles = formatFiles(newFiles)
+	const updateFiles = (
+		newFiles: IUploadFileItem[],
+		action: "update" | "remove" = "update",
+	) => {
+		const formattedNewFiles = formatFiles(newFiles);
 		const newFilesState =
-			mode === 'single'
+			mode === "single"
 				? formattedNewFiles
-				: action === 'remove'
+				: action === "remove"
 					? newFiles
-					: [...files, ...formattedNewFiles]
-		setFiles(newFilesState)
-		if (mode === 'single') {
-			;(onChange as IFileUploadSingleProps['onChange'])?.(newFilesState[0])
+					: [...files, ...formattedNewFiles];
+		setFiles(newFilesState);
+		if (mode === "single") {
+			(onChange as IFileUploadSingleProps["onChange"])?.(newFilesState[0]);
 		} else {
-			;(onChange as IFileUploadMultipleProps['onChange'])?.(newFilesState)
+			(onChange as IFileUploadMultipleProps["onChange"])?.(newFilesState);
 		}
-	}
+	};
 
 	const allowedFileTypes = useMemo(() => {
-		const result: string[] = []
-		allowed_file_types?.forEach(item => {
+		const result: string[] = [];
+		allowed_file_types?.forEach((item) => {
 			if (FileTypeMap.get(item)) {
-				result.push(...((FileTypeMap.get(item) as string[]) || []))
+				result.push(...((FileTypeMap.get(item) as string[]) || []));
 			}
-		})
-		return result
-	}, [allowed_file_types])
+		});
+		return result;
+	}, [allowed_file_types]);
 
 	const handleUpload = async (file: RcFile) => {
 		const fileBaseInfo: IUploadFileItem = {
 			uid: file.uid,
 			name: file.name,
-			status: 'uploading',
+			status: "uploading",
 			size: file.size,
 			type: file.type,
 			originFileObj: file,
-			transfer_method: 'local_file',
-		}
+			transfer_method: "local_file",
+		};
 
 		// 模拟上传进度
 		const mockLoadingProgress = () => {
-			let percent = 0
+			let percent = 0;
 			updateFiles([
 				{
 					...fileBaseInfo,
 					percent: percent,
 				},
-			])
+			]);
 			const interval = setInterval(() => {
 				if (percent >= 99) {
-					clearInterval(interval)
-					return
+					clearInterval(interval);
+					return;
 				}
-				percent = percent + 1
+				percent = percent + 1;
 				updateFiles([
 					{
 						...fileBaseInfo,
 						percent,
 					},
-				])
-			}, 100)
+				]);
+			}, 100);
 			return {
 				clear: () => clearInterval(interval),
-			}
-		}
-		const { clear } = mockLoadingProgress()
+			};
+		};
+		const { clear } = mockLoadingProgress();
 
-		const result = await uploadFileApi(file)
-		clear()
-		const fileType = getDifyFileType(file.name, allowed_file_types)
+		const result = await uploadFileApi(file);
+		clear();
+		const fileType = getDifyFileType(file.name, allowed_file_types);
 		updateFiles([
 			{
 				...fileBaseInfo,
 				upload_file_id: result.id,
-				type: fileType || 'custom',
+				type: fileType || "custom",
 				percent: 100,
-				status: 'done',
+				status: "done",
 			},
-		])
-	}
+		]);
+	};
 
 	/**
 	 * 用于渲染的文件列表
 	 */
 	const files4Render = useMemo(() => {
-		return files.map(item => {
+		return files.map((item) => {
 			return {
 				...item,
-				url: completeFileUrl(item.url || '', currentApp?.config.requestConfig.apiBase || ''),
-			}
-		})
-	}, [files, currentApp?.config.requestConfig.apiBase])
+				url: completeFileUrl(
+					item.url || "",
+					currentApp?.config.requestConfig.apiBase || "",
+				),
+			};
+		});
+	}, [files, currentApp?.config.requestConfig.apiBase]);
 
 	return (
 		<Upload
-			maxCount={mode === 'single' ? 1 : maxCount}
+			maxCount={mode === "single" ? 1 : maxCount}
 			disabled={disabled}
 			fileList={files4Render}
-			beforeUpload={async file => {
+			beforeUpload={async (file) => {
 				// 校验文件类型
 				// 自定义上传
-				const ext = getFileExtByName(file.name)
+				const ext = getFileExtByName(file.name);
 				// 校验文件类型
 				if (allowedFileTypes.length > 0 && !allowedFileTypes.includes(ext!)) {
-					message.error(`不支持的文件类型: ${ext}`)
-					return false
+					message.error(`不支持的文件类型: ${ext}`);
+					return false;
 				}
 
-				handleUpload(file)
-				return false
+				handleUpload(file);
+				return false;
 			}}
-			onRemove={file => {
+			onRemove={(file) => {
 				updateFiles(
-					files.filter(item => item.uid !== file.uid),
-					'remove',
-				)
+					files.filter((item) => item.uid !== file.uid),
+					"remove",
+				);
 			}}
 		>
-			<Button
-				disabled={disabled}
-				icon={<UploadOutlined />}
-			>
+			<Button disabled={disabled} icon={<UploadOutlined />}>
 				点击上传
 			</Button>
 		</Upload>
-	)
+	);
 }
