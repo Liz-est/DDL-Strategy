@@ -44,4 +44,4 @@ next-env.d.ts
 .dify-chat/storage/apps.json
 
 # prisma
-/lib/generated/prisma
+*/generated/prisma
