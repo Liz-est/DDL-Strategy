@@ -35,6 +35,8 @@ export default defineConfig({
 		compress: false, // 解决代理后流式输出失效的问题
 		base: '/dify-chat',
 		port: 5200,
+		// 允许外部访问
+		host: '0.0.0.0',
 		proxy: [
 			{
 				// 代理 Dify API
