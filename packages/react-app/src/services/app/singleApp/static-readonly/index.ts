@@ -19,4 +19,4 @@ class DifyAppConfig {
 	}
 }
 
-export default new DifyAppConfig()
+export const appConfig = new DifyAppConfig()
