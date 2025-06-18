@@ -39,19 +39,22 @@
 		"@rsbuild/plugin-react": "catalog:",
 		"@rslib/core": "catalog:",
 		"@types/react": "catalog:",
+		"antd": "catalog:",
 		"eslint": "catalog:",
 		"globals": "catalog:",
+		"lucide-react": "catalog:",
 		"prettier": "catalog:",
 		"react": "catalog:",
 		"typescript": "catalog:",
-		"typescript-eslint": "catalog:",
-		"antd": "catalog:",
-		"lucide-react": "catalog:"
+		"typescript-eslint": "catalog:"
 	},
 	"peerDependencies": {
-		"lucide-react": "catalog:",
 		"antd": ">=5.0.0",
+		"lucide-react": "catalog:",
 		"react": ">=16.9.0",
 		"react-dom": ">=16.9.0"
+	},
+	"dependencies": {
+		"@dify-chat/helpers": "workspace:^"
 	}
 }
