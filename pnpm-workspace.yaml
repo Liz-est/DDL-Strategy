@@ -84,7 +84,7 @@ catalog:
   pako: ^2.1.0
   prettier: ^3.5.3
   prisma: ^6.9.0
-  pure-react-router: ^0.2.3
+  pure-react-router: ^0.2.4
   react: ^19.1.0
   react-dom: ^19.1.0
   react-markdown: ^10.1.0
