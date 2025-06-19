@@ -65,7 +65,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	}, [open]);
 
 	const { runAsync: createApp } = useRequest(
-		async (appInfo: IDifyAppItem) => {
+		async (appInfo: Omit<IDifyAppItem, "id">) => {
 			return createAppAction(appInfo);
 		},
 		{
@@ -160,7 +160,6 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 									});
 								} else {
 									await createApp({
-										id: Math.random().toString(),
 										...commonInfo,
 									});
 								}
