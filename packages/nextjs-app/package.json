@@ -3,8 +3,10 @@
 	"version": "0.3.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
+		"prisma:gen": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
+		"dev": "pnpm prisma:gen && next dev --turbopack",
+		"build": "pnpm prisma:gen && next build",
 		"start": "next start",
 		"lint": "next lint"
 	},
