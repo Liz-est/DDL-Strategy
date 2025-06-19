@@ -4,8 +4,8 @@
 
 ## Why me?
 
-- 通过服务端调用 Dify API，密钥信息不会暴露在客户端
-- 应用列表 CRUD 默认实现调整为服务端存储，跨客户端不丢失，真正实现开箱即用
+- 通过服务端调用 Dify API，密钥信息不会在客户端传输和存储
+- 应用列表 CRUD 默认实现调整为数据库持久化存储
 
 ## 环境变量配置
 
@@ -15,12 +15,27 @@
 openssl rand -base64 32
 ```
 
-在根目录新增 `.env.local`，增加如下配置项：
+在根目录新增 `.env` 文件，增加如下配置项：
 
 ```bash
-# .env.local
+# .env
 RUNNING_MODE=multiApp # 多应用模式
-SESSION_SECRET=xxx # Session 密钥
+SESSION_SECRET=xxx # 上面生成的 Session 密钥
+DATABASE_URL=postgresql://db_userName:db_password@db_host:db_port/dify_chat # 数据库连接
+```
+
+## 数据库配置
+
+数据库默认使用 PostgreSQL，如果你有其他需求，可以在 `/prisma/schema.prisma` 中自行修改。
+
+### 数据库迁移
+
+```bash
+npm run prisma:migrate
+# or
+yarn prisma:migrate
+# or
+pnpm prisma:migrate
 ```
 
 ## 本地开发
