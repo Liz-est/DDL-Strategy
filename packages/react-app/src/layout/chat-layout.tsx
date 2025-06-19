@@ -460,7 +460,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 									</div>
 								)}
 
-								<div className="border-0 border-t border-solid border-theme-border flex items-center justify-center h-12">
+								<div className="border-0 border-t border-solid border-theme-splitter flex items-center justify-center h-12">
 									<Tooltip
 										title={sidebarOpen ? '折叠侧边栏' : '展开侧边栏'}
 										placement="right"
