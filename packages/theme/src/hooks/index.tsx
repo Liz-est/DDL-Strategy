@@ -68,7 +68,7 @@ export const ThemeContextProvider = (props: { children: React.ReactNode }) => {
 	});
 
 	useEffect(() => {
-		LocalStorageStore.set(LocalStorageKeys.THEME, themeMode);
+		LocalStorageStore.set(LocalStorageKeys.THEME, themeState);
 	}, [themeState]);
 
 	/**
