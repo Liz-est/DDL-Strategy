@@ -11,9 +11,7 @@ import { AppEditDrawer } from '@/components/app-edit-drawer'
 import { difyChatRuntimeConfig } from '@/config/global'
 import { AppDetailDrawerModeEnum } from '@/enums'
 import { useAuth } from '@/hooks/use-auth'
-import DifyAppService from '@/services/app/multiApp/localstorage'
-
-const appService = new DifyAppService()
+import { appService } from '@/services/app/multiApp'
 
 export default function AppListPage() {
 	const history = useHistory()
