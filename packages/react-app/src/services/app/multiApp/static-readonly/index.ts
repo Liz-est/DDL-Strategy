@@ -9,11 +9,11 @@ import { staticAppList } from './data'
 class DifyAppService extends DifyAppStoreReadonly {
 	public readonly = true as const
 
-	async getApps(): Promise<IDifyAppItem[]> {
+	getApps = async (): Promise<IDifyAppItem[]> => {
 		return Promise.resolve(staticAppList)
 	}
 
-	async getApp(id: string): Promise<IDifyAppItem | undefined> {
+	getApp = async (id: string): Promise<IDifyAppItem | undefined> => {
 		return Promise.resolve(staticAppList.find(config => config.id === id))
 	}
 }
