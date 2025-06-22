@@ -15,8 +15,17 @@ export interface IConfig {
 }
 
 export const getConfigs = (): IConfig => {
-	return {
-		runningMode: process.env.RUNNING_MODE,
-		secretKey: process.env.SESSION_SECRET,
-	} as IConfig;
+	const runningMode = process.env.RUNNING_MODE || "";
+	const secretKey = process.env.SESSION_SECRET || "";
+	const config: IConfig = {
+		runningMode: runningMode as NonNullable<IRunningMode>,
+		secretKey,
+	};
+	Object.keys(config).forEach((key) => {
+		// 判断每个值都不能为空，否则报错并提示缺失的 key
+		if (!config[key as keyof IConfig]) {
+			throw new Error(`环境变量 ${key} 不能为空`);
+		}
+	});
+	return config as IConfig;
 };
