@@ -21,18 +21,20 @@ export default function AppsPage() {
 		enableSetting: false,
 	});
 
+	const refreshAppList = async () => {
+		const appsRes = await getAppList();
+		setApps(appsRes);
+	};
+
 	const initData = async () => {
 		const user = await getUserAction();
-		const appsRes = await getAppList();
+		refreshAppList();
 		setUser(user);
-		setApps(appsRes);
 	};
 
 	useMount(() => {
 		initData();
 	});
-
-	const refreshApps = getAppList;
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
@@ -67,7 +69,7 @@ export default function AppsPage() {
 				)}
 			</div>
 
-			{user.enableSetting ? <AddButton refreshApps={refreshApps} /> : null}
+			{user.enableSetting ? <AddButton refreshApps={refreshAppList} /> : null}
 		</div>
 	);
 }
