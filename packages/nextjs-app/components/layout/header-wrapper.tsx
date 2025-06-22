@@ -3,7 +3,7 @@ import { HeaderLayout } from "@/components";
 import { IHeaderLayoutProps } from "@/components/layout/header";
 import { ILucideIconProps, LucideIcon } from "@dify-chat/components";
 
-interface IHeaderProps {
+export interface IHeaderProps {
 	centerTitle: {
 		title: string;
 		icon: ILucideIconProps["name"];
