@@ -2,12 +2,13 @@ import "server-only";
 import { JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
+import { getConfigs } from "@/config";
 
 export interface SessionPayload extends JWTPayload {
 	userId: string;
 }
 
-const secretKey = process.env.SESSION_SECRET;
+const secretKey = getConfigs().secretKey;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 /**
