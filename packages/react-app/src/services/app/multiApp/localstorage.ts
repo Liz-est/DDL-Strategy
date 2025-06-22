@@ -8,23 +8,23 @@ import { APP_LIST_KEY } from '@/constants'
 class DifyAppService extends DifyAppStore {
 	public readonly = false as const
 
-	async getApps(): Promise<IDifyAppItem[]> {
+	getApps = async (): Promise<IDifyAppItem[]> => {
 		const appJson = localStorage.getItem(APP_LIST_KEY)
 		return appJson ? JSON.parse(appJson) : []
 	}
 
-	async getApp(id: string): Promise<IDifyAppItem | undefined> {
+	getApp = async (id: string): Promise<IDifyAppItem | undefined> => {
 		const apps = await this.getApps()
 		return apps.find(config => config.id === id)
 	}
 
-	async addApp(config: IDifyAppItem): Promise<void> {
+	addApp = async (config: IDifyAppItem): Promise<void> => {
 		const apps = await this.getApps()
 		apps.push(config)
 		localStorage.setItem(APP_LIST_KEY, JSON.stringify(apps))
 	}
 
-	async updateApp(config: IDifyAppItem): Promise<void> {
+	updateApp = async (config: IDifyAppItem): Promise<void> => {
 		const apps = await this.getApps()
 		const index = apps.findIndex(c => c.id === config.id)
 		if (index !== -1) {
@@ -33,7 +33,7 @@ class DifyAppService extends DifyAppStore {
 		}
 	}
 
-	async deleteApp(id: string): Promise<void> {
+	deleteApp = async (id: string): Promise<void> => {
 		const apps = await this.getApps()
 		const newApps = apps.filter(config => config.id !== id)
 		localStorage.setItem(APP_LIST_KEY, JSON.stringify(newApps))

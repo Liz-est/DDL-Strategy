@@ -12,12 +12,12 @@ const request = new BaseRequest({ baseURL: API_BASE_URL })
 class DifyAppService extends DifyAppStore {
 	public readonly = false as const
 
-	async getApps(): Promise<IDifyAppItem[]> {
+	getApps = async (): Promise<IDifyAppItem[]> => {
 		const response = await request.get(`/apps`)
 		return response
 	}
 
-	async getApp(id: string): Promise<IDifyAppItem | undefined> {
+	getApp = async (id: string): Promise<IDifyAppItem | undefined> => {
 		try {
 			const response = await request.get(`/apps/${id}`)
 			return response
@@ -27,15 +27,15 @@ class DifyAppService extends DifyAppStore {
 		}
 	}
 
-	async addApp(config: IDifyAppItem): Promise<void> {
+	addApp = async (config: IDifyAppItem): Promise<void> => {
 		return request.post(`/apps`, config as unknown as Record<string, unknown>)
 	}
 
-	async updateApp(config: IDifyAppItem): Promise<void> {
+	updateApp = async (config: IDifyAppItem): Promise<void> => {
 		return request.put(`/apps/${config.id}`, config as unknown as Record<string, unknown>)
 	}
 
-	async deleteApp(id: string): Promise<void> {
+	deleteApp = async (id: string): Promise<void> => {
 		await request.delete(`/apps/${id}`)
 	}
 }
