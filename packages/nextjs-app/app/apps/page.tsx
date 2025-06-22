@@ -5,7 +5,7 @@ import { Empty, Row } from "antd";
 
 import AppItem from "@/app/apps/components/app-item";
 import HeaderWrapper, {
-	IHeaderWrapperProps,
+	IHeaderProps,
 } from "@/components/layout/header-wrapper";
 import { useMount } from "ahooks";
 import { useMemo, useState } from "react";
@@ -24,7 +24,7 @@ export default function AppsPage() {
 		initData();
 	});
 
-	const headerWrapperProps: IHeaderWrapperProps = useMemo(() => {
+	const headerWrapperProps: IHeaderProps = useMemo(() => {
 		const userInfo = getAllState().user;
 		const enableSetting = userInfo?.enableSetting;
 		return {

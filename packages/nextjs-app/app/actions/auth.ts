@@ -14,7 +14,7 @@ const DEFAULT_ENABLE_SETTING = true;
 export const getUserAction = async () => {
 	const { userId } = await decrypt();
 	return {
-		userId,
+		userId: userId as string,
 		enableSetting: DEFAULT_ENABLE_SETTING,
 	};
 };

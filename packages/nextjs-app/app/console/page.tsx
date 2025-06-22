@@ -1,3 +1,4 @@
+"use client";
 import { getUserAction } from "@/app/actions";
 import { getAppList } from "@/app/console/actions";
 
@@ -6,10 +7,30 @@ import { Empty, Row } from "antd";
 import AddButton from "@/app/console/components/add-button";
 import AppItem from "@/app/console/components/app-item";
 import Header from "@/components/layout/header-wrapper";
+import { useState } from "react";
+import { IDifyAppItem } from "@/types";
+import { useMount } from "ahooks";
 
-export default async function AppsPage() {
-	const user = await getUserAction();
-	const apps = await getAppList();
+export default function AppsPage() {
+	const [apps, setApps] = useState<IDifyAppItem[]>([]);
+	const [user, setUser] = useState<{
+		userId: string;
+		enableSetting: boolean;
+	}>({
+		userId: "",
+		enableSetting: false,
+	});
+
+	const initData = async () => {
+		const user = await getUserAction();
+		const appsRes = await getAppList();
+		setUser(user);
+		setApps(appsRes);
+	};
+
+	useMount(() => {
+		initData();
+	});
 
 	const refreshApps = getAppList;
 
