@@ -58,10 +58,13 @@ export async function getUserIdFromNextRequest(request: NextRequest) {
 /**
  * 创建 session 并设置 cookie
  */
-export async function createSession(userId: string) {
+export async function createSession(info: {
+	userId: string;
+	enableSetting: boolean;
+}) {
 	// 设置 7 天过期
 	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-	const session = await encrypt({ userId });
+	const session = await encrypt(info);
 	const cookieStore = await cookies();
 
 	cookieStore.set(SESSION_KEY_NAME, session, {

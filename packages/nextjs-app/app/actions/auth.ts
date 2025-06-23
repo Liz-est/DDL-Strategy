@@ -24,9 +24,10 @@ export const getUserAction = async () => {
  * 简单的用户登录实现，入参可以改造为用户信息表单，如账号+密码
  */
 export const loginAction = async (userId: string) => {
-	await createSession(userId);
-	return {
+	const sessionInfo = {
 		userId,
 		enableSetting: DEFAULT_ENABLE_SETTING,
 	};
+	await createSession(sessionInfo);
+	return sessionInfo;
 };
