@@ -1,7 +1,10 @@
+"user server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getConfigs } from "./config/env";
 import { decrypt, SESSION_KEY_NAME } from "./lib/session";
+import { RunningModes } from "@/constants";
+
+let runningMode = "";
 
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
@@ -19,10 +22,24 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL("/auth/login", request.url));
 	}
 
-	const { runningMode } = getConfigs();
+	// TODO: runningMode 获取，需要更好的方式。
+	if (!runningMode) {
+		const result = await fetch(
+			new URL("/api/internal/running-mode", request.url),
+			{
+				headers: {
+					"Content-type": "application/json",
+				},
+			},
+		)
+			.then((res) => res.json())
+			.then((res) => res.data);
+		runningMode = result;
+	}
+
 	// 如果是单应用模式下访问了多应用的页面，则重定向到首页，由首页自行分流到单应用页面
 	if (pathname.startsWith("/app")) {
-		if (runningMode === "singleApp") {
+		if (runningMode === RunningModes.SingleApp) {
 			return NextResponse.redirect(new URL("/", request.url));
 		}
 	}
@@ -37,5 +54,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/", "/api/:path*", "/app/:path*", "/apps", "/console"],
+	matcher: [
+		"/",
+		"/api/app/:path*",
+		"/api/apps/:path*",
+		"/api/external/:path*",
+		"/app/:path*",
+		"/apps",
+		"/console",
+	],
 };
