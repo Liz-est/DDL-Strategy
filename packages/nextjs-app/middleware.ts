@@ -2,7 +2,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { decrypt, SESSION_KEY_NAME } from "./lib/session";
-import { RunningModes } from "@/constants";
 
 let runningMode = "";
 
@@ -37,12 +36,12 @@ export async function middleware(request: NextRequest) {
 		runningMode = result;
 	}
 
-	// 如果是单应用模式下访问了多应用的页面，则重定向到首页，由首页自行分流到单应用页面
-	if (pathname.startsWith("/app")) {
-		if (runningMode === RunningModes.SingleApp) {
-			return NextResponse.redirect(new URL("/", request.url));
-		}
-	}
+	// // 如果是单应用模式下访问了多应用的页面，则重定向到首页，由首页自行分流到单应用页面
+	// if (pathname.startsWith("/app")) {
+	// 	if (runningMode === RunningModes.SingleApp) {
+	// 		return NextResponse.redirect(new URL("/", request.url));
+	// 	}
+	// }
 
 	// 当访问 /console 时，需要校验用户是否有 enableSetting 权限
 	if (pathname.startsWith("/console")) {
