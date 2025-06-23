@@ -100,9 +100,9 @@ export default function ConsolePage() {
 			/>
 			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{/* 切换模式 */}
-				<div className="flex items-center mb-6">
-					<div className="flex items-center mx-4 text-lg">
-						<div className="mr-2">运行模式:</div>
+				<div className="block md:flex! items-center mb-6">
+					<div className="flex items-center mx-4 text-lg mt-3">
+						<div className="mr-2">当前运行模式:</div>
 						<Select
 							style={{ width: 200 }}
 							value={runningMode}
@@ -111,7 +111,7 @@ export default function ConsolePage() {
 						/>
 					</div>
 					{runningMode === "singleApp" ? (
-						<div className="flex items-center mx-4 text-lg">
+						<div className="flex items-center mx-4 text-lg mt-3">
 							<div className="mr-2">当前运行应用:</div>
 							<Select
 								style={{ width: 200 }}
