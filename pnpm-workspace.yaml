@@ -19,6 +19,7 @@ catalog:
   "@ant-design/cssinjs": ^1.23.0
   "@ant-design/icons": ^5.6.1
   "@ant-design/nextjs-registry": ^1.0.2
+  "@ant-design/v5-patch-for-react-19": ^1.0.3
   "@ant-design/x": ^1.4.0
   "@biomejs/biome": ^1.9.4
   "@changesets/cli": ^2.29.2
@@ -83,6 +84,7 @@ catalog:
   next: ^15.3.2
   pako: ^2.1.0
   prettier: ^3.5.3
+  prettier-plugin-tailwindcss: ^0.6.11
   prisma: ^6.9.0
   pure-react-router: ^0.2.4
   react: ^19.1.0
