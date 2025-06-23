@@ -4,19 +4,20 @@ import { LucideIcon } from "@dify-chat/components";
 import { AppModeLabels, IDifyAppItem } from "@dify-chat/core";
 import { useIsMobile } from "@dify-chat/helpers";
 
-import { Col } from "antd";
+import { Col, Tag } from "antd";
 import { useRouter } from "next/navigation";
 import AppItemActionButton from "@/app/console/components/app-item-action-button";
 
 interface IAppItemProps {
 	item: IDifyAppItem;
 	enableSetting: boolean;
+	isCurrent: boolean;
 	refreshAppList: () => Promise<void>;
 }
 
 export default function AppItem(props: IAppItemProps) {
 	const router = useRouter();
-	const { item, enableSetting, refreshAppList } = props;
+	const { item, enableSetting, isCurrent, refreshAppList } = props;
 	const isMobile = useIsMobile();
 	const hasTags = item.info.tags?.length;
 	return (
@@ -36,6 +37,16 @@ export default function AppItem(props: IAppItemProps) {
 						</div>
 						<div className="flex-1 overflow-hidden ml-3 text-theme-text h-10 flex flex-col justify-between">
 							<div className="truncate font-semibold pr-4">
+								{isCurrent ? (
+									<Tag
+										style={{
+											color: "var(--primary-color)",
+											border: "1px solid var(--primary-color)",
+										}}
+									>
+										正在运行
+									</Tag>
+								) : null}
 								{item.info.name}
 							</div>
 							<div className="text-theme-desc text-xs mt-0.5">
