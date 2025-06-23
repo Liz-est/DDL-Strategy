@@ -26,6 +26,14 @@ export async function middleware(request: NextRequest) {
 			return NextResponse.redirect(new URL("/", request.url));
 		}
 	}
+
+	// 当访问 /console 时，需要校验用户是否有 enableSetting 权限
+	if (pathname.startsWith("/console")) {
+		const { enableSetting } = decodedSession;
+		if (!enableSetting) {
+			return NextResponse.redirect(new URL("/403", request.url));
+		}
+	}
 }
 
 export const config = {
