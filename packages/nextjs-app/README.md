@@ -75,6 +75,7 @@ pnpm dev
 - [ ] 子包依赖本地开发热更新
 - [x] 移除 DC-User 机制，通过 cookie 解析 jwt token 获取 userId
 - [x] 上传文件支持（Dify UploadFile API）
+- [ ] 使用 Drizzle 替换 Prisma
 
 ## Project Tree
 
