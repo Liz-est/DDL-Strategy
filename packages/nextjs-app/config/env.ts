@@ -1,13 +1,7 @@
-import { IRunningMode } from "@/types";
-
 /**
  * 所有的配置项
  */
 export interface IConfig {
-	/**
-	 * 运行模式
-	 */
-	runningMode: IRunningMode;
 	/**
 	 * Session 密钥
 	 */
@@ -15,10 +9,8 @@ export interface IConfig {
 }
 
 export const getConfigs = (): IConfig => {
-	const runningMode = process.env.RUNNING_MODE || "";
 	const secretKey = process.env.SESSION_SECRET || "";
 	const config: IConfig = {
-		runningMode: runningMode as NonNullable<IRunningMode>,
 		secretKey,
 	};
 	Object.keys(config).forEach((key) => {
