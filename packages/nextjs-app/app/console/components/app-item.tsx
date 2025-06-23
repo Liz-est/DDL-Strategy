@@ -28,7 +28,8 @@ export default function AppItem(props: IAppItemProps) {
 			>
 				<div
 					onClick={() => {
-						router.push(`/app/${item.id}`);
+						// 增加跳转来源标识
+						router.push(`/app/${item.id}?sourcePage=console`);
 					}}
 				>
 					<div className="flex items-center overflow-hidden">
