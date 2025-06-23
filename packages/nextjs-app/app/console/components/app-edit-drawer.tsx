@@ -12,7 +12,6 @@ import {
 	createApp as createAppAction,
 	updateApp as updateAppAction,
 } from "@/app/console/actions";
-import { redirect } from "next/navigation";
 import { getAllState } from "@/store";
 
 interface IAppEditDrawerProps extends DrawerProps {
@@ -73,9 +72,6 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 			onSuccess: () => {
 				onClose?.();
 				message.success("新增应用配置成功");
-				setTimeout(() => {
-					redirect("/console");
-				}, 1200);
 			},
 		},
 	);
@@ -89,9 +85,6 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 			onSuccess: () => {
 				onClose?.();
 				message.success("编辑应用配置成功");
-				setTimeout(() => {
-					redirect("/console");
-				}, 1200);
 			},
 		},
 	);

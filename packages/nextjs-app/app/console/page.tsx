@@ -58,6 +58,7 @@ export default function AppsPage() {
 									key={item.id}
 									item={item}
 									enableSetting={user.enableSetting}
+									refreshAppList={refreshAppList}
 								/>
 							);
 						})}

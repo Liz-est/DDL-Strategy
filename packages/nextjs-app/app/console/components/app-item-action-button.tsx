@@ -6,16 +6,20 @@ import { Dropdown, message } from "antd";
 import { useAppEditDrawer } from "@/app/console/hooks/use-app-edit-drawer";
 import { AppDetailDrawerModeEnum } from "@/app/console/enums";
 import { deleteApp } from "@/app/console/actions";
-import { redirect } from "next/navigation";
 
-export default function AppItemActionButton(props: { item: IDifyAppItem }) {
-	const { item } = props;
+export default function AppItemActionButton(props: {
+	item: IDifyAppItem;
+	refreshAppList: () => Promise<void>;
+}) {
+	const { item, refreshAppList } = props;
 	const {
 		setAppEditDrawerMode,
 		setAppEditDrawerOpen,
 		setAppEditDrawerAppItem,
 		drawerComponent,
-	} = useAppEditDrawer();
+	} = useAppEditDrawer({
+		successCallback: () => refreshAppList(),
+	});
 	return (
 		<>
 			<Dropdown
@@ -40,7 +44,7 @@ export default function AppItemActionButton(props: { item: IDifyAppItem }) {
 								await deleteApp(item.id);
 								message.success("删除应用成功");
 								// 重新加载列表页
-								redirect("/console");
+								refreshAppList();
 							},
 						},
 					],

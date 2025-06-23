@@ -11,11 +11,12 @@ import AppItemActionButton from "@/app/console/components/app-item-action-button
 interface IAppItemProps {
 	item: IDifyAppItem;
 	enableSetting: boolean;
+	refreshAppList: () => Promise<void>;
 }
 
 export default function AppItem(props: IAppItemProps) {
 	const router = useRouter();
-	const { item, enableSetting } = props;
+	const { item, enableSetting, refreshAppList } = props;
 	const isMobile = useIsMobile();
 	const hasTags = item.info.tags?.length;
 	return (
@@ -56,7 +57,9 @@ export default function AppItem(props: IAppItemProps) {
 				</div>
 
 				{/* 操作图标 */}
-				{enableSetting ? <AppItemActionButton item={item} /> : null}
+				{enableSetting ? (
+					<AppItemActionButton item={item} refreshAppList={refreshAppList} />
+				) : null}
 			</div>
 		</Col>
 	);
