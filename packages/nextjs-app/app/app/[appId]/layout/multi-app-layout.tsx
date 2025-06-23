@@ -1,13 +1,8 @@
 import { DownCircleTwoTone } from "@ant-design/icons";
 import { DifyApi } from "@/services/dify";
 import { LucideIcon } from "@dify-chat/components";
-import {
-	AppContextProvider,
-	ICurrentApp,
-	IDifyAppItem,
-	IDifyChatContextMultiApp,
-} from "@dify-chat/core";
-import { useDifyChat } from "@dify-chat/core";
+import { getAppList as getAppListAction } from "@/app/apps/actions";
+import { AppContextProvider } from "@dify-chat/core";
 import { useIsMobile } from "@dify-chat/helpers";
 import { useMount, useRequest } from "ahooks";
 import { Dropdown, message } from "antd";
@@ -17,29 +12,37 @@ import { flushSync } from "react-dom";
 import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
 import MainLayout from "@/app/app/[appId]/layout/main-layout";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { getUserAction } from "@/app/actions";
+import { IDifyAppItem4View } from "@/types";
+import { ICurrentApp } from "@/app/app/[appId]/types";
 
-const MultiAppLayout: React.FC = () => {
-	const { ...difyChatContext } = useDifyChat();
-	const { user, appService } = difyChatContext as IDifyChatContextMultiApp;
+interface IMultiAppLayoutProps {
+	appId: string;
+}
+
+const MultiAppLayout = (props: IMultiAppLayoutProps) => {
+	const { appId } = props;
 	const router = useRouter();
-	const { appId } = useParams<{ appId: string }>();
+	const { data: userInfo = { userId: "" } } = useRequest(() => {
+		return getUserAction();
+	});
 
 	const difyApi = useDifyApi({
-		user,
+		user: userInfo.userId!,
 		appId,
 	});
 
 	const [selectedAppId, setSelectedAppId] = useState<string>("");
 	const [initLoading, setInitLoading] = useState(false);
-	const [appList, setAppList] = useState<IDifyAppItem[]>([]);
+	const [appList, setAppList] = useState<IDifyAppItem4View[]>([]);
 
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>();
 
 	const { runAsync: getAppList } = useRequest(
 		() => {
 			setInitLoading(true);
-			return appService.getApps();
+			return getAppListAction();
 		},
 		{
 			manual: true,

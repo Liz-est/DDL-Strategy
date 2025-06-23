@@ -1,10 +1,5 @@
 "use client";
-import {
-	AppContextProvider,
-	ICurrentApp,
-	IDifyChatContextSingleApp,
-} from "@dify-chat/core";
-import { useDifyChat } from "@dify-chat/core";
+import { AppContextProvider } from "@dify-chat/core";
 import { useMount, useRequest } from "ahooks";
 import { Spin } from "antd";
 import React, { useState } from "react";
@@ -12,17 +7,42 @@ import React, { useState } from "react";
 import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
 import MainLayout from "@/app/app/[appId]/layout/main-layout";
+import { getUserAction } from "@/app/actions";
+import { IDifyAppItem4View } from "@/types";
+import { ICurrentApp } from "@/app/app/[appId]/types";
 
-const SingleAppLayout: React.FC = () => {
-	const difyChatContext = useDifyChat();
-	const { user, appConfig } = difyChatContext as IDifyChatContextSingleApp;
+interface ISingleAppLayoutProps {
+	appId: string;
+}
+
+const SingleAppLayout = (props: ISingleAppLayoutProps) => {
+	const { appId } = props;
 	const [selectedAppId, setSelectedAppId] = useState("");
 	const [initLoading, setInitLoading] = useState(false);
-	const [currentApp, setCurrentApp] = useState<ICurrentApp>(); // 新增 currentApp 状态用于保存当前应用的 inf
+	const [currentApp, setCurrentApp] = useState<ICurrentApp>(); // 新增 currentApp 状态用于保存当前应用的 info
+	const { data: userInfo = { userId: "" } } = useRequest(() => {
+		return getUserAction();
+	});
+	const { runAsync: getAppConfig } = useRequest(
+		(appId: string) => {
+			return fetch(`/api/app/${appId}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}).then((res) => res.json());
+		},
+		{
+			manual: true,
+			onSuccess: (appConfig) => {
+				initInSingleModeByAppConfig(appConfig);
+			},
+		},
+	);
 
 	const difyApi = useDifyApi({
-		user,
-		appId: appConfig.id,
+		user: userInfo.userId,
+		appId,
 	});
 
 	const { runAsync: getAppParameters } = useRequest(
@@ -36,8 +56,8 @@ const SingleAppLayout: React.FC = () => {
 
 	const { getAppSiteSettting } = useAppSiteSetting();
 
-	const initInSingleMode = async () => {
-		setSelectedAppId(appConfig.id);
+	const initInSingleModeByAppConfig = async (appConfig: IDifyAppItem4View) => {
+		setSelectedAppId(appId);
 		setInitLoading(true);
 		const [difyAppInfo, appParameters, appSiteSetting] = await Promise.all([
 			difyApi.getAppInfo(),
@@ -47,7 +67,6 @@ const SingleAppLayout: React.FC = () => {
 		// 获取应用信息
 		setCurrentApp({
 			config: {
-				id: appConfig.id,
 				...appConfig,
 				info: {
 					...difyAppInfo,
@@ -63,7 +82,7 @@ const SingleAppLayout: React.FC = () => {
 
 	// 初始化获取应用列表
 	useMount(() => {
-		initInSingleMode();
+		getAppConfig(appId);
 	});
 
 	if (initLoading) {
