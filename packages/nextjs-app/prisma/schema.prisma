@@ -14,6 +14,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 系统配置
+model system_config {
+	id String @id @default(uuid()) @db.VarChar(36)
+	key String @db.VarChar(255)
+	value String @db.VarChar(255)
+	created_at DateTime @default(now())
+	updated_at DateTime @default(now()) @updatedAt
+}
+
+// 应用
 model app {
 	id String @id @default(uuid()) @db.VarChar(36)
 	api_base String @db.VarChar(255)
