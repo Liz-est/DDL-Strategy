@@ -7,7 +7,24 @@
 - 通过服务端调用 Dify API，密钥信息不会在客户端传输和存储
 - 应用列表 CRUD 默认实现调整为数据库持久化存储
 
-## 环境变量配置
+## 前置准备
+
+在开始之前，请确保你已经准备好了以下环境/工具：
+
+- Node.js
+- PNPM
+- PostgreSQL
+
+### 数据库准备
+
+数据库默认使用 PostgreSQL，如果你有其他需求，可以在 `/prisma/schema.prisma` 中自行修改。
+
+你需要创建：
+
+- 一个数据库，例如 `dify_chat`，用于存储应用列表信息
+- 一个数据库用户，例如 `postgres`，并赋予该用户对 `dify_chat` 数据库的读写权限
+
+### 环境变量配置
 
 第一步，生成 session 密钥：
 
@@ -19,16 +36,20 @@ openssl rand -base64 32
 
 ```bash
 # .env
-RUNNING_MODE=multiApp # 多应用模式
+RUNNING_MODE=multiApp # 应用模式, 可选值：singleApp-单应用, multiApp-多应用
 SESSION_SECRET=xxx # 上面生成的 Session 密钥
-DATABASE_URL=postgresql://db_userName:db_password@db_host:db_port/dify_chat # 数据库连接
+DATABASE_URL=postgresql:/<db_userName>:<db_password>@<db_host>:<db_port>/<dify_name> # 数据库连接
 ```
 
-## 数据库配置
+数据库连接变量说明：
 
-数据库默认使用 PostgreSQL，如果你有其他需求，可以在 `/prisma/schema.prisma` 中自行修改。
+- `db_username`: 用户名
+- `db_password`: 密码
+- `db_host`: 数据库地址
+- `db_port`: 数据库端口
+- `dify_name`: 数据库名称
 
-### 数据库迁移
+### 数据库初始化
 
 ```bash
 npm run prisma:migrate
@@ -53,7 +74,7 @@ pnpm dev
 - [x] 把 react-app 以及其他子包的依赖升级到 react 19
 - [ ] 子包依赖本地开发热更新
 - [x] 移除 DC-User 机制，通过 cookie 解析 jwt token 获取 userId
-- [ ] 上传文件支持（Dify UploadFile API）
+- [x] 上传文件支持（Dify UploadFile API）
 
 ## Project Tree
 
