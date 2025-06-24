@@ -28,10 +28,10 @@
 		"antd": "catalog:",
 		"classnames": "catalog:",
 		"dayjs": "catalog:",
-		"drizzle-orm": "^0.44.2",
+		"drizzle-orm": "catalog:",
 		"jose": "catalog:",
 		"next": "catalog:",
-		"pg": "^8.16.2",
+		"pg": "catalog:",
 		"prisma": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
@@ -40,14 +40,14 @@
 		"@eslint/eslintrc": "catalog:",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "catalog:",
-		"@types/pg": "^8.15.4",
+		"@types/pg": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
-		"drizzle-kit": "^0.31.2",
+		"drizzle-kit": "catalog:",
 		"eslint": "catalog:",
 		"eslint-config-next": "catalog:",
 		"tailwindcss": "^4",
-		"tsx": "^4.20.3",
+		"tsx": "catalog:",
 		"typescript": "catalog:"
 	}
 }
