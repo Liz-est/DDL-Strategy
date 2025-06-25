@@ -5,8 +5,9 @@
 	"scripts": {
 		"prisma:gen": "prisma generate",
 		"prisma:migrate": "prisma migrate dev",
-		"dev": "pnpm prisma:gen && next dev --turbopack",
-		"build": "pnpm prisma:gen && next build",
+		"db:gen": "drizzle-kit generate",
+		"dev": "pnpm db:gen && next dev --turbopack",
+		"build": "pnpm db:gen && next build",
 		"start": "next start",
 		"lint": "next lint"
 	},
@@ -27,8 +28,10 @@
 		"antd": "catalog:",
 		"classnames": "catalog:",
 		"dayjs": "catalog:",
+		"drizzle-orm": "catalog:",
 		"jose": "catalog:",
 		"next": "catalog:",
+		"pg": "catalog:",
 		"prisma": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:"
@@ -37,11 +40,14 @@
 		"@eslint/eslintrc": "catalog:",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "catalog:",
+		"@types/pg": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
+		"drizzle-kit": "catalog:",
 		"eslint": "catalog:",
 		"eslint-config-next": "catalog:",
 		"tailwindcss": "^4",
+		"tsx": "catalog:",
 		"typescript": "catalog:"
 	}
 }
