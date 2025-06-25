@@ -92,9 +92,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	});
 
 	const searchParams = useSearchParams();
-	const isFromConsole = useMemo(() => {
-		return searchParams.get("sourcePage") === "console";
-	}, [searchParams]);
 
 	// 创建 Dify API 实例
 	const [conversationListLoading, setCoversationListLoading] =
@@ -416,15 +413,6 @@ export default function ChatLayout(props: IChatLayoutProps) {
 								<MenuOutlined className="text-xl" />
 							</Dropdown>
 						) : null
-					}
-					rightLink={
-						isFromConsole && userInfo?.enableSetting
-							? {
-									icon: "square-chevron-right",
-									href: "/console",
-									title: "控制台",
-								}
-							: undefined
 					}
 				/>
 

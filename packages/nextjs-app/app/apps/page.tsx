@@ -10,7 +10,6 @@ import HeaderWrapper, {
 import { useMount } from "ahooks";
 import { useMemo, useState } from "react";
 import { IDifyAppItem4View } from "@/types";
-import { getAllState } from "@/store";
 
 export default function AppsPage() {
 	const [apps, setApps] = useState<IDifyAppItem4View[]>();
@@ -25,20 +24,11 @@ export default function AppsPage() {
 	});
 
 	const headerWrapperProps: IHeaderProps = useMemo(() => {
-		const userInfo = getAllState().user;
-		const enableSetting = userInfo?.enableSetting;
 		return {
 			centerTitle: {
 				icon: "layout-grid",
 				title: "应用列表",
 			},
-			rightLink: enableSetting
-				? {
-						icon: "square-chevron-right",
-						href: "/console",
-						title: "控制台",
-					}
-				: undefined,
 		};
 	}, []);
 

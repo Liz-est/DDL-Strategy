@@ -8,7 +8,7 @@ export interface IHeaderProps {
 		title: string;
 		icon: ILucideIconProps["name"];
 	};
-	rightLink: IHeaderLayoutProps["rightLink"];
+	rightLink?: IHeaderLayoutProps["rightLink"];
 }
 
 export default function Header(props: IHeaderProps) {
