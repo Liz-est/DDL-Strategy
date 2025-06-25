@@ -18,7 +18,6 @@ import {
 	ConversationsContextProvider,
 	IDifyAppItem,
 	useAppContext,
-	useDifyChat,
 } from "@dify-chat/core";
 import { isTempId, useIsMobile } from "@dify-chat/helpers";
 import {
@@ -48,6 +47,8 @@ import { DEFAULT_CONVERSATION_NAME } from "@/config";
 import { useLatest } from "@/hooks/use-latest";
 import { useSearchParams } from "next/navigation";
 import { useDifyApi } from "@/hooks/useApi";
+import { getUserAction } from "@/app/actions";
+import { useRequest } from "ahooks";
 
 interface IChatLayoutProps {
 	/**
@@ -82,14 +83,20 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	}, [conversations, currentConversationId]);
 	const isMobile = useIsMobile();
 	const { currentAppId } = useAppContext();
-	const { user } = useDifyChat();
+	const { data: userInfo } = useRequest(() => {
+		return getUserAction();
+	});
 	const difyApi = useDifyApi({
-		user,
+		user: userInfo?.userId as string,
 		appId: currentAppId!,
 	});
 
-	// 创建 Dify API 实例
 	const searchParams = useSearchParams();
+	const isFromConsole = useMemo(() => {
+		return searchParams.get("sourcePage") === "console";
+	}, [searchParams]);
+
+	// 创建 Dify API 实例
 	const [conversationListLoading, setCoversationListLoading] =
 		useState<boolean>(false);
 	const latestCurrentConversationId = useLatest(currentConversationId);
@@ -409,6 +416,15 @@ export default function ChatLayout(props: IChatLayoutProps) {
 								<MenuOutlined className="text-xl" />
 							</Dropdown>
 						) : null
+					}
+					rightLink={
+						isFromConsole && userInfo?.enableSetting
+							? {
+									icon: "square-chevron-right",
+									href: "/console",
+									title: "控制台",
+								}
+							: undefined
 					}
 				/>
 
