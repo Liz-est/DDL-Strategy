@@ -43,7 +43,7 @@ export default function ConsolePage() {
 		userId: "",
 		enableSetting: false,
 	});
-	const [runningMode, setRunningMode] = useState<IDifyChatMode>("multiApp");
+	const [runningMode, setRunningMode] = useState<IDifyChatMode>();
 	const [runningAppId, setRunningAppId] = useState("");
 
 	const handleRunningModeChange = async (value: string) => {
