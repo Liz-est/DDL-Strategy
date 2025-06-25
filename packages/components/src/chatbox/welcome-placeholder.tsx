@@ -1,8 +1,4 @@
-import {
-	EllipsisOutlined,
-	FireOutlined,
-	ShareAltOutlined,
-} from "@ant-design/icons";
+import { EllipsisOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { Prompts, Welcome } from "@ant-design/x";
 import { DifyApi } from "@dify-chat/api";
 import { useAppContext } from "@dify-chat/core";
@@ -14,13 +10,6 @@ import { useMemo } from "react";
 import LucideIcon from "../lucide-icon";
 import { validateAndGenErrMsgs } from "../utils";
 import AppInputWrapper from "./app-input-wrapper";
-
-const renderTitle = (icon: React.ReactElement, title: string) => (
-	<Space align="start">
-		{icon}
-		<div className="whitespace-pre-wrap">{title}</div>
-	</Space>
-);
 
 interface IWelcomePlaceholderProps {
 	/**
@@ -63,19 +52,20 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 
 	const placeholderPromptsItems: GetProp<typeof Prompts, "items"> =
 		useMemo(() => {
-			if (currentApp?.parameters?.suggested_questions?.length) {
+			if (
+				currentApp?.parameters?.opening_statement ||
+				currentApp?.parameters?.suggested_questions?.length
+			) {
 				// 开场白标题
 				const suggestedTitle =
-					currentApp?.parameters?.opening_statement || "Hot Topics";
+					currentApp?.parameters?.opening_statement ||
+					`你好，我是 ${currentApp?.config?.info?.name || "Dify Chat"}`;
 				return [
 					{
 						key: "suggested_question",
-						label: renderTitle(
-							<FireOutlined style={{ color: "#FF4D4F" }} />,
-							suggestedTitle,
-						),
+						label: <div className="whitespace-pre-wrap">{suggestedTitle}</div>,
 						description: "",
-						children: currentApp.parameters.suggested_questions.map(
+						children: currentApp.parameters.suggested_questions?.map(
 							(item, index) => {
 								return {
 									key: `suggested_question-${index}`,
