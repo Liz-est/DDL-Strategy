@@ -5,12 +5,12 @@ export const SystemConfigKeys = {
 	/**
 	 * 运行模式
 	 */
-	RunningMode: "running_mode",
+	RunningMode: "RUNNING_MODE",
 	/**
 	 * 单应用模式下正在运行的应用 ID
 	 */
-	RunningSingleAppId: "running_single_app_id",
-};
+	RunningSingleAppId: "RUNNING_SINGLE_APP_ID",
+} as const;
 
 /**
  * 运行模式

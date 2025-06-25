@@ -8,7 +8,7 @@ export interface SessionPayload extends JWTPayload {
 	userId: string;
 }
 
-const secretKey = getConfigs().secretKey;
+const secretKey = getConfigs().SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 /**
