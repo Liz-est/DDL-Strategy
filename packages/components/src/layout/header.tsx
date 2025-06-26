@@ -50,7 +50,7 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 			{/* 右侧图标 */}
 			<HeaderSiderIcon align="right">
 				{rightIcon || (
-					<Space className="flex items-center">
+					<Space className="flex items-center" size={16}>
 						<ThemeSelector>
 							<div className="flex items-center cursor-pointer">
 								<LucideIcon

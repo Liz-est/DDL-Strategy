@@ -57,7 +57,7 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 			{/* 右侧图标 */}
 			<HeaderSiderIcon align="right">
 				{rightIcon || (
-					<Space size="middle" className="flex items-center">
+					<Space size={16} className="flex items-center">
 						{rightLink ? (
 							<Link href={rightLink.href} title={rightLink.title}>
 								<LucideIcon
