@@ -50,6 +50,10 @@ router.get('/apps/:id', async ctx => {
 router.post('/apps', async ctx => {
 	const newApp = ctx.request.body
 	const apps = readData()
+	// 如果id为空，则生成一个
+	if (!newApp.id) {
+		newApp.id = Date.now().toString()
+	}
 	apps.push(newApp)
 	writeData(apps)
 	ctx.status = 201
