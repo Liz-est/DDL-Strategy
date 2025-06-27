@@ -3,7 +3,7 @@ import { IDifyAppItem } from "@/types";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
 const APPS_JSON_PATH = path.resolve(
-	process.env.PROJECT_ROOT!,
+	process.cwd(),
 	".dify-chat",
 	"storage",
 	"apps.json",
