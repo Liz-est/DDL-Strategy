@@ -1,4 +1,4 @@
-import { getAppList } from "@/lib/repository";
+import { getAppList } from "@/services/app";
 import { NextResponse } from "next/server";
 
 /**

@@ -1,4 +1,4 @@
-import { addApp } from "@/lib/repository/fs/app";
+import { addApp } from "@/services/app";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

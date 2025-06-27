@@ -1,4 +1,4 @@
-import { getAppItem } from "@/lib/repository";
+import { getAppItem } from "@/services/app";
 
 import { BaseRequest } from "@dify-chat/helpers";
 import { NextRequest } from "next/server";

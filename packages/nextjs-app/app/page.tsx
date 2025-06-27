@@ -1,6 +1,6 @@
 import Image from "next/image";
 import SingleAppLayoutWrapper from "@/components/layout/single-layout-wrapper";
-import { getAppList } from "@/lib/repository";
+import { getAppList } from "@/services/app";
 import { redirect } from "next/navigation";
 import { getRunningModeAction } from "@/app/actions";
 import { RunningModes } from "@/constants";
