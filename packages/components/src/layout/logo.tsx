@@ -22,7 +22,7 @@ export const GithubIcon = () => {
 			target="_blank"
 			className="!px-0"
 		>
-			<GithubOutlined className="text-xl cursor-pointer" />
+			<GithubOutlined className="text-xl cursor-pointer text-theme-text" />
 		</Button>
 	);
 };
