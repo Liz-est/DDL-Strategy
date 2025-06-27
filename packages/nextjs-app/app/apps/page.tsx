@@ -9,14 +9,29 @@ import HeaderWrapper, {
 } from "@/components/layout/header-wrapper";
 import { useMount } from "ahooks";
 import { useMemo, useState } from "react";
-import { IDifyAppItem4View } from "@/types";
+import { IDifyAppItem } from "@/types";
+import AddButton from "./components/add-button";
+import { getUserAction } from "../actions";
 
 export default function AppsPage() {
-	const [apps, setApps] = useState<IDifyAppItem4View[]>();
+	const [apps, setApps] = useState<IDifyAppItem[]>();
+	const [user, setUser] = useState<{
+		userId: string;
+		enableSetting: boolean;
+	}>({
+		userId: "",
+		enableSetting: false,
+	});
 
-	const initData = async () => {
+	const refreshAppList = async () => {
 		const appsRes = await getAppList();
 		setApps(appsRes);
+	};
+
+	const initData = async () => {
+		const user = await getUserAction();
+		setUser(user);
+		refreshAppList();
 	};
 
 	useMount(() => {
@@ -39,7 +54,14 @@ export default function AppsPage() {
 				{apps?.length ? (
 					<Row gutter={[16, 16]} className="px-3 md:px-6">
 						{apps.map((item) => {
-							return <AppItem key={item.id} item={item} />;
+							return (
+								<AppItem
+									key={item.id}
+									item={item}
+									enableSetting={user.enableSetting}
+									refreshAppList={refreshAppList}
+								/>
+							);
 						})}
 					</Row>
 				) : (
@@ -48,6 +70,8 @@ export default function AppsPage() {
 					</div>
 				)}
 			</div>
+
+			{user.enableSetting ? <AddButton refreshApps={refreshAppList} /> : null}
 		</div>
 	);
 }

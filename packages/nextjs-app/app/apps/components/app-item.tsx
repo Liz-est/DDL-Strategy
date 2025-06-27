@@ -1,5 +1,5 @@
 "use client";
-import { IDifyAppItem4View } from "@/types";
+import { IDifyAppItem } from "@/types";
 import { TagOutlined } from "@ant-design/icons";
 import { LucideIcon } from "@dify-chat/components";
 import { AppModeLabels } from "@dify-chat/core";
@@ -7,14 +7,17 @@ import { useIsMobile } from "@dify-chat/helpers";
 
 import { Col } from "antd";
 import { useRouter } from "next/navigation";
+import AppItemActionButton from "./app-item-action-button";
 
 interface IAppItemProps {
-	item: IDifyAppItem4View;
+	item: IDifyAppItem;
+	enableSetting: boolean;
+	refreshAppList: () => Promise<void>;
 }
 
 export default function AppItem(props: IAppItemProps) {
 	const router = useRouter();
-	const { item } = props;
+	const { item, enableSetting, refreshAppList } = props;
 	const isMobile = useIsMobile();
 	const hasTags = item.info.tags?.length;
 	return (
@@ -53,6 +56,11 @@ export default function AppItem(props: IAppItemProps) {
 						</>
 					) : null}
 				</div>
+
+				{/* 操作图标 */}
+				{enableSetting ? (
+					<AppItemActionButton item={item} refreshAppList={refreshAppList} />
+				) : null}
 			</div>
 		</Col>
 	);

@@ -6,12 +6,12 @@ import { useRequest } from "ahooks";
 import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
 import { useEffect, useState } from "react";
 
-import { AppDetailDrawerModeEnum } from "@/app/console/enums";
-import SettingForm from "@/app/console/components/setting-form";
+import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
+import SettingForm from "@/app/apps/components/setting-form";
 import {
 	createApp as createAppAction,
 	updateApp as updateAppAction,
-} from "@/app/console/actions";
+} from "@/app/apps/actions";
 import { getAllState } from "@/store";
 
 interface IAppEditDrawerProps extends DrawerProps {
