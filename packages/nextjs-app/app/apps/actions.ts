@@ -5,7 +5,7 @@ import {
 	updateApp as updateAppItem,
 	deleteApp as deleteAppItem,
 	getAppList as getAppListFromRepository,
-} from "@/lib/repository";
+} from "@/services/app";
 
 export async function getAppList() {
 	const res = await getAppListFromRepository();
@@ -20,11 +20,22 @@ export async function deleteApp(id: string) {
 }
 
 export async function createApp(appItem: Omit<IDifyAppItem, "id">) {
-	const res = await addApp(appItem);
+	const res = await addApp({
+		...appItem,
+		id: Date.now().toString(),
+	});
 	return res;
 }
 
 export async function updateApp(appItem: IDifyAppItem) {
-	const res = await updateAppItem(appItem);
-	return res;
+	try {
+		const res = await updateAppItem(appItem);
+		return res;
+	} catch (error) {
+		console.error(error);
+		return {
+			success: false,
+			message: "更新应用配置失败",
+		};
+	}
 }
