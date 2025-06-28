@@ -34,10 +34,14 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 	const [workflowStatus, setWorkflowStatus] = useState<'running' | 'finished'>()
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([])
 	const [resultDetail, setResultDetail] = useState<Record<string, string>>({})
+	const [textGenerateStatus, setTextGenerateStatus] = useState<'init' | 'running' | 'finished'>(
+		'init',
+	)
+
+	const appMode = currentApp?.config?.info?.mode
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
 		const runner = () => {
-			const appMode = currentApp?.config?.info?.mode
 			if (appMode === AppModeEnums.WORKFLOW) {
 				return difyApi.runWorkflow({
 					inputs: values,
@@ -164,10 +168,20 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 						}
 						if (parsedData.event === EventEnum.MESSAGE) {
 							const text = parsedData.answer
+							if (textGenerateStatus === 'init') {
+								setTextGenerateStatus('running')
+							}
 							setText(prev => {
 								return prev + text
 							})
 							result += text
+						}
+						if (parsedData.event === EventEnum.MESSAGE_END) {
+							if (parsedData.event === EventEnum.MESSAGE_END) {
+								setText(result)
+								setTextGenerateStatus('finished')
+							}
+							setText(result)
 						}
 						if (parsedData.event === EventEnum.ERROR) {
 							message.error((parsedData as unknown as IErrorEvent).message)
@@ -254,22 +268,37 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 			</div>
 
 			{/* 工作流执行输出区域 */}
-			<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
-				{!text && !workflowItems?.length && workflowStatus !== 'running' ? (
-					<div className="w-full h-full flex items-center justify-center">
-						<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
-					</div>
-				) : (
-					<>
-						<WorkflowLogs
-							className="mt-0"
-							status={workflowStatus}
-							items={workflowItems}
-						/>
-						{resultItems?.length ? <Tabs items={resultItems} /> : null}
-					</>
-				)}
-			</div>
+			{appMode === AppModeEnums.WORKFLOW && (
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+					{!workflowItems?.length && workflowStatus !== 'running' ? (
+						<div className="w-full h-full flex items-center justify-center">
+							<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
+						</div>
+					) : (
+						<>
+							<WorkflowLogs
+								className="mt-0"
+								status={workflowStatus}
+								items={workflowItems}
+							/>
+							{resultItems?.length ? <Tabs items={resultItems} /> : null}
+						</>
+					)}
+				</div>
+			)}
+
+			{/* 文本生成结果渲染 */}
+			{appMode === AppModeEnums.TEXT_GENERATOR && (
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+					{textGenerateStatus === 'init' ? (
+						<div className="w-full h-full flex items-center justify-center">
+							<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
+						</div>
+					) : (
+						<MarkdownRenderer markdownText={text} />
+					)}
+				</div>
+			)}
 		</div>
 	)
 }
