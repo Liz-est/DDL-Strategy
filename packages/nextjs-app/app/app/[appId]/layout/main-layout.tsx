@@ -60,7 +60,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 					{[AppModeEnums.WORKFLOW, AppModeEnums.TEXT_GENERATOR].includes(
 						appMode,
 					) ? (
-						<WorkflowLayout />
+						<WorkflowLayout appMode={appMode} />
 					) : (
 						<div>不支持的应用类型</div>
 					)}

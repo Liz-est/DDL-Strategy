@@ -23,10 +23,13 @@ import { useState } from "react";
 /**
  * 工作流应用详情布局
  */
-export default function WorkflowLayout() {
+export default function WorkflowLayout({ appMode }: { appMode: AppModeEnums }) {
 	const [entryForm] = Form.useForm();
 	const { currentApp } = useAppContext();
 	const [text, setText] = useState("");
+	const [textGenerateStatus, setTextGenerateStatus] = useState<
+		"init" | "running" | "finished"
+	>("init");
 	const [workflowStatus, setWorkflowStatus] = useState<
 		"running" | "finished"
 	>();
@@ -168,10 +171,17 @@ export default function WorkflowLayout() {
 						}
 						if (parsedData.event === EventEnum.MESSAGE) {
 							const text = parsedData.answer;
+							if (textGenerateStatus === "init") {
+								setTextGenerateStatus("running");
+							}
 							setText((prev) => {
 								return prev + text;
 							});
 							result += text;
+						}
+						if (parsedData.event === EventEnum.MESSAGE_END) {
+							setText(result);
+							setTextGenerateStatus("finished");
 						}
 						console.log("result", result);
 						if (parsedData.event === EventEnum.ERROR) {
@@ -222,7 +232,7 @@ export default function WorkflowLayout() {
 	].filter((item) => item.visible);
 
 	return (
-		<div className="block md:flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden bg-gray-50">
+		<div className="block md:!flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden bg-gray-50">
 			{/* 参数填写区域 */}
 			<div className="md:flex-1 overflow-hidden border-0 border-r border-solid border-light-gray bg-theme-bg pb-6 md:pb-0">
 				<div className="px-2">
@@ -258,24 +268,41 @@ export default function WorkflowLayout() {
 			</div>
 
 			{/* 工作流执行输出区域 */}
-			<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
-				{!text && !workflowItems?.length && workflowStatus !== "running" ? (
-					<div className="w-full h-full flex items-center justify-center">
-						<Empty
-							description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `}
-						/>
-					</div>
-				) : (
-					<>
-						<WorkflowLogs
-							className="mt-0"
-							status={workflowStatus}
-							items={workflowItems}
-						/>
-						{resultItems?.length ? <Tabs items={resultItems} /> : null}
-					</>
-				)}
-			</div>
+			{appMode === AppModeEnums.WORKFLOW && (
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+					{!workflowItems?.length && workflowStatus !== "running" ? (
+						<div className="w-full h-full flex items-center justify-center">
+							<Empty
+								description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `}
+							/>
+						</div>
+					) : (
+						<>
+							<WorkflowLogs
+								className="mt-0"
+								status={workflowStatus}
+								items={workflowItems}
+							/>
+							{resultItems?.length ? <Tabs items={resultItems} /> : null}
+						</>
+					)}
+				</div>
+			)}
+
+			{/* 文本生成结果渲染 */}
+			{appMode === AppModeEnums.TEXT_GENERATOR && (
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+					{textGenerateStatus === "init" ? (
+						<div className="w-full h-full flex items-center justify-center">
+							<Empty
+								description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `}
+							/>
+						</div>
+					) : (
+						<MarkdownRenderer markdownText={text} />
+					)}
+				</div>
+			)}
 		</div>
 	);
 }
