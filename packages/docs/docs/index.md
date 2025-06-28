@@ -2,16 +2,16 @@
 pageType: home
 
 hero:
-  name: My Site
-  text: A cool website!
-  tagline: This is the tagline
+  name: Dify Chat
+  text: 更贴近业务的 Dify Web APP
+  # tagline: 快速部署
   actions:
     - theme: brand
       text: Quick Start
       link: /guide/
     - theme: alt
       text: GitHub
-      link: https://github.com/web-infra-dev/rspress
+      link: https://github.com/lexmin0412/dify-chat
   image:
     src: /rspress-icon.png
     alt: Logo
