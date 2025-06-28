@@ -132,9 +132,9 @@ export abstract class DifyAppStore extends DifyAppStoreBase {
 	/**
 	 * 更新 App
 	 */
-	abstract updateApp(app: IDifyAppItem): Promise<void>;
+	abstract updateApp(app: IDifyAppItem): Promise<unknown>;
 	/**
 	 * 删除 App
 	 */
-	abstract deleteApp(id: string): Promise<void>;
+	abstract deleteApp(id: string): Promise<unknown>;
 }
