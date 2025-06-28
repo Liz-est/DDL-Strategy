@@ -1,29 +1,27 @@
-# Rspress website
+# Dify Chat 文档站点
 
-## Setup
-
-Install the dependencies:
+## 安装依赖
 
 ```bash
-npm install
+pnpm install
 ```
 
-## Get started
+## 开始使用
 
-Start the dev server:
+启动开发服务器:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-Build the website for production:
+构建生产静态站点：
 
 ```bash
-npm run build
+pnpm build
 ```
 
-Preview the production build locally:
+本地预览生产构建产物：
 
 ```bash
-npm run preview
+pnpm preview
 ```
