@@ -13,5 +13,12 @@
 		"label": "功能特性",
 		"collapsible": true,
 		"collapsed": false
+	},
+	{
+		"type": "dir",
+		"name": "advanced",
+		"label": "高级",
+		"collapsible": true,
+		"collapsed": false
 	}
 ]
