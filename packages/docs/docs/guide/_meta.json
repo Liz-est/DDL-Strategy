@@ -1,1 +1,10 @@
-["index"]
+[
+	"index",
+	{
+		"type": "dir",
+		"name": "start",
+		"label": "开始",
+		"collapsible": true,
+		"collapsed": false
+	}
+]
