@@ -653,16 +653,19 @@ export class DifyApi {
 	runWorkflow = async (params: {
 		inputs: Record<string, IFile[] | unknown>;
 	}) => {
-		return this.baseRequest.baseRequest("/workflows/run", {
-			method: "POST",
-			body: JSON.stringify({
-				...params,
-				response_mode: "streaming",
-			}),
-			headers: {
-				"Content-Type": "application/json",
+		return this.baseRequest.baseRequest(
+			`/${this.options.appId}/workflows/run`,
+			{
+				method: "POST",
+				body: JSON.stringify({
+					...params,
+					response_mode: "streaming",
+				}),
+				headers: {
+					"Content-Type": "application/json",
+				},
 			},
-		});
+		);
 	};
 
 	/**
@@ -670,7 +673,7 @@ export class DifyApi {
 	 */
 	getWorkflowResult = async (params: { workflow_run_id: string }) => {
 		return this.baseRequest.get(
-			`/workflows/run/${params.workflow_run_id}`,
+			`/${this.options.appId}/workflows/run/${params.workflow_run_id}`,
 		) as Promise<IGetWorkflowResultResponse>;
 	};
 
@@ -680,16 +683,19 @@ export class DifyApi {
 	completion = async (params: {
 		inputs: Record<string, IFile[] | unknown>;
 	}) => {
-		return this.baseRequest.baseRequest("/completion-messages", {
-			method: "POST",
-			body: JSON.stringify({
-				...params,
-				response_mode: "streaming",
-			}),
-			headers: {
-				"Content-Type": "application/json",
+		return this.baseRequest.baseRequest(
+			`/${this.options.appId}/completion-messages`,
+			{
+				method: "POST",
+				body: JSON.stringify({
+					...params,
+					response_mode: "streaming",
+				}),
+				headers: {
+					"Content-Type": "application/json",
+				},
 			},
-		});
+		);
 	};
 }
 
