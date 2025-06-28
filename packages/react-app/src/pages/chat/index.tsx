@@ -8,7 +8,12 @@ export default function ChatPage() {
 	const mode = difyChatRuntimeConfig.get().runningMode
 
 	if (mode === 'singleApp') {
-		return <SingleAppLayout getAppConfig={appConfig.getConfig} />
+		return (
+			<SingleAppLayout
+				getAppConfig={appConfig.getConfig}
+				setAppConfig={appConfig.setConfig}
+			/>
+		)
 	}
 
 	return <MultiAppLayout listApi={appService.getApps} />
