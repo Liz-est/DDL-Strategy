@@ -26,10 +26,16 @@ const POST = async (
 	const { inputs } = await _request.json();
 	const user = await getUserIdFromNextRequest(_request);
 	const difyRequest = await genDifyRequest(appId);
-	const response = await difyRequest.post(`/workflows/run`, {
-		response_mode: RESPONSE_MODE,
-		user,
-		inputs,
+	const response = await difyRequest.baseRequest(`/workflows/run`, {
+		method: "POST",
+		body: JSON.stringify({
+			response_mode: RESPONSE_MODE,
+			user,
+			inputs,
+		}),
+		headers: {
+			"Content-Type": "application/json",
+		},
 	});
 	return genDifyResponseProxy(response);
 };
