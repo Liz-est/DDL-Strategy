@@ -172,3 +172,10 @@ body {
 	color: var(--theme-text-color);
 	font-family: Arial, Helvetica, sans-serif;
 }
+
+hr {
+	margin: 0.25rem auto;
+	color: #9ca3b3;
+	height: 0;
+	display: none;
+}
