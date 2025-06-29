@@ -1,8 +1,10 @@
 import { IDifyAppItem } from "@/types";
 import { BaseRequest } from "@dify-chat/helpers";
 
+const API_BASE_URL = "http://localhost:3000";
+
 const baseRequest = new BaseRequest({
-	baseURL: "http://localhost:3000",
+	baseURL: API_BASE_URL,
 });
 
 export const getAppList = async (): Promise<IDifyAppItem[]> => {
