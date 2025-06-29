@@ -20,7 +20,7 @@ export default defineConfig({
 			{
 				icon: 'github',
 				mode: 'link',
-				content: 'https://github.com/web-infra-dev/rspress',
+				content: 'https://github.com/lexmin0412/dify-chat',
 			},
 		],
 	},
