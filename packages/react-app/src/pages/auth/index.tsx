@@ -19,16 +19,19 @@ export default function AuthPage() {
 	const mockLogin = async () => {
 		const fp = await FingerPrintJS.load()
 		const result = await fp.get()
-		return result.visitorId
+		return {
+			userId: result.visitorId,
+			enableSetting: true,
+		}
 	}
 
 	/**
 	 * 登录函数
 	 */
 	const handleLogin = async () => {
-		const userId = await mockLogin()
-		LocalStorageStore.set(LocalStorageKeys.USER_ID, userId)
-		LocalStorageStore.set(LocalStorageKeys.ENABLE_SETTING, 'true')
+		const userInfo = await mockLogin()
+		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId)
+		LocalStorageStore.set(LocalStorageKeys.ENABLE_SETTING, userInfo.enableSetting ? 'true' : '')
 		redirect2Index()
 	}
 
