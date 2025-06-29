@@ -1,4 +1,4 @@
-# 30 秒上手
+# 30 秒试用
 
 为方便演示，我们在 Github Pages 上部署了一个多应用模式的 React SPA 版本，你可以访问 https://lexmin0412.github.io/dify-chat/ 体验。
 

@@ -1,0 +1,155 @@
+import { Tab, Tabs } from 'rspress/theme';
+
+# 自定义应用配置
+
+## 确定运行模式
+
+在开始配置之前，确保你的运行模式是单应用模式。
+
+<Tabs>
+  <Tab label="React SPA">
+```tsx title="packages/react-app/src/App.tsx"
+// 初始化全局运行时配置
+difyChatRuntimeConfig.init('singleApp')
+```
+	</Tab>
+  <Tab label="Next.js">
+```bash title="packages/nextjs-app/.env"
+# 运行模式
+RUNNING_MODE=singleApp
+```
+	</Tab>
+</Tabs>
+
+## 修改默认应用配置管理方式
+
+### React SPA 版本
+
+应用管理服务定义入口：
+
+```tsx title="packages/react-app/src/services/app/singleApp/index.ts"
+// 默认使用 LocalStorage 存储
+export { appConfig } from './localstorage'
+```
+
+在 `packages/react-app/src/services/app/singleApp` 目录下，分别有三种应用配置存储的实现形式：
+
+- `static-readonly`, 写死在代码中的配置，只支持读取，不支持修改数据
+- `localstorage`, 使用 LocalStorage 存储，支持读取和修改，但无法跨浏览器同步
+- `restful`, 通过 API 接口存储，支持读取和修改，推荐使用🌟
+
+你可以根据你的需要自行选择，也可以修改代码或扩展其他实现形式，最终只要通过 `src/services/app/singleApp/index.ts` 导出即可。
+
+### Next.js 版本
+
+应用管理服务定义入口：
+
+```ts title="packages/nextjs-appservices/app/index.ts"
+# 使用 fs 实现
+export * from "./fs";
+```
+
+在 `packages/nextjs-app/services/app` 目录下，实现了两种应用配置的存储形式：
+
+- `fs`, 基于本地文件的存储，支持读取和修改，但存在丢失数据的风险
+- `restful`, 通过 API 接口管理，支持读取和修改，推荐使用🌟
+
+你可以根据你的需要自行选择，也可以修改代码或扩展其他实现形式，最终只要通过 `packages/nextjs-app/services/app/index.ts` 导出即可。
+
+## 预设应用配置管理方式
+
+### React SPA 版本
+
+1. LocalStorage 实现
+
+使用 LocalStorage 数据进行存储，当用户切换浏览器后，数据会丢失，仅作为演示用。
+
+2. 静态数据实现
+
+使用静态数据进行存储，仅支持查询，不支持修改数据，适用于修改频率不高，用户无需自定义应用的场景。
+
+定义配置：
+
+```ts title="packages/react-app/src/services/app/singleApp/static-readonly/data.ts"
+import { AppModeEnums } from '@dify-chat/core'
+
+/**
+ * 静态的应用配置，用于演示
+ * 注意：**尽量不要在公开的生产环境中使用静态数据**，推荐使用后端服务
+ */
+export const staticAppConfig = {
+	id: '0.270357011315995',
+	info: {
+		name: 'My Chatflow APP',
+		description: '我的 Chatflow 应用',
+		tags: [],
+		mode: AppModeEnums.CHATFLOW,
+	},
+	requestConfig: {
+		apiBase: 'https://api.dify.ai/v1',
+		apiKey: 'app-xxxxxxx',
+	},
+}
+```
+
+3. Restful 实现
+
+通过 API 接口管理，支持完整的 CRUD，推荐使用🌟
+
+默认请求的后端服务地址为 `http://localhost:3000`，你可以根据你的需要修改。
+
+然后在对应的 restful 实现中，修改调用的 BaseURL 即可。
+
+<Tabs>
+  <Tab label="React SPA">
+```ts title="packages/react-app/src/services/app/singleApp/restful.ts"
+const API_BASE_URL = 'http://localhost:3000'
+```
+	</Tab>
+  <Tab label="Next.js">
+```ts title="packages/nextjs-app/services/app/restful.ts"
+const API_BASE_URL = 'http://localhost:3000'
+```
+	</Tab>
+</Tabs>
+
+你需要自行实现以下接口以完成应用配置的读取和保存：
+
+| 接口名称 | 请求方法 | 接口路径 | 请求参数 | 返回参数 |
+|---------|----------|----------|----------|----------|
+| 获取 App 配置详情 | GET | `/app` | 无 | `IDifyAppItem` |
+| 保存 App 配置 | POST | `/app` | `IDifyAppItem` | 无 |
+
+### Next.js 版本
+
+1. 本地文件实现
+
+使用本地文件进行存储，支持读取和修改，但存在丢失数据的风险。
+
+2. Restful 实现
+
+通过 API 接口管理，支持读取和修改，推荐使用🌟
+
+默认请求的后端服务地址为 `http://localhost:3000`，你可以根据你的需要修改。
+
+然后在对应的 restful 实现中，修改调用的 BaseURL 即可。
+
+<Tabs>
+  <Tab label="React SPA">
+```ts title="packages/react-app/src/services/app/singleApp/restful.ts"
+const API_BASE_URL = 'http://localhost:3000'
+```
+	</Tab>
+  <Tab label="Next.js">
+```ts title="packages/nextjs-app/services/app/restful.ts"
+const API_BASE_URL = 'http://localhost:3000'
+```
+	</Tab>
+</Tabs>
+
+你需要自行实现以下接口以完成应用配置的读取和保存：
+
+| 接口名称 | 请求方法 | 接口路径 | 请求参数 | 返回参数 |
+|---------|----------|----------|----------|----------|
+| 获取 App 配置详情 | GET | `/app` | 无 | `IDifyAppItem` |
+| 保存 App 配置 | POST | `/app` | `IDifyAppItem` | 无 |
