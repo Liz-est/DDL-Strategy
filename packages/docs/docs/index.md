@@ -7,8 +7,8 @@ hero:
   # tagline: 快速部署
   actions:
     - theme: brand
-      text: Quick Start
-      link: /guide/
+      text: 快速开始
+      link: /guide/start/introduction
     - theme: alt
       text: GitHub
       link: https://github.com/lexmin0412/dify-chat
@@ -16,22 +16,22 @@ hero:
     src: /rspress-icon.png
     alt: Logo
 features:
-  - title: Blazing fast build speed
-    details: The core compilation module is based on the Rust front-end toolchain, providing a more ultimate development experience.
+  - title: 低成本接入
+    details: 仅需 30 秒填写应用信息，即可开始使用，开箱即用的示例应用，助你快速体验。
     icon: 🏃🏻‍♀️
-  - title: Support for MDX content writing
-    details: MDX is a powerful way to write content, allowing you to use React components in Markdown.
+  - title: 多场景适用
+    details: 提供单应用、多应用模式，致力于满足不同场景下的深度应用。
     icon: 📦
-  - title: Built-in full-text search
-    details: Automatically generates a full-text search index for you during construction, providing out-of-the-box full-text search capabilities.
+  - title: 功能可扩展
+    details: 源码全开放，你可以 Fork 原仓库后进行二开，扩展任意功能。
     icon: 🎨
-  - title: Simpler I18n solution
-    details: With the built-in I18n solution, you can easily provide multi-language support for documents or components.
+  - title: 实现多样化
+    details: 提供 React SPA 和 Next.js 两种技术栈实现，满足不同开发者的喜好。
     icon: 🌍
-  - title: Static site generation
-    details: In production, it automatically builds into static HTML files, which can be easily deployed anywhere.
+  - title: 主题可定制
+    details: 兼容 TailwindCSS + Ant Design 设计系统，自由修改主题。
     icon: 🌈
-  - title: Providing multiple custom capabilities
-    details: Through its extension mechanism, you can easily extend theme UI and build process.
+  - title: 丰富内容支持
+    details: 支持渲染图片、视频、代码、图表等丰富的交互性内容，让 AI 自由发挥。
     icon: 🔥
 ---

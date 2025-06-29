@@ -55,6 +55,55 @@ Mermaid 是一种流行的文本绘图格式，展示效果如下：
 
 ## 回复表单
 
-当用户在应用配置中启用了 "表单回复"，并且 AI 回复了表单内容，用户就可以进行表单内容填写，并点击提交按钮，这会发送一条消息，也就是将填写的表单信息作为参数提交到 Dify Chatflow 内容的开始节点：
+Dify 支持通过 `jinja2` 来配置回复表单供用户填写，本项目也支持了对应的功能。
+
+Dify Chatflow 编排的回复内容示例：
+
+```html
+<form data-format="json">
+  <label for="username">用户名字:</label>
+  <input type="text" name="username" value="{{ username }}" />
+  <label for="phone">联系电话:</label>
+  <input type="text" name="phone" value="{{ phone }}" />
+  <label for="content">投诉内容:</label>
+  <textarea name="content"></textarea>
+  <button data-size="small" data-variant="primary">提交</button>
+</form>
+```
+
+> 注意：
+>
+> - 你需要自行在 Chatflow 中对 `sys.query` 进行正确的逻辑处理，区分普通消息、触发表单的消息及提交信息。
+> - form 标签的 `data-format` 属性用于指定表单数据的格式，目前支持 `json` 和 `text` 两种格式。
+
+按照上面的内容回复后，默认情况下，在用户点击表单的提交按钮后，会将表单的值对象作为消息发送给同一个 Dify 应用，同时会在消息列表中展示。提交消息的示例文本：
+
+```json
+{
+  "username": "lexmin",
+  "phone": "13123456789",
+  "content": "快递太慢啦，我要举报",
+  "isFormSubmit": true
+}
+```
+
+其中，`isFormSubmit` 字段用于标识这是一个表单提交的消息, 你可以在 Chatflow 编排的条件分支中使用它来进行判断消息类型。
+
+![回复表单](/guide__sample_form.png)
+
+### 自定义提交消息文本
+
+如果你不想展示具体的表单值 json 字符串，而是需要自定义发送的消息文本，可以按照下面的指引，在应用配置中进行配置（此配置只影响界面展示，实际提交到 Dify Chatflow 开始节点的仍然是用户填写的表单值 json 字符串）。
+
+**多应用模式**
+
+在添加/更新应用配置弹窗中填写字段：
+
+- 表单回复 - 设置为 "启用"
+- 提交消息文本 - 用于替换表单值对象的文本，如 "我提交了一个表单"
+
+![回复表单-配置](/guide__sample_form_answer_config.png)
+
+按照如上配置后，效果如下：
 
 ![回复表单](/guide__sample_form.png)

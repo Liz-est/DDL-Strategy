@@ -5,10 +5,10 @@ export default defineConfig({
 	root: path.join(__dirname, 'docs'),
 	title: 'Dify Chat 文档',
 	icon: '/rspress-icon.png',
-	logo: {
-		light: '/rspress-light-logo.png',
-		dark: '/rspress-dark-logo.png',
-	},
+	// logo: {
+	// 	light: '/rspress-light-logo.png',
+	// 	dark: '/rspress-dark-logo.png',
+	// },
 	builderConfig: {
 		server: {
 			// 指定启动端口

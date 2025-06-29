@@ -16,15 +16,15 @@
 	},
 	{
 		"type": "dir",
-		"name": "config-multiple",
-		"label": "配置 - 多应用模式",
+		"name": "app-config",
+		"label": "应用配置",
 		"collapsible": true,
 		"collapsed": false
 	},
 	{
 		"type": "dir",
-		"name": "config-single",
-		"label": "配置 - 单应用模式",
+		"name": "development",
+		"label": "开发与部署",
 		"collapsible": true,
 		"collapsed": false
 	}
