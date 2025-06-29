@@ -1,4 +1,5 @@
 "use client";
+import { getUserAction } from "@/app/actions";
 import { useDifyApi } from "@/hooks/useApi";
 import { XStream } from "@ant-design/x";
 import {
@@ -15,8 +16,9 @@ import {
 	MarkdownRenderer,
 	WorkflowLogs,
 } from "@dify-chat/components";
-import { AppModeEnums, useAppContext, useDifyChat } from "@dify-chat/core";
+import { AppModeEnums, useAppContext } from "@dify-chat/core";
 import { copyToClipboard } from "@toolkit-fe/clipboard";
+import { useRequest } from "ahooks";
 import { Button, Empty, Form, message, Tabs } from "antd";
 import { useState } from "react";
 
@@ -35,10 +37,12 @@ export default function WorkflowLayout({ appMode }: { appMode: AppModeEnums }) {
 	>();
 	const [workflowItems, setWorkflowItems] = useState<IWorkflowNode[]>([]);
 	const [resultDetail, setResultDetail] = useState<Record<string, string>>({});
-	const { user } = useDifyChat();
+	const { data: userInfo } = useRequest(() => {
+		return getUserAction();
+	});
 	const { currentAppId } = useAppContext();
 	const difyApi = useDifyApi({
-		user,
+		user: userInfo?.userId as string,
 		appId: currentAppId!,
 	});
 

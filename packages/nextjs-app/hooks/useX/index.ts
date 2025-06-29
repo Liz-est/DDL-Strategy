@@ -9,7 +9,7 @@ import {
 	IFile,
 } from "@dify-chat/api";
 import { IWorkflowNode, IAgentMessage, IMessageFileItem } from "@dify-chat/api";
-import { useAppContext, useDifyChat } from "@dify-chat/core";
+import { useAppContext } from "@dify-chat/core";
 import { isTempId } from "@dify-chat/helpers";
 import { message as antdMessage, FormInstance } from "antd";
 import { useState } from "react";
@@ -18,6 +18,8 @@ import { RESPONSE_MODE } from "@/config";
 
 import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
 import { useDifyApi } from "@/hooks/useApi";
+import { useRequest } from "ahooks";
+import { getUserAction } from "@/app/actions";
 
 export const useX = (options: {
 	difyApi: DifyApi;
@@ -45,11 +47,13 @@ export const useX = (options: {
 		entryForm,
 	} = options;
 	const { currentApp } = useAppContext();
-	const { user } = useDifyChat();
+	const { data: userInfo } = useRequest(() => {
+		return getUserAction();
+	});
 	const [currentTaskId, setCurrentTaskId] = useState("");
 	const { currentAppId } = useAppContext();
 	const difyApi = useDifyApi({
-		user,
+		user: userInfo?.userId as string,
 		appId: currentAppId!,
 	});
 

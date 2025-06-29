@@ -7,7 +7,7 @@ import {
 } from "@dify-chat/api";
 import { IMessageItem4Render } from "@dify-chat/api";
 import { Chatbox } from "@dify-chat/components";
-import { useAppContext, useDifyChat } from "@dify-chat/core";
+import { useAppContext } from "@dify-chat/core";
 import { Roles, useConversationsContext } from "@dify-chat/core";
 import { isTempId } from "@dify-chat/helpers";
 import { Button, Empty, Form, GetProp, Spin } from "antd";
@@ -18,6 +18,8 @@ import { useLatest } from "@/hooks/use-latest";
 import { useX } from "@/hooks/useX";
 import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
 import { useDifyApi } from "@/hooks/useApi";
+import { useRequest } from "ahooks";
+import { getUserAction } from "@/app/actions";
 
 interface IChatboxWrapperProps {
 	/**
@@ -48,10 +50,12 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationItemsChangeCallback,
 		handleStartConfig,
 	} = props;
-	const { user } = useDifyChat();
 	const { currentAppId, currentApp, appLoading } = useAppContext();
+	const { data: userInfo } = useRequest(() => {
+		return getUserAction();
+	});
 	const difyApi = useDifyApi({
-		user,
+		user: userInfo?.userId as string,
 		appId: currentAppId!,
 	});
 	const {
