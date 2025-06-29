@@ -2,7 +2,6 @@ import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
 
 /**
  * 静态的应用列表，用于演示
- * 注意：**尽量不要在公开的生产环境中使用静态数据**，推荐使用后端服务
  */
 export const staticAppList: IDifyAppItem[] = [
 	{
