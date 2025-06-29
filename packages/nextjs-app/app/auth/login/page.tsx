@@ -2,40 +2,21 @@
 import { Logo } from "@/components";
 import { message, Spin } from "antd";
 import { getRunningModeAction, loginAction } from "@/app/actions";
-import { useUserId } from "@/hooks/useUserId";
-import { useEffect } from "react";
 import { redirect } from "next/navigation";
 import { LocalStorageKeys, LocalStorageStore } from "@dify-chat/helpers";
+import { useMount } from "ahooks";
+import FingerPrintJS from "@fingerprintjs/fingerprintjs";
 
 export default function LoginPage() {
-	// 获取 userId
-	const userId = useUserId();
-
 	/**
-	 * 调用登录 server action
+	 * 重定向到首页
 	 */
-	const authLogin = async (userId: string) => {
-		// 登录
-		const userInfo = await loginAction(userId);
-
-		// 获取应用运行模式
+	const redirect2Index = async () => {
 		const runningMode = await getRunningModeAction();
-
 		if (!runningMode) {
 			message.error("获取运行模式失败，请检查配置");
 			return;
 		}
-
-		LocalStorageStore.set(LocalStorageKeys.RUNNING_MODE, runningMode);
-		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId);
-		LocalStorageStore.set(
-			LocalStorageKeys.ENABLE_SETTING,
-			String(userInfo.enableSetting),
-		);
-
-		message.success("登录成功");
-
-		// 判断运行模式，区分跳转页面
 		if (runningMode === "singleApp") {
 			redirect("/");
 		} else if (runningMode === "multiApp") {
@@ -43,9 +24,36 @@ export default function LoginPage() {
 		}
 	};
 
-	useEffect(() => {
-		authLogin(userId);
-	}, [userId]);
+	/**
+	 * 调用登录 server action
+	 */
+	const mockLogin = async (): Promise<{
+		userId: string;
+		enableSetting: boolean;
+	}> => {
+		const fp = await FingerPrintJS.load();
+		const result = await fp.get();
+		const userInfo = await loginAction(result.visitorId);
+		return userInfo;
+	};
+
+	/**
+	 * 登录
+	 */
+	const handleLogin = async () => {
+		const userInfo = await mockLogin();
+		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId);
+		LocalStorageStore.set(
+			LocalStorageKeys.ENABLE_SETTING,
+			userInfo.enableSetting ? "true" : "",
+		);
+		message.success("登录成功");
+		redirect2Index();
+	};
+
+	useMount(() => {
+		handleLogin();
+	});
 
 	return (
 		<div className="w-screen h-screen flex flex-col items-center justify-center bg-theme-bg">
