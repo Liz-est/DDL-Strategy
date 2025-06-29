@@ -26,5 +26,12 @@
 		"label": "开发与部署",
 		"collapsible": true,
 		"collapsed": false
+	},
+	{
+		"type": "dir",
+		"name": "migrate",
+		"label": "迁移",
+		"collapsible": true,
+		"collapsed": false
 	}
 ]
