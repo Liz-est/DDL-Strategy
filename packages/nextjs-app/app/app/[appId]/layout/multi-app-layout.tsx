@@ -42,7 +42,7 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 	const { runAsync: getAppList } = useRequest(
 		() => {
 			setInitLoading(true);
-			return getAppListAction();
+			return getAppListAction({ isMask: true });
 		},
 		{
 			manual: true,

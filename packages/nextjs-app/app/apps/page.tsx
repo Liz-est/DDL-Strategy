@@ -24,7 +24,9 @@ export default function AppsPage() {
 	});
 
 	const refreshAppList = async () => {
-		const appsRes = await getAppList();
+		const appsRes = await getAppList({
+			isMask: true,
+		});
 		setApps(appsRes);
 	};
 

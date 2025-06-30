@@ -13,7 +13,9 @@ import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 import { DifyApi } from "@/services/dify";
 
 interface ISingleAppLayoutProps {
-	getAppConfig: () => Promise<IDifyAppItem | undefined>;
+	getAppConfig: (options: {
+		isMask?: boolean;
+	}) => Promise<IDifyAppItem | undefined>;
 	setAppConfig: (appConfig: IDifyAppItem) => Promise<unknown>;
 }
 
@@ -34,8 +36,7 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 	>(undefined);
 
 	const initInSingleMode = async () => {
-		const appConfig = (await getAppConfig()) as IDifyAppItem;
-		console.log("appConfig", appConfig);
+		const appConfig = (await getAppConfig({ isMask: true })) as IDifyAppItem;
 		if (!appConfig) {
 			message.error("请先配置应用");
 			setAppEditDrawerMode(AppDetailDrawerModeEnum.create);

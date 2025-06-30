@@ -5,10 +5,33 @@ import {
 	updateApp as updateAppItem,
 	deleteApp as deleteAppItem,
 	getAppList as getAppListFromRepository,
+	getAppItem as getAppItemFromRepository,
 } from "@/services/app/multiApp";
+import { maskApiKey4AppConfig } from "@/app/actions/utils";
 
-export async function getAppList() {
+export async function getAppList({
+	isMask = false,
+}: { isMask?: boolean } = {}) {
 	const res = await getAppListFromRepository();
+	if (isMask) {
+		const result = await Promise.all(
+			res.map((item) => {
+				return maskApiKey4AppConfig(item);
+			}),
+		);
+		return result;
+	}
+	return res;
+}
+
+export async function getAppItem(
+	id: string,
+	{ isMask = false }: { isMask?: boolean } = {},
+) {
+	const res = await getAppItemFromRepository(id);
+	if (isMask && res) {
+		return await maskApiKey4AppConfig(res);
+	}
 	return res;
 }
 

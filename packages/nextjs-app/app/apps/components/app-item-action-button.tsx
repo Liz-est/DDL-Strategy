@@ -5,7 +5,7 @@ import { IDifyAppItem } from "@dify-chat/core";
 import { Dropdown, message } from "antd";
 import { useAppEditDrawer } from "@/app/apps/hooks/use-app-edit-drawer";
 import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
-import { deleteApp } from "@/app/apps/actions";
+import { deleteApp, getAppItem } from "@/app/apps/actions";
 
 export default function AppItemActionButton(props: {
 	item: IDifyAppItem;
@@ -29,10 +29,12 @@ export default function AppItemActionButton(props: {
 							key: "edit",
 							icon: <EditOutlined />,
 							label: "编辑",
-							onClick: () => {
+							onClick: async () => {
+								// 获取 app 详情
+								const app = await getAppItem(item.id);
 								setAppEditDrawerMode(AppDetailDrawerModeEnum.edit);
 								setAppEditDrawerOpen(true);
-								setAppEditDrawerAppItem(item);
+								setAppEditDrawerAppItem(app);
 							},
 						},
 						{
