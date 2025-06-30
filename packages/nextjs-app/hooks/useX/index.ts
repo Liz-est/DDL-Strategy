@@ -67,7 +67,7 @@ export const useX = (options: {
 					? latestProps.current.conversationId
 					: undefined,
 				files: filesRef.current || [],
-				user,
+				user: userInfo?.userId as string,
 				response_mode: RESPONSE_MODE,
 				query: message?.content as string,
 			});
