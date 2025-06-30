@@ -19,3 +19,4 @@ dist/
 .next
 
 packages/server/apps.json
+.dify-chat
