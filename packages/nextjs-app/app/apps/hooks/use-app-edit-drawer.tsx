@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 import { IDifyAppItem } from "@dify-chat/core";
 import { AppEditDrawer } from "@/app/apps/components/app-edit-drawer";
+import { createApp, updateApp } from "../actions";
 
 export const useAppEditDrawer = (callbacks?: {
 	successCallback?: () => void;
@@ -14,6 +15,8 @@ export const useAppEditDrawer = (callbacks?: {
 
 	const drawerComponent = (
 		<AppEditDrawer
+			addApi={createApp}
+			updateApi={updateApp}
 			detailDrawerMode={appEditDrawerMode!}
 			open={appEditDrawerOpen}
 			onClose={() => setAppEditDrawerOpen(false)}
