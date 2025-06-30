@@ -1,6 +1,6 @@
 {
 	"name": "dify-chat-app-server",
-	"version": "0.0.1",
+	"version": "0.4.0",
 	"description": "应用管理的后端最简实现",
 	"main": "index.js",
 	"private": true,

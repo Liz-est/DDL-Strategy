@@ -1,5 +1,18 @@
 # @dify-chat/core
 
+## 0.4.0
+
+### Minor Changes
+
+- a415147: 新增 Next.js MVP 版本, 以及文档站点子包
+- 14c0820: 新增 genDifyRequestByRequestConfig, 支持传入 requestConfig 生成 Dify 的请求基类
+
+### Patch Changes
+
+- Updated dependencies [b9e8b63]
+- Updated dependencies [a415147]
+  - @dify-chat/helpers@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
