@@ -8,10 +8,6 @@ import { useEffect, useState } from "react";
 
 import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
 import SettingForm from "@/app/apps/components/setting-form";
-import {
-	createApp as createAppAction,
-	updateApp as updateAppAction,
-} from "@/app/apps/actions";
 import { getAllState } from "@/store";
 
 interface IAppEditDrawerProps extends DrawerProps {
@@ -20,13 +16,23 @@ interface IAppEditDrawerProps extends DrawerProps {
 	appItem?: IDifyAppItem;
 	onClose?: () => void;
 	confirmCallback?: () => void;
+	addApi: (app: IDifyAppItem) => Promise<unknown>;
+	updateApi: (app: IDifyAppItem) => Promise<unknown>;
 }
 
 /**
  * 应用配置编辑抽屉
  */
 export const AppEditDrawer = (props: IAppEditDrawerProps) => {
-	const { detailDrawerMode, appItem, open, onClose, confirmCallback } = props;
+	const {
+		detailDrawerMode,
+		appItem,
+		open,
+		onClose,
+		confirmCallback,
+		addApi,
+		updateApi,
+	} = props;
 	const [settingForm] = Form.useForm();
 	const [confirmLoading, setConfirmBtnLoading] = useState(false);
 
@@ -65,7 +71,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	const { runAsync: createApp } = useRequest(
 		async (appInfo: Omit<IDifyAppItem, "id">) => {
-			return createAppAction(appInfo);
+			return addApi(appInfo);
 		},
 		{
 			manual: true,
@@ -78,7 +84,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 
 	const { runAsync: updateApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return updateAppAction(appInfo);
+			return updateApi(appInfo);
 		},
 		{
 			manual: true,

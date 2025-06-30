@@ -1,69 +1,71 @@
 "use client";
-import { AppContextProvider } from "@dify-chat/core";
+import { AppContextProvider, DEFAULT_APP_SITE_SETTING } from "@dify-chat/core";
 import { useMount, useRequest } from "ahooks";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 import React, { useState } from "react";
-
-import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
 
 import MainLayout from "@/app/app/[appId]/layout/main-layout";
 import { getUserAction } from "@/app/actions";
-import { IDifyAppItem4View } from "@/types";
+import { IDifyAppItem } from "@/types";
 import { ICurrentApp } from "@/app/app/[appId]/types";
+import { AppEditDrawer } from "@/app/apps/components/app-edit-drawer";
+import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
+import { DifyApi } from "@/services/dify";
 
 interface ISingleAppLayoutProps {
-	appId: string;
+	getAppConfig: () => Promise<IDifyAppItem | undefined>;
+	setAppConfig: (appConfig: IDifyAppItem) => Promise<unknown>;
 }
 
 const SingleAppLayout = (props: ISingleAppLayoutProps) => {
-	const { appId } = props;
+	const { getAppConfig, setAppConfig } = props;
 	const [selectedAppId, setSelectedAppId] = useState("");
 	const [initLoading, setInitLoading] = useState(false);
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>(); // 新增 currentApp 状态用于保存当前应用的 info
 	const { data: userInfo = { userId: "" } } = useRequest(() => {
 		return getUserAction();
 	});
-	const { runAsync: getAppConfig } = useRequest(
-		(appId: string) => {
-			return fetch(`/api/app/${appId}`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			}).then((res) => res.json());
-		},
-		{
-			manual: true,
-			onSuccess: (appConfig) => {
-				initInSingleModeByAppConfig(appConfig);
-			},
-		},
-	);
+	const [appEditDrawerMode, setAppEditDrawerMode] = useState<
+		AppDetailDrawerModeEnum | undefined
+	>(undefined);
+	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false);
+	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<
+		IDifyAppItem | undefined
+	>(undefined);
 
-	const difyApi = useDifyApi({
-		user: userInfo.userId,
-		appId,
-	});
+	const initInSingleMode = async () => {
+		const appConfig = (await getAppConfig()) as IDifyAppItem;
+		console.log("appConfig", appConfig);
+		if (!appConfig) {
+			message.error("请先配置应用");
+			setAppEditDrawerMode(AppDetailDrawerModeEnum.create);
+			setAppEditDrawerOpen(true);
+			setAppEditDrawerAppItem(undefined);
+			return;
+		}
 
-	const { runAsync: getAppParameters } = useRequest(
-		() => {
-			return difyApi.getAppParameters();
-		},
-		{
-			manual: true,
-		},
-	);
-
-	const { getAppSiteSettting } = useAppSiteSetting();
-
-	const initInSingleModeByAppConfig = async (appConfig: IDifyAppItem4View) => {
-		setSelectedAppId(appId);
 		setInitLoading(true);
+		const newDifyApi = new DifyApi({
+			user: userInfo.userId,
+			appId: appConfig.id,
+		});
 		const [difyAppInfo, appParameters, appSiteSetting] = await Promise.all([
-			difyApi.getAppInfo(),
-			getAppParameters(),
-			getAppSiteSettting(difyApi),
+			newDifyApi.getAppInfo(),
+			newDifyApi.getAppParameters(),
+			newDifyApi
+				.getAppSiteSetting()
+				.then((res) => {
+					return res;
+				})
+				.catch((err) => {
+					console.error(err);
+					console.warn(
+						"Dify 版本提示: 获取应用 WebApp 设置失败，已降级为使用默认设置。如需与 Dify 配置同步，请确保你的 Dify 版本 >= v1.4.0",
+					);
+					return DEFAULT_APP_SITE_SETTING;
+				}),
 		]);
+		setSelectedAppId(appConfig.id);
 		// 获取应用信息
 		setCurrentApp({
 			config: {
@@ -80,9 +82,9 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 		setInitLoading(false);
 	};
 
-	// 初始化获取应用列表
+	// 初始化获取应用配置
 	useMount(() => {
-		getAppConfig(appId);
+		initInSingleMode();
 	});
 
 	if (initLoading) {
@@ -93,25 +95,42 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 		);
 	}
 
-	return currentApp && selectedAppId ? (
-		<AppContextProvider
-			value={{
-				appLoading: initLoading,
-				currentAppId: selectedAppId,
-				setCurrentAppId: setSelectedAppId,
-				currentApp: currentApp,
-				setCurrentApp,
-			}}
-		>
-			<MainLayout
-				// difyApi={difyApi}
-				initLoading={false}
-				renderCenterTitle={(appInfo) => {
-					return <>{appInfo?.name}</>;
+	return (
+		<>
+			{currentApp && selectedAppId ? (
+				<AppContextProvider
+					value={{
+						appLoading: initLoading,
+						currentAppId: selectedAppId,
+						setCurrentAppId: setSelectedAppId,
+						currentApp: currentApp,
+						setCurrentApp,
+					}}
+				>
+					<MainLayout
+						// difyApi={difyApi}
+						initLoading={false}
+						renderCenterTitle={(appInfo) => {
+							return <>{appInfo?.name}</>;
+						}}
+					/>
+				</AppContextProvider>
+			) : null}
+
+			{/* 应用配置编辑抽屉 */}
+			<AppEditDrawer
+				detailDrawerMode={appEditDrawerMode!}
+				open={appEditDrawerOpen}
+				onClose={() => setAppEditDrawerOpen(false)}
+				appItem={appEditDrawerAppItem}
+				confirmCallback={() => {
+					initInSingleMode();
 				}}
+				addApi={setAppConfig}
+				updateApi={setAppConfig}
 			/>
-		</AppContextProvider>
-	) : null;
+		</>
+	);
 };
 
 export default SingleAppLayout;

@@ -1,12 +1,15 @@
 "use client";
 import SingleAppLayout from "@/app/app/[appId]/layout/single-app-layout";
-import { IDifyAppItem } from "@dify-chat/core";
 import PageLayoutWrapper from "./page-layout-wrapper";
+import { getAppConfig, setAppConfig } from "@/app/actions/app";
 
-export default function SingleAppLayoutWrapper(props: { app: IDifyAppItem }) {
+export default function SingleAppLayoutWrapper() {
 	return (
 		<PageLayoutWrapper>
-				<SingleAppLayout />
+			<SingleAppLayout
+				getAppConfig={getAppConfig}
+				setAppConfig={setAppConfig}
+			/>
 		</PageLayoutWrapper>
 	);
 }

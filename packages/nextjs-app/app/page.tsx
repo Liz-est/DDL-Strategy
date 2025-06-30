@@ -1,6 +1,5 @@
 import Image from "next/image";
 import SingleAppLayoutWrapper from "@/components/layout/single-layout-wrapper";
-import { getAppList } from "@/services/app";
 import { redirect } from "next/navigation";
 import { getRunningModeAction } from "@/app/actions";
 import { RunningModes } from "@/constants";
@@ -10,9 +9,7 @@ export default async function Home() {
 
 	// 单应用模式直接渲染
 	if (runningMode === RunningModes.SingleApp) {
-		const apps = await getAppList();
-
-		return <SingleAppLayoutWrapper app={apps[0]} />;
+		return <SingleAppLayoutWrapper />;
 	} else if (runningMode === RunningModes.MultiApp) {
 		// TODO 后续通过中间件处理
 		redirect("/apps");
