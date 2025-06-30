@@ -1,7 +1,9 @@
 "user server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { decrypt, SESSION_KEY_NAME } from "./lib/session";
+import { decrypt, SESSION_KEY_NAME } from "@/lib/session";
+import { RunningModes } from "@/constants";
+import { getConfigs } from "@/config";
 
 // let runningMode = "";
 
@@ -33,13 +35,15 @@ export async function middleware(request: NextRequest) {
 	// 		.then((res) => res.data);
 	// 	runningMode = result;
 	// }
+	const pathname = request.nextUrl.pathname;
+	const runningMode = getConfigs().RUNNING_MODE;
 
 	// // 如果是单应用模式下访问了多应用的页面，则重定向到首页，由首页自行分流到单应用页面
-	// if (pathname.startsWith("/app")) {
-	// 	if (runningMode === RunningModes.SingleApp) {
-	// 		return NextResponse.redirect(new URL("/", request.url));
-	// 	}
-	// }
+	if (pathname.startsWith("/app")) {
+		if (runningMode === RunningModes.SingleApp) {
+			return NextResponse.redirect(new URL("/", request.url));
+		}
+	}
 }
 
 export const config = {
