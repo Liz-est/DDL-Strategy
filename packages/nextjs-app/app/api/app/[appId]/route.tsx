@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteApp, getAppItem, updateApp } from "@/services/app";
+import { deleteApp, getAppItem, updateApp } from "@/services/app/multiApp";
 import { IDifyAppItem } from "@dify-chat/core";
 
 /**

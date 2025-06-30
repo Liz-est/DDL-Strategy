@@ -8,7 +8,7 @@ import { RunningModes } from "@/constants";
 import SingleAppLayout from "./layout/single-app-layout";
 import { redirect, useParams, useSearchParams } from "next/navigation";
 import { IRunningMode } from "@/types";
-import { getAppConfig, setAppConfig } from "@/app/actions/app";
+import { getAppConfig, setAppConfig } from "@/app/actions/app-single";
 
 export default function AppPage() {
 	const { appId } = useParams<{ appId: string }>();

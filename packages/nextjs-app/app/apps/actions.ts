@@ -5,7 +5,7 @@ import {
 	updateApp as updateAppItem,
 	deleteApp as deleteAppItem,
 	getAppList as getAppListFromRepository,
-} from "@/services/app";
+} from "@/services/app/multiApp";
 
 export async function getAppList() {
 	const res = await getAppListFromRepository();

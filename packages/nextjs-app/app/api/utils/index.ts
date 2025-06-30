@@ -1,4 +1,7 @@
-import { getAppItem } from "@/services/app";
+import { getAppConfig } from "@/app/actions/app-single";
+import { getConfigs } from "@/config";
+import { RunningModes } from "@/constants";
+import { getAppItem } from "@/services/app/multiApp";
 
 import { BaseRequest } from "@dify-chat/helpers";
 import { NextRequest } from "next/server";
@@ -33,11 +36,19 @@ export const genDifyRequestByRequestConfig = async (
 	return request;
 };
 
+const getAppData = async (appId: string) => {
+	const runningMode = getConfigs().RUNNING_MODE;
+	if (runningMode === RunningModes.SingleApp) {
+		return getAppConfig();
+	}
+	return getAppItem(appId);
+};
+
 /**
  * 生成 Dify 请求函数
  */
 export const genDifyRequest = async (appId: string) => {
-	const appItem = await getAppItem(appId);
+	const appItem = await getAppData(appId);
 	const request = genDifyRequestByRequestConfig(
 		appItem?.requestConfig as IDifyAppRequestConfig,
 	);
