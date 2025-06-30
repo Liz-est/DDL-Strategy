@@ -73,7 +73,7 @@ export const staticAppConfig = {
 
 默认请求的后端服务地址为 `http://localhost:3000`，你可以根据你的需要修改。
 
-在对应的 restful 实现中，修改调用的 BaseURL 即可。
+如果你的后端服务地址与默认地址不一致，只需在对应的 restful 实现中，修改调用的 BaseURL 即可。
 
 ```ts title="packages/react-app/src/services/app/singleApp/restful.ts"
 // 比如你的自定义后端服务地址是 http://localhost:4567
@@ -108,7 +108,7 @@ export { appConfig } from "./fs";
 
 默认请求的后端服务地址为 `http://localhost:3000`，你可以根据你的需要修改。
 
-然后在对应的 restful 实现中，修改调用的 BaseURL 即可。
+如果你的后端服务地址与默认地址不一致，只需在对应的 restful 实现中，修改调用的 BaseURL 即可。
 
 ```ts title="packages/nextjs-app/services/app/singleApp/restful.ts"
 // 比如你的自定义后端服务地址是 http://localhost:4567
