@@ -2,6 +2,8 @@ import { useAppContext } from "@dify-chat/core";
 import { useThemeContext } from "@dify-chat/theme";
 import { useMemo } from "react";
 import { completeFileUrl } from "../utils";
+// @ts-expect-error no declaration file
+import emoji from "emoji-dictionary";
 
 /**
  * 应用图标
@@ -30,7 +32,7 @@ export default function AppIcon(props: {
 
 	const renderIcon = useMemo(() => {
 		return renderProps.type === "emoji" ? (
-			renderProps.icon
+			emoji.getUnicode(renderProps.icon)
 		) : (
 			<img className="w-full h-full inline-block" src={renderProps.icon} />
 		);
