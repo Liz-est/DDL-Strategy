@@ -17,10 +17,9 @@ export const getUserAction = async () => {
 	const decyptRes = await decrypt(
 		cookieStore.get("__DC_SESSION")?.value as string,
 	);
-	const userId = decyptRes?.userId;
 	return {
-		userId: userId as string,
-		enableSetting: DEFAULT_ENABLE_SETTING,
+		userId: decyptRes?.userId as string,
+		enableSetting: decyptRes.enableSetting,
 	};
 };
 
