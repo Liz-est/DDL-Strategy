@@ -30,7 +30,7 @@ export async function encrypt(payload: SessionPayload) {
 /**
  * 解析 session
  */
-export async function decrypt(session: string | undefined = "") {
+export async function decrypt(session: string) {
 	try {
 		const { payload } = await jwtVerify(session, encodedKey, {
 			algorithms: ["HS256"],
@@ -48,7 +48,7 @@ export async function decrypt(session: string | undefined = "") {
  */
 export async function getUserIdFromNextRequest(request: NextRequest) {
 	const session = request.cookies.get(SESSION_KEY_NAME)?.value;
-	const result = await decrypt(session);
+	const result = await decrypt(session as string);
 	if (result.error) {
 		return "";
 	}
