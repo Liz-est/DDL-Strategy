@@ -21,6 +21,7 @@ export default function AuthPage() {
 		const result = await fp.get()
 		return {
 			userId: result.visitorId,
+			// 为方便演示，默认开启设置，实际场景中需要根据用户信息判断是否开启设置
 			enableSetting: true,
 		}
 	}

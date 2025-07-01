@@ -4,11 +4,6 @@ import { createSession, decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
 /**
- * 默认是否允许编辑配置
- */
-const DEFAULT_ENABLE_SETTING = true;
-
-/**
  * 获取用户信息
  * 简单的实现，实际场景中可以根据 userId 从数据库中查询用户信息
  */
@@ -30,7 +25,8 @@ export const getUserAction = async () => {
 export const loginAction = async (userId: string) => {
 	const sessionInfo = {
 		userId,
-		enableSetting: DEFAULT_ENABLE_SETTING,
+		// 为方便演示，默认开启设置，实际场景中需要根据用户信息判断是否开启设置
+		enableSetting: true,
 	};
 	await createSession(sessionInfo);
 	return sessionInfo;
