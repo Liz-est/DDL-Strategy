@@ -1,6 +1,7 @@
 "use server";
 
 import { createSession, decrypt } from "@/lib/session";
+import { cookies } from "next/headers";
 
 /**
  * 默认是否允许编辑配置
@@ -12,7 +13,11 @@ const DEFAULT_ENABLE_SETTING = true;
  * 简单的实现，实际场景中可以根据 userId 从数据库中查询用户信息
  */
 export const getUserAction = async () => {
-	const { userId } = await decrypt();
+	const cookieStore = await cookies();
+	const decyptRes = await decrypt(
+		cookieStore.get("__DC_SESSION")?.value as string,
+	);
+	const userId = decyptRes?.userId;
 	return {
 		userId: userId as string,
 		enableSetting: DEFAULT_ENABLE_SETTING,
