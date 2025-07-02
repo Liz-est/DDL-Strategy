@@ -34,6 +34,7 @@ pnpm add @dify-chat/core
 ```tsx
 import { AppContextProvider, ICurrentApp } from '@dify-chat/core';
 import { createDifyApiInstance } from '@dify-chat/api';
+import { generateUuidV4 } from '@dify-chat/helpers'
 
 const YourChatComponent = () => {
 
@@ -70,7 +71,7 @@ const YourChatComponent = () => {
     setAppLoading(false)
     setCurrentApp({
 			config: {
-				id: Math.random().toString(),
+				id: generateUuidV4(),
 				info: difyAppInfo,
         requestConfig: appConfig.requestConfig,
         answerForm: appConfig.answerForm,

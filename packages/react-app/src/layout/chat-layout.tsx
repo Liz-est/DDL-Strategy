@@ -9,7 +9,7 @@ import { DifyApi, IConversationItem } from '@dify-chat/api'
 import { AppIcon, AppInfo, ConversationList, LucideIcon } from '@dify-chat/components'
 import { HeaderLayout } from '@dify-chat/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
-import { isTempId, useIsMobile } from '@dify-chat/helpers'
+import { generateUuidV4, isTempId, useIsMobile } from '@dify-chat/helpers'
 import { ThemeModeEnum, ThemeModeLabelEnum, useThemeContext } from '@dify-chat/theme'
 import {
 	Button,
@@ -126,7 +126,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	 */
 	const onAddConversation = () => {
 		// 创建新对话
-		const newKey = `temp_${Math.random()}`
+		const newKey = `temp_${generateUuidV4()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
 		setConversations(prev => {
 			return [

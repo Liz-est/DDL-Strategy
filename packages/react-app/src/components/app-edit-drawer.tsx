@@ -1,5 +1,6 @@
 import { DifyApi } from '@dify-chat/api'
 import { AppModeEnums, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
+import { generateUuidV4 } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Drawer, DrawerProps, Form, message, Space } from 'antd'
 import { useEffect, useState } from 'react'
@@ -145,7 +146,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 									})
 								} else {
 									await createApp({
-										id: Math.random().toString(),
+										id: generateUuidV4(),
 										...commonInfo,
 									})
 								}
