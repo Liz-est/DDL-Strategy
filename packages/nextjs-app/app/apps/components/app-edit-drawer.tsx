@@ -1,104 +1,99 @@
-"use client";
-import "@ant-design/v5-patch-for-react-19";
-import { DifyApi } from "@dify-chat/api";
-import { AppModeEnums, IDifyAppItem } from "@dify-chat/core";
-import { useRequest } from "ahooks";
-import { Button, Drawer, DrawerProps, Form, message, Space } from "antd";
-import { useEffect, useState } from "react";
+'use client'
 
-import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
-import SettingForm from "@/app/apps/components/setting-form";
-import { getAllState } from "@/store";
+import '@ant-design/v5-patch-for-react-19'
+import { DifyApi } from '@dify-chat/api'
+import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
+import { useRequest } from 'ahooks'
+import { Button, Drawer, DrawerProps, Form, message, Space } from 'antd'
+import { useEffect, useState } from 'react'
+
+import { getUserAction } from '@/app/actions'
+import SettingForm from '@/app/apps/components/setting-form'
+import { AppDetailDrawerModeEnum } from '@/app/apps/enums'
 
 interface IAppEditDrawerProps extends DrawerProps {
-	detailDrawerMode: AppDetailDrawerModeEnum;
-	confirmLoading?: boolean;
-	appItem?: IDifyAppItem;
-	onClose?: () => void;
-	confirmCallback?: () => void;
-	addApi: (app: IDifyAppItem) => Promise<unknown>;
-	updateApi: (app: IDifyAppItem) => Promise<unknown>;
+	detailDrawerMode: AppDetailDrawerModeEnum
+	confirmLoading?: boolean
+	appItem?: IDifyAppItem
+	onClose?: () => void
+	confirmCallback?: () => void
+	addApi: (app: IDifyAppItem) => Promise<unknown>
+	updateApi: (app: IDifyAppItem) => Promise<unknown>
 }
 
 /**
  * 应用配置编辑抽屉
  */
 export const AppEditDrawer = (props: IAppEditDrawerProps) => {
-	const {
-		detailDrawerMode,
-		appItem,
-		open,
-		onClose,
-		confirmCallback,
-		addApi,
-		updateApi,
-	} = props;
-	const [settingForm] = Form.useForm();
-	const [confirmLoading, setConfirmBtnLoading] = useState(false);
+	const { detailDrawerMode, appItem, open, onClose, confirmCallback, addApi, updateApi } = props
+	const [settingForm] = Form.useForm()
+	const [confirmLoading, setConfirmBtnLoading] = useState(false)
+	const { data: userInfo } = useRequest(() => {
+		return getUserAction()
+	})
 
 	useEffect(() => {
 		if (appItem?.info.mode) {
 			settingForm.setFieldsValue({
-				"info.mode": appItem?.info.mode,
-			});
+				'info.mode': appItem?.info.mode,
+			})
 		}
-	}, [appItem?.info.mode]);
+	}, [appItem?.info.mode])
 
 	useEffect(() => {
 		if (!open) {
-			settingForm.resetFields();
+			settingForm.resetFields()
 		} else if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
 			settingForm.setFieldsValue({
 				apiBase: appItem?.requestConfig.apiBase,
 				apiKey: appItem?.requestConfig.apiKey,
-				"info.name": appItem?.info.name,
-				"info.description": appItem?.info.description,
-				"info.mode": appItem?.info.mode || AppModeEnums.CHATBOT,
-				"answerForm.enabled": appItem?.answerForm?.enabled || false,
-				"answerForm.feedbackText": appItem?.answerForm?.feedbackText || "",
-				"inputParams.enableUpdateAfterCvstStarts":
+				'info.name': appItem?.info.name,
+				'info.description': appItem?.info.description,
+				'info.mode': appItem?.info.mode || AppModeEnums.CHATBOT,
+				'answerForm.enabled': appItem?.answerForm?.enabled || false,
+				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
+				'inputParams.enableUpdateAfterCvstStarts':
 					appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
-				"extConfig.conversation.openingStatement.displayMode":
-					appItem?.extConfig?.conversation?.openingStatement?.displayMode ||
-					"default",
-			});
+				'extConfig.conversation.openingStatement.displayMode':
+					appItem?.extConfig?.conversation?.openingStatement?.displayMode || 'default',
+			})
 		} else if (detailDrawerMode === AppDetailDrawerModeEnum.create) {
 			settingForm.setFieldsValue({
-				"info.mode": AppModeEnums.CHATBOT,
-			});
+				'info.mode': AppModeEnums.CHATBOT,
+			})
 		}
-	}, [open]);
+	}, [open])
 
 	const { runAsync: createApp } = useRequest(
-		async (appInfo: Omit<IDifyAppItem, "id">) => {
-			return addApi(appInfo);
+		async (appInfo: Omit<IDifyAppItem, 'id'>) => {
+			return addApi(appInfo)
 		},
 		{
 			manual: true,
 			onSuccess: () => {
-				onClose?.();
-				message.success("新增应用配置成功");
+				onClose?.()
+				message.success('新增应用配置成功')
 			},
 		},
-	);
+	)
 
 	const { runAsync: updateApp } = useRequest(
 		async (appInfo: IDifyAppItem) => {
-			return updateApi(appInfo);
+			return updateApi(appInfo)
 		},
 		{
 			manual: true,
 			onSuccess: () => {
-				onClose?.();
-				message.success("编辑应用配置成功");
+				onClose?.()
+				message.success('编辑应用配置成功')
 			},
 		},
-	);
+	)
 
 	return (
 		<Drawer
 			width={700}
-			title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? "新增应用配置" : `编辑应用配置 - ${appItem?.info.name}`}`}
+			title={`${detailDrawerMode === AppDetailDrawerModeEnum.create ? '新增应用配置' : `编辑应用配置 - ${appItem?.info.name}`}`}
 			open={open}
 			onClose={onClose}
 			extra={
@@ -108,72 +103,65 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 						type="primary"
 						loading={confirmLoading}
 						onClick={async () => {
-							await settingForm.validateFields();
+							await settingForm.validateFields()
 
-							setConfirmBtnLoading(true);
+							setConfirmBtnLoading(true)
 							try {
-								const values = settingForm.getFieldsValue();
-								const updatingItem = appItem;
+								const values = settingForm.getFieldsValue()
+								const updatingItem = appItem
 
-								const userId = getAllState().user?.userId;
 								// 获取 Dify 应用信息
 								const newDifyApiInstance = new DifyApi({
-									user: userId as string,
+									user: userInfo?.userId as string,
 									apiBase: values.apiBase,
 									apiKey: values.apiKey,
-								});
-								const difyAppInfo = await newDifyApiInstance.getAppInfo();
-								const commonInfo: Omit<IDifyAppItem, "id"> = {
+								})
+								const difyAppInfo = await newDifyApiInstance.getAppInfo()
+								const commonInfo: Omit<IDifyAppItem, 'id'> = {
 									info: {
 										...difyAppInfo,
 										// 兼容处理，当 Dify API 返回的应用信息中没有 mode 时，使用表单中的 mode
-										mode: difyAppInfo.mode || values["info.mode"],
+										mode: difyAppInfo.mode || values['info.mode'],
 									},
 									requestConfig: {
 										apiBase: values.apiBase,
 										apiKey: values.apiKey,
 									},
 									answerForm: {
-										enabled: values["answerForm.enabled"],
-										feedbackText: values["answerForm.feedbackText"],
+										enabled: values['answerForm.enabled'],
+										feedbackText: values['answerForm.feedbackText'],
 									},
 									inputParams: {
-										enableUpdateAfterCvstStarts:
-											values["inputParams.enableUpdateAfterCvstStarts"],
+										enableUpdateAfterCvstStarts: values['inputParams.enableUpdateAfterCvstStarts'],
 									},
 									extConfig: {
 										conversation: {
 											openingStatement: {
-												displayMode:
-													values[
-														"extConfig.conversation.openingStatement.displayMode"
-													],
+												displayMode: values['extConfig.conversation.openingStatement.displayMode'],
 											},
 										},
 									},
-								};
+								}
 								if (detailDrawerMode === AppDetailDrawerModeEnum.edit) {
 									await updateApp({
 										id: updatingItem!.id,
 										...commonInfo,
-									});
+									})
 								} else {
 									await createApp({
 										...commonInfo,
-									});
+									})
 								}
-								confirmCallback?.();
+								confirmCallback?.()
 							} catch (error) {
-								console.error("保存应用配置失败", error);
-								message.error(`保存应用配置失败: ${error}`);
+								console.error('保存应用配置失败', error)
+								message.error(`保存应用配置失败: ${error}`)
 							} finally {
-								setConfirmBtnLoading(false);
+								setConfirmBtnLoading(false)
 							}
 						}}
 					>
-						{detailDrawerMode === AppDetailDrawerModeEnum.create
-							? "确定"
-							: "更新"}
+						{detailDrawerMode === AppDetailDrawerModeEnum.create ? '确定' : '更新'}
 					</Button>
 				</Space>
 			}
@@ -184,5 +172,5 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				appItem={appItem!}
 			/>
 		</Drawer>
-	);
-};
+	)
+}
