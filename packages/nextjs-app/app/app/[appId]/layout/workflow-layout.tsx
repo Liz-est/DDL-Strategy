@@ -6,6 +6,7 @@ import {
 	IAgentMessage,
 	IChunkChatCompletionResponse,
 	IErrorEvent,
+	IMessageFileItem,
 	IWorkflowNode,
 } from '@dify-chat/api'
 import {
@@ -13,6 +14,7 @@ import {
 	AppInputForm,
 	LucideIcon,
 	MarkdownRenderer,
+	MessageFileList,
 	WorkflowLogs,
 } from '@dify-chat/components'
 import { AppModeEnums, useAppContext } from '@dify-chat/core'
@@ -45,6 +47,7 @@ export default function WorkflowLayout({ appMode }: { appMode: AppModeEnums }) {
 		user: userInfo?.userId as string,
 		appId: currentAppId!,
 	})
+	const [files, setFiles] = useState<IMessageFileItem[]>([])
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
 		const runner = () => {
@@ -130,14 +133,19 @@ export default function WorkflowLayout({ appMode }: { appMode: AppModeEnums }) {
 							setWorkflowItems([])
 						} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
 							workflows.status = 'finished'
-							const { outputs } = parsedData.data || {}
+							const { outputs, files } = parsedData.data || {}
 							const outputsLength = Object.keys(outputs)?.length
 							if (outputsLength > 0) {
 								setResultDetail(outputs)
 							}
 							// 如果返回的对象只有一个属性, 则在 "结果" Tab 中渲染其值
 							if (outputsLength === 1) {
-								setText(Object.values(outputs)[0] as string)
+								if (typeof Object.values(outputs)[0] === 'string') {
+									setText(Object.values(outputs)[0] as string)
+								}
+								if (files) {
+									setFiles(files)
+								}
 							}
 							setWorkflowStatus('finished')
 						} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
@@ -208,7 +216,11 @@ export default function WorkflowLayout({ appMode }: { appMode: AppModeEnums }) {
 			label: '结果',
 			children: (
 				<div className="w-full h-full overflow-x-hidden overflow-y-auto">
-					<MarkdownRenderer markdownText={text} />
+					{text ? (
+						<MarkdownRenderer markdownText={text} />
+					) : files ? (
+						<MessageFileList files={files} />
+					) : null}
 				</div>
 			),
 			visible: resultDetailLength === 1,
