@@ -301,7 +301,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 
 			{/* 文本生成结果渲染 */}
 			{appMode === AppModeEnums.TEXT_GENERATOR && (
-				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-gray-50">
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-theme-bg">
 					{textGenerateStatus === 'init' ? (
 						<div className="w-full h-full flex items-center justify-center">
 							<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
