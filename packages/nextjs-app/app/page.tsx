@@ -1,18 +1,19 @@
-import Image from "next/image";
-import SingleAppLayoutWrapper from "@/components/layout/single-layout-wrapper";
-import { redirect } from "next/navigation";
-import { getRunningModeAction } from "@/app/actions";
-import { RunningModes } from "@/constants";
+import Image from 'next/image'
+import { redirect } from 'next/navigation'
+
+import { getRunningModeAction } from '@/app/actions'
+import SingleAppLayoutWrapper from '@/components/layout/single-layout-wrapper'
+import { RunningModes } from '@/constants'
 
 export default async function Home() {
-	const runningMode = await getRunningModeAction();
+	const runningMode = await getRunningModeAction()
 
 	// 单应用模式直接渲染
 	if (runningMode === RunningModes.SingleApp) {
-		return <SingleAppLayoutWrapper />;
+		return <SingleAppLayoutWrapper />
 	} else if (runningMode === RunningModes.MultiApp) {
 		// TODO 后续通过中间件处理
-		redirect("/apps");
+		redirect('/apps')
 	}
 
 	return (
@@ -28,15 +29,13 @@ export default async function Home() {
 				/>
 				<ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
 					<li className="mb-2 tracking-[-.01em]">
-						Get started by editing{" "}
+						Get started by editing{' '}
 						<code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
 							src/app/page.tsx
 						</code>
 						.
 					</li>
-					<li className="tracking-[-.01em]">
-						Save and see your changes instantly.
-					</li>
+					<li className="tracking-[-.01em]">Save and see your changes instantly.</li>
 				</ol>
 
 				<div className="flex gap-4 items-center flex-col sm:flex-row">
@@ -113,5 +112,5 @@ export default async function Home() {
 				</a>
 			</footer>
 		</div>
-	);
+	)
 }

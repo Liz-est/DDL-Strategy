@@ -1,4 +1,4 @@
 export enum AppDetailDrawerModeEnum {
-	create = "create",
-	edit = "edit",
+	create = 'create',
+	edit = 'edit',
 }

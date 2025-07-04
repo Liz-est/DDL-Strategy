@@ -1,129 +1,128 @@
-import { DownCircleTwoTone } from "@ant-design/icons";
-import { DifyApi } from "@/services/dify";
-import { LucideIcon } from "@dify-chat/components";
-import { getAppList as getAppListAction } from "@/app/apps/actions";
-import { AppContextProvider } from "@dify-chat/core";
-import { useIsMobile } from "@dify-chat/helpers";
-import { useMount, useRequest } from "ahooks";
-import { Dropdown, message } from "antd";
-import React, { useEffect, useState } from "react";
-import { flushSync } from "react-dom";
+import { DownCircleTwoTone } from '@ant-design/icons'
+import { LucideIcon } from '@dify-chat/components'
+import { AppContextProvider } from '@dify-chat/core'
+import { useIsMobile } from '@dify-chat/helpers'
+import { useMount, useRequest } from 'ahooks'
+import { Dropdown, message } from 'antd'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { flushSync } from 'react-dom'
 
-import { useAppSiteSetting, useDifyApi } from "@/hooks/useApi";
-
-import MainLayout from "@/app/app/[appId]/layout/main-layout";
-import { useRouter } from "next/navigation";
-import { getUserAction } from "@/app/actions";
-import { IDifyAppItem4View } from "@/types";
-import { ICurrentApp } from "@/app/app/[appId]/types";
+import { getUserAction } from '@/app/actions'
+import MainLayout from '@/app/app/[appId]/layout/main-layout'
+import { ICurrentApp } from '@/app/app/[appId]/types'
+import { getAppList as getAppListAction } from '@/app/apps/actions'
+import { useAppSiteSetting, useDifyApi } from '@/hooks/useApi'
+import { DifyApi } from '@/services/dify'
+import { IDifyAppItem4View } from '@/types'
 
 interface IMultiAppLayoutProps {
-	appId: string;
+	appId: string
 }
 
 const MultiAppLayout = (props: IMultiAppLayoutProps) => {
-	const { appId } = props;
-	const router = useRouter();
-	const { data: userInfo = { userId: "" } } = useRequest(() => {
-		return getUserAction();
-	});
+	const { appId } = props
+	const router = useRouter()
+	const { data: userInfo = { userId: '' } } = useRequest(() => {
+		return getUserAction()
+	})
 
 	const difyApi = useDifyApi({
 		user: userInfo.userId!,
 		appId,
-	});
+	})
 
-	const [selectedAppId, setSelectedAppId] = useState<string>("");
-	const [initLoading, setInitLoading] = useState(false);
-	const [appList, setAppList] = useState<IDifyAppItem4View[]>([]);
+	const [selectedAppId, setSelectedAppId] = useState<string>('')
+	const [initLoading, setInitLoading] = useState(false)
+	const [appList, setAppList] = useState<IDifyAppItem4View[]>([])
 
-	const [currentApp, setCurrentApp] = useState<ICurrentApp>();
+	const [currentApp, setCurrentApp] = useState<ICurrentApp>()
 
 	const { runAsync: getAppList } = useRequest(
 		() => {
-			setInitLoading(true);
-			return getAppListAction({ isMask: true });
+			setInitLoading(true)
+			return getAppListAction({ isMask: true })
 		},
 		{
 			manual: true,
-			onSuccess: (result) => {
+			onSuccess: result => {
 				flushSync(() => {
-					setAppList(result);
-				});
+					setAppList(result)
+				})
 				if (isMobile) {
 					// 移动端如果没有应用，直接跳转应用列表页
 					if (!result?.length) {
-						router.replace("/apps");
-						return Promise.resolve([]);
+						router.replace('/apps')
+						return Promise.resolve([])
 					}
 				}
 
 				if (appId) {
-					setSelectedAppId(appId as string);
+					setSelectedAppId(appId as string)
 				} else if (!selectedAppId && result?.length) {
-					setSelectedAppId(result[0]?.id || "");
+					setSelectedAppId(result[0]?.id || '')
 				}
 			},
-			onError: (error) => {
-				message.error(`获取应用列表失败: ${error}`);
-				console.error(error);
+			onError: error => {
+				message.error(`获取应用列表失败: ${error}`)
+				console.error(error)
 			},
 		},
-	);
+	)
 
 	const { runAsync: getAppParameters } = useRequest(
 		(difyApi: DifyApi) => {
-			return difyApi.getAppParameters();
+			return difyApi.getAppParameters()
 		},
 		{
 			manual: true,
 		},
-	);
+	)
 
-	const { getAppSiteSettting } = useAppSiteSetting();
+	const { getAppSiteSettting } = useAppSiteSetting()
 
 	/**
 	 * 初始化应用信息
 	 */
 	const initApp = async () => {
-		const appItem = appList?.find((item) => item.id === selectedAppId);
+		const appItem = appList?.find(item => item.id === selectedAppId)
 		if (!appItem) {
-			return;
+			return
 		}
-		setInitLoading(true);
+		setInitLoading(true)
 		// 获取应用参数
-		const getParameters = () => getAppParameters(difyApi);
-		const getSiteSetting = () => getAppSiteSettting(difyApi);
-		const promises = [getParameters(), getSiteSetting()] as const;
+		const getParameters = () => getAppParameters(difyApi)
+		const getSiteSetting = () => getAppSiteSettting(difyApi)
+		const promises = [getParameters(), getSiteSetting()] as const
 		Promise.all(promises)
-			.then((res) => {
-				const [parameters, siteSetting] = res;
+			.then(res => {
+				const [parameters, siteSetting] = res
 				setCurrentApp({
 					config: appItem,
 					parameters: parameters!,
 					site: siteSetting,
-				});
+				})
 			})
-			.catch((err) => {
-				message.error(`获取应用参数失败: ${err}`);
-				console.error(err);
-				setCurrentApp(undefined);
+			.catch(err => {
+				message.error(`获取应用参数失败: ${err}`)
+				console.error(err)
+				setCurrentApp(undefined)
 			})
 			.finally(() => {
-				setInitLoading(false);
-			});
-	};
+				setInitLoading(false)
+			})
+	}
 
 	useEffect(() => {
-		initApp();
-	}, [selectedAppId]);
+		initApp()
+	}, [selectedAppId])
 
-	const isMobile = useIsMobile();
+	const isMobile = useIsMobile()
 
 	// 初始化获取应用列表
 	useMount(() => {
-		getAppList();
-	});
+		getAppList()
+	})
 
 	return (
 		<AppContextProvider
@@ -140,11 +139,15 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 				renderCenterTitle={() => {
 					return (
 						<div className="flex items-center overflow-hidden">
-							<LucideIcon name="layout-grid" size={16} className="mr-1" />
+							<LucideIcon
+								name="layout-grid"
+								size={16}
+								className="mr-1"
+							/>
 							<span
 								className="cursor-pointer inline-block shrink-0"
 								onClick={() => {
-									router.push("/apps");
+									router.push('/apps')
 								}}
 							>
 								应用列表
@@ -155,31 +158,30 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 									<Dropdown
 										arrow
 										placement="bottom"
-										trigger={["click"]}
+										trigger={['click']}
 										menu={{
 											selectedKeys: [selectedAppId],
 											items: [
-												...(appList?.map((item) => {
-													const isSelected = selectedAppId === item.id;
+												...(appList?.map(item => {
+													const isSelected = selectedAppId === item.id
 													return {
 														key: item.id,
 														label: (
-															<div
-																className={
-																	isSelected
-																		? "text-primary"
-																		: "text-theme-text"
-																}
-															>
+															<div className={isSelected ? 'text-primary' : 'text-theme-text'}>
 																{item.info.name}
 															</div>
 														),
 														onClick: () => {
-															router.push(`/app/${item.id}`);
-															setSelectedAppId(item.id);
+															router.push(`/app/${item.id}`)
+															setSelectedAppId(item.id)
 														},
-														icon: <LucideIcon name="bot" size={18} />,
-													};
+														icon: (
+															<LucideIcon
+																name="bot"
+																size={18}
+															/>
+														),
+													}
 												}) || []),
 											],
 										}}
@@ -194,11 +196,11 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 								</div>
 							) : null}
 						</div>
-					);
+					)
 				}}
 			/>
 		</AppContextProvider>
-	);
-};
+	)
+}
 
-export default MultiAppLayout;
+export default MultiAppLayout

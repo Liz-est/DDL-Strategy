@@ -3,67 +3,66 @@ import {
 	CloseCircleOutlined,
 	InfoOutlined,
 	LoadingOutlined,
-} from "@ant-design/icons";
-import { IAgentMessage, IWorkflowNode } from "@dify-chat/api";
-import { useAppContext } from "@dify-chat/core";
-import { Collapse, CollapseProps, GetProp } from "antd";
-import { useMemo } from "react";
+} from '@ant-design/icons'
+import { IAgentMessage, IWorkflowNode } from '@dify-chat/api'
+import { useAppContext } from '@dify-chat/core'
+import { Collapse, CollapseProps, GetProp } from 'antd'
+import { useMemo } from 'react'
 
-import LucideIcon from "../../lucide-icon";
-import WorkflowNodeDetail from "./workflow-node-detail";
-import WorkflowNodeIcon from "./workflow-node-icon";
+import LucideIcon from '../../lucide-icon'
+import WorkflowNodeDetail from './workflow-node-detail'
+import WorkflowNodeIcon from './workflow-node-icon'
 
 interface IWorkflowLogsProps {
-	className?: string;
-	status: NonNullable<IAgentMessage["workflows"]>["status"];
-	items: IWorkflowNode[];
+	className?: string
+	status: NonNullable<IAgentMessage['workflows']>['status']
+	items: IWorkflowNode[]
 }
 
 export default function WorkflowLogs(props: IWorkflowLogsProps) {
-	const { items, status, className } = props;
-	const { currentApp } = useAppContext();
+	const { items, status, className } = props
+	const { currentApp } = useAppContext()
 
 	// Collapse 组件的通用 props
-	const collapseCommonProps: Pick<CollapseProps, "expandIconPosition"> =
-		useMemo(() => {
-			if (currentApp?.site?.show_workflow_steps) {
-				return {
-					expandIconPosition: "end",
-				};
-			}
+	const collapseCommonProps: Pick<CollapseProps, 'expandIconPosition'> = useMemo(() => {
+		if (currentApp?.site?.show_workflow_steps) {
 			return {
-				expandIconPosition: "end",
-			};
-		}, [currentApp?.site?.show_workflow_steps]);
+				expandIconPosition: 'end',
+			}
+		}
+		return {
+			expandIconPosition: 'end',
+		}
+	}, [currentApp?.site?.show_workflow_steps])
 
 	// Collapse 组件的 item 通用 props
 	const collapseItemVisibleProps: Pick<
-		GetProp<CollapseProps, "items">[0],
-		"showArrow" | "collapsible"
+		GetProp<CollapseProps, 'items'>[0],
+		'showArrow' | 'collapsible'
 	> = useMemo(() => {
 		if (currentApp?.site?.show_workflow_steps) {
 			return {
 				showArrow: true,
-			};
+			}
 		}
 		return {
 			showArrow: false,
-			collapsible: "icon",
-		};
-	}, [currentApp?.site?.show_workflow_steps]);
+			collapsible: 'icon',
+		}
+	}, [currentApp?.site?.show_workflow_steps])
 
 	if (!items?.length) {
-		return null;
+		return null
 	}
 
-	const collapseItems: CollapseProps["items"] = [
+	const collapseItems: CollapseProps['items'] = [
 		{
-			key: "workflow",
+			key: 'workflow',
 			label: (
 				<div className="flex items-center">
-					{status === "running" ? (
+					{status === 'running' ? (
 						<LoadingOutlined />
-					) : status === "finished" ? (
+					) : status === 'finished' ? (
 						<div className="text-theme-success flex items-center">
 							<LucideIcon name="circle-check" />
 						</div>
@@ -76,19 +75,19 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 				<Collapse
 					size="small"
 					expandIconPosition={collapseCommonProps.expandIconPosition}
-					items={items.map((item) => {
-						const totalTokens = item.execution_metadata?.total_tokens;
+					items={items.map(item => {
+						const totalTokens = item.execution_metadata?.total_tokens
 						return {
 							key: item.id,
 							...collapseItemVisibleProps,
 							label: (
 								<div className="flex items-center justify-between w-full">
 									<div className="flex items-center">
-										{item.status === "success" ? (
+										{item.status === 'success' ? (
 											<CheckCircleOutlined className="text-theme-success" />
-										) : item.status === "error" ? (
+										) : item.status === 'error' ? (
 											<CloseCircleOutlined className="text-theme-danger" />
-										) : item.status === "running" ? (
+										) : item.status === 'running' ? (
 											<LoadingOutlined />
 										) : (
 											<InfoOutlined />
@@ -99,14 +98,10 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 										<div className="text-theme-text">{item.title}</div>
 									</div>
 									<div className="flex items-center  text-theme-text">
-										{item.status === "success" ? (
+										{item.status === 'success' ? (
 											<>
-												<div className="mr-3">
-													{item.elapsed_time?.toFixed(3)} 秒
-												</div>
-												<div className="mr-3">
-													{totalTokens ? `${totalTokens} tokens` : ""}
-												</div>
+												<div className="mr-3">{item.elapsed_time?.toFixed(3)} 秒</div>
+												<div className="mr-3">{totalTokens ? `${totalTokens} tokens` : ''}</div>
 											</>
 										) : null}
 									</div>
@@ -119,43 +114,33 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 									items={[
 										{
 											key: `${item.id}-input`,
-											label: "输入",
-											children: (
-												<WorkflowNodeDetail originalContent={item.inputs} />
-											),
+											label: '输入',
+											children: <WorkflowNodeDetail originalContent={item.inputs} />,
 										},
 										{
 											key: `${item.id}-process`,
-											label: "处理过程",
-											children: (
-												<WorkflowNodeDetail
-													originalContent={item.process_data}
-												/>
-											),
+											label: '处理过程',
+											children: <WorkflowNodeDetail originalContent={item.process_data} />,
 										},
 										{
 											key: `${item.id}-output`,
-											label: "输出",
-											children: (
-												<WorkflowNodeDetail
-													originalContent={item.outputs as string}
-												/>
-											),
+											label: '输出',
+											children: <WorkflowNodeDetail originalContent={item.outputs as string} />,
 										},
 									]}
 								></Collapse>
 							),
-						};
+						}
 					})}
 				>
 					{}
 				</Collapse>
 			),
 		},
-	];
+	]
 
 	return (
-		<div className={`md:min-w-chat-card mb-3 ${className || ""}`}>
+		<div className={`md:min-w-chat-card mb-3 ${className || ''}`}>
 			<Collapse
 				items={collapseItems}
 				size="small"
@@ -163,5 +148,5 @@ export default function WorkflowLogs(props: IWorkflowLogsProps) {
 				expandIconPosition={collapseCommonProps.expandIconPosition}
 			/>
 		</div>
-	);
+	)
 }

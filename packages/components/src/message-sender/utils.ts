@@ -1,52 +1,52 @@
-import { IFileType } from "@dify-chat/api";
+import { IFileType } from '@dify-chat/api'
 
 /**
  * Dify 支持的文件类型和对应的格式
  */
-export const FileTypeMap: Map<IFileType, string[]> = new Map();
+export const FileTypeMap: Map<IFileType, string[]> = new Map()
 
-FileTypeMap.set("document", [
-	"txt",
-	"md",
-	"markdown",
-	"pdf",
-	"html",
-	"xlsx",
-	"xls",
-	"doc",
-	"docx",
-	"csv",
-	"eml",
-	"msg",
-	"pptx",
-	"ppt",
-	"xml",
-	"epub",
-]);
-FileTypeMap.set("image", ["jpg", "jpeg", "png", "gif", "svg", "webp"]);
-FileTypeMap.set("audio", ["mp3", "m4a", "wav", "webm", "amr"]);
-FileTypeMap.set("video", ["mp4", "mov", "mpeg", "mpga"]);
-FileTypeMap.set("custom", []);
+FileTypeMap.set('document', [
+	'txt',
+	'md',
+	'markdown',
+	'pdf',
+	'html',
+	'xlsx',
+	'xls',
+	'doc',
+	'docx',
+	'csv',
+	'eml',
+	'msg',
+	'pptx',
+	'ppt',
+	'xml',
+	'epub',
+])
+FileTypeMap.set('image', ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'])
+FileTypeMap.set('audio', ['mp3', 'm4a', 'wav', 'webm', 'amr'])
+FileTypeMap.set('video', ['mp4', 'mov', 'mpeg', 'mpga'])
+FileTypeMap.set('custom', [])
 
 /**
  * 获取文件扩展名
  */
 export const getFileExtByName = (filename: string) => {
-	return filename.split(".").pop();
-};
+	return filename.split('.').pop()
+}
 
 export const getFileTypeByName = (filename: string): IFileType => {
-	const ext = filename.split(".").pop();
+	const ext = filename.split('.').pop()
 
 	// 使用文件扩展名和 FileTypeMap 进行匹配
-	let fileType: IFileType = "custom";
+	let fileType: IFileType = 'custom'
 	FileTypeMap.forEach((extensions, type) => {
 		if (extensions.indexOf(ext as string) > -1) {
-			fileType = type;
+			fileType = type
 		}
-	});
-	return fileType;
-};
+	})
+	return fileType
+}
 
 /**
  * 获取文件类型
@@ -55,15 +55,12 @@ export const getFileTypeByName = (filename: string): IFileType => {
  * @param filename 文件名
  * @param allowedFileTypes 允许的文件类型
  */
-export const getDifyFileType = (
-	filename: string,
-	allowedFileTypes: IFileType[],
-): IFileType => {
+export const getDifyFileType = (filename: string, allowedFileTypes: IFileType[]): IFileType => {
 	if (allowedFileTypes.length === 1) {
-		return allowedFileTypes[0];
+		return allowedFileTypes[0]
 	}
-	return getFileTypeByName(filename);
-};
+	return getFileTypeByName(filename)
+}
 
 /**
  * 格式化文件大小, 原始单位为 Byte
@@ -72,7 +69,7 @@ export const getDifyFileType = (
  */
 export const formatSize = (size: number) => {
 	if (size > 1024 * 1024) {
-		return `${(size / 1024 / 1024).toFixed(2)} MB`;
+		return `${(size / 1024 / 1024).toFixed(2)} MB`
 	}
-	return `${(size / 1024).toFixed(2)} KB`;
-};
+	return `${(size / 1024).toFixed(2)} KB`
+}

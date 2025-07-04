@@ -1,7 +1,9 @@
-"use client";
-import SingleAppLayout from "@/app/app/[appId]/layout/single-app-layout";
-import PageLayoutWrapper from "./page-layout-wrapper";
-import { getAppConfig, setAppConfig } from "@/app/actions/app-single";
+'use client'
+
+import { getAppConfig, setAppConfig } from '@/app/actions/app-single'
+import SingleAppLayout from '@/app/app/[appId]/layout/single-app-layout'
+
+import PageLayoutWrapper from './page-layout-wrapper'
 
 export default function SingleAppLayoutWrapper() {
 	return (
@@ -11,5 +13,5 @@ export default function SingleAppLayoutWrapper() {
 				setAppConfig={setAppConfig}
 			/>
 		</PageLayoutWrapper>
-	);
+	)
 }

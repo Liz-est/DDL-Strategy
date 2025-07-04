@@ -1,7 +1,7 @@
-import { GithubOutlined } from "@ant-design/icons";
-import { Button } from "antd";
+import { GithubOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
 
-import LogoImage from "../assets/images/logo.png";
+import LogoImage from '../assets/images/logo.png'
 
 export const LogoIcon = () => {
 	return (
@@ -11,8 +11,8 @@ export const LogoIcon = () => {
 			draggable={false}
 			alt="logo"
 		/>
-	);
-};
+	)
+}
 
 export const GithubIcon = () => {
 	return (
@@ -24,22 +24,22 @@ export const GithubIcon = () => {
 		>
 			<GithubOutlined className="text-xl cursor-pointer text-theme-text" />
 		</Button>
-	);
-};
+	)
+}
 
 interface ILogoProps {
 	/**
 	 * 是否隐藏 Github 图标
 	 */
-	hideGithubIcon?: boolean;
+	hideGithubIcon?: boolean
 	/**
 	 * 是否隐藏文本
 	 */
-	hideText?: boolean;
+	hideText?: boolean
 }
 
 export const Logo = (props: ILogoProps) => {
-	const { hideGithubIcon, hideText } = props;
+	const { hideGithubIcon, hideText } = props
 
 	return (
 		<div className="flex h-16 items-center justify-start !py-0 box-border">
@@ -67,5 +67,5 @@ export const Logo = (props: ILogoProps) => {
 				</Button>
 			)}
 		</div>
-	);
-};
+	)
+}

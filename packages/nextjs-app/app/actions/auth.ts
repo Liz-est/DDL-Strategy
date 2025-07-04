@@ -1,22 +1,21 @@
-"use server";
+'use server'
 
-import { createSession, decrypt } from "@/lib/session";
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers'
+
+import { createSession, decrypt } from '@/lib/session'
 
 /**
  * 获取用户信息
  * 简单的实现，实际场景中可以根据 userId 从数据库中查询用户信息
  */
 export const getUserAction = async () => {
-	const cookieStore = await cookies();
-	const decyptRes = await decrypt(
-		cookieStore.get("__DC_SESSION")?.value as string,
-	);
+	const cookieStore = await cookies()
+	const decyptRes = await decrypt(cookieStore.get('__DC_SESSION')?.value as string)
 	return {
 		userId: decyptRes?.userId as string,
 		enableSetting: decyptRes.enableSetting,
-	};
-};
+	}
+}
 
 /**
  * 登录 server action
@@ -27,7 +26,7 @@ export const loginAction = async (userId: string) => {
 		userId,
 		// 为方便演示，默认开启设置，实际场景中需要根据用户信息判断是否开启设置
 		enableSetting: true,
-	};
-	await createSession(sessionInfo);
-	return sessionInfo;
-};
+	}
+	await createSession(sessionInfo)
+	return sessionInfo
+}

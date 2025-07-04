@@ -1,43 +1,40 @@
-"use client";
-import { Prompts } from "@ant-design/x";
-import {
-	IFile,
-	IMessageFileItem,
-	MessageFileBelongsToEnum,
-} from "@dify-chat/api";
-import { IMessageItem4Render } from "@dify-chat/api";
-import { Chatbox } from "@dify-chat/components";
-import { useAppContext } from "@dify-chat/core";
-import { Roles, useConversationsContext } from "@dify-chat/core";
-import { isTempId } from "@dify-chat/helpers";
-import { Button, Empty, Form, GetProp, Spin } from "antd";
-import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+'use client'
 
-import { useLatest } from "@/hooks/use-latest";
-import { useX } from "@/hooks/useX";
-import workflowDataStorage from "@/hooks/useX/workflow-data-storage";
-import { useDifyApi } from "@/hooks/useApi";
-import { useRequest } from "ahooks";
-import { getUserAction } from "@/app/actions";
+import { Prompts } from '@ant-design/x'
+import { IFile, IMessageFileItem, MessageFileBelongsToEnum } from '@dify-chat/api'
+import { IMessageItem4Render } from '@dify-chat/api'
+import { Chatbox } from '@dify-chat/components'
+import { useAppContext } from '@dify-chat/core'
+import { Roles, useConversationsContext } from '@dify-chat/core'
+import { isTempId } from '@dify-chat/helpers'
+import { useRequest } from 'ahooks'
+import { Button, Empty, Form, GetProp, Spin } from 'antd'
+import dayjs from 'dayjs'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import { getUserAction } from '@/app/actions'
+import { useLatest } from '@/hooks/use-latest'
+import { useDifyApi } from '@/hooks/useApi'
+import { useX } from '@/hooks/useX'
+import workflowDataStorage from '@/hooks/useX/workflow-data-storage'
 
 interface IChatboxWrapperProps {
 	/**
 	 * 对话列表 loading
 	 */
-	conversationListLoading?: boolean;
+	conversationListLoading?: boolean
 	/**
 	 * 内部处理对话列表变更的函数
 	 */
-	conversationItemsChangeCallback: (showLoading?: boolean) => void;
+	conversationItemsChangeCallback: (showLoading?: boolean) => void
 	/**
 	 * 添加对话
 	 */
-	onAddConversation: () => void;
+	onAddConversation: () => void
 	/**
 	 * 触发配置应用事件
 	 */
-	handleStartConfig?: () => void;
+	handleStartConfig?: () => void
 }
 
 /**
@@ -49,75 +46,73 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		onAddConversation,
 		conversationItemsChangeCallback,
 		handleStartConfig,
-	} = props;
-	const { currentAppId, currentApp, appLoading } = useAppContext();
+	} = props
+	const { currentAppId, currentApp, appLoading } = useAppContext()
 	const { data: userInfo } = useRequest(() => {
-		return getUserAction();
-	});
+		return getUserAction()
+	})
 	const difyApi = useDifyApi({
 		user: userInfo?.userId as string,
 		appId: currentAppId!,
-	});
+	})
 	const {
 		currentConversationId,
 		setCurrentConversationId,
 		setConversations,
 		currentConversationInfo,
-	} = useConversationsContext();
+	} = useConversationsContext()
 
-	const [entryForm] = Form.useForm();
-	const abortRef = useRef(() => {});
+	const [entryForm] = Form.useForm()
+	const abortRef = useRef(() => {})
 	useEffect(() => {
 		return () => {
-			abortRef.current();
-		};
-	}, []);
+			abortRef.current()
+		}
+	}, [])
 	// 是否允许消息列表请求时展示 loading
-	const [messagesloadingEnabled, setMessagesloadingEnabled] = useState(true);
-	const [initLoading, setInitLoading] = useState<boolean>(false);
-	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>(
-		[],
-	);
+	const [messagesloadingEnabled, setMessagesloadingEnabled] = useState(true)
+	const [initLoading, setInitLoading] = useState<boolean>(false)
+	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([])
 
-	const [nextSuggestions, setNextSuggestions] = useState<string[]>([]);
+	const [nextSuggestions, setNextSuggestions] = useState<string[]>([])
 	// 定义 ref, 用于获取最新的 conversationId
 	const latestProps = useLatest({
 		conversationId: currentConversationId,
 		appId: currentAppId,
-	});
+	})
 	const latestState = useLatest({
 		inputParams: currentConversationInfo?.inputs || {},
-	});
+	})
 
-	const filesRef = useRef<IFile[]>([]);
+	const filesRef = useRef<IFile[]>([])
 
 	/**
 	 * 获取下一轮问题建议
 	 */
 	const getNextSuggestions = useCallback(
 		async (message_id: string) => {
-			const result = await difyApi.getNextSuggestions({ message_id });
-			setNextSuggestions(result.data);
+			const result = await difyApi.getNextSuggestions({ message_id })
+			setNextSuggestions(result.data)
 		},
 		[difyApi],
-	);
+	)
 
 	const updateConversationInputs = useCallback(
 		(formValues: Record<string, unknown>) => {
-			setConversations((prev) => {
-				return prev.map((item) => {
+			setConversations(prev => {
+				return prev.map(item => {
 					if (item.id === currentConversationId) {
 						return {
 							...item,
 							inputs: formValues,
-						};
+						}
 					}
-					return item;
-				});
-			});
+					return item
+				})
+			})
 		},
 		[currentConversationId, setConversations],
-	);
+	)
 
 	/**
 	 * 获取对话的历史消息
@@ -126,36 +121,31 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		async (conversationId: string) => {
 			// 如果是临时 ID，则不获取历史消息
 			if (isTempId(conversationId)) {
-				return;
+				return
 			}
-			const result = await difyApi.getConversationHistory(conversationId);
+			const result = await difyApi.getConversationHistory(conversationId)
 
 			if (!result?.data?.length) {
-				return;
+				return
 			}
 
-			const newMessages: IMessageItem4Render[] = [];
+			const newMessages: IMessageItem4Render[] = []
 
 			// 只有当历史消息中的参数不为空时才更新
-			if (
-				result?.data?.length &&
-				Object.values(result.data?.[0]?.inputs)?.length
-			) {
-				updateConversationInputs(result.data[0]?.inputs || {});
+			if (result?.data?.length && Object.values(result.data?.[0]?.inputs)?.length) {
+				updateConversationInputs(result.data[0]?.inputs || {})
 			}
 
-			result.data.forEach((item) => {
-				const createdAt = dayjs(item.created_at * 1000).format(
-					"YYYY-MM-DD HH:mm:ss",
-				);
+			result.data.forEach(item => {
+				const createdAt = dayjs(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss')
 				newMessages.push(
 					{
 						id: item.id,
 						content: item.query,
-						status: "success",
+						status: 'success',
 						isHistory: true,
-						files: item.message_files?.filter((item) => {
-							return item.belongs_to === MessageFileBelongsToEnum.user;
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.user
 						}),
 						role: Roles.USER,
 						created_at: createdAt,
@@ -163,34 +153,34 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 					{
 						id: item.id,
 						content: item.answer,
-						status: item.status === "error" ? item.status : "success",
-						error: item.error || "",
+						status: item.status === 'error' ? item.status : 'success',
+						error: item.error || '',
 						isHistory: true,
-						files: item.message_files?.filter((item) => {
-							return item.belongs_to === MessageFileBelongsToEnum.assistant;
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.assistant
 						}),
 						feedback: item.feedback,
 						workflows:
 							workflowDataStorage.get({
-								appId: currentAppId || "",
+								appId: currentAppId || '',
 								conversationId,
 								messageId: item.id,
-								key: "workflows",
+								key: 'workflows',
 							}) || [],
 						agentThoughts: item.agent_thoughts || [],
 						retrieverResources: item.retriever_resources || [],
 						role: Roles.AI,
 						created_at: createdAt,
 					},
-				);
-			});
+				)
+			})
 
-			setMessages([]); // 历史消息回来之后，应该清空临时消息
-			setHistoryMessages(newMessages);
+			setMessages([]) // 历史消息回来之后，应该清空临时消息
+			setHistoryMessages(newMessages)
 			if (newMessages?.length) {
 				// 如果下一步问题建议已开启，则请求接口获取
 				if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
-					getNextSuggestions(newMessages[newMessages.length - 1].id);
+					getNextSuggestions(newMessages[newMessages.length - 1].id)
 				}
 			}
 		},
@@ -201,7 +191,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			getNextSuggestions,
 			updateConversationInputs,
 		],
-	);
+	)
 
 	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
 		latestProps,
@@ -210,97 +200,94 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		getNextSuggestions,
 		abortRef,
 		getConversationMessages,
-		onConversationIdChange: (id) => {
-			setMessagesloadingEnabled(false);
-			setCurrentConversationId(id);
-			conversationItemsChangeCallback();
+		onConversationIdChange: id => {
+			setMessagesloadingEnabled(false)
+			setCurrentConversationId(id)
+			conversationItemsChangeCallback()
 		},
 		entryForm,
 		difyApi,
-	});
+	})
 
 	const initConversationInfo = async () => {
 		// 有对话 ID 且非临时 ID 时，获取历史消息
 		if (currentConversationId && !isTempId(currentConversationId)) {
-			await getConversationMessages(currentConversationId);
-			setInitLoading(false);
+			await getConversationMessages(currentConversationId)
+			setInitLoading(false)
 		} else {
 			// 不管有没有参数，都结束 loading，开始展示内容
-			setInitLoading(false);
+			setInitLoading(false)
 		}
-	};
+	}
 
 	useEffect(() => {
 		if (!messagesloadingEnabled) {
-			setMessagesloadingEnabled(true);
+			setMessagesloadingEnabled(true)
 		} else {
 			// 只有允许 loading 时，才清空对话列表数据
-			setInitLoading(true);
-			setMessages([]);
-			setNextSuggestions([]);
-			setHistoryMessages([]);
+			setInitLoading(true)
+			setMessages([])
+			setNextSuggestions([])
+			setHistoryMessages([])
 		}
-		initConversationInfo();
-	}, [currentConversationId]);
+		initConversationInfo()
+	}, [currentConversationId])
 
-	const onPromptsItemClick: GetProp<typeof Prompts, "onItemClick"> = (info) => {
+	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
 		onRequest({
 			content: info.data.description as string,
-		});
-	};
+		})
+	}
 
 	const isFormFilled = useMemo(() => {
 		if (!currentApp?.parameters?.user_input_form?.length) {
-			return true;
+			return true
 		}
-		return currentApp?.parameters.user_input_form.every((item) => {
-			const fieldInfo = Object.values(item)[0];
-			return !!currentConversationInfo?.inputs?.[fieldInfo.variable];
-		});
-	}, [currentApp?.parameters, currentConversationInfo]);
+		return currentApp?.parameters.user_input_form.every(item => {
+			const fieldInfo = Object.values(item)[0]
+			return !!currentConversationInfo?.inputs?.[fieldInfo.variable]
+		})
+	}, [currentApp?.parameters, currentConversationInfo])
 
 	const onSubmit = useCallback(
-		(
-			nextContent: string,
-			options?: { files?: IFile[]; inputs?: Record<string, unknown> },
-		) => {
-			filesRef.current = options?.files || [];
+		(nextContent: string, options?: { files?: IFile[]; inputs?: Record<string, unknown> }) => {
+			filesRef.current = options?.files || []
 			onRequest({
 				content: nextContent,
 				files: options?.files as IMessageFileItem[],
-			});
+			})
 		},
 		[onRequest],
-	);
+	)
 
 	const unStoredMessages4Render = useMemo(() => {
-		return messages.map((item) => {
+		return messages.map(item => {
 			return {
 				id: item.id,
 				status: item.status,
 				// @ts-expect-error TODO: 类型待优化
-				error: item.message.error || "",
+				error: item.message.error || '',
 				workflows: item.message.workflows,
 				agentThoughts: item.message.agentThoughts,
 				retrieverResources: item.message.retrieverResources,
 				files: item.message.files,
 				content: item.message.content,
 				role: item.status === Roles.LOCAL ? Roles.USER : Roles.AI,
-			} as IMessageItem4Render;
-		});
-	}, [messages]);
+			} as IMessageItem4Render
+		})
+	}, [messages])
 
 	const messageItems = useMemo(() => {
-		return [...historyMessages, ...unStoredMessages4Render];
-	}, [historyMessages, unStoredMessages4Render]);
+		return [...historyMessages, ...unStoredMessages4Render]
+	}, [historyMessages, unStoredMessages4Render])
 
 	const fallbackCallback = useCallback(
 		(conversationId: string) => {
 			// 反馈成功后，重新获取历史消息
-			getConversationMessages(conversationId);
+			getConversationMessages(conversationId)
 		},
 		[getConversationMessages],
-	);
+	)
 
 	// 如果应用配置 / 对话列表加载中，则展示 loading
 	if (conversationListLoading || appLoading) {
@@ -308,19 +295,22 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			<div className="w-full h-full flex items-center justify-center">
 				<Spin spinning />
 			</div>
-		);
+		)
 	}
 
 	if (!currentApp) {
 		return (
 			<div className="w-full h-full flex items-center justify-center">
 				<Empty description="请先配置 Dify 应用">
-					<Button type="primary" onClick={handleStartConfig}>
+					<Button
+						type="primary"
+						onClick={handleStartConfig}
+					>
 						开始配置
 					</Button>
 				</Empty>
 			</div>
-		);
+		)
 	}
 
 	return (
@@ -339,23 +329,23 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 						messageItems={messageItems}
 						isRequesting={agent.isRequesting()}
 						onPromptsItemClick={(...params) => {
-							setNextSuggestions([]);
-							return onPromptsItemClick(...params);
+							setNextSuggestions([])
+							return onPromptsItemClick(...params)
 						}}
 						onSubmit={onSubmit}
 						onCancel={async () => {
-							abortRef.current();
+							abortRef.current()
 							if (currentTaskId) {
-								await difyApi.stopTask(currentTaskId);
-								getConversationMessages(currentConversationId!);
+								await difyApi.stopTask(currentTaskId)
+								getConversationMessages(currentConversationId!)
 							}
 						}}
 						isFormFilled={isFormFilled}
-						onStartConversation={(formValues) => {
-							updateConversationInputs(formValues);
+						onStartConversation={formValues => {
+							updateConversationInputs(formValues)
 
 							if (!currentConversationId) {
-								onAddConversation();
+								onAddConversation()
 							}
 						}}
 						feedbackApi={difyApi.feedbackMessage}
@@ -371,5 +361,5 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				)}
 			</div>
 		</div>
-	);
+	)
 }

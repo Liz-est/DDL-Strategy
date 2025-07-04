@@ -1,22 +1,18 @@
-import {
-	AppModeOptions,
-	IDifyAppItem,
-	OpeningStatementDisplayModeOptions,
-} from "@dify-chat/core";
-import { Form, FormInstance, Input, Select } from "antd";
+import { AppModeOptions, IDifyAppItem, OpeningStatementDisplayModeOptions } from '@dify-chat/core'
+import { Form, FormInstance, Input, Select } from 'antd'
 
-import { AppDetailDrawerModeEnum } from "@/app/apps/enums";
+import { AppDetailDrawerModeEnum } from '@/app/apps/enums'
 
 interface ISettingFormProps {
-	formInstance: FormInstance<Record<string, unknown>>;
-	mode: AppDetailDrawerModeEnum;
-	appItem: IDifyAppItem;
+	formInstance: FormInstance<Record<string, unknown>>
+	mode: AppDetailDrawerModeEnum
+	appItem: IDifyAppItem
 }
 
 export default function SettingForm(props: ISettingFormProps) {
-	const { formInstance, mode, appItem } = props;
+	const { formInstance, mode, appItem } = props
 
-	const answerFormEnabled = Form.useWatch("answerForm.enabled", formInstance);
+	const answerFormEnabled = Form.useWatch('answerForm.enabled', formInstance)
 
 	return (
 		<Form
@@ -27,9 +23,9 @@ export default function SettingForm(props: ISettingFormProps) {
 				span: 5,
 			}}
 			initialValues={{
-				"answerForm.enabled": false,
-				"inputParams.enableUpdateAfterCvstStarts": false,
-				"extConfig.conversation.openingStatement.displayMode": "default",
+				'answerForm.enabled': false,
+				'inputParams.enableUpdateAfterCvstStarts': false,
+				'extConfig.conversation.openingStatement.displayMode': 'default',
 			}}
 		>
 			<div className="text-base mb-3 flex items-center">
@@ -39,17 +35,20 @@ export default function SettingForm(props: ISettingFormProps) {
 			<Form.Item
 				label="API Base"
 				name="apiBase"
-				rules={[{ required: true, message: "API Base 不能为空" }]}
+				rules={[{ required: true, message: 'API Base 不能为空' }]}
 				tooltip="Dify API 的域名+版本号前缀，如 https://api.dify.ai/v1"
 				required
 			>
-				<Input autoComplete="new-password" placeholder="请输入 API BASE" />
+				<Input
+					autoComplete="new-password"
+					placeholder="请输入 API BASE"
+				/>
 			</Form.Item>
 			<Form.Item
 				label="API Secret"
 				name="apiKey"
 				tooltip="Dify App 的 API Secret (以 app- 开头)"
-				rules={[{ required: true, message: "API Secret 不能为空" }]}
+				rules={[{ required: true, message: 'API Secret 不能为空' }]}
 				required
 			>
 				<Input.Password
@@ -67,14 +66,17 @@ export default function SettingForm(props: ISettingFormProps) {
 				label="应用名称"
 				hidden={mode === AppDetailDrawerModeEnum.create}
 			>
-				<Input disabled placeholder="请输入应用名称" />
+				<Input
+					disabled
+					placeholder="请输入应用名称"
+				/>
 			</Form.Item>
 			<Form.Item
 				name="info.mode"
 				label="应用类型"
 				tooltip="小于或等于 v1.3.1 的 Dify API 不会返回应用类型字段，需要用户自行选择"
 				required
-				rules={[{ required: true, message: "应用类型不能为空" }]}
+				rules={[{ required: true, message: '应用类型不能为空' }]}
 			>
 				<Select
 					// TODO 等 Dify 支持返回 mode 字段后，这里可以做一个判断，大于支持返回 mode 的版本就禁用，直接取接口值
@@ -88,7 +90,10 @@ export default function SettingForm(props: ISettingFormProps) {
 				label="应用描述"
 				hidden={mode === AppDetailDrawerModeEnum.create}
 			>
-				<Input disabled placeholder="请输入应用描述" />
+				<Input
+					disabled
+					placeholder="请输入应用描述"
+				/>
 			</Form.Item>
 			<Form.Item
 				name="info.tags"
@@ -96,7 +101,7 @@ export default function SettingForm(props: ISettingFormProps) {
 				hidden={mode === AppDetailDrawerModeEnum.create}
 			>
 				{appItem?.info.tags?.length ? (
-					<div className="text-theme-text">{appItem.info.tags.join(", ")}</div>
+					<div className="text-theme-text">{appItem.info.tags.join(', ')}</div>
 				) : (
 					<>无</>
 				)}
@@ -118,11 +123,11 @@ export default function SettingForm(props: ISettingFormProps) {
 					placeholder="请选择"
 					options={[
 						{
-							label: "启用",
+							label: '启用',
 							value: true,
 						},
 						{
-							label: "禁用",
+							label: '禁用',
 							value: false,
 						},
 					]}
@@ -158,11 +163,11 @@ export default function SettingForm(props: ISettingFormProps) {
 					placeholder="请选择"
 					options={[
 						{
-							label: "启用",
+							label: '启用',
 							value: true,
 						},
 						{
-							label: "禁用",
+							label: '禁用',
 							value: false,
 						},
 					]}
@@ -178,5 +183,5 @@ export default function SettingForm(props: ISettingFormProps) {
 				</Form.Item>
 			) : null}
 		</Form>
-	);
+	)
 }

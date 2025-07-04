@@ -1,17 +1,15 @@
-import { genDifyRequest } from "@/app/api/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
 
-const GET = async (
-	_request: NextRequest,
-	{ params }: { params: Promise<{ appId: string }> },
-) => {
-	const { appId } = await params;
-	const difyRequest = await genDifyRequest(appId);
-	const result = await difyRequest.get(`/parameters`);
+import { genDifyRequest } from '@/app/api/utils'
+
+const GET = async (_request: NextRequest, { params }: { params: Promise<{ appId: string }> }) => {
+	const { appId } = await params
+	const difyRequest = await genDifyRequest(appId)
+	const result = await difyRequest.get(`/parameters`)
 	return NextResponse.json({
 		code: 200,
 		data: result,
-	});
-};
+	})
+}
 
-export { GET };
+export { GET }

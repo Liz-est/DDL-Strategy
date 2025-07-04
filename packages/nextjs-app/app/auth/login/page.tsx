@@ -1,59 +1,58 @@
-"use client";
-import { Logo } from "@/components";
-import { message, Spin } from "antd";
-import { getRunningModeAction, loginAction } from "@/app/actions";
-import { redirect } from "next/navigation";
-import { LocalStorageKeys, LocalStorageStore } from "@dify-chat/helpers";
-import { useMount } from "ahooks";
-import FingerPrintJS from "@fingerprintjs/fingerprintjs";
+'use client'
+
+import { LocalStorageKeys, LocalStorageStore } from '@dify-chat/helpers'
+import FingerPrintJS from '@fingerprintjs/fingerprintjs'
+import { useMount } from 'ahooks'
+import { message, Spin } from 'antd'
+import { redirect } from 'next/navigation'
+
+import { getRunningModeAction, loginAction } from '@/app/actions'
+import { Logo } from '@/components'
 
 export default function LoginPage() {
 	/**
 	 * 重定向到首页
 	 */
 	const redirect2Index = async () => {
-		const runningMode = await getRunningModeAction();
+		const runningMode = await getRunningModeAction()
 		if (!runningMode) {
-			message.error("获取运行模式失败，请检查配置");
-			return;
+			message.error('获取运行模式失败，请检查配置')
+			return
 		}
-		if (runningMode === "singleApp") {
-			redirect("/");
-		} else if (runningMode === "multiApp") {
-			redirect("/apps");
+		if (runningMode === 'singleApp') {
+			redirect('/')
+		} else if (runningMode === 'multiApp') {
+			redirect('/apps')
 		}
-	};
+	}
 
 	/**
 	 * 调用登录 server action
 	 */
 	const mockLogin = async (): Promise<{
-		userId: string;
-		enableSetting: boolean;
+		userId: string
+		enableSetting: boolean
 	}> => {
-		const fp = await FingerPrintJS.load();
-		const result = await fp.get();
-		const userInfo = await loginAction(result.visitorId);
-		return userInfo;
-	};
+		const fp = await FingerPrintJS.load()
+		const result = await fp.get()
+		const userInfo = await loginAction(result.visitorId)
+		return userInfo
+	}
 
 	/**
 	 * 登录
 	 */
 	const handleLogin = async () => {
-		const userInfo = await mockLogin();
-		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId);
-		LocalStorageStore.set(
-			LocalStorageKeys.ENABLE_SETTING,
-			userInfo.enableSetting ? "true" : "",
-		);
-		message.success("登录成功");
-		redirect2Index();
-	};
+		const userInfo = await mockLogin()
+		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId)
+		LocalStorageStore.set(LocalStorageKeys.ENABLE_SETTING, userInfo.enableSetting ? 'true' : '')
+		message.success('登录成功')
+		redirect2Index()
+	}
 
 	useMount(() => {
-		handleLogin();
-	});
+		handleLogin()
+	})
 
 	return (
 		<div className="w-screen h-screen flex flex-col items-center justify-center bg-theme-bg">
@@ -65,5 +64,5 @@ export default function LoginPage() {
 				</div>
 			</div>
 		</div>
-	);
+	)
 }

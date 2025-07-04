@@ -1,22 +1,20 @@
-import { HeaderLayout } from "@dify-chat/components";
-import { IDifyAppItem, useAppContext } from "@dify-chat/core";
-import { Empty, Spin } from "antd";
+import { HeaderLayout } from '@dify-chat/components'
+import { IDifyAppItem, useAppContext } from '@dify-chat/core'
+import { Empty, Spin } from 'antd'
 
 interface ICommonLayoutProps {
-	initLoading: boolean;
-	renderCenterTitle?: (appInfo?: IDifyAppItem["info"]) => React.ReactNode;
-	children: React.ReactNode;
-	extComponents?: React.ReactNode;
+	initLoading: boolean
+	renderCenterTitle?: (appInfo?: IDifyAppItem['info']) => React.ReactNode
+	children: React.ReactNode
+	extComponents?: React.ReactNode
 }
 
 export default function CommonLayout(props: ICommonLayoutProps) {
-	const { initLoading, renderCenterTitle, children, extComponents } = props;
-	const { appLoading, currentApp } = useAppContext();
+	const { initLoading, renderCenterTitle, children, extComponents } = props
+	const { appLoading, currentApp } = useAppContext()
 
 	return (
-		<div
-			className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}
-		>
+		<div className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}>
 			{/* 头部 */}
 			<HeaderLayout title={renderCenterTitle?.(currentApp?.config?.info)} />
 
@@ -39,5 +37,5 @@ export default function CommonLayout(props: ICommonLayoutProps) {
 			</div>
 			{extComponents}
 		</div>
-	);
+	)
 }

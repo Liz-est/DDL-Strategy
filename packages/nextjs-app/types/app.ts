@@ -2,11 +2,11 @@ export interface IDifyAppRequestConfig {
 	/**
 	 * 请求地址
 	 */
-	apiBase: string;
+	apiBase: string
 	/**
 	 * Dify APP API 密钥
 	 */
-	apiKey: string;
+	apiKey: string
 }
 
 /**
@@ -16,30 +16,30 @@ export enum AppModeEnums {
 	/**
 	 * 文本生成
 	 */
-	TEXT_GENERATOR = "completion",
+	TEXT_GENERATOR = 'completion',
 	/**
 	 * 聊天助手
 	 */
-	CHATBOT = "chat",
+	CHATBOT = 'chat',
 	/**
 	 * 工作流
 	 */
-	WORKFLOW = "workflow",
+	WORKFLOW = 'workflow',
 	/**
 	 * 支持工作流编排的聊天助手
 	 */
-	CHATFLOW = "advanced-chat",
+	CHATFLOW = 'advanced-chat',
 	/**
 	 * 具备推理和自主调用能力的聊天助手
 	 */
-	AGENT = "agent-chat",
+	AGENT = 'agent-chat',
 }
 
 export interface IDifyAppItem4View {
 	/**
 	 * 唯一标识
 	 */
-	id: string;
+	id: string
 	/**
 	 * Dify 应用基本信息
 	 */
@@ -47,20 +47,20 @@ export interface IDifyAppItem4View {
 		/**
 		 * 应用名称
 		 */
-		name: string;
+		name: string
 		/**
 		 * 应用类型
 		 */
-		mode?: AppModeEnums;
+		mode?: AppModeEnums
 		/**
 		 * 应用描述
 		 */
-		description: string;
+		description: string
 		/**
 		 * 应用标签
 		 */
-		tags: string[];
-	};
+		tags: string[]
+	}
 }
 
 /**
@@ -70,7 +70,7 @@ export interface IDifyAppItem extends IDifyAppItem4View {
 	/**
 	 * 请求配置
 	 */
-	requestConfig: IDifyAppRequestConfig;
+	requestConfig: IDifyAppRequestConfig
 	/**
 	 * 回复表单配置
 	 */
@@ -78,12 +78,12 @@ export interface IDifyAppItem extends IDifyAppItem4View {
 		/**
 		 * 是否启用
 		 */
-		enabled: boolean;
+		enabled: boolean
 		/**
 		 * 反馈的占位文字
 		 */
-		feedbackText?: string;
-	};
+		feedbackText?: string
+	}
 	/**
 	 * 输入参数配置
 	 */
@@ -91,8 +91,8 @@ export interface IDifyAppItem extends IDifyAppItem4View {
 		/**
 		 * 开始对话后，是否支持更新对话参数
 		 */
-		enableUpdateAfterCvstStarts: boolean;
-	};
+		enableUpdateAfterCvstStarts: boolean
+	}
 	/**
 	 * 其他扩展配置
 	 */
@@ -108,8 +108,8 @@ export interface IDifyAppItem extends IDifyAppItem4View {
 				/**
 				 * 展示模式 default-默认（对话开始后不展示） always-固定展示
 				 */
-				displayMode?: "default" | "always";
-			};
-		};
-	};
+				displayMode?: 'default' | 'always'
+			}
+		}
+	}
 }

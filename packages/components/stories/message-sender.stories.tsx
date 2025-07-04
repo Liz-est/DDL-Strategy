@@ -33,7 +33,7 @@ export const Primary: Story = {
 			<MessageSender
 				isRequesting={isRequesting}
 				onCancel={() => setIsRequesting(false)}
-				onSubmit={(value) => {
+				onSubmit={value => {
 					setIsRequesting(true)
 					setTimeout(() => {
 						message.success(`发送成功: ${value}`)

@@ -1,6 +1,7 @@
+import { PicCenterOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import React from 'react'
-import { PicCenterOutlined } from '@ant-design/icons'
+
 import { cn } from './../utils'
 
 type ISVGBtnProps = {
@@ -16,8 +17,8 @@ const SVGBtn = ({ isSVG, setIsSVG }: ISVGBtnProps) => {
 			}}
 		>
 			<div className={cn('h-4 w-4')}>
-                <PicCenterOutlined />
-            </div>
+				<PicCenterOutlined />
+			</div>
 		</Button>
 	)
 }

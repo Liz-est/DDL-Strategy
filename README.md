@@ -8,35 +8,35 @@
 
 **想要了解更多，可以访问 https://docs.dify-chat.lexmin.cn/ 查看使用文档。**
 
-| 加群沟通（提需求/ bug 请带 issue 发言）                                                                                                              | 喂我花生（请在留言中备注自己的 Github 用户名哦）                                                                                                |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| 加群沟通（提需求/ bug 请带 issue 发言） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
+| --- | --- |
 | <img src="https://github.com/user-attachments/assets/6dedb923-b434-4a61-be2d-cda04e91b2af" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
 
 ## 🥇 Sponsors
 
 > 注：每日手动更新
 
-| Avatar                                                                                                                          | Name                                                                            | Type   |
-| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------ |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/bc1384b1-1920-44e9-91a5-571fffb496d6" /> | FENGYRAN                                                                        | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/7828931?v=4" />                             | <a target="blank" href="https://github.com/xieqinzhangjian">xieqinzhangjian</a> | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/ce9ee0e1-d3ff-469d-a52d-16f00890dd25" /> | 果冻                                                                            | Wechat |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/df21bfee-a552-49ca-9a58-20311c87560d" /> | VincentX                                                                        | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" />                            | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a>   | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan                                                                          | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" />                            | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a>             | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼                                                                            | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" />                            | <a target="blank" href="https://github.com/unmurphy">unmurphy</a>               | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" />                            | <a target="blank" href="https://github.com/HowieSh">HowieSh</a>                 | Github |
-| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1                                                                              | Wechat |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" />                             | <a target="blank" href="https://github.com/tangzp">tangzp</a>                   | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" />                             | <a target="blank" href="https://github.com/wallowbear">打豆豆</a>               | Github |
-| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" />                            | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a>       | Github |
-| None                                                                                                                            | 匿名慈善家                                                                      | Wechat |
+| Avatar | Name | Type |
+| --- | --- | --- |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/bc1384b1-1920-44e9-91a5-571fffb496d6" /> | FENGYRAN | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/7828931?v=4" /> | <a target="blank" href="https://github.com/xieqinzhangjian">xieqinzhangjian</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/ce9ee0e1-d3ff-469d-a52d-16f00890dd25" /> | 果冻 | Wechat |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/df21bfee-a552-49ca-9a58-20311c87560d" /> | VincentX | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/13366372?v=4" /> | <a target="blank" href="https://github.com/zhaoweihan2015">zhaoweihan2015</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/42f840cd-ce40-4193-89b7-77bd578fed5b" /> | xintan | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/49941899?v=4" /> | <a target="blank" href="https://github.com/weihaoaho">weihaoaho</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/77f6390a-dfb8-4660-b43d-6965477cab9b" /> | 北鱼 | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/18590361?v=4" /> | <a target="blank" href="https://github.com/unmurphy">unmurphy</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/48902884?v=4" /> | <a target="blank" href="https://github.com/HowieSh">HowieSh</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/2a8f706b-4c41-461c-a29c-89e354b02d33" /> | -1 | Wechat |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/9300916?v=4" /> | <a target="blank" href="https://github.com/tangzp">tangzp</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/1463755?v=4" /> | <a target="blank" href="https://github.com/wallowbear">打豆豆</a> | Github |
+| <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/74965055?v=4" /> | <a target="blank" href="https://github.com/forgoodthing">forgoodthing</a> | Github |
+| None | 匿名慈善家 | Wechat |
 
 ## Repobeats
 
-![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg "Repobeats analytics image")
+![Alt](https://repobeats.axiom.co/api/embed/cd9a078e6a4a70289aa28870d4934f6757d2fd4f.svg 'Repobeats analytics image')
 
 ## 特性
 
@@ -49,13 +49,13 @@
 
 ## 子包列表
 
-| 子包名称                | 描述            | 相关信息                                                                                                                                                                                                              | 文档                                                                                         |
-| ----------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `@dify-chat/api`        | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api)                      | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api)     |
-| `@dify-chat/core`       | 核心包          | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core)                   | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core)   |
-| `@dify-chat/theme`      | 主题包          | ![version](https://img.shields.io/npm/v/@dify-chat/theme) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/theme) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/theme)                | [packages/theme/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/theme) |
-| `@dify-chat/helpers`    | 工具包          | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers)          | 敬请期待...                                                                                  |
-| `@dify-chat/components` | 核心 UI 组件库  | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待...                                                                                  |
+| 子包名称 | 描述 | 相关信息 | 文档 |
+| --- | --- | --- | --- |
+| `@dify-chat/api` | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api) | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api) |
+| `@dify-chat/core` | 核心包 | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core) | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core) |
+| `@dify-chat/theme` | 主题包 | ![version](https://img.shields.io/npm/v/@dify-chat/theme) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/theme) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/theme) | [packages/theme/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/theme) |
+| `@dify-chat/helpers` | 工具包 | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers) | 敬请期待... |
+| `@dify-chat/components` | 核心 UI 组件库 | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待... |
 
 ## 技术栈
 

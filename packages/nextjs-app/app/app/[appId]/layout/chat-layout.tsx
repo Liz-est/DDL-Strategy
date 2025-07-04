@@ -1,30 +1,18 @@
-"use client";
+'use client'
+
 import {
 	EditOutlined,
 	MenuOutlined,
 	MinusCircleOutlined,
 	PlusCircleOutlined,
 	PlusOutlined,
-} from "@ant-design/icons";
-import { IConversationItem } from "@dify-chat/api";
-import {
-	AppIcon,
-	AppInfo,
-	ConversationList,
-	LucideIcon,
-} from "@dify-chat/components";
-import { HeaderLayout } from "@/components";
-import {
-	ConversationsContextProvider,
-	IDifyAppItem,
-	useAppContext,
-} from "@dify-chat/core";
-import { generateUuidV4, isTempId, useIsMobile } from "@dify-chat/helpers";
-import {
-	ThemeModeEnum,
-	ThemeModeLabelEnum,
-	useThemeContext,
-} from "@dify-chat/theme";
+} from '@ant-design/icons'
+import { IConversationItem } from '@dify-chat/api'
+import { AppIcon, AppInfo, ConversationList, LucideIcon } from '@dify-chat/components'
+import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
+import { generateUuidV4, isTempId, useIsMobile } from '@dify-chat/helpers'
+import { ThemeModeEnum, ThemeModeLabelEnum, useThemeContext } from '@dify-chat/theme'
+import { useRequest } from 'ahooks'
 import {
 	Button,
 	Dropdown,
@@ -38,138 +26,136 @@ import {
 	Radio,
 	Spin,
 	Tooltip,
-} from "antd";
-import dayjs from "dayjs";
-import React, { useEffect, useMemo, useState } from "react";
+} from 'antd'
+import dayjs from 'dayjs'
+import { useSearchParams } from 'next/navigation'
+import React, { useEffect, useMemo, useState } from 'react'
 
-import ChatboxWrapper from "@/app/app/[appId]/components/chatbox-wrapper";
-import { DEFAULT_CONVERSATION_NAME } from "@/config";
-import { useLatest } from "@/hooks/use-latest";
-import { useSearchParams } from "next/navigation";
-import { useDifyApi } from "@/hooks/useApi";
-import { getUserAction } from "@/app/actions";
-import { useRequest } from "ahooks";
+import { getUserAction } from '@/app/actions'
+import ChatboxWrapper from '@/app/app/[appId]/components/chatbox-wrapper'
+import { HeaderLayout } from '@/components'
+import { DEFAULT_CONVERSATION_NAME } from '@/config'
+import { useLatest } from '@/hooks/use-latest'
+import { useDifyApi } from '@/hooks/useApi'
 
 interface IChatLayoutProps {
 	/**
 	 * 扩展的 JSX 元素, 如抽屉/弹窗等
 	 */
-	extComponents?: React.ReactNode;
+	extComponents?: React.ReactNode
 	/**
 	 * 自定义中心标题
 	 */
-	renderCenterTitle?: (appInfo?: IDifyAppItem["info"]) => React.ReactNode;
+	renderCenterTitle?: (appInfo?: IDifyAppItem['info']) => React.ReactNode
 	/**
 	 * 自定义右侧头部内容
 	 */
-	renderRightHeader?: () => React.ReactNode;
+	renderRightHeader?: () => React.ReactNode
 	/**
 	 * 是否正在加载应用配置
 	 */
-	initLoading: boolean;
+	initLoading: boolean
 }
 
 export default function ChatLayout(props: IChatLayoutProps) {
-	const { extComponents, renderCenterTitle, initLoading } = props;
-	const [sidebarOpen, setSidebarOpen] = useState(true);
-	const { themeMode, setThemeMode } = useThemeContext();
-	const { appLoading, currentApp } = useAppContext();
-	const [renameForm] = Form.useForm();
-	const [conversations, setConversations] = useState<IConversationItem[]>([]);
-	const [currentConversationId, setCurrentConversationId] =
-		useState<string>("");
+	const { extComponents, renderCenterTitle, initLoading } = props
+	const [sidebarOpen, setSidebarOpen] = useState(true)
+	const { themeMode, setThemeMode } = useThemeContext()
+	const { appLoading, currentApp } = useAppContext()
+	const [renameForm] = Form.useForm()
+	const [conversations, setConversations] = useState<IConversationItem[]>([])
+	const [currentConversationId, setCurrentConversationId] = useState<string>('')
 	const currentConversationInfo = useMemo(() => {
-		return conversations.find((item) => item.id === currentConversationId);
-	}, [conversations, currentConversationId]);
-	const isMobile = useIsMobile();
-	const { currentAppId } = useAppContext();
+		return conversations.find(item => item.id === currentConversationId)
+	}, [conversations, currentConversationId])
+	const isMobile = useIsMobile()
+	const { currentAppId } = useAppContext()
 	const { data: userInfo } = useRequest(() => {
-		return getUserAction();
-	});
+		return getUserAction()
+	})
 	const difyApi = useDifyApi({
 		user: userInfo?.userId as string,
 		appId: currentAppId!,
-	});
+	})
 
-	const searchParams = useSearchParams();
+	const searchParams = useSearchParams()
 
 	// 创建 Dify API 实例
-	const [conversationListLoading, setCoversationListLoading] =
-		useState<boolean>(false);
-	const latestCurrentConversationId = useLatest(currentConversationId);
+	const [conversationListLoading, setCoversationListLoading] = useState<boolean>(false)
+	const latestCurrentConversationId = useLatest(currentConversationId)
 
 	useEffect(() => {
 		if (!currentApp?.config) {
-			return;
+			return
 		}
-		setConversations([]);
-		setCurrentConversationId("");
+		setConversations([])
+		setCurrentConversationId('')
 		getConversationItems().then(() => {
-			const isNewConversation = searchParams.get("isNewCvst") === "1";
+			const isNewConversation = searchParams.get('isNewCvst') === '1'
 			if (isNewConversation) {
-				onAddConversation();
+				onAddConversation()
 			}
-		});
-	}, [currentApp?.config]);
+		})
+	}, [currentApp?.config])
 
 	/**
 	 * 获取对话列表
 	 */
 	const getConversationItems = async (showLoading = true) => {
 		if (showLoading) {
-			setCoversationListLoading(true);
+			setCoversationListLoading(true)
 		}
 		try {
 			const result = await difyApi?.getConversationList({
 				limit: 100,
-			});
+			})
 			const newItems =
-				result?.data?.map((item) => {
+				result?.data?.map(item => {
 					return {
 						key: item.id,
 						label: item.name,
-					};
-				}) || [];
-			setConversations(result?.data);
+					}
+				}) || []
+			setConversations(result?.data)
 			// 避免闭包问题
 			if (!latestCurrentConversationId.current) {
 				if (newItems.length) {
-					setCurrentConversationId(newItems[0]?.key);
+					setCurrentConversationId(newItems[0]?.key)
 				} else {
-					onAddConversation();
+					onAddConversation()
 				}
 			}
 		} catch (error) {
-			console.error(error);
-			message.error(`获取会话列表失败: ${error}`);
+			console.error(error)
+			message.error(`获取会话列表失败: ${error}`)
 		} finally {
-			setCoversationListLoading(false);
+			setCoversationListLoading(false)
 		}
-	};
+	}
 
 	/**
 	 * 添加临时新对话(要到第一次服务器响应有效的对话 ID 时才真正地创建完成)
 	 */
 	const onAddConversation = () => {
 		// 创建新对话
-		const newKey = `temp_${generateUuidV4()}`;
+		const newKey = `temp_${generateUuidV4()}`
 		// 使用函数式更新保证状态一致性（修复潜在竞态条件）
-		setConversations((prev) => {
+		setConversations(prev => {
 			return [
 				{
 					id: newKey,
 					name: DEFAULT_CONVERSATION_NAME,
 					created_at: dayjs().valueOf(),
 					inputs: {},
-					introduction: "",
-					status: "normal",
+					introduction: '',
+					status: 'normal',
 					updated_at: dayjs().valueOf(),
 				},
 				...(prev || []),
-			];
-		});
-		setCurrentConversationId(newKey);
-	};
+			]
+		})
+		setCurrentConversationId(newKey)
+	}
 
 	/**
 	 * 重命名对话
@@ -178,9 +164,9 @@ export default function ChatLayout(props: IChatLayoutProps) {
 		await difyApi?.renameConversation({
 			conversation_id: conversationId,
 			name,
-		});
-		getConversationItems();
-	};
+		})
+		getConversationItems()
+	}
 
 	/**
 	 * 重命名会话
@@ -189,168 +175,162 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	const handleRenameConversation = () => {
 		renameForm.setFieldsValue({
 			name: currentConversationInfo?.name,
-		});
+		})
 		Modal.confirm({
 			centered: true,
 			destroyOnClose: true,
-			title: "编辑对话名称",
+			title: '编辑对话名称',
 			content: (
-				<Form form={renameForm} className="mt-3">
+				<Form
+					form={renameForm}
+					className="mt-3"
+				>
 					<Form.Item name="name">
 						<Input placeholder="请输入" />
 					</Form.Item>
 				</Form>
 			),
 			onOk: async () => {
-				await renameForm.validateFields();
-				const values = await renameForm.validateFields();
-				await onRenameConversation(currentConversationId, values.name);
-				message.success("对话重命名成功");
+				await renameForm.validateFields()
+				const values = await renameForm.validateFields()
+				await onRenameConversation(currentConversationId, values.name)
+				message.success('对话重命名成功')
 			},
-		});
-	};
+		})
+	}
 
 	/**
 	 * 删除对话
 	 */
 	const onDeleteConversation = async (conversationId: string) => {
 		if (isTempId(conversationId)) {
-			setConversations((prev) => {
-				const newConversations = prev.filter(
-					(item) => item.id !== conversationId,
-				);
+			setConversations(prev => {
+				const newConversations = prev.filter(item => item.id !== conversationId)
 				// 删除当前对话
 				if (conversationId === currentConversationId) {
 					// 如果列表不为空，则选择第一个作为当前对话
 					if (newConversations.length) {
-						setCurrentConversationId(newConversations[0].id);
+						setCurrentConversationId(newConversations[0].id)
 					} else {
 						// 如果列表为空，则创建一个新的临时对话
-						onAddConversation();
+						onAddConversation()
 					}
 				}
-				return newConversations;
-			});
+				return newConversations
+			})
 		} else {
-			await difyApi?.deleteConversation(conversationId);
+			await difyApi?.deleteConversation(conversationId)
 			if (conversationId === currentConversationId) {
-				setCurrentConversationId("");
+				setCurrentConversationId('')
 			}
-			getConversationItems();
-			return Promise.resolve();
+			getConversationItems()
+			return Promise.resolve()
 		}
-	};
+	}
 
-	const mobileMenuItems: GetProp<typeof Dropdown, "menu">["items"] =
-		useMemo(() => {
-			const actionMenus: GetProp<typeof Dropdown, "menu">["items"] = [
-				{
-					key: "add_conversation",
-					icon: <PlusCircleOutlined />,
-					label: "新增对话",
-					disabled: isTempId(currentConversationId),
-					onClick: () => {
-						onAddConversation();
-					},
+	const mobileMenuItems: GetProp<typeof Dropdown, 'menu'>['items'] = useMemo(() => {
+		const actionMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				key: 'add_conversation',
+				icon: <PlusCircleOutlined />,
+				label: '新增对话',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					onAddConversation()
 				},
-				{
-					key: "rename_conversation",
-					icon: <EditOutlined />,
-					label: "编辑对话名称",
-					disabled: isTempId(currentConversationId),
-					onClick: () => {
-						handleRenameConversation();
-					},
+			},
+			{
+				key: 'rename_conversation',
+				icon: <EditOutlined />,
+				label: '编辑对话名称',
+				disabled: isTempId(currentConversationId),
+				onClick: () => {
+					handleRenameConversation()
 				},
-				{
-					key: "delete_conversation",
-					icon: <MinusCircleOutlined />,
-					label: "删除当前对话",
-					disabled: isTempId(currentConversationId),
-					danger: true,
-					onClick: () => {
-						Modal.confirm({
-							centered: true,
-							title: "确定删除当前对话？",
-							content: "删除后，聊天记录将不可恢复。",
-							okText: "删除",
-							cancelText: "取消",
-							onOk: async () => {
-								// 执行删除操作
-								await onDeleteConversation(currentConversationId);
-								message.success("删除成功");
-							},
-						});
-					},
-				},
-				{
-					type: "divider",
-				},
-			];
-
-			const conversationListMenus: GetProp<typeof Dropdown, "menu">["items"] = [
-				{
-					key: "view-mode",
-					type: "group",
-					children: [
-						{
-							key: "light",
-							label: (
-								<Radio.Group
-									key="view-mode"
-									optionType="button"
-									value={themeMode}
-									onChange={(e) => {
-										setThemeMode(e.target.value as ThemeModeEnum);
-									}}
-								>
-									<Radio value={ThemeModeEnum.SYSTEM}>
-										{ThemeModeLabelEnum.SYSTEM}
-									</Radio>
-									<Radio value={ThemeModeEnum.LIGHT}>
-										{ThemeModeLabelEnum.LIGHT}
-									</Radio>
-									<Radio value={ThemeModeEnum.DARK}>
-										{ThemeModeLabelEnum.DARK}
-									</Radio>
-								</Radio.Group>
-							),
+			},
+			{
+				key: 'delete_conversation',
+				icon: <MinusCircleOutlined />,
+				label: '删除当前对话',
+				disabled: isTempId(currentConversationId),
+				danger: true,
+				onClick: () => {
+					Modal.confirm({
+						centered: true,
+						title: '确定删除当前对话？',
+						content: '删除后，聊天记录将不可恢复。',
+						okText: '删除',
+						cancelText: '取消',
+						onOk: async () => {
+							// 执行删除操作
+							await onDeleteConversation(currentConversationId)
+							message.success('删除成功')
 						},
-					],
-					label: "主题",
+					})
 				},
-				{
-					type: "divider",
-				},
-				{
-					type: "group",
-					label: "对话列表",
-					children: conversations?.length
-						? conversations.map((item) => {
-								return {
-									key: item.id,
-									label: item.name,
-									onClick: () => {
-										setCurrentConversationId(item.id);
-									},
-								};
-							})
-						: [
-								{
-									key: "no_conversation",
-									label: "暂无对话",
-									disabled: true,
+			},
+			{
+				type: 'divider',
+			},
+		]
+
+		const conversationListMenus: GetProp<typeof Dropdown, 'menu'>['items'] = [
+			{
+				key: 'view-mode',
+				type: 'group',
+				children: [
+					{
+						key: 'light',
+						label: (
+							<Radio.Group
+								key="view-mode"
+								optionType="button"
+								value={themeMode}
+								onChange={e => {
+									setThemeMode(e.target.value as ThemeModeEnum)
+								}}
+							>
+								<Radio value={ThemeModeEnum.SYSTEM}>{ThemeModeLabelEnum.SYSTEM}</Radio>
+								<Radio value={ThemeModeEnum.LIGHT}>{ThemeModeLabelEnum.LIGHT}</Radio>
+								<Radio value={ThemeModeEnum.DARK}>{ThemeModeLabelEnum.DARK}</Radio>
+							</Radio.Group>
+						),
+					},
+				],
+				label: '主题',
+			},
+			{
+				type: 'divider',
+			},
+			{
+				type: 'group',
+				label: '对话列表',
+				children: conversations?.length
+					? conversations.map(item => {
+							return {
+								key: item.id,
+								label: item.name,
+								onClick: () => {
+									setCurrentConversationId(item.id)
 								},
-							],
-				},
-			];
+							}
+						})
+					: [
+							{
+								key: 'no_conversation',
+								label: '暂无对话',
+								disabled: true,
+							},
+						],
+			},
+		]
 
-			if (isTempId(currentConversationId)) {
-				return [...conversationListMenus];
-			}
+		if (isTempId(currentConversationId)) {
+			return [...conversationListMenus]
+		}
 
-			return [...actionMenus, ...conversationListMenus];
-		}, [currentConversationId, conversations, themeMode, setThemeMode]);
+		return [...actionMenus, ...conversationListMenus]
+	}, [currentConversationId, conversations, themeMode, setThemeMode])
 
 	// 对话列表（包括加载和缺省状态）
 	const conversationListWithEmpty = useMemo(() => {
@@ -360,30 +340,28 @@ export default function ChatLayout(props: IChatLayoutProps) {
 					<ConversationList
 						renameConversationPromise={onRenameConversation}
 						deleteConversationPromise={onDeleteConversation}
-						items={conversations.map((item) => {
+						items={conversations.map(item => {
 							return {
 								key: item.id,
 								label: item.name,
-							};
+							}
 						})}
 						activeKey={currentConversationId}
-						onActiveChange={(id) => {
-							setCurrentConversationId(id);
+						onActiveChange={id => {
+							setCurrentConversationId(id)
 						}}
 					/>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
-						<Empty className="pt-6" description="暂无会话" />
+						<Empty
+							className="pt-6"
+							description="暂无会话"
+						/>
 					</div>
 				)}
 			</Spin>
-		);
-	}, [
-		conversations,
-		onRenameConversation,
-		onDeleteConversation,
-		setCurrentConversationId,
-	]);
+		)
+	}, [conversations, onRenameConversation, onDeleteConversation, setCurrentConversationId])
 
 	return (
 		<ConversationsContextProvider
@@ -395,9 +373,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				currentConversationInfo,
 			}}
 		>
-			<div
-				className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}
-			>
+			<div className={`w-full h-screen flex flex-col overflow-hidden bg-theme-bg`}>
 				{/* 头部 */}
 				<HeaderLayout
 					title={renderCenterTitle?.(currentApp?.config?.info)}
@@ -405,7 +381,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						isMobile ? (
 							<Dropdown
 								menu={{
-									className: "!pb-3 w-[80vw]",
+									className: '!pb-3 w-[80vw]',
 									activeKey: currentConversationId,
 									items: mobileMenuItems,
 								}}
@@ -426,7 +402,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 						<>
 							{/* 左侧对话列表 */}
 							<div
-								className={`hidden md:!flex ${sidebarOpen ? "w-72" : "w-14"} transition-all h-full flex-col border-r border-solid border-r-(--theme-splitter-color)`}
+								className={`hidden md:!flex ${sidebarOpen ? 'w-72' : 'w-14'} transition-all h-full flex-col border-r border-solid border-r-(--theme-splitter-color)`}
 							>
 								{sidebarOpen ? (
 									<>
@@ -435,7 +411,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 										{currentApp ? (
 											<Button
 												onClick={() => {
-													onAddConversation();
+													onAddConversation()
 												}}
 												type="default"
 												className="h-10 leading-10 rounded-lg border border-solid border-gray-200 mt-3 mx-4 text-theme-text "
@@ -457,7 +433,10 @@ export default function ChatLayout(props: IChatLayoutProps) {
 										</div>
 
 										{/* 新增对话 */}
-										<Tooltip title="新增对话" placement="right">
+										<Tooltip
+											title="新增对话"
+											placement="right"
+										>
 											<div className="text-theme-text my-1.5 hover:text-primary flex items-center">
 												<LucideIcon
 													name="plus-circle"
@@ -465,7 +444,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 													size={28}
 													className="cursor-pointer"
 													onClick={() => {
-														onAddConversation();
+														onAddConversation()
 													}}
 												/>
 											</div>
@@ -495,19 +474,15 @@ export default function ChatLayout(props: IChatLayoutProps) {
 
 								<div className="border-t border-solid border-(--theme-splitter-color) flex items-center justify-center h-12">
 									<Tooltip
-										title={sidebarOpen ? "折叠侧边栏" : "展开侧边栏"}
+										title={sidebarOpen ? '折叠侧边栏' : '展开侧边栏'}
 										placement="right"
 									>
 										<div className="flex items-center justify-center">
 											<LucideIcon
 												onClick={() => {
-													setSidebarOpen(!sidebarOpen);
+													setSidebarOpen(!sidebarOpen)
 												}}
-												name={
-													sidebarOpen
-														? "arrow-left-circle"
-														: "arrow-right-circle"
-												}
+												name={sidebarOpen ? 'arrow-left-circle' : 'arrow-right-circle'}
 												className="cursor-pointer hover:text-primary"
 												strokeWidth={1.25}
 												size={28}
@@ -522,9 +497,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 								<ChatboxWrapper
 									conversationListLoading={conversationListLoading}
 									onAddConversation={onAddConversation}
-									conversationItemsChangeCallback={() =>
-										getConversationItems(false)
-									}
+									conversationItemsChangeCallback={() => getConversationItems(false)}
 								/>
 							</div>
 						</>
@@ -541,5 +514,5 @@ export default function ChatLayout(props: IChatLayoutProps) {
 
 			{extComponents}
 		</ConversationsContextProvider>
-	);
+	)
 }

@@ -1,61 +1,63 @@
-"use client";
-import { getAppList } from "@/app/apps/actions";
+'use client'
 
-import { Empty, Row } from "antd";
+import { useMount } from 'ahooks'
+import { Empty, Row } from 'antd'
+import { useMemo, useState } from 'react'
 
-import AppItem from "@/app/apps/components/app-item";
-import HeaderWrapper, {
-	IHeaderProps,
-} from "@/components/layout/header-wrapper";
-import { useMount } from "ahooks";
-import { useMemo, useState } from "react";
-import { IDifyAppItem } from "@/types";
-import AddButton from "./components/add-button";
-import { getUserAction } from "../actions";
+import { getAppList } from '@/app/apps/actions'
+import AppItem from '@/app/apps/components/app-item'
+import HeaderWrapper, { IHeaderProps } from '@/components/layout/header-wrapper'
+import { IDifyAppItem } from '@/types'
+
+import { getUserAction } from '../actions'
+import AddButton from './components/add-button'
 
 export default function AppsPage() {
-	const [apps, setApps] = useState<IDifyAppItem[]>();
+	const [apps, setApps] = useState<IDifyAppItem[]>()
 	const [user, setUser] = useState<{
-		userId: string;
-		enableSetting: boolean;
+		userId: string
+		enableSetting: boolean
 	}>({
-		userId: "",
+		userId: '',
 		enableSetting: false,
-	});
+	})
 
 	const refreshAppList = async () => {
 		const appsRes = await getAppList({
 			isMask: true,
-		});
-		setApps(appsRes);
-	};
+		})
+		setApps(appsRes)
+	}
 
 	const initData = async () => {
-		const user = await getUserAction();
-		setUser(user);
-		refreshAppList();
-	};
+		const user = await getUserAction()
+		setUser(user)
+		refreshAppList()
+	}
 
 	useMount(() => {
-		initData();
-	});
+		initData()
+	})
 
 	const headerWrapperProps: IHeaderProps = useMemo(() => {
 		return {
 			centerTitle: {
-				icon: "layout-grid",
-				title: "应用列表",
+				icon: 'layout-grid',
+				title: '应用列表',
 			},
-		};
-	}, []);
+		}
+	}, [])
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
 			<HeaderWrapper {...headerWrapperProps} />
 			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{apps?.length ? (
-					<Row gutter={[16, 16]} className="px-3 md:px-6">
-						{apps.map((item) => {
+					<Row
+						gutter={[16, 16]}
+						className="px-3 md:px-6"
+					>
+						{apps.map(item => {
 							return (
 								<AppItem
 									key={item.id}
@@ -63,7 +65,7 @@ export default function AppsPage() {
 									enableSetting={user.enableSetting}
 									refreshAppList={refreshAppList}
 								/>
-							);
+							)
 						})}
 					</Row>
 				) : (
@@ -75,5 +77,5 @@ export default function AppsPage() {
 
 			{user.enableSetting ? <AddButton refreshApps={refreshAppList} /> : null}
 		</div>
-	);
+	)
 }

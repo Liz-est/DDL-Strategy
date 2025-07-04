@@ -1,1 +1,1 @@
-export { appConfig } from "./fs";
+export { appConfig } from './fs'

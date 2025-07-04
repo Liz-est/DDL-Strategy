@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
 	--theme-text-color: #333;
@@ -61,7 +61,7 @@
 			background-color: var(--theme-bubble-bg-color);
 		}
 
-		&[role="ai"] {
+		&[role='ai'] {
 			.ant-bubble-content {
 				background-color: transparent;
 				padding: 0;
