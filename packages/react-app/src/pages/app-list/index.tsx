@@ -1,9 +1,16 @@
-import { DeleteOutlined, EditOutlined, MoreOutlined, TagOutlined } from '@ant-design/icons'
+import {
+	DeleteOutlined,
+	EditOutlined,
+	MoreOutlined,
+	SyncOutlined,
+	TagOutlined,
+} from '@ant-design/icons'
+import { DifyApi } from '@dify-chat/api'
 import { HeaderLayout, LucideIcon } from '@dify-chat/components'
 import { AppModeLabels, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
-import { Button, Col, Dropdown, Empty, message, Row } from 'antd'
+import { Button, Col, Dropdown, Empty, message, Modal, Row } from 'antd'
 import { useHistory } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 
@@ -21,6 +28,7 @@ export default function AppListPage() {
 	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
 	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum>()
 	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<IDifyAppItem>()
+	const { userId } = useAuth()
 
 	const { runAsync: getAppList, data: list } = useRequest(
 		() => {
@@ -114,6 +122,45 @@ export default function AppListPage() {
 											<Dropdown
 												menu={{
 													items: [
+														{
+															key: 'sync',
+															icon: <SyncOutlined />,
+															label: '同步 Dify 应用信息',
+															onClick: () => {
+																Modal.confirm({
+																	title: '同步 Dify 应用信息',
+																	content: '确定要同步 Dify 应用信息吗？',
+																	onOk: async () => {
+																		const appItem = await appService.getApp(item.id)
+																		if (!appItem) {
+																			message.error('应用不存在')
+																			return
+																		}
+																		const { info: originalInfo, ...rest } = appItem!
+																		// 调用获取应用信息接口
+																		const difyApi = new DifyApi({
+																			...appItem.requestConfig,
+																			user: userId,
+																		})
+																		const appInfo = await difyApi.getAppInfo()
+																		try {
+																			await appService.updateApp({
+																				...rest,
+																				info: {
+																					...originalInfo,
+																					...appInfo,
+																				},
+																			})
+																			message.success('同步应用成功')
+																			getAppList()
+																		} catch (error) {
+																			message.error('同步应用失败')
+																			console.error(error)
+																		}
+																	},
+																})
+															},
+														},
 														{
 															key: 'edit',
 															icon: <EditOutlined />,
