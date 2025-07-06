@@ -22,6 +22,7 @@ export interface IUserInputFormItemValueBase {
 	default: string
 	label: string
 	required: boolean
+	hide?: boolean
 	variable: string
 	options?: string[]
 	/**
