@@ -51,6 +51,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
 				'inputParams.enableUpdateAfterCvstStarts':
 					appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
+				'inputParams.parameters': appItem?.inputParams?.parameters || [],
 				'extConfig.conversation.openingStatement.displayMode':
 					appItem?.extConfig?.conversation?.openingStatement?.displayMode || 'default',
 			})
@@ -130,6 +131,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 									},
 									inputParams: {
 										enableUpdateAfterCvstStarts: values['inputParams.enableUpdateAfterCvstStarts'],
+										parameters: values['inputParams.parameters'],
 									},
 									extConfig: {
 										conversation: {

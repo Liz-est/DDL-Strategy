@@ -1,7 +1,12 @@
+import { DifyApi } from '@dify-chat/api'
+import { type IParamItem, ParamsConfigEditor } from '@dify-chat/components'
 import { AppModeOptions, IDifyAppItem, OpeningStatementDisplayModeOptions } from '@dify-chat/core'
+import { useRequest } from 'ahooks'
 import { Form, FormInstance, Input, Select } from 'antd'
+import { useEffect, useState } from 'react'
 
 import { AppDetailDrawerModeEnum } from '@/enums'
+import { useAuth } from '@/hooks/use-auth'
 
 interface ISettingFormProps {
 	formInstance: FormInstance<Record<string, unknown>>
@@ -14,6 +19,49 @@ export default function SettingForm(props: ISettingFormProps) {
 
 	const answerFormEnabled = Form.useWatch('answerForm.enabled', formInstance)
 
+	const apiKey = Form.useWatch('apiKey', formInstance) as string
+	const apiBase = Form.useWatch('apiBase', formInstance) as string
+	const { userId } = useAuth()
+	const [parameters, setParameters] = useState<IParamItem[]>([])
+
+	const { runAsync: getAppParameters } = useRequest(
+		async () => {
+			const difyApi = new DifyApi({
+				user: userId,
+				apiKey,
+				apiBase,
+			})
+			const parameters = await difyApi.getAppParameters()
+			// 如果没有对话参数，则无需处理
+			if (!parameters.user_input_form.length) {
+				return
+			}
+
+			// 转换成 IParamItem 结构
+			const params = parameters.user_input_form.map(item => {
+				const paramItem = Object.values(item)[0]
+				return {
+					variable: paramItem.variable,
+					required: paramItem.required,
+					hide: paramItem.hide || false,
+					label: paramItem.label,
+				}
+			})
+			setParameters(params)
+		},
+		{
+			manual: true,
+		},
+	)
+
+	useEffect(() => {
+		if (apiKey && apiBase) {
+			console.log('apiKey', apiKey)
+			console.log('apiBase', apiBase)
+			getAppParameters()
+		}
+	}, [apiKey, apiBase])
+
 	return (
 		<Form
 			autoComplete="off"
@@ -25,6 +73,7 @@ export default function SettingForm(props: ISettingFormProps) {
 			initialValues={{
 				'answerForm.enabled': false,
 				'inputParams.enableUpdateAfterCvstStarts': false,
+				'inputParams.parameters': [],
 				'extConfig.conversation.openingStatement.displayMode': 'default',
 			}}
 		>
@@ -32,6 +81,7 @@ export default function SettingForm(props: ISettingFormProps) {
 				<div className="h-4 w-1 bg-primary rounded"></div>
 				<div className="ml-2 font-semibold">请求配置</div>
 			</div>
+
 			<Form.Item
 				label="API Base"
 				name="apiBase"
@@ -44,6 +94,7 @@ export default function SettingForm(props: ISettingFormProps) {
 					placeholder="请输入 API BASE"
 				/>
 			</Form.Item>
+
 			<Form.Item
 				label="API Secret"
 				name="apiKey"
@@ -133,6 +184,18 @@ export default function SettingForm(props: ISettingFormProps) {
 					]}
 				/>
 			</Form.Item>
+
+			{parameters.length ? (
+				<Form.Item
+					label="参数设置"
+					name="inputParams.parameters"
+					tooltip="设置对话的输入参数"
+					rules={[{ required: true }]}
+					required
+				>
+					<ParamsConfigEditor params={parameters} />
+				</Form.Item>
+			) : null}
 
 			<Form.Item
 				label="开场白展示场景"
