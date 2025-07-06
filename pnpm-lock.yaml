@@ -781,6 +781,9 @@ importers:
       classnames:
         specifier: 'catalog:'
         version: 2.5.1
+      lodash-es:
+        specifier: 'catalog:'
+        version: 4.17.21
       lucide-react:
         specifier: 'catalog:'
         version: 0.508.0(react@19.1.0)
@@ -824,6 +827,9 @@ importers:
       '@trivago/prettier-plugin-sort-imports':
         specifier: 'catalog:'
         version: 5.2.2(prettier@3.5.3)
+      '@types/lodash-es':
+        specifier: 'catalog:'
+        version: 4.17.12
       '@types/node':
         specifier: 'catalog:'
         version: 22.15.21
