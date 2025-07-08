@@ -37,14 +37,6 @@ export default defineConfig({
 		port: 5200,
 		// 允许外部访问
 		host: '0.0.0.0',
-		proxy: [
-			{
-				// 代理 Dify API
-				target: process.env.DIFY_API_DOMAIN || 'https://api.dify.ai',
-				changeOrigin: true,
-				context: process.env.DIFY_API_PREFIX || '/v1',
-			},
-		],
 	},
 	tools: {
 		postcss: {
