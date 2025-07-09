@@ -2,7 +2,7 @@
 	{
 		"type": "dir",
 		"name": "start",
-		"label": "开始",
+		"label": "开始体验",
 		"collapsible": true,
 		"collapsed": false
 	},

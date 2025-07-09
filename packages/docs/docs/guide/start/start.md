@@ -23,5 +23,5 @@ Dify Chat 提供两种应用模式来满足不同的使用场景：
 
 由于多应用和单应用的配置方式存在众多差异，接下来我们将对两种模式的配置进行分别阐述，你可以点击以下链接查看：
 
-- [配置 - 多应用模式](../config-multiple/start)
-- [配置 - 单应用模式](../config-single/start)
+- [配置 - 多应用模式](../app-config/config-multiple/start.md)
+- [配置 - 单应用模式](../app-config/config-single/start.md)
