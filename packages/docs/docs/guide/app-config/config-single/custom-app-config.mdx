@@ -102,6 +102,41 @@ export { appConfig } from "./fs";
 
 使用本地文件进行存储，支持读取和修改，但存在丢失数据的风险。
 
+配置示例：
+
+```json title="packages/nextjs-app/.dify-chat/storage/app.config.json"
+{
+  "info": {
+    "name": "Chatflow Demo",
+    "description": "",
+    "tags": [
+      "参数",
+      "测试"
+    ],
+    "mode": "advanced-chat",
+    "author_name": "Dify"
+  },
+  "requestConfig": {
+    "apiBase": "https://api.dify.ai/v1",
+    "apiKey": "app-xxx"
+  },
+  "answerForm": {
+    "enabled": false
+  },
+  "inputParams": {
+    "enableUpdateAfterCvstStarts": false
+  },
+  "extConfig": {
+    "conversation": {
+      "openingStatement": {
+        "displayMode": "default"
+      }
+    }
+  },
+  "id": "1751257572123"
+}
+```
+
 **2. Restful API**
 
 通过 API 接口管理，支持读取和修改，推荐使用🌟

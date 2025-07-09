@@ -130,6 +130,44 @@ export * from "./fs";
 
 使用本地文件进行存储，支持完整的 CRUD，但存在丢失数据的风险。
 
+配置示例：
+
+```json title="packages/nextjs-app/.dify-chat/storage/apps.json"
+[
+  {
+    "id": "1751001348066",
+    "info": {
+      "name": "Chatflow Demo",
+      "description": "",
+      "tags": [
+        "参数",
+        "测试"
+      ],
+      "mode": "advanced-chat",
+      "author_name": "Dify"
+    },
+    "requestConfig": {
+      "apiBase": "https://api.dify.ai/v1",
+      "apiKey": "app-xxx"
+    },
+    "answerForm": {
+      "enabled": true,
+      "feedbackText": "你提交了一个表单"
+    },
+    "inputParams": {
+      "enableUpdateAfterCvstStarts": true
+    },
+    "extConfig": {
+      "conversation": {
+        "openingStatement": {
+          "displayMode": "always"
+        }
+      }
+    }
+  }
+]
+```
+
 **2. Restful API**
 
 通过 API 接口管理，支持完整的 CRUD，推荐使用🌟
