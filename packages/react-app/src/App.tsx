@@ -7,9 +7,11 @@ import { difyChatRuntimeConfig } from '@/config/global'
 
 import './App.css'
 import LayoutIndex from './layout'
-import AppListPage from './pages/app-list'
-import AuthPage from './pages/auth'
-import ChatPage from './pages/chat'
+import AppManagementPage from './pages/admin/app-management'
+import SystemConfigPage from './pages/admin/system-config'
+import AppListPage from './pages/client/apps'
+import AuthPage from './pages/client/auth'
+import ChatPage from './pages/client/chat'
 
 // 初始化响应式配置
 initResponsiveConfig()
@@ -18,10 +20,12 @@ initResponsiveConfig()
 difyChatRuntimeConfig.init('multiApp')
 
 const routes: IRoute[] = [
-	{ path: '/auth', component: () => <AuthPage /> },
-	{ path: '/chat', component: () => <ChatPage /> },
-	{ path: '/app/:appId', component: () => <ChatPage /> },
-	{ path: '/apps', component: () => <AppListPage /> },
+	{ path: '/admin/app-management', component: () => <AppManagementPage /> },
+	{ path: '/admin/system-config', component: () => <SystemConfigPage /> },
+	{ path: '/client/auth', component: () => <AuthPage /> },
+	{ path: '/client/chat', component: () => <ChatPage /> },
+	{ path: '/client/app/:appId', component: () => <ChatPage /> },
+	{ path: '/client/apps', component: () => <AppListPage /> },
 ]
 
 /**
