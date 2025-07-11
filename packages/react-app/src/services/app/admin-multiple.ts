@@ -3,7 +3,7 @@ import { DifyAppStore, type IDifyAppItem } from '@dify-chat/core'
 import { APP_LIST_KEY } from '@/constants'
 
 /**
- * 应用列表 CRUD 的 localStorage 实现
+ * 多应用模式-Admin应用服务
  */
 class DifyAppService extends DifyAppStore {
 	public readonly = false as const
@@ -40,4 +40,4 @@ class DifyAppService extends DifyAppStore {
 	}
 }
 
-export default DifyAppService
+export const appService = new DifyAppService()

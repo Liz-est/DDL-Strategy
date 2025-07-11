@@ -6,7 +6,7 @@ import Title from 'antd/es/typography/Title'
 import { useState } from 'react'
 
 import { AppDetailDrawerModeEnum } from '@/enums'
-import { appService } from '@/services/app/multiApp'
+import { appService } from '@/services/app/admin-multiple'
 
 import AdminPageLayout from '../components/admin-page-layout'
 import { AppEditDrawer } from './components/app-edit-drawer'

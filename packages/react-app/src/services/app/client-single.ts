@@ -1,7 +1,7 @@
 import { type IDifyAppItem } from '@dify-chat/core'
 
 /**
- * 单应用配置 get/set 的 localStorage 实现
+ * 单应用模式-Client应用服务
  */
 class DifyAppConfig {
 	async getConfig(): Promise<IDifyAppItem | undefined> {
@@ -10,10 +10,6 @@ class DifyAppConfig {
 			return undefined
 		}
 		return JSON.parse(configInLocalStorage!)
-	}
-
-	async setConfig(config: IDifyAppItem): Promise<void> {
-		localStorage.setItem('__DC_APP_CONFIG', JSON.stringify(config))
 	}
 }
 
