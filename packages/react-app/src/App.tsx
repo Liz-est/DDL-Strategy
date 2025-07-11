@@ -1,6 +1,7 @@
 import { initResponsiveConfig } from '@dify-chat/helpers'
 import { useThemeContext } from '@dify-chat/theme'
 import { theme as antdTheme, ConfigProvider } from 'antd'
+import zhCN from 'antd/es/locale/zh_CN'
 import { BrowserRouter, type IRoute } from 'pure-react-router'
 
 import { difyChatRuntimeConfig } from '@/config/global'
@@ -36,6 +37,7 @@ export default function App() {
 
 	return (
 		<ConfigProvider
+			locale={zhCN}
 			theme={{
 				algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
 			}}
