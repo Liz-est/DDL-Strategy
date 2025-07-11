@@ -4,8 +4,6 @@ import { useMount, useRequest } from 'ahooks'
 import { message, Spin } from 'antd'
 import { useState } from 'react'
 
-import { AppEditDrawer } from '@/components/app-edit-drawer'
-import { AppDetailDrawerModeEnum } from '@/enums'
 import { useAuth } from '@/hooks/use-auth'
 import { useAppSiteSetting } from '@/hooks/useApi'
 
@@ -13,11 +11,10 @@ import MainLayout from './main-layout'
 
 interface ISingleAppLayoutProps {
 	getAppConfig: () => Promise<IDifyAppItem | undefined>
-	setAppConfig: (appConfig: IDifyAppItem) => Promise<unknown>
 }
 
 const SingleAppLayout = (props: ISingleAppLayoutProps) => {
-	const { getAppConfig, setAppConfig } = props
+	const { getAppConfig } = props
 	const [selectedAppId, setSelectedAppId] = useState('')
 	const [initLoading, setInitLoading] = useState(false)
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>() // 新增 currentApp 状态用于保存当前应用的 inf
@@ -46,9 +43,6 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 		const appConfig = (await getAppConfig()) as IDifyAppItem
 		if (!appConfig) {
 			message.error('请先配置应用')
-			setAppEditDrawerMode(AppDetailDrawerModeEnum.create)
-			setAppEditDrawerOpen(true)
-			setAppEditDrawerAppItem(undefined)
 			return
 		}
 		difyApi.updateOptions({
@@ -83,14 +77,6 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 		initInSingleMode()
 	})
 
-	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum | undefined>(
-		undefined,
-	)
-	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
-	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<IDifyAppItem | undefined>(
-		undefined,
-	)
-
 	if (initLoading) {
 		return (
 			<div className="absolute w-full h-full left-0 top-0 z-50 flex items-center justify-center">
@@ -120,19 +106,6 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 					/>
 				</AppContextProvider>
 			) : null}
-
-			{/* 应用配置编辑抽屉 */}
-			<AppEditDrawer
-				detailDrawerMode={appEditDrawerMode!}
-				open={appEditDrawerOpen}
-				onClose={() => setAppEditDrawerOpen(false)}
-				appItem={appEditDrawerAppItem}
-				confirmCallback={() => {
-					initInSingleMode()
-				}}
-				addApi={setAppConfig}
-				updateApi={setAppConfig}
-			/>
 		</>
 	)
 }

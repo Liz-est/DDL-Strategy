@@ -1,34 +1,19 @@
-import {
-	DeleteOutlined,
-	EditOutlined,
-	MoreOutlined,
-	SyncOutlined,
-	TagOutlined,
-} from '@ant-design/icons'
-import { DifyApi } from '@dify-chat/api'
+import { TagOutlined } from '@ant-design/icons'
 import { HeaderLayout, LucideIcon } from '@dify-chat/components'
-import { AppModeLabels, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
+import { AppModeLabels } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
-import { Button, Col, Dropdown, Empty, message, Modal, Row } from 'antd'
+import { Col, Empty, message, Row } from 'antd'
 import { useHistory } from 'pure-react-router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import { AppEditDrawer } from '@/components/app-edit-drawer'
 import { difyChatRuntimeConfig } from '@/config/global'
-import { AppDetailDrawerModeEnum } from '@/enums'
-import { useAuth } from '@/hooks/use-auth'
 import { appService } from '@/services/app/multiApp'
 
 export default function AppListPage() {
 	const history = useHistory()
 	const mode = difyChatRuntimeConfig.get().runningMode
-	const { enableSetting } = useAuth()
 	const isMobile = useIsMobile()
-	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
-	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum>()
-	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<IDifyAppItem>()
-	const { userId } = useAuth()
 
 	const { runAsync: getAppList, data: list } = useRequest(
 		() => {
@@ -116,78 +101,6 @@ export default function AppListPage() {
 												</>
 											) : null}
 										</div>
-
-										{/* 操作图标 */}
-										{enableSetting && !appService.readonly ? (
-											<Dropdown
-												menu={{
-													items: [
-														{
-															key: 'sync',
-															icon: <SyncOutlined />,
-															label: '同步 Dify 应用信息',
-															onClick: () => {
-																Modal.confirm({
-																	title: '同步 Dify 应用信息',
-																	content: '确定要同步 Dify 应用信息吗？',
-																	onOk: async () => {
-																		const appItem = await appService.getApp(item.id)
-																		if (!appItem) {
-																			message.error('应用不存在')
-																			return
-																		}
-																		const { info: originalInfo, ...rest } = appItem!
-																		// 调用获取应用信息接口
-																		const difyApi = new DifyApi({
-																			...appItem.requestConfig,
-																			user: userId,
-																		})
-																		const appInfo = await difyApi.getAppInfo()
-																		try {
-																			await appService.updateApp({
-																				...rest,
-																				info: {
-																					...originalInfo,
-																					...appInfo,
-																				},
-																			})
-																			message.success('同步应用成功')
-																			getAppList()
-																		} catch (error) {
-																			message.error('同步应用失败')
-																			console.error(error)
-																		}
-																	},
-																})
-															},
-														},
-														{
-															key: 'edit',
-															icon: <EditOutlined />,
-															label: '编辑',
-															onClick: () => {
-																setAppEditDrawerMode(AppDetailDrawerModeEnum.edit)
-																setAppEditDrawerOpen(true)
-																setAppEditDrawerAppItem(item)
-															},
-														},
-														{
-															key: 'delete',
-															icon: <DeleteOutlined />,
-															label: '删除',
-															danger: true,
-															onClick: async () => {
-																await (appService as DifyAppStore).deleteApp(item.id)
-																message.success('删除应用成功')
-																getAppList()
-															},
-														},
-													],
-												}}
-											>
-												<MoreOutlined className="absolute right-3 top-3 text-lg" />
-											</Dropdown>
-										) : null}
 									</div>
 								</Col>
 							)
@@ -199,36 +112,6 @@ export default function AppListPage() {
 					</div>
 				)}
 			</div>
-
-			{enableSetting && !appService.readonly ? (
-				<Button
-					type="primary"
-					size="large"
-					className="!absolute w-4/5 md:!w-96 box-border bottom-4 left-1/2 !rounded-3xl"
-					style={{
-						transform: 'translateX(-50%)',
-					}}
-					onClick={() => {
-						setAppEditDrawerMode(AppDetailDrawerModeEnum.create)
-						setAppEditDrawerOpen(true)
-						setAppEditDrawerAppItem(undefined)
-					}}
-				>
-					新增应用配置
-				</Button>
-			) : null}
-
-			<AppEditDrawer
-				detailDrawerMode={appEditDrawerMode!}
-				open={appEditDrawerOpen}
-				onClose={() => setAppEditDrawerOpen(false)}
-				appItem={appEditDrawerAppItem}
-				confirmCallback={() => {
-					getAppList()
-				}}
-				addApi={(appService as DifyAppStore).addApp}
-				updateApi={(appService as DifyAppStore).updateApp}
-			/>
 		</div>
 	)
 }

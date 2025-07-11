@@ -1,3 +1,4 @@
+import { DifyApi } from '@dify-chat/api'
 import { AppModeEnums, AppModeNames, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
 import { useMount, useRequest } from 'ahooks'
 import { Button, message, Popconfirm, Space, Table, Tag } from 'antd'
@@ -114,7 +115,7 @@ export default function AppManagementPage() {
 						{
 							title: '操作',
 							key: 'action',
-							width: 120,
+							width: 200,
 							fixed: 'right',
 							render: (_, record) => (
 								<Space size="middle">
@@ -128,6 +129,41 @@ export default function AppManagementPage() {
 										}}
 									>
 										编辑
+									</Button>
+									<Button
+										className="!px-0"
+										type="link"
+										onClick={async () => {
+											const appItem = await appService.getApp(record.id)
+											if (!appItem) {
+												message.error('应用不存在')
+												return
+											}
+											const { info: originalInfo, ...rest } = appItem!
+											// 调用获取应用信息接口
+											const difyApi = new DifyApi({
+												...appItem.requestConfig,
+												// TODO: 获取应用信息的 API 其实不用 user，后面处理掉
+												user: '',
+											})
+											const appInfo = await difyApi.getAppInfo()
+											try {
+												await appService.updateApp({
+													...rest,
+													info: {
+														...originalInfo,
+														...appInfo,
+													},
+												})
+												message.success('同步应用成功')
+												getAppList()
+											} catch (error) {
+												message.error('同步应用失败')
+												console.error(error)
+											}
+										}}
+									>
+										同步应用信息
 									</Button>
 									<Popconfirm
 										title="确定删除该应用吗？"
