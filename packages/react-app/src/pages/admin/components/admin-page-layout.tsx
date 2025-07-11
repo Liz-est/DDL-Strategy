@@ -17,6 +17,7 @@ export default function AdminPageLayout(props: IAdminPageLayoutProps) {
 	return (
 		<PageLayout
 			headerProps={{
+				logoText: 'Dify Chat Admin',
 				isTitleWrapped: true,
 				title: <AdminHeaderTitle />,
 			}}
