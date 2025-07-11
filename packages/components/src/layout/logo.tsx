@@ -36,10 +36,14 @@ interface ILogoProps {
 	 * 是否隐藏文本
 	 */
 	hideText?: boolean
+	/**
+	 * 文本
+	 */
+	text?: string
 }
 
 export const Logo = (props: ILogoProps) => {
-	const { hideGithubIcon, hideText } = props
+	const { hideGithubIcon, hideText, text } = props
 
 	return (
 		<div className="flex h-16 items-center justify-start !py-0 box-border">
@@ -52,7 +56,7 @@ export const Logo = (props: ILogoProps) => {
 				/>
 				{!hideText ? (
 					<span className="inline-block my-0 ml-3 font-bold text-lg text-theme-text">
-						Dify Chat
+						{text || 'Dify Chat'}
 					</span>
 				) : null}
 			</div>
