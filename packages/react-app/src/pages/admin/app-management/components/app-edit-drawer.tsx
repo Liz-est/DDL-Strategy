@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { AppDetailDrawerModeEnum } from '@/enums'
 import { useAuth } from '@/hooks/use-auth'
 
-import SettingForm from './setting-form'
+import SettingForm from './app-setting-form'
 
 interface IAppEditDrawerProps extends DrawerProps {
 	detailDrawerMode: AppDetailDrawerModeEnum
