@@ -1,12 +1,20 @@
-import { AppModeEnums, AppModeNames } from '@dify-chat/core'
+import { AppModeEnums, AppModeNames, DifyAppStore, IDifyAppItem } from '@dify-chat/core'
 import { useMount, useRequest } from 'ahooks'
-import { Button, Space, Table, Tag } from 'antd'
+import { Button, message, Popconfirm, Space, Table, Tag } from 'antd'
+import Title from 'antd/es/typography/Title'
+import { useState } from 'react'
 
+import { AppDetailDrawerModeEnum } from '@/enums'
 import { appService } from '@/services/app/multiApp'
 
 import AdminPageLayout from '../components/admin-page-layout'
+import { AppEditDrawer } from './components/app-edit-drawer'
 
 export default function AppManagementPage() {
+	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
+	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum>()
+	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<IDifyAppItem>()
+
 	const {
 		runAsync: getAppList,
 		data: list,
@@ -27,15 +35,32 @@ export default function AppManagementPage() {
 	return (
 		<AdminPageLayout>
 			<div className="flex-1 h-full overflow-auto px-6">
+				<div className="mb-3 flex items-center justify-between">
+					<div className="flex items-center">
+						<Title level={3}>应用配置</Title>
+					</div>
+					<Button
+						type="primary"
+						onClick={() => {
+							setAppEditDrawerMode(AppDetailDrawerModeEnum.create)
+							setAppEditDrawerOpen(true)
+							setAppEditDrawerAppItem(undefined)
+						}}
+					>
+						新增
+					</Button>
+				</div>
 				<Table
 					dataSource={list}
 					loading={listLoading}
+					scroll={{ x: 1200 }}
 					columns={[
 						{
 							title: '名称',
 							dataIndex: 'info.name',
 							key: 'info.name',
 							width: 180,
+							fixed: 'left',
 							ellipsis: true,
 							render: (_text, record) => {
 								return record.info.name
@@ -78,30 +103,67 @@ export default function AppManagementPage() {
 							},
 						},
 						{
+							title: '状态',
+							dataIndex: 'is_enabled',
+							key: 'is_enabled',
+							width: 140,
+							render: () => {
+								return <Tag color="success">已启用</Tag>
+							},
+						},
+						{
 							title: '操作',
 							key: 'action',
 							width: 120,
-							render: _ => (
+							fixed: 'right',
+							render: (_, record) => (
 								<Space size="middle">
 									<Button
 										className="!px-0"
 										type="link"
+										onClick={() => {
+											setAppEditDrawerMode(AppDetailDrawerModeEnum.edit)
+											setAppEditDrawerOpen(true)
+											setAppEditDrawerAppItem(record)
+										}}
 									>
 										编辑
 									</Button>
-									<Button
-										className="!px-0"
-										type="link"
-										danger
+									<Popconfirm
+										title="确定删除该应用吗？"
+										description="删除后将无法恢复"
+										onConfirm={async () => {
+											await (appService as DifyAppStore).deleteApp(record.id)
+											message.success('删除应用成功')
+											getAppList()
+										}}
 									>
-										删除
-									</Button>
+										<Button
+											className="!px-0"
+											type="link"
+											danger
+										>
+											删除
+										</Button>
+									</Popconfirm>
 								</Space>
 							),
 						},
 					]}
 				/>
 			</div>
+
+			<AppEditDrawer
+				detailDrawerMode={appEditDrawerMode!}
+				open={appEditDrawerOpen}
+				onClose={() => setAppEditDrawerOpen(false)}
+				appItem={appEditDrawerAppItem}
+				confirmCallback={() => {
+					getAppList()
+				}}
+				addApi={(appService as DifyAppStore).addApp}
+				updateApi={(appService as DifyAppStore).updateApp}
+			/>
 		</AdminPageLayout>
 	)
 }
