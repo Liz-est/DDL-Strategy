@@ -8,8 +8,18 @@ import React from 'react'
 import CenterTitleWrapper from './center-title-wrapper'
 import { GithubIcon, Logo } from './logo'
 
-interface IHeaderLayoutProps {
-	title: React.ReactNode
+export interface IHeaderLayoutProps {
+	/**
+	 * 自定义标题
+	 */
+	title?: React.ReactNode
+	/**
+	 * 传进来的标题是否已经包含容器
+	 */
+	isTitleWrapped?: boolean
+	/**
+	 * 自定义右侧图标
+	 */
 	rightIcon?: React.ReactNode
 }
 
@@ -31,7 +41,7 @@ const HeaderSiderIcon = (props: { align: 'left' | 'right'; children: React.React
  * 头部布局组件
  */
 export default function HeaderLayout(props: IHeaderLayoutProps) {
-	const { title, rightIcon } = props
+	const { isTitleWrapped, title, rightIcon } = props
 	const { themeMode } = useThemeContext()
 	const isMobile = useIsMobile()
 	return (
@@ -44,7 +54,8 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 				/>
 			</HeaderSiderIcon>
 
-			<CenterTitleWrapper>{title}</CenterTitleWrapper>
+			{/* 中间标题 */}
+			{isTitleWrapped ? title : <CenterTitleWrapper>{title}</CenterTitleWrapper>}
 
 			{/* 右侧图标 */}
 			<HeaderSiderIcon align="right">
