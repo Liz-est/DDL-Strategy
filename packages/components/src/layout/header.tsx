@@ -25,6 +25,10 @@ export interface IHeaderLayoutProps {
 	 * Logo 文本
 	 */
 	logoText?: string
+	/**
+	 * 自定义 Logo 渲染
+	 */
+	renderLogo?: () => React.ReactNode
 }
 
 const HeaderSiderIcon = (props: { align: 'left' | 'right'; children: React.ReactNode }) => {
@@ -45,7 +49,7 @@ const HeaderSiderIcon = (props: { align: 'left' | 'right'; children: React.React
  * 头部布局组件
  */
 export default function HeaderLayout(props: IHeaderLayoutProps) {
-	const { isTitleWrapped, title, rightIcon, logoText } = props
+	const { isTitleWrapped, title, rightIcon, logoText, renderLogo } = props
 	const { themeMode } = useThemeContext()
 	const isMobile = useIsMobile()
 	return (
@@ -54,6 +58,7 @@ export default function HeaderLayout(props: IHeaderLayoutProps) {
 			<HeaderSiderIcon align="left">
 				<Logo
 					text={logoText}
+					renderLogo={renderLogo}
 					hideText={isMobile}
 					hideGithubIcon
 				/>
