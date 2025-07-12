@@ -1,0 +1,27 @@
+{
+	"name": "dify-chat-admin-nextjs",
+	"version": "0.4.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --turbopack",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"next": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:",
+		"@types/node": "catalog:",
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"@tailwindcss/postcss": "^4",
+		"tailwindcss": "^4",
+		"eslint": "catalog:",
+		"eslint-config-next": "catalog:",
+		"@eslint/eslintrc": "catalog:"
+	}
+}
