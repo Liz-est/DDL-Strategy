@@ -1,7 +1,7 @@
 import { DownCircleTwoTone } from '@ant-design/icons'
 import { createDifyApiInstance, DifyApi } from '@dify-chat/api'
 import { LucideIcon } from '@dify-chat/components'
-import { AppContextProvider, DifyAppStore, ICurrentApp, IDifyAppItem } from '@dify-chat/core'
+import { AppContextProvider, ICurrentApp, IDifyAppItem } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useMount, useRequest } from 'ahooks'
 import { Dropdown, message } from 'antd'
@@ -11,15 +11,11 @@ import { flushSync } from 'react-dom'
 
 import { useAuth } from '@/hooks/use-auth'
 import { useAppSiteSetting } from '@/hooks/useApi'
+import appService from '@/services/app'
 
 import MainLayout from './main-layout'
 
-interface IMultiAppLayoutProps {
-	listApi: DifyAppStore['getApps']
-}
-
-const MultiAppLayout = (props: IMultiAppLayoutProps) => {
-	const { listApi } = props
+const MultiAppLayout = () => {
 	const history = useHistory()
 	const { userId } = useAuth()
 
@@ -41,7 +37,7 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 	const { runAsync: getAppList } = useRequest(
 		() => {
 			setInitLoading(true)
-			return listApi()
+			return appService.getApps()
 		},
 		{
 			manual: true,
@@ -85,7 +81,7 @@ const MultiAppLayout = (props: IMultiAppLayoutProps) => {
 	 * 初始化应用信息
 	 */
 	const initApp = async () => {
-		const appItem = appList?.find(item => item.id === selectedAppId)
+		const appItem = await appService.getApp(selectedAppId)
 		if (!appItem) {
 			return
 		}

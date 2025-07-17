@@ -6,15 +6,11 @@ import { useState } from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { useAppSiteSetting } from '@/hooks/useApi'
+import appService from '@/services/app'
 
 import MainLayout from './main-layout'
 
-interface ISingleAppLayoutProps {
-	getAppConfig: () => Promise<IDifyAppItem | undefined>
-}
-
-const SingleAppLayout = (props: ISingleAppLayoutProps) => {
-	const { getAppConfig } = props
+const SingleAppLayout = () => {
 	const [selectedAppId, setSelectedAppId] = useState('')
 	const [initLoading, setInitLoading] = useState(false)
 	const [currentApp, setCurrentApp] = useState<ICurrentApp>() // 新增 currentApp 状态用于保存当前应用的 inf
@@ -40,7 +36,8 @@ const SingleAppLayout = (props: ISingleAppLayoutProps) => {
 	const { getAppSiteSettting } = useAppSiteSetting()
 
 	const initInSingleMode = async () => {
-		const appConfig = (await getAppConfig()) as IDifyAppItem
+		const appList = await appService.getApps()
+		const appConfig = appList[0] as IDifyAppItem
 		if (!appConfig) {
 			message.error('请先配置应用')
 			return

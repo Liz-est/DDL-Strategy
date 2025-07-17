@@ -8,7 +8,7 @@ import { useHistory } from 'pure-react-router'
 import { useEffect } from 'react'
 
 import { difyChatRuntimeConfig } from '@/config/global'
-import { appService } from '@/services/app/client-multiple'
+import appService from '@/services/app'
 
 export default function AppListPage() {
 	const history = useHistory()
