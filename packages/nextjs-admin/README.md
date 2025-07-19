@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dify Chat Admin - Next.js
 
-## Getting Started
+Dify Chat 的管理后台，基于 Next.js 构建，使用 Prisma + SQLite 进行数据持久化。
 
-First, run the development server:
+## 功能特性
+
+- 🗄️ **数据库持久化**: 使用 Prisma ORM + SQLite 数据库
+- 📊 **应用管理**: 完整的 Dify 应用配置管理
+- 🎨 **现代化 UI**: 基于 Ant Design 的管理界面
+- 🔒 **类型安全**: 完整的 TypeScript 支持
+
+## 快速开始
+
+### 1. 安装依赖
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. 环境配置
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+复制环境变量配置文件：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env
+```
 
-## Learn More
+### 3. 数据库初始化
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# 生成 Prisma 客户端
+pnpm db:generate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# 推送数据库模式（开发环境）
+pnpm db:push
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 或者使用数据库迁移（生产环境推荐）
+pnpm db:migrate
+```
 
-## Deploy on Vercel
+### 4. 启动开发服务器
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+访问 [http://localhost:3000](http://localhost:3000) 查看管理后台。
+
+## 数据库管理
+
+### 常用命令
+
+```bash
+# 生成 Prisma 客户端
+pnpm db:generate
+
+# 推送模式到数据库（开发环境）
+pnpm db:push
+
+# 创建和运行迁移（生产环境）
+pnpm db:migrate
+
+# 打开数据库管理界面
+pnpm db:studio
+
+# 运行种子数据
+pnpm db:seed
+```
+
+## 项目结构
+
+```
+packages/nextjs-admin/
+├── prisma/                 # Prisma 配置和迁移
+│   ├── schema.prisma      # 数据库模式
+│   ├── migrations/        # 数据库迁移文件
+│   └── seed.ts           # 种子数据
+├── lib/
+│   ├── prisma.ts         # Prisma 客户端
+│   └── db/               # 数据库工具
+├── repository/
+│   ├── app.ts            # 应用数据访问层
+│   └── prisma/           # Prisma 实现
+├── app/
+│   ├── app-management/   # 应用管理页面
+│   └── system-config/    # 系统配置页面
+└── components/           # UI 组件
+```
+
+## 数据库模式
+
+应用配置存储在 `dify_apps` 表中，包含以下字段：
+
+- 基本信息：name, mode, description, tags
+- 请求配置：apiBase, apiKey
+- 功能配置：answerForm, inputParams, extConfig
+- 时间戳：createdAt, updatedAt
+
+## 部署
+
+### 开发环境
+
+```bash
+pnpm dev
+```
+
+### 生产环境
+
+```bash
+# 构建应用
+pnpm build
+
+# 启动生产服务器
+pnpm start
+```
+
+### Docker 部署
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+COPY . .
+
+RUN pnpm install
+RUN pnpm db:generate
+RUN pnpm build
+
+EXPOSE 3000
+
+CMD ["pnpm", "start"]
+```
+
+## 环境变量
+
+| 变量名         | 描述             | 默认值          |
+| -------------- | ---------------- | --------------- |
+| `DATABASE_URL` | 数据库连接字符串 | `file:./dev.db` |
+
+## 技术栈
+
+- **框架**: Next.js 15 + React 19
+- **数据库**: SQLite + Prisma ORM
+- **UI**: Ant Design + Tailwind CSS
+- **语言**: TypeScript
+- **构建**: Turbopack
+
+## 贡献
+
+欢迎提交 Issue 和 Pull Request！
