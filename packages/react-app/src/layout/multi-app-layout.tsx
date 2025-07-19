@@ -81,7 +81,7 @@ const MultiAppLayout = () => {
 	 * 初始化应用信息
 	 */
 	const initApp = async () => {
-		const appItem = await appService.getApp(selectedAppId)
+		const appItem = await appService.getAppByID(selectedAppId)
 		if (!appItem) {
 			return
 		}
