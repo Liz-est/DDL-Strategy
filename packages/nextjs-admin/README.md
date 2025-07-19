@@ -8,6 +8,8 @@ Dify Chat 的管理后台，基于 Next.js 构建，使用 Prisma + SQLite 进�
 - 📊 **应用管理**: 完整的 Dify 应用配置管理
 - 🎨 **现代化 UI**: 基于 Ant Design 的管理界面
 - 🔒 **类型安全**: 完整的 TypeScript 支持
+- 🌐 **客户端 API**: 为前端应用提供安全的 API 接口
+- 🛡️ **API 代理**: 安全地代理 Dify API 请求，保护 API Key
 
 ## 快速开始
 
@@ -110,7 +112,7 @@ pnpm dev
 # 构建应用
 pnpm build
 
-# 启动生产服务器
+# 时间戳：createdAt, updatedAt启动生产服务器
 pnpm start
 ```
 
