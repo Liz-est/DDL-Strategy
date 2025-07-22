@@ -1,12 +1,16 @@
-import { createDifyApiInstance, DifyApi } from '@dify-chat/api'
-import { AppContextProvider, ICurrentApp, IDifyAppItem } from '@dify-chat/core'
+import {
+	AppContextProvider,
+	DEFAULT_APP_SITE_SETTING,
+	ICurrentApp,
+	IDifyAppItem,
+} from '@dify-chat/core'
 import { useMount, useRequest } from 'ahooks'
 import { message, Spin } from 'antd'
 import { useState } from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
-import { useAppSiteSetting } from '@/hooks/useApi'
 import appService from '@/services/app'
+import { createDifyApiInstance, DifyApi } from '@/utils/dify-api'
 
 import MainLayout from './main-layout'
 
@@ -33,7 +37,25 @@ const SingleAppLayout = () => {
 		},
 	)
 
-	const { getAppSiteSettting } = useAppSiteSetting()
+	const { runAsync: getAppSiteSettting } = useRequest(
+		(difyApi: DifyApi) => {
+			return difyApi
+				.getAppSiteSetting()
+				.then(res => {
+					return res
+				})
+				.catch(err => {
+					console.error(err)
+					console.warn(
+						'Dify 版本提示: 获取应用 WebApp 设置失败，已降级为使用默认设置。如需与 Dify 配置同步，请确保你的 Dify 版本 >= v1.4.0',
+					)
+					return DEFAULT_APP_SITE_SETTING
+				})
+		},
+		{
+			manual: true,
+		},
+	)
 
 	const initInSingleMode = async () => {
 		const appList = await appService.getApps()

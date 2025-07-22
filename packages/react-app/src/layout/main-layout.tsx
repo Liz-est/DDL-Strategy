@@ -1,9 +1,9 @@
 import { XProvider } from '@ant-design/x'
-import { DifyApi } from '@dify-chat/api'
 import { AppModeEnums, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import React from 'react'
 
 import { colors } from '@/theme/config'
+import { DifyApi } from '@/utils/dify-api'
 
 import ChatLayout from './chat-layout'
 import CommonLayout from './common-layout'

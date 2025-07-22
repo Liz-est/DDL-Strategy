@@ -1,7 +1,11 @@
 import { DownCircleTwoTone } from '@ant-design/icons'
-import { createDifyApiInstance, DifyApi } from '@dify-chat/api'
 import { LucideIcon } from '@dify-chat/components'
-import { AppContextProvider, ICurrentApp, IDifyAppItem } from '@dify-chat/core'
+import {
+	AppContextProvider,
+	DEFAULT_APP_SITE_SETTING,
+	ICurrentApp,
+	IDifyAppItem,
+} from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useMount, useRequest } from 'ahooks'
 import { Dropdown, message } from 'antd'
@@ -10,8 +14,8 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import { useAuth } from '@/hooks/use-auth'
-import { useAppSiteSetting } from '@/hooks/useApi'
 import appService from '@/services/app'
+import { createDifyApiInstance, DifyApi } from '@/utils/dify-api'
 
 import MainLayout from './main-layout'
 
@@ -63,6 +67,9 @@ const MultiAppLayout = () => {
 				message.error(`获取应用列表失败: ${error}`)
 				console.error(error)
 			},
+			onFinally: () => {
+				setInitLoading(false)
+			},
 		},
 	)
 
@@ -75,7 +82,25 @@ const MultiAppLayout = () => {
 		},
 	)
 
-	const { getAppSiteSettting } = useAppSiteSetting()
+	const { runAsync: getAppSiteSettting } = useRequest(
+		(difyApi: DifyApi) => {
+			return difyApi
+				.getAppSiteSetting()
+				.then(res => {
+					return res
+				})
+				.catch(err => {
+					console.error(err)
+					console.warn(
+						'Dify 版本提示: 获取应用 WebApp 设置失败，已降级为使用默认设置。如需与 Dify 配置同步，请确保你的 Dify 版本 >= v1.4.0',
+					)
+					return DEFAULT_APP_SITE_SETTING
+				})
+		},
+		{
+			manual: true,
+		},
+	)
 
 	/**
 	 * 初始化应用信息
@@ -88,6 +113,7 @@ const MultiAppLayout = () => {
 		difyApi.updateOptions({
 			user: userId,
 			...appItem.requestConfig,
+			apiBase: `/${selectedAppId}`,
 		})
 		setInitLoading(true)
 		// 获取应用参数
