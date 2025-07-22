@@ -31,12 +31,6 @@
     "requestConfig": {
       "apiBase": "https://api.dify.ai/v1",
       "apiKey": "******"
-    },
-    "answerForm": {
-      "enabled": false
-    },
-    "inputParams": {
-      "enableUpdateAfterCvstStarts": false
     }
   }
 ]
@@ -52,80 +46,171 @@
 
 **描述**: 获取指定应用的详细信息，API Key 会被隐藏。
 
-**响应示例**:
-
-```json
-{
-  "id": "app-123",
-  "info": {
-    "name": "聊天助手",
-    "description": "智能聊天助手应用",
-    "tags": ["聊天", "AI"],
-    "mode": "chat"
-  },
-  "requestConfig": {
-    "apiBase": "https://api.dify.ai/v1",
-    "apiKey": "******"
-  }
-}
-```
-
 ## Dify API 代理
 
 所有 Dify API 请求都通过平台代理，确保 API Key 安全性。
 
-### 1. 发送聊天消息
+### 应用信息 API
 
-**接口**: `POST /api/client/dify/{appId}/chat-messages`
+#### 1. 获取应用基本信息
 
-**参数**:
+- **接口**: `GET /api/client/dify/{appId}/info`
+- **描述**: 获取应用的基本信息
 
-- `appId` (路径参数): 应用 ID
+#### 2. 获取应用元数据
 
-**请求体**:
+- **接口**: `GET /api/client/dify/{appId}/meta`
+- **描述**: 获取应用的元数据信息
+
+#### 3. 获取应用站点设置
+
+- **接口**: `GET /api/client/dify/{appId}/site`
+- **描述**: 获取应用的站点配置信息
+
+#### 4. 获取应用参数
+
+- **接口**: `GET /api/client/dify/{appId}/parameters`
+- **描述**: 获取应用的参数配置，包括开场白、建议问题等
+
+### 聊天和消息 API
+
+#### 5. 发送聊天消息
+
+- **接口**: `POST /api/client/dify/{appId}/chat-messages`
+- **请求体**:
 
 ```json
 {
   "query": "你好",
   "conversation_id": "conv-123",
   "response_mode": "streaming",
+  "inputs": {},
+  "files": []
+}
+```
+
+- **描述**: 向指定应用发送聊天消息，支持流式和非流式响应
+
+#### 6. 停止聊天消息生成
+
+- **接口**: `POST /api/client/dify/{appId}/chat-messages/{taskId}/stop`
+- **描述**: 停止正在生成的聊天消息
+
+#### 7. 发送完成消息（文本生成）
+
+- **接口**: `POST /api/client/dify/{appId}/completion-messages`
+- **请求体**:
+
+```json
+{
   "inputs": {}
 }
 ```
 
-**描述**: 向指定应用发送聊天消息，支持流式和非流式响应。
+- **描述**: 发送文本生成请求
 
-### 2. 获取会话列表
+### 会话管理 API
 
-**接口**: `GET /api/client/dify/{appId}/conversations`
+#### 8. 获取会话列表
 
-**参数**:
+- **接口**: `GET /api/client/dify/{appId}/conversations`
+- **参数**: `limit` (查询参数): 返回数量限制，默认 20
+- **描述**: 获取指定应用的会话列表
 
-- `appId` (路径参数): 应用 ID
-- `limit` (查询参数): 返回数量限制，默认 20
+#### 9. 获取会话消息历史
 
-**描述**: 获取指定应用的会话列表。
+- **接口**: `GET /api/client/dify/{appId}/conversation/{conversationId}/messages`
+- **描述**: 获取指定会话的消息历史
 
-### 3. 获取会话消息历史
+#### 10. 删除会话
 
-**接口**: `GET /api/client/dify/{appId}/conversation/{conversationId}/messages`
+- **接口**: `DELETE /api/client/dify/{appId}/conversation/{conversationId}`
+- **描述**: 删除指定的会话
 
-**参数**:
+#### 11. 重命名会话
 
-- `appId` (路径参数): 应用 ID
-- `conversationId` (路径参数): 会话 ID
+- **接口**: `PUT /api/client/dify/{appId}/conversation/{conversationId}/name`
+- **请求体**:
 
-**描述**: 获取指定会话的消息历史。
+```json
+{
+  "name": "新会话名称",
+  "auto_generate": false
+}
+```
 
-### 4. 获取应用参数
+- **描述**: 重命名指定的会话
 
-**接口**: `GET /api/client/dify/{appId}/parameters`
+### 文件和媒体 API
 
-**参数**:
+#### 12. 上传文件
 
-- `appId` (路径参数): 应用 ID
+- **接口**: `POST /api/client/dify/{appId}/files/upload`
+- **请求体**: FormData 格式，包含文件
+- **描述**: 上传文件到 Dify 平台
 
-**描述**: 获取应用的参数配置，包括开场白、建议问题等。
+#### 13. 音频转文字
+
+- **接口**: `POST /api/client/dify/{appId}/audio2text`
+- **请求体**: FormData 格式，包含音频文件
+- **描述**: 将音频文件转换为文字
+
+#### 14. 文字转音频
+
+- **接口**: `POST /api/client/dify/{appId}/text2audio`
+- **请求体**:
+
+```json
+{
+  "message_id": "msg-123",
+  "text": "要转换的文字"
+}
+```
+
+- **描述**: 将文字转换为音频
+
+### 反馈和建议 API
+
+#### 15. 提交消息反馈
+
+- **接口**: `POST /api/client/dify/{appId}/feedback`
+- **请求体**:
+
+```json
+{
+  "messageId": "msg-123",
+  "rating": "like",
+  "content": "反馈内容"
+}
+```
+
+- **描述**: 对消息进行点赞或点踩反馈
+
+#### 16. 获取消息建议
+
+- **接口**: `GET /api/client/dify/{appId}/messages/{messageId}/suggested`
+- **描述**: 获取基于消息的建议问题
+
+### 工作流 API
+
+#### 17. 运行工作流
+
+- **接口**: `POST /api/client/dify/{appId}/workflows/run`
+- **请求体**:
+
+```json
+{
+  "inputs": {}
+}
+```
+
+- **描述**: 运行工作流，支持流式响应
+
+#### 18. 获取工作流运行结果
+
+- **接口**: `GET /api/client/dify/{appId}/workflows/run?id={runId}`
+- **参数**: `id` (查询参数): 工作流运行 ID
+- **描述**: 获取工作流的运行结果
 
 ## 错误响应格式
 
@@ -181,6 +266,19 @@ const sendMessage = async (appId: string, message: string) => {
 
   return response
 }
+
+// 上传文件
+const uploadFile = async (appId: string, file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const response = await fetch(`/api/client/dify/${appId}/files/upload`, {
+    method: 'POST',
+    body: formData,
+  })
+
+  return response.json()
+}
 ```
 
 ## 安全性说明
@@ -215,3 +313,5 @@ API_BASE_URL=https://your-platform-domain.com/api/client
 2. 应用配置中的 API Key 在客户端 API 中会被隐藏，这是正常的安全措施
 3. 流式响应需要特殊处理，参考上面的示例代码
 4. 建议在客户端实现适当的错误处理和重试机制
+5. 文件上传和音频转换接口使用 FormData 格式
+6. 用户ID会自动从请求头中获取，客户端无需手动传递

@@ -1,5 +1,5 @@
 import { IDifyAppItem } from '@dify-chat/core'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * 统一的 API 错误处理
@@ -48,4 +48,62 @@ export async function proxyDifyRequest(
 	})
 
 	return response
+}
+
+/**
+ * 创建 Dify 响应代理
+ */
+export function createDifyResponseProxy(response: Response) {
+	return new Response(response.body, {
+		status: response.status,
+		headers: {
+			'Content-Type': response.headers.get('Content-Type') || 'application/json',
+			'X-Version': response.headers.get('X-Version') || '',
+			'Access-Control-Allow-Headers': 'X-Version, Authorization, Content-Type',
+		},
+	})
+}
+
+/**
+ * 生成 FormData 代理
+ */
+export async function createFormDataProxy(request: NextRequest) {
+	const proxyFormData = new FormData()
+	const formData = await request.formData()
+
+	for (const [key, value] of formData.entries()) {
+		if (
+			typeof value === 'object' &&
+			value !== null &&
+			typeof value.arrayBuffer === 'function' &&
+			'name' in value
+		) {
+			proxyFormData.append(key, value, value.name)
+		} else {
+			proxyFormData.append(key, value as string)
+		}
+	}
+
+	return proxyFormData
+}
+
+/**
+ * 统一的 Dify API 响应格式
+ */
+export function createDifyApiResponse<T>(data: T, status = 200) {
+	return NextResponse.json(
+		{
+			code: status,
+			data,
+		},
+		{ status },
+	)
+}
+
+/**
+ * 从请求中获取用户ID（简化版本，实际项目中可能需要从session或token中获取）
+ */
+export function getUserIdFromRequest(request: NextRequest): string {
+	// 这里简化处理，实际项目中应该从认证信息中获取
+	return request.headers.get('x-user-id') || 'anonymous'
 }
