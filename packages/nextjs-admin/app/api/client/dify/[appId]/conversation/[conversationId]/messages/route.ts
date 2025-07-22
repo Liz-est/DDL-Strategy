@@ -24,9 +24,14 @@ export async function GET(
 			return NextResponse.json({ error: 'App not found' }, { status: 404 })
 		}
 
+		const user = request.nextUrl.searchParams.get('user')
+		if (!user) {
+			return NextResponse.json({ error: 'User not found' }, { status: 404 })
+		}
+
 		// 转发请求到 Dify API
 		const response = await fetch(
-			`${app.requestConfig.apiBase}/conversation/${conversationId}/messages`,
+			`${app.requestConfig.apiBase}/messages?conversation_id=${conversationId}&user=${user}`,
 			{
 				method: 'GET',
 				headers: {

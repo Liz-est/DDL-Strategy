@@ -24,14 +24,18 @@ export async function GET(request: NextRequest, { params }: { params: { appId: s
 		// 获取查询参数
 		const searchParams = request.nextUrl.searchParams
 		const limit = searchParams.get('limit') || '20'
+		const user = searchParams.get('user')
 
 		// 转发请求到 Dify API
-		const response = await fetch(`${app.requestConfig.apiBase}/conversations?limit=${limit}`, {
-			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${app.requestConfig.apiKey}`,
+		const response = await fetch(
+			`${app.requestConfig.apiBase}/conversations?limit=${limit}&user=${user}`,
+			{
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${app.requestConfig.apiKey}`,
+				},
 			},
-		})
+		)
 
 		// 返回响应
 		const data = await response.json()
