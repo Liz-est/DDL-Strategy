@@ -38,9 +38,7 @@ const baseRequest = new BaseRequest({
 
 class AppService implements IAppStorageAdapter {
 	async getApps(): Promise<IDifyAppItem[]> {
-		// return Promise.resolve(appList)
 		const result = await baseRequest.get('/apps')
-		console.log('真是结果', result)
 		return Promise.resolve(result)
 	}
 
