@@ -608,7 +608,7 @@ export class DifyApi {
 					text: string
 			  },
 	) => {
-		return this.baseRequest.baseRequest('/text-to-audio', {
+		return this.baseRequest.baseRequest('/text2audio', {
 			method: 'POST',
 			body: JSON.stringify({
 				...params,
@@ -629,7 +629,7 @@ export class DifyApi {
 		formData.append('file', file)
 		formData.append('user', this.options.user)
 		return this.baseRequest
-			.baseRequest('/audio-to-text', {
+			.baseRequest('/audio2text', {
 				method: 'POST',
 				body: formData,
 			})
