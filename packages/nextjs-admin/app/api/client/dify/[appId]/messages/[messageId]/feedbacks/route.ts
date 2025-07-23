@@ -21,9 +21,7 @@ export async function POST(
 			return createDifyApiResponse({ error: 'App not found' }, 404)
 		}
 		// 获取请求体
-		const { rating, content } = await request.json()
-
-		const user = request.nextUrl.searchParams.get('user')
+		const { rating, content, user } = await request.json()
 
 		// 代理请求到 Dify API
 		const response = await proxyDifyRequest(
