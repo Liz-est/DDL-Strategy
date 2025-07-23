@@ -633,7 +633,8 @@ export class DifyApi {
 				method: 'POST',
 				body: formData,
 			})
-			.then(res => res.json()) as Promise<IAudio2TextResponse>
+			.then(res => res.json())
+			.then(res => res.data) as Promise<IAudio2TextResponse>
 	}
 
 	/**
