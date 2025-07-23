@@ -18,6 +18,7 @@
 
 | Avatar | Name | Type |
 | --- | --- | --- |
+| <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/f3893c63-e9f1-40ca-8cd6-d8e2d449d4b6" /> | mars | Wechat |
 | <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/d438d892-f942-43a1-89ec-cd24df6f3c91" /> | 发呆的比目鱼📷 | Wechat |
 | <img style="width: 50px; height: 50px" src="https://github.com/user-attachments/assets/bc1384b1-1920-44e9-91a5-571fffb496d6" /> | FENGYRAN | Wechat |
 | <img style="width: 50px; height: 50px" src="https://avatars.githubusercontent.com/u/7828931?v=4" /> | <a target="blank" href="https://github.com/xieqinzhangjian">xieqinzhangjian</a> | Github |
