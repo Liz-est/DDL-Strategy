@@ -33,7 +33,8 @@
 		"pure-react-router": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"semver": "catalog:"
+		"semver": "catalog:",
+		"zustand": "catalog:"
 	},
 	"devDependencies": {
 		"@changesets/cli": "catalog:",
