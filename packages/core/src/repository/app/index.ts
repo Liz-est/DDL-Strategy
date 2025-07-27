@@ -12,6 +12,15 @@ export interface IDifyAppRequestConfig {
 }
 
 /**
+ * 参数配置 Item
+ */
+export interface IParamItem {
+	variable: string
+	required: boolean
+	hide: boolean
+}
+
+/**
  * 应用配置 Item
  */
 export interface IDifyAppItem {
@@ -65,6 +74,10 @@ export interface IDifyAppItem {
 		 * 开始对话后，是否支持更新对话参数
 		 */
 		enableUpdateAfterCvstStarts: boolean
+		/**
+		 * 对话参数
+		 */
+		parameters: IParamItem[]
 	}
 	/**
 	 * 其他扩展配置

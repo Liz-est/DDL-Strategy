@@ -36,23 +36,35 @@ interface ILogoProps {
 	 * 是否隐藏文本
 	 */
 	hideText?: boolean
+	/**
+	 * 文本
+	 */
+	text?: string
+	/**
+	 * 自定义 Logo 渲染
+	 */
+	renderLogo?: () => React.ReactNode
 }
 
 export const Logo = (props: ILogoProps) => {
-	const { hideGithubIcon, hideText } = props
+	const { hideGithubIcon, hideText, text, renderLogo } = props
 
 	return (
 		<div className="flex h-16 items-center justify-start !py-0 box-border">
 			<div className="h-full flex items-center flex-1 overflow-hidden">
-				<img
-					className="w-8 h-8 inline-block"
-					src={LogoImage}
-					draggable={false}
-					alt="logo"
-				/>
+				{renderLogo ? (
+					renderLogo()
+				) : (
+					<img
+						className="w-8 h-8 inline-block"
+						src={LogoImage}
+						draggable={false}
+						alt="logo"
+					/>
+				)}
 				{!hideText ? (
 					<span className="inline-block my-0 ml-3 font-bold text-lg text-theme-text">
-						Dify Chat
+						{text || 'Dify Chat'}
 					</span>
 				) : null}
 			</div>

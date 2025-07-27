@@ -6,14 +6,17 @@
 		"build": "pnpm build:pkgs && pnpm --filter dify-chat-app-react build",
 		"build:pkgs": "pnpm --filter @dify-chat/* recursive run build",
 		"build:next": "pnpm build:pkgs && pnpm --filter dify-chat-app-nextjs build",
+		"build:platform": "pnpm build:pkgs && pnpm --filter dify-chat-platform build",
 		"build:docs": "pnpm --filter dify-chat-docs build",
 		"dev": "pnpm --filter dify-chat-app-react dev",
 		"dev:next": "pnpm --filter dify-chat-app-nextjs dev",
+		"dev:platform": "pnpm --filter dify-chat-platform dev",
 		"dev:docs": "pnpm --filter dify-chat-docs dev",
 		"format": "prettier --write .",
 		"lint": "eslint .",
 		"preview": "pnpm --filter dify-chat-app-react preview",
 		"preview:next": "pnpm --filter dify-chat-app-nextjs start",
+		"preview:platform": "pnpm --filter dify-chat-platform start",
 		"prepare": "husky"
 	},
 	"devDependencies": {

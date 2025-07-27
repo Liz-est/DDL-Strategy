@@ -2,13 +2,16 @@ packages:
   - packages/*
 
 overrides:
-  'mdast-util-gfm-autolink-literal': 2.0.0
+  mdast-util-gfm-autolink-literal: 2.0.0
 
 onlyBuiltDependencies:
   - '@biomejs/biome'
+  - '@prisma/client'
+  - '@prisma/engines'
   - '@tailwindcss/oxide'
   - core-js
   - esbuild
+  - prisma
   - sharp
   - unrs-resolver
 
@@ -104,3 +107,4 @@ catalog:
   typescript: ^5.8.3
   typescript-eslint: ^8.30.1
   vitest: ^3.2.3
+  zustand: ^5.0.6

@@ -28,11 +28,13 @@
 		"antd": "catalog:",
 		"antd-style": "catalog:",
 		"classnames": "catalog:",
+		"lodash-es": "catalog:",
 		"lucide-react": "catalog:",
 		"pure-react-router": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"semver": "catalog:"
+		"semver": "catalog:",
+		"zustand": "catalog:"
 	},
 	"devDependencies": {
 		"@changesets/cli": "catalog:",
@@ -44,6 +46,7 @@
 		"@rsbuild/plugin-react": "catalog:",
 		"@rsbuild/plugin-source-build": "catalog:",
 		"@trivago/prettier-plugin-sort-imports": "catalog:",
+		"@types/lodash-es": "catalog:",
 		"@types/node": "catalog:",
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
