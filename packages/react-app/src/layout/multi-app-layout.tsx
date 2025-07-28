@@ -1,5 +1,5 @@
 import { DownCircleTwoTone } from '@ant-design/icons'
-import { LucideIcon } from '@dify-chat/components'
+import { LucideIcon } from '@/components'
 import {
 	AppContextProvider,
 	DEFAULT_APP_SITE_SETTING,

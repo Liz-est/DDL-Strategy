@@ -6,8 +6,8 @@ import {
 	PlusOutlined,
 } from '@ant-design/icons'
 import { DifyApi, IConversationItem } from '@dify-chat/api'
-import { AppIcon, AppInfo, ConversationList, LucideIcon } from '@dify-chat/components'
-import { HeaderLayout } from '@dify-chat/components'
+import { AppIcon, AppInfo, ConversationList, LucideIcon } from '@/components'
+import { HeaderLayout } from '@/components'
 import { ConversationsContextProvider, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { generateUuidV4, isTempId, useIsMobile } from '@dify-chat/helpers'
 import { ThemeModeEnum, ThemeModeLabelEnum, useThemeContext } from '@dify-chat/theme'

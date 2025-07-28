@@ -1,5 +1,5 @@
 import { TagOutlined } from '@ant-design/icons'
-import { HeaderLayout, LucideIcon } from '@dify-chat/components'
+import { HeaderLayout, LucideIcon } from '@/components'
 import { AppModeLabels } from '@dify-chat/core'
 import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'

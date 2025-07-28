@@ -1,7 +1,7 @@
 import { Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageFileItem, MessageFileBelongsToEnum } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
-import { Chatbox } from '@dify-chat/components'
+import { Chatbox } from '@/components'
 import { useAppContext } from '@dify-chat/core'
 import { Roles, useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'

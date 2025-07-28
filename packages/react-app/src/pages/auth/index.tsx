@@ -1,4 +1,4 @@
-import { Logo } from '@dify-chat/components'
+import { Logo } from '@/components'
 import { LocalStorageKeys, LocalStorageStore } from '@dify-chat/helpers'
 import FingerPrintJS from '@fingerprintjs/fingerprintjs'
 import { useMount } from 'ahooks'

@@ -15,7 +15,7 @@ import {
 	MarkdownRenderer,
 	MessageFileList,
 	WorkflowLogs,
-} from '@dify-chat/components'
+} from '@/components'
 import { AppModeEnums, useAppContext } from '@dify-chat/core'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { Button, Empty, Form, message, Tabs } from 'antd'

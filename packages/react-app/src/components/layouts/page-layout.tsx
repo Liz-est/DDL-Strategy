@@ -1,4 +1,4 @@
-import { HeaderLayout, IHeaderLayoutProps } from '@dify-chat/components'
+import { HeaderLayout, IHeaderLayoutProps } from '@/components'
 
 interface IPageLayoutProps {
 	headerProps: IHeaderLayoutProps

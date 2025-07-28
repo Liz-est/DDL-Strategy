@@ -1,4 +1,4 @@
-import { HeaderLayout } from '@dify-chat/components'
+import { HeaderLayout } from '@/components'
 import { IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { Empty, Spin } from 'antd'
 
