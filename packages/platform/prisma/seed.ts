@@ -14,9 +14,9 @@ async function main() {
 			tags: JSON.stringify(['示例', '聊天']),
 			apiBase: 'https://api.dify.ai/v1',
 			apiKey: 'app-xxxxxxxxxxxxxxxxx',
-			answerFormEnabled: false,
-			inputParamsEnableUpdateAfterCvstStarts: false,
-			extConfigConversationOpeningStatementDisplayMode: 'default',
+			enableAnswerForm: false,
+			enableUpdateInputAfterStarts: false,
+			openingStatementDisplayMode: 'default',
 		},
 	})
 

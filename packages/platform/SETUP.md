@@ -80,26 +80,27 @@ CREATE TABLE "dify_apps" (
     "apiKey" TEXT NOT NULL,
 
     -- 功能配置
-    "answerFormEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "enableAnswerForm" BOOLEAN NOT NULL DEFAULT false,
     "answerFormFeedbackText" TEXT,
-    "inputParamsEnableUpdateAfterCvstStarts" BOOLEAN NOT NULL DEFAULT false,
-    "inputParamsParameters" TEXT, -- JSON 字符串
-    "extConfigConversationOpeningStatementDisplayMode" TEXT
+    "enableUpdateInputAfterStarts" BOOLEAN NOT NULL DEFAULT false,
+    "openingStatementDisplayMode" TEXT
 );
 ```
 
 ### 数据类型映射
 
-| 应用配置字段             | 数据库字段              | 类型    | 说明             |
-| ------------------------ | ----------------------- | ------- | ---------------- |
-| `info.name`              | `name`                  | TEXT    | 应用名称         |
-| `info.mode`              | `mode`                  | TEXT    | 应用类型         |
-| `info.description`       | `description`           | TEXT    | 应用描述         |
-| `info.tags`              | `tags`                  | TEXT    | JSON 字符串存储  |
-| `requestConfig.apiBase`  | `apiBase`               | TEXT    | API 基础地址     |
-| `requestConfig.apiKey`   | `apiKey`                | TEXT    | API 密钥         |
-| `answerForm.enabled`     | `answerFormEnabled`     | BOOLEAN | 是否启用回复表单 |
-| `inputParams.parameters` | `inputParamsParameters` | TEXT    | JSON 字符串存储  |
+| 应用配置字段 | 数据库字段 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `info.name` | `name` | TEXT | 应用名称 |
+| `info.mode` | `mode` | TEXT | 应用类型 |
+| `info.description` | `description` | TEXT | 应用描述 |
+| `info.tags` | `tags` | TEXT | JSON 字符串存储 |
+| `requestConfig.apiBase` | `api_base` | TEXT | API 基础地址 |
+| `requestConfig.apiKey` | `api_key` | TEXT | API 密钥 |
+| `enableAnswerForm` | `enable_answer_form` | BOOLEAN | 是否启用回复表单 |
+| `answerForm.feedbackText` | `answer_form_feedback_text` | TEXT | 回复表单反馈文本 |
+| `enableUpdateInputAfterStarts` | `enable_update_input_after_starts` | BOOLEAN | 对话开始后是否允许修改对话参数 |
+| `openingStatementDisplayMode` | `opening_statement_display_mode` | TEXT | 开场白展示模式 |
 
 ## 🛠️ 开发工具
 

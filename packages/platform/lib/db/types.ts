@@ -18,23 +18,20 @@ export function dbAppToAppItem(dbApp: DifyApp): IDifyAppItem {
 			apiBase: dbApp.apiBase,
 			apiKey: dbApp.apiKey,
 		},
-		answerForm: dbApp.answerFormEnabled
+		answerForm: dbApp.enableAnswerForm
 			? {
-					enabled: dbApp.answerFormEnabled,
-					feedbackText: dbApp.answerFormFeedbackText,
+					enabled: dbApp.enableAnswerForm,
+					feedbackText: (dbApp.answerFormFeedbackText as string) || '',
 				}
 			: undefined,
 		inputParams: {
-			enableUpdateAfterCvstStarts: dbApp.inputParamsEnableUpdateAfterCvstStarts,
-			parameters: dbApp.inputParamsParameters ? JSON.parse(dbApp.inputParamsParameters) : [],
+			enableUpdateAfterCvstStarts: dbApp.enableUpdateInputAfterStarts,
 		},
-		extConfig: dbApp.extConfigConversationOpeningStatementDisplayMode
+		extConfig: dbApp.openingStatementDisplayMode
 			? {
 					conversation: {
 						openingStatement: {
-							displayMode: dbApp.extConfigConversationOpeningStatementDisplayMode as
-								| 'default'
-								| 'always',
+							displayMode: dbApp.openingStatementDisplayMode as 'default' | 'always',
 						},
 					},
 				}
@@ -55,14 +52,10 @@ export function appItemToDbApp(
 		tags: appItem.info.tags.length > 0 ? JSON.stringify(appItem.info.tags) : null,
 		apiBase: appItem.requestConfig.apiBase,
 		apiKey: appItem.requestConfig.apiKey,
-		answerFormEnabled: appItem.answerForm?.enabled || false,
+		enableAnswerForm: appItem.answerForm?.enabled || false,
 		answerFormFeedbackText: appItem.answerForm?.feedbackText || null,
-		inputParamsEnableUpdateAfterCvstStarts:
-			appItem.inputParams?.enableUpdateAfterCvstStarts || false,
-		inputParamsParameters: appItem.inputParams?.parameters
-			? JSON.stringify(appItem.inputParams.parameters)
-			: null,
-		extConfigConversationOpeningStatementDisplayMode:
+		enableUpdateInputAfterStarts: appItem.inputParams?.enableUpdateAfterCvstStarts || false,
+		openingStatementDisplayMode:
 			appItem.extConfig?.conversation?.openingStatement?.displayMode || null,
 	}
 }

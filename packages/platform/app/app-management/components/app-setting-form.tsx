@@ -1,9 +1,5 @@
-import { DifyApi } from '@dify-chat/api'
-import { type IParamItem, ParamsConfigEditor } from '@dify-chat/components'
 import { AppModeOptions, OpeningStatementDisplayModeOptions } from '@dify-chat/core'
-import { useRequest } from 'ahooks'
 import { Form, FormInstance, Input, Select } from 'antd'
-import { useEffect, useState } from 'react'
 
 import { IDifyAppItem } from '@/types'
 
@@ -18,49 +14,7 @@ interface ISettingFormProps {
 export default function SettingForm(props: ISettingFormProps) {
 	const { formInstance, mode, appItem } = props
 
-	const answerFormEnabled = Form.useWatch('answerForm.enabled', formInstance)
-
-	const apiKey = Form.useWatch('apiKey', formInstance) as string
-	const apiBase = Form.useWatch('apiBase', formInstance) as string
-	const [parameters, setParameters] = useState<IParamItem[]>([])
-
-	const { runAsync: getAppParameters } = useRequest(
-		async () => {
-			const difyApi = new DifyApi({
-				user: '',
-				apiKey,
-				apiBase,
-			})
-			const parameters = await difyApi.getAppParameters()
-			// 如果没有对话参数，则无需处理
-			if (!parameters.user_input_form.length) {
-				return
-			}
-
-			// 转换成 IParamItem 结构
-			const params = parameters.user_input_form.map(item => {
-				const paramItem = Object.values(item)[0]
-				return {
-					variable: paramItem.variable,
-					required: paramItem.required,
-					hide: paramItem.hide || false,
-					label: paramItem.label,
-				}
-			})
-			setParameters(params)
-		},
-		{
-			manual: true,
-		},
-	)
-
-	useEffect(() => {
-		if (apiKey && apiBase) {
-			console.log('apiKey', apiKey)
-			console.log('apiBase', apiBase)
-			getAppParameters()
-		}
-	}, [apiKey, apiBase])
+	const enableAnswerForm = Form.useWatch('enableAnswerForm', formInstance)
 
 	return (
 		<Form
@@ -71,10 +25,9 @@ export default function SettingForm(props: ISettingFormProps) {
 				span: 5,
 			}}
 			initialValues={{
-				'answerForm.enabled': false,
-				'inputParams.enableUpdateAfterCvstStarts': false,
-				'inputParams.parameters': [],
-				'extConfig.conversation.openingStatement.displayMode': 'default',
+				enableAnswerForm: false,
+				enableUpdateInputAfterStarts: false,
+				openingStatementDisplayMode: 'default',
 			}}
 		>
 			<div className="text-base mb-3 flex items-center">
@@ -165,7 +118,7 @@ export default function SettingForm(props: ISettingFormProps) {
 
 			<Form.Item
 				label="更新历史参数"
-				name="inputParams.enableUpdateAfterCvstStarts"
+				name="enableUpdateInputAfterStarts"
 				tooltip="是否允许更新历史对话的输入参数"
 				rules={[{ required: true }]}
 				required
@@ -185,21 +138,9 @@ export default function SettingForm(props: ISettingFormProps) {
 				/>
 			</Form.Item>
 
-			{parameters.length ? (
-				<Form.Item
-					label="参数设置"
-					name="inputParams.parameters"
-					tooltip="设置对话的输入参数"
-					rules={[{ required: true }]}
-					required
-				>
-					<ParamsConfigEditor params={parameters} />
-				</Form.Item>
-			) : null}
-
 			<Form.Item
 				label="开场白展示场景"
-				name="extConfig.conversation.openingStatement.displayMode"
+				name="openingStatementDisplayMode"
 				tooltip="配置开场白的展示逻辑"
 				rules={[{ required: true }]}
 				required
@@ -217,7 +158,7 @@ export default function SettingForm(props: ISettingFormProps) {
 
 			<Form.Item
 				label="表单回复"
-				name="answerForm.enabled"
+				name="enableAnswerForm"
 				tooltip="当工作流需要回复表单给用户填写时，建议开启此功能"
 				rules={[{ required: true }]}
 				required
@@ -236,7 +177,7 @@ export default function SettingForm(props: ISettingFormProps) {
 					]}
 				/>
 			</Form.Item>
-			{answerFormEnabled ? (
+			{enableAnswerForm ? (
 				<Form.Item
 					label="提交消息文本"
 					name="answerForm.feedbackText"

@@ -46,12 +46,10 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				'info.name': appItem?.info.name,
 				'info.description': appItem?.info.description,
 				'info.mode': appItem?.info.mode || AppModeEnums.CHATBOT,
-				'answerForm.enabled': appItem?.answerForm?.enabled || false,
+				enableAnswerForm: appItem?.answerForm?.enabled || false,
 				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
-				'inputParams.enableUpdateAfterCvstStarts':
-					appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
-				'inputParams.parameters': appItem?.inputParams?.parameters || [],
-				'extConfig.conversation.openingStatement.displayMode':
+				enableUpdateInputAfterStarts: appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
+				openingStatementDisplayMode:
 					appItem?.extConfig?.conversation?.openingStatement?.displayMode || 'default',
 			})
 		} else if (detailDrawerMode === AppDetailDrawerModeEnum.create) {
@@ -125,17 +123,16 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 										apiKey: values.apiKey,
 									},
 									answerForm: {
-										enabled: values['answerForm.enabled'],
+										enabled: values['enableAnswerForm'],
 										feedbackText: values['answerForm.feedbackText'],
 									},
 									inputParams: {
-										enableUpdateAfterCvstStarts: values['inputParams.enableUpdateAfterCvstStarts'],
-										parameters: values['inputParams.parameters'],
+										enableUpdateAfterCvstStarts: values['enableUpdateInputAfterStarts'],
 									},
 									extConfig: {
 										conversation: {
 											openingStatement: {
-												displayMode: values['extConfig.conversation.openingStatement.displayMode'],
+												displayMode: values['openingStatementDisplayMode'],
 											},
 										},
 									},
