@@ -6,6 +6,8 @@ import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select 
 import { useHistory, useSearchParams } from 'pure-react-router'
 import { useEffect, useRef, useState } from 'react'
 
+import { useGlobalStore } from '@/store'
+
 import FileUpload, { IUploadFileItem } from './form-controls/file-upload'
 
 export type IConversationEntryFormItem = FormItemProps &
@@ -51,6 +53,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 	} = useHistory()
 	const [userInputItems, setUserInputItems] = useState<IConversationEntryFormItem[]>([])
 	const cachedSearchParams = useRef<URLSearchParams>(new URLSearchParams(searchParams))
+	const store = useGlobalStore()
 
 	useEffect(() => {
 		const user_input_form = currentApp?.parameters.user_input_form
@@ -72,8 +75,9 @@ export default function AppInputForm(props: IAppInputFormProps) {
 					allowed_file_types: originalProps.allowed_file_types,
 				}
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
-				if (searchValue) {
-					const { error, data } = unParseGzipString(searchValue)
+				const cachedValue = store.globalParams[originalProps.variable]
+				if (searchValue || cachedValue) {
+					const { error, data } = unParseGzipString(searchValue || cachedValue)
 
 					if (error) {
 						message.error(`解压缩参数 ${originalProps.variable} 失败: ${error}`)
@@ -94,29 +98,34 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						)
 					}
 				} else {
-					let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
-					if (originalProps.type === 'file-list') {
-						fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
-							...file,
-							name: file.name || file.filename,
-							url: file.url || file.remote_url,
-							status: file.status || 'done',
-							upload_file_id: file.upload_file_id || file.related_id,
-						}))
-					} else if (originalProps.type === 'file') {
-						if (fieldValue) {
-							const { name, filename, url, remote_url, upload_file_id, related_id, status } =
-								fieldValue as IUploadFileItem
-							fieldValue = {
-								...fieldValue,
-								name: name || filename,
-								url: url || remote_url,
-								status: status || 'done',
-								upload_file_id: upload_file_id || related_id,
-							} as IUploadFileItem
+					// 只有在非临时对话时才使用 currentConversationInfo 的 inputs
+					// 临时对话的 inputs 通常是空的，不应该覆盖可能存在的默认值
+					if (!isTempId(currentConversationId)) {
+						let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
+						if (originalProps.type === 'file-list') {
+							fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
+								...file,
+								name: file.name || file.filename,
+								url: file.url || file.remote_url,
+								status: file.status || 'done',
+								upload_file_id: file.upload_file_id || file.related_id,
+							}))
+						} else if (originalProps.type === 'file') {
+							if (fieldValue) {
+								const { name, filename, url, remote_url, upload_file_id, related_id, status } =
+									fieldValue as IUploadFileItem
+								fieldValue = {
+									...fieldValue,
+									name: name || filename,
+									url: url || remote_url,
+									status: status || 'done',
+									upload_file_id: upload_file_id || related_id,
+								} as IUploadFileItem
+							}
 						}
+						entryForm.setFieldValue(originalProps.variable, fieldValue)
 					}
-					entryForm.setFieldValue(originalProps.variable, fieldValue)
+					// 如果是临时对话且没有 URL 参数，则不设置任何值，保持表单字段为空或默认值
 				}
 				if (originalProps.required) {
 					baseProps.required = true

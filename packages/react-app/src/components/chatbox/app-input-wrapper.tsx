@@ -23,7 +23,10 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 	}, [currentConversationId])
 
 	useEffect(() => {
-		props.entryForm.resetFields()
+		// 只有在非临时对话时才重置表单，临时对话需要保留 URL 参数
+		if (!isTempId(currentConversationId)) {
+			props.entryForm.resetFields()
+		}
 	}, [currentConversationId])
 
 	/**
