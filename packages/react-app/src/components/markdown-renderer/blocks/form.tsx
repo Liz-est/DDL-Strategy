@@ -1,4 +1,5 @@
-import { Button, Input, Select } from 'antd'
+import { Button, DatePicker, Input, Select } from 'antd'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 
 enum DATA_FORMAT {
@@ -89,27 +90,34 @@ const MarkdownForm = ({ node, onSend }: any) => {
 						child.tagName === SUPPORTED_TAGS.INPUT &&
 						Object.values(SUPPORTED_TYPES).includes(child.properties.type)
 					) {
-						// if (child.properties.type === SUPPORTED_TYPES.DATE || child.properties.type === SUPPORTED_TYPES.DATETIME) {
-						//   return (
-						//     <DatePicker
-						//       key={index}
-						//       value={formValues[child.properties.name]}
-						//       needTimePicker={child.properties.type === SUPPORTED_TYPES.DATETIME}
-						//       onChange={(date) => {
-						//         setFormValues(prevValues => ({
-						//           ...prevValues,
-						//           [child.properties.name]: date,
-						//         }))
-						//       }}
-						//       onClear={() => {
-						//         setFormValues(prevValues => ({
-						//           ...prevValues,
-						//           [child.properties.name]: undefined,
-						//         }))
-						//       }}
-						//     />
-						//   )
-						// }
+						if (child.properties.type === SUPPORTED_TYPES.DATE || child.properties.type === SUPPORTED_TYPES.DATETIME) {
+							const format = child.properties.type === SUPPORTED_TYPES.DATE ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'
+							let value = null
+							// 如果有值，尝试解析为日期
+							if (formValues[child.properties.name]) {
+								try {
+									value = dayjs(formValues[child.properties.name])
+								} catch (error) {
+									console.error('解析日期值失败', error)
+									// 如果解析报错，置空
+									value = null
+								}
+							}
+						  return (
+						    <DatePicker
+						      key={index}
+						      value={value}
+						      showTime={child.properties.type === SUPPORTED_TYPES.DATETIME}
+						      onChange={(date) => {
+						        setFormValues(prevValues => ({
+						          ...prevValues,
+						          [child.properties.name]: dayjs(date).format(format),
+						        }))
+						      }}
+									allowClear
+						    />
+						  )
+						}
 						// if (child.properties.type === SUPPORTED_TYPES.TIME) {
 						//   return (
 						//     <TimePicker
