@@ -1,7 +1,6 @@
 import { Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageFileItem, MessageFileBelongsToEnum } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
-import { Chatbox } from '@/components'
 import { useAppContext } from '@dify-chat/core'
 import { Roles, useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
@@ -9,6 +8,7 @@ import { Button, Empty, Form, GetProp, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { Chatbox } from '@/components'
 import { useLatest } from '@/hooks/use-latest'
 import { useX } from '@/hooks/useX'
 import workflowDataStorage from '@/hooks/useX/workflow-data-storage'
@@ -172,14 +172,14 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			setHistoryMessages(newMessages)
 			if (newMessages?.length) {
 				// 如果下一步问题建议已开启，则请求接口获取
-				if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
+				if (currentApp?.parameters?.suggested_questions_after_answer?.enabled) {
 					getNextSuggestions(newMessages[newMessages.length - 1].id)
 				}
 			}
 		},
 		[
 			difyApi,
-			currentApp?.parameters?.suggested_questions_after_answer.enabled,
+			currentApp?.parameters?.suggested_questions_after_answer?.enabled,
 			currentAppId,
 			getNextSuggestions,
 			updateConversationInputs,

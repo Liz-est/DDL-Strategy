@@ -180,7 +180,7 @@ export const useX = (options: {
 
 					if (parsedData.event === EventEnum.MESSAGE_END) {
 						// 如果开启了建议问题，获取下一轮问题建议
-						if (currentApp?.parameters?.suggested_questions_after_answer.enabled) {
+						if (currentApp?.parameters?.suggested_questions_after_answer?.enabled) {
 							getNextSuggestions(parsedData.message_id)
 						}
 					}
