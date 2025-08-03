@@ -73,6 +73,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 					options: originalProps.options,
 					max_length: originalProps.max_length,
 					allowed_file_types: originalProps.allowed_file_types,
+					hidden: originalProps.hide,
 				}
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
 				const cachedValue = store.globalParams[originalProps.variable]
@@ -177,6 +178,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 										name={item.name}
 										label={item.label}
 										required={item.required}
+										hidden={item.hidden}
 										rules={
 											item.required
 												? [

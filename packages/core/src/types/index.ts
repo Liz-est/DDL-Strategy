@@ -22,6 +22,10 @@ export interface IUserInputFormItemValueBase {
 	label: string
 	required: boolean
 	variable: string
+	/**
+	 * 是否隐藏
+	 */
+	hide?: boolean
 	options?: string[]
 	/**
 	 * 最大长度
