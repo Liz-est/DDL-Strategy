@@ -1,4 +1,4 @@
-import { Button, Input } from 'antd'
+import { Button, Input, Select } from 'antd'
 import { useEffect, useState } from 'react'
 
 enum DATA_FORMAT {
@@ -147,38 +147,37 @@ const MarkdownForm = ({ node, onSend }: any) => {
 						//     </div>
 						//   )
 						// }
-						// if (child.properties.type === SUPPORTED_TYPES.SELECT) {
-						//   return (
-						//     <Select
-						//       key={index}
-						//       allowSearch={false}
-						//       className="w-full"
-						//       items={(() => {
-						//         let options = child.properties.dataOptions || child.properties['data-options'] || []
-						//         if (typeof options === 'string') {
-						//           try {
-						//             options = JSON.parse(options)
-						//           }
-						//           catch (e) {
-						//             console.error('Failed to parse options:', e)
-						//             options = []
-						//           }
-						//         }
-						//         return options.map((option: string) => ({
-						//           name: option,
-						//           value: option,
-						//         }))
-						//       })()}
-						//       defaultValue={formValues[child.properties.name]}
-						//       onSelect={(item) => {
-						//         setFormValues(prevValues => ({
-						//           ...prevValues,
-						//           [child.properties.name]: item.value,
-						//         }))
-						//       }}
-						//     />
-						//   )
-						// }
+						if (child.properties.type === SUPPORTED_TYPES.SELECT) {
+						  return (
+						    <Select
+						      key={index}
+						      className="w-full"
+						      options={(() => {
+						        let options = child.properties.dataOptions || child.properties['data-options'] || []
+						        if (typeof options === 'string') {
+						          try {
+						            options = JSON.parse(options)
+						          }
+						          catch (e) {
+						            console.error('Failed to parse options:', e)
+						            options = []
+						          }
+						        }
+						        return options.map((option: string) => ({
+						          label: option,
+						          value: option,
+						        }))
+						      })()}
+						      defaultValue={formValues[child.properties.name]}
+						      onChange={(value) => {
+						        setFormValues(prevValues => ({
+						          ...prevValues,
+						          [child.properties.name]: value,
+						        }))
+						      }}
+						    />
+						  )
+						}
 
 						return (
 							<Input
