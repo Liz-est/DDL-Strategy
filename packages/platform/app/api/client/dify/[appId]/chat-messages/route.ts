@@ -13,7 +13,7 @@ import { getAppItem } from '@/repository/app'
  */
 export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
