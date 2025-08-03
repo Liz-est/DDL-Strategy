@@ -210,6 +210,14 @@ interface IGetConversationListRequest {
 	 * 返回条数
 	 */
 	limit: number
+	/**
+	 * （选填）当前页最后面一条记录的 ID，默认 null
+	 */
+	last_id?: string
+	/**
+	 * （选填）排序字段，默认 -updated_at(按更新时间倒序排列)
+	 */
+	sort_by?: 'created_at' | '-created_at' | 'updated_at' | '-updated_at'
 }
 
 /**
@@ -439,6 +447,8 @@ export class DifyApi {
 		return this.baseRequest.get('/conversations', {
 			user: this.options.user,
 			limit: (params?.limit || 100).toString(),
+			last_id: params?.last_id,
+			sort_by: params?.sort_by,
 		}) as Promise<IGetConversationListResponse>
 	}
 
@@ -478,10 +488,25 @@ export class DifyApi {
 	/**
 	 * 获取会话历史消息
 	 */
-	getConversationHistory = (conversation_id: string) => {
+	getConversationHistory = (
+		conversation_id: string,
+		options?: {
+			/**
+			 * 当前页第一条聊天记录的 ID，默认 null
+			 */
+			first_id?: string | null
+			/**
+			 * 一次请求返回多少条聊天记录，默认 100 条
+			 */
+			limit?: number
+		},
+	) => {
+		const { first_id, limit } = options || {}
 		return this.baseRequest.get(`/conversation/${conversation_id}/messages`, {
 			user: this.options.user,
 			conversation_id,
+			first_id,
+			limit,
 		}) as Promise<IGetConversationHistoryResponse>
 	}
 

@@ -35,8 +35,14 @@ export class BaseRequest {
 		params: Record<string, string> = {},
 		headers: Record<string, string> = {},
 	) => {
+		// 过滤掉值为 undefined 的参数
+		const filteredParams = Object.fromEntries(
+			Object.entries(params).filter(([_, value]) => value !== undefined),
+		)
 		const queryString =
-			params && Object.keys(params).length > 0 ? `?${new URLSearchParams(params).toString()}` : ''
+			filteredParams && Object.keys(filteredParams).length > 0
+				? `?${new URLSearchParams(filteredParams).toString()}`
+				: ''
 		const result = await this.jsonRequest(`${url}${queryString}`, {
 			method: 'GET',
 			headers,
@@ -49,9 +55,13 @@ export class BaseRequest {
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
 	) => {
+		// 过滤掉值为 undefined 的参数
+		const filteredParams = Object.fromEntries(
+			Object.entries(params).filter(([_, value]) => value !== undefined),
+		)
 		const result = await this.jsonRequest(url, {
 			method: 'POST',
-			body: JSON.stringify(params),
+			body: JSON.stringify(filteredParams),
 			headers,
 		})
 		return result
@@ -62,9 +72,13 @@ export class BaseRequest {
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
 	) => {
+		// 过滤掉值为 undefined 的参数
+		const filteredParams = Object.fromEntries(
+			Object.entries(params).filter(([_, value]) => value !== undefined),
+		)
 		const result = await this.jsonRequest(url, {
 			method: 'PUT',
-			body: JSON.stringify(params),
+			body: JSON.stringify(filteredParams),
 			headers,
 		})
 		return result
@@ -75,9 +89,13 @@ export class BaseRequest {
 		params: Record<string, unknown> = {},
 		headers: Record<string, string> = {},
 	) => {
+		// 过滤掉值为 undefined 的参数
+		const filteredParams = Object.fromEntries(
+			Object.entries(params).filter(([_, value]) => value !== undefined),
+		)
 		const result = await this.baseRequest(url, {
 			method: 'DELETE',
-			body: JSON.stringify(params),
+			body: JSON.stringify(filteredParams),
 			headers: {
 				...headers,
 				'Content-Type': 'application/json',

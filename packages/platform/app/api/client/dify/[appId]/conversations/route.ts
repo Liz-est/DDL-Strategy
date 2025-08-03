@@ -23,12 +23,28 @@ export async function GET(request: NextRequest, { params }: { params: { appId: s
 
 		// 获取查询参数
 		const searchParams = request.nextUrl.searchParams
-		const limit = searchParams.get('limit') || '20'
+		const limit = searchParams.get('limit') || '100'
+		const last_id = searchParams.get('last_id')
+		const sort_by = searchParams.get('sort_by')
 		const user = searchParams.get('user')
+
+		const fullSearchParams = new URLSearchParams()
+		if (limit) {
+			fullSearchParams.append('limit', limit)
+		}
+		if (last_id) {
+			fullSearchParams.append('last_id', last_id)
+		}
+		if (sort_by) {
+			fullSearchParams.append('sort_by', sort_by)
+		}
+		if (user) {
+			fullSearchParams.append('user', user)
+		}
 
 		// 转发请求到 Dify API
 		const response = await fetch(
-			`${app.requestConfig.apiBase}/conversations?limit=${limit}&user=${user}`,
+			`${app.requestConfig.apiBase}/conversations?${fullSearchParams.toString()}`,
 			{
 				method: 'GET',
 				headers: {

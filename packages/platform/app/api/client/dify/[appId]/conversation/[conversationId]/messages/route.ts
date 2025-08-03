@@ -13,10 +13,15 @@ import { getAppItem } from '@/repository/app'
  */
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { appId: string; conversationId: string } },
+	{
+		params,
+	}: { params: { appId: string; conversationId: string; first_id?: string; limit?: string } },
 ) {
 	try {
-		const { appId, conversationId } = params
+		const { appId, conversationId } = await params
+		const searchParams = request.nextUrl.searchParams
+		const first_id = searchParams.get('first_id')
+		const limit = searchParams.get('limit') || 100
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -29,16 +34,23 @@ export async function GET(
 			return NextResponse.json({ error: 'User not found' }, { status: 404 })
 		}
 
+		const fullSearchParams = new URLSearchParams()
+		fullSearchParams.append('conversation_id', conversationId)
+		fullSearchParams.append('user', user)
+		if (first_id) {
+			fullSearchParams.append('first_id', first_id)
+		}
+		if (limit) {
+			fullSearchParams.append('limit', limit.toString())
+		}
+
 		// 转发请求到 Dify API
-		const response = await fetch(
-			`${app.requestConfig.apiBase}/messages?conversation_id=${conversationId}&user=${user}`,
-			{
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${app.requestConfig.apiKey}`,
-				},
+		const response = await fetch(`${app.requestConfig.apiBase}/messages?${fullSearchParams}`, {
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${app.requestConfig.apiKey}`,
 			},
-		)
+		})
 
 		// 返回响应
 		const data = await response.json()
