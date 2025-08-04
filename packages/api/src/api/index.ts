@@ -305,6 +305,8 @@ interface IMessageItem {
 
 interface IGetConversationHistoryResponse {
 	data: IMessageItem[]
+	has_more: boolean
+	limit: number
 }
 
 export interface IDifyApiOptions {
