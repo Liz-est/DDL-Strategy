@@ -7,6 +7,7 @@ import { isTempId } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { Chatbox } from '@/components'
 import { useLatest } from '@/hooks/use-latest'
@@ -66,6 +67,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const [messagesloadingEnabled, setMessagesloadingEnabled] = useState(true)
 	const [initLoading, setInitLoading] = useState<boolean>(false)
 	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([])
+	const [hasMore, setHasMore] = useState<boolean>(true)
 
 	const [nextSuggestions, setNextSuggestions] = useState<string[]>([])
 	// 定义 ref, 用于获取最新的 conversationId
@@ -111,16 +113,22 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	 * 获取对话的历史消息
 	 */
 	const getConversationMessages = useCallback(
-		async (conversationId: string) => {
+		async (conversationId: string = currentConversationId) => {
 			// 如果是临时 ID，则不获取历史消息
 			if (isTempId(conversationId)) {
 				return
 			}
-			const result = await difyApi.getConversationHistory(conversationId)
+			let firstId = ''
+			if (historyMessages[0]?.id) {
+				firstId = historyMessages[0]?.id.replace('question-', '')
+			}
+			const result = await difyApi.getConversationHistory(conversationId, { first_id: firstId })
 
 			if (!result?.data?.length) {
 				return
 			}
+
+			setHasMore(result.has_more || false)
 
 			const newMessages: IMessageItem4Render[] = []
 
@@ -168,8 +176,19 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				)
 			})
 
-			setMessages([]) // 历史消息回来之后，应该清空临时消息
-			setHistoryMessages(newMessages)
+			if (!firstId) {
+				// 第一页数据，替换历史消息
+				setHistoryMessages(newMessages)
+			} else {
+				// 后续页数据，追加到历史消息前面
+				setHistoryMessages(prev => [...newMessages, ...prev])
+			}
+
+			// 清空临时消息只在初始化时进行
+			if (!firstId) {
+				setMessages([])
+			}
+
 			if (newMessages?.length) {
 				// 如果下一步问题建议已开启，则请求接口获取
 				if (currentApp?.parameters?.suggested_questions_after_answer?.enabled) {
@@ -183,6 +202,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			currentAppId,
 			getNextSuggestions,
 			updateConversationInputs,
+			historyMessages,
 		],
 	)
 
@@ -316,37 +336,59 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				) : null}
 
 				{currentConversationId ? (
-					<Chatbox
-						conversationId={currentConversationId!}
-						nextSuggestions={nextSuggestions}
-						messageItems={messageItems}
-						isRequesting={agent.isRequesting()}
-						onPromptsItemClick={(...params) => {
-							setNextSuggestions([])
-							return onPromptsItemClick(...params)
+					<div
+						id="scrollableDiv"
+						style={{
+							height: '100%', // Specify a value
+							overflow: 'auto',
+							display: 'flex',
+							flexDirection: 'column-reverse',
 						}}
-						onSubmit={onSubmit}
-						onCancel={async () => {
-							abortRef.current()
-							if (currentTaskId) {
-								await difyApi.stopTask(currentTaskId)
-								getConversationMessages(currentConversationId!)
+					>
+						<InfiniteScroll
+							scrollableTarget="scrollableDiv"
+							hasMore={hasMore}
+							next={getConversationMessages}
+							dataLength={messageItems.length}
+							loader={
+								<div className="system-xs-regular text-center text-text-tertiary">加载中...</div>
 							}
-						}}
-						isFormFilled={isFormFilled}
-						onStartConversation={formValues => {
-							updateConversationInputs(formValues)
+							inverse={true}
+							style={{ display: 'flex', flexDirection: 'column-reverse' }}
+						>
+							<Chatbox
+								conversationId={currentConversationId!}
+								nextSuggestions={nextSuggestions}
+								messageItems={messageItems}
+								isRequesting={agent.isRequesting()}
+								onPromptsItemClick={(...params) => {
+									setNextSuggestions([])
+									return onPromptsItemClick(...params)
+								}}
+								onSubmit={onSubmit}
+								onCancel={async () => {
+									abortRef.current()
+									if (currentTaskId) {
+										await difyApi.stopTask(currentTaskId)
+										getConversationMessages(currentConversationId!)
+									}
+								}}
+								isFormFilled={isFormFilled}
+								onStartConversation={formValues => {
+									updateConversationInputs(formValues)
 
-							if (!currentConversationId) {
-								onAddConversation()
-							}
-						}}
-						feedbackApi={difyApi.feedbackMessage}
-						feedbackCallback={fallbackCallback}
-						uploadFileApi={difyApi.uploadFile}
-						difyApi={difyApi}
-						entryForm={entryForm}
-					/>
+									if (!currentConversationId) {
+										onAddConversation()
+									}
+								}}
+								feedbackApi={difyApi.feedbackMessage}
+								feedbackCallback={fallbackCallback}
+								uploadFileApi={difyApi.uploadFile}
+								difyApi={difyApi}
+								entryForm={entryForm}
+							/>
+						</InfiniteScroll>
+					</div>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
 						<Spin spinning />
