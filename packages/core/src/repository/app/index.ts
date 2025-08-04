@@ -74,10 +74,6 @@ export interface IDifyAppItem {
 		 * 开始对话后，是否支持更新对话参数
 		 */
 		enableUpdateAfterCvstStarts: boolean
-		/**
-		 * 对话参数
-		 */
-		parameters: IParamItem[]
 	}
 	/**
 	 * 其他扩展配置
