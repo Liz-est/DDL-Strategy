@@ -11,9 +11,12 @@ import { getAppItem } from '@/repository/app'
  * @param params 包含应用 ID 的参数对象
  * @returns 来自 Dify API 的会话列表
  */
-export async function GET(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
