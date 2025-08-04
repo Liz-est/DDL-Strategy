@@ -12,9 +12,9 @@ import { getAppItem } from '@/repository/app'
  * @param params 包含应用 ID 的参数对象
  * @returns 应用详情，但不包含敏感的 API Key
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
 	try {
-		const { id } = params
+		const { id } = await params
 		const app = await getAppItem(id)
 
 		if (!app) {
@@ -26,6 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 		return NextResponse.json(safeApp)
 	} catch (error) {
-		return handleApiError(error, `Error fetching app ${params.id} for client`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error fetching app ${resolvedParams.id} for client`)
 	}
 }

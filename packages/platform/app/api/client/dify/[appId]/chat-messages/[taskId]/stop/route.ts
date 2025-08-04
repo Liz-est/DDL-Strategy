@@ -15,10 +15,10 @@ import { getAppItem } from '@/repository/app'
  */
 export async function POST(
 	request: NextRequest,
-	{ params }: { params: { appId: string; taskId: string } },
+	{ params }: { params: Promise<{ appId: string; taskId: string }> },
 ) {
 	try {
-		const { appId, taskId } = params
+		const { appId, taskId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -45,6 +45,10 @@ export async function POST(
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error stopping chat message ${params.taskId} for ${params.appId}`)
+		const resolvedParams = await params
+		return handleApiError(
+			error,
+			`Error stopping chat message ${resolvedParams.taskId} for ${resolvedParams.appId}`,
+		)
 	}
 }

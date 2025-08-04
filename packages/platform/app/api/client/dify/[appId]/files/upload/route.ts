@@ -8,9 +8,13 @@ import { getAppItem } from '@/repository/app'
 /**
  * 上传文件到 Dify
  */
-export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
-	const { appId } = await params
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
+		const { appId } = await params
+
 		// 获取应用配置
 		const app = await getAppItem(appId)
 		if (!app) {
@@ -31,6 +35,7 @@ export async function POST(request: NextRequest, { params }: { params: { appId: 
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error uploading file for ${appId}`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error uploading file for ${resolvedParams.appId}`)
 	}
 }

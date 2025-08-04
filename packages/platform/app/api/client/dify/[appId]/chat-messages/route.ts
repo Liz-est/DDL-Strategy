@@ -11,7 +11,10 @@ import { getAppItem } from '@/repository/app'
  * @param params 包含应用 ID 的参数对象
  * @returns 来自 Dify API 的响应
  */
-export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
 		const { appId } = await params
 

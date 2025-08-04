@@ -15,10 +15,10 @@ import { getAppItem } from '@/repository/app'
  */
 export async function DELETE(
 	request: NextRequest,
-	{ params }: { params: { appId: string; conversationId: string } },
+	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) {
 	try {
-		const { appId, conversationId } = params
+		const { appId, conversationId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -45,9 +45,10 @@ export async function DELETE(
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
+		const resolvedParams = await params
 		return handleApiError(
 			error,
-			`Error deleting conversation ${params.conversationId} for ${params.appId}`,
+			`Error deleting conversation ${resolvedParams.conversationId} for ${resolvedParams.appId}`,
 		)
 	}
 }

@@ -13,12 +13,12 @@ import { getAppItem } from '@/repository/app'
 /**
  * 重命名会话
  */
-export async function PUT(
+export async function POST(
 	request: NextRequest,
-	{ params }: { params: { appId: string; conversationId: string } },
+	{ params }: { params: Promise<{ appId: string; conversationId: string }> },
 ) {
 	try {
-		const { appId, conversationId } = params
+		const { appId, conversationId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -61,9 +61,10 @@ export async function PUT(
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
+		const resolvedParams = await params
 		return handleApiError(
 			error,
-			`Error renaming conversation ${params.conversationId} for ${params.appId}`,
+			`Error renaming conversation ${resolvedParams.conversationId} for ${resolvedParams.appId}`,
 		)
 	}
 }

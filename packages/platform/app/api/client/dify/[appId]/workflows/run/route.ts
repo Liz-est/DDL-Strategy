@@ -14,9 +14,12 @@ import { getAppItem } from '@/repository/app'
 /**
  * 获取工作流运行结果
  */
-export async function GET(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -40,16 +43,20 @@ export async function GET(request: NextRequest, { params }: { params: { appId: s
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error fetching workflow run result for ${params.appId}`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error fetching workflow run result for ${resolvedParams.appId}`)
 	}
 }
 
 /**
  * 运行工作流
  */
-export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -83,7 +90,8 @@ export async function POST(request: NextRequest, { params }: { params: { appId: 
 		// 返回流式响应
 		return createDifyResponseProxy(response)
 	} catch (error) {
-		console.error(`Error running workflow for ${params.appId}:`, error)
+		const resolvedParams = await params
+		console.error(`Error running workflow for ${resolvedParams.appId}:`, error)
 		return new Response(JSON.stringify({ error: 'Failed to run workflow' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' },

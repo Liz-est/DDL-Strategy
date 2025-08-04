@@ -10,7 +10,7 @@ import { getAppItem } from '@/repository/app'
  */
 export async function POST(
 	request: NextRequest,
-	{ params }: { params: { appId: string; messageId: string } },
+	{ params }: { params: Promise<{ appId: string; messageId: string }> },
 ) {
 	try {
 		const { appId, messageId } = await params
@@ -41,6 +41,7 @@ export async function POST(
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error submitting feedback for ${params.appId}`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error submitting feedback for ${resolvedParams.appId}`)
 	}
 }

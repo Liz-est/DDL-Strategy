@@ -13,9 +13,12 @@ import { getAppItem } from '@/repository/app'
 /**
  * 音频转文字
  */
-export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -42,6 +45,7 @@ export async function POST(request: NextRequest, { params }: { params: { appId: 
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error converting audio to text for ${params.appId}`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error converting audio to text for ${resolvedParams.appId}`)
 	}
 }

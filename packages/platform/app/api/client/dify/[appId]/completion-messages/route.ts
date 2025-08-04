@@ -8,9 +8,12 @@ import { getAppItem } from '@/repository/app'
 /**
  * 发送完成消息（文本生成）
  */
-export async function POST(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function POST(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -44,7 +47,8 @@ export async function POST(request: NextRequest, { params }: { params: { appId: 
 		// 返回流式响应
 		return createDifyResponseProxy(response)
 	} catch (error) {
-		console.error(`Error sending completion message for ${params.appId}:`, error)
+		const resolvedParams = await params
+		console.error(`Error sending completion message for ${resolvedParams.appId}:`, error)
 		return new Response(JSON.stringify({ error: 'Failed to send completion message' }), {
 			status: 500,
 			headers: { 'Content-Type': 'application/json' },

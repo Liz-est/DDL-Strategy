@@ -8,9 +8,12 @@ import { getAppItem } from '@/repository/app'
 /**
  * 获取应用元数据
  */
-export async function GET(request: NextRequest, { params }: { params: { appId: string } }) {
+export async function GET(
+	request: NextRequest,
+	{ params }: { params: Promise<{ appId: string }> },
+) {
 	try {
-		const { appId } = params
+		const { appId } = await params
 
 		// 获取应用配置
 		const app = await getAppItem(appId)
@@ -28,6 +31,7 @@ export async function GET(request: NextRequest, { params }: { params: { appId: s
 		const data = await response.json()
 		return createDifyApiResponse(data, response.status)
 	} catch (error) {
-		return handleApiError(error, `Error fetching app meta for ${params.appId}`)
+		const resolvedParams = await params
+		return handleApiError(error, `Error fetching app meta for ${resolvedParams.appId}`)
 	}
 }

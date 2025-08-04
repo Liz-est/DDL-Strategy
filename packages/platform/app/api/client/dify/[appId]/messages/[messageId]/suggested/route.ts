@@ -10,7 +10,7 @@ import { getAppItem } from '@/repository/app'
  */
 export async function GET(
 	request: NextRequest,
-	{ params }: { params: { appId: string; messageId: string } },
+	{ params }: { params: Promise<{ appId: string; messageId: string }> },
 ) {
 	try {
 		const { appId, messageId } = await params
@@ -34,9 +34,10 @@ export async function GET(
 		const result = await response.json()
 		return createDifyApiResponse(result.data || [], response.status)
 	} catch (error) {
+		const resolvedParams = await params
 		return handleApiError(
 			error,
-			`Error fetching message suggestions for ${params.messageId} in ${params.appId}`,
+			`Error fetching message suggestions for ${resolvedParams.messageId} in ${resolvedParams.appId}`,
 		)
 	}
 }
