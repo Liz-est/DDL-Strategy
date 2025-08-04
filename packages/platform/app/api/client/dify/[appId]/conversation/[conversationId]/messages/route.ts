@@ -15,7 +15,9 @@ export async function GET(
 	request: NextRequest,
 	{
 		params,
-	}: { params: { appId: string; conversationId: string; first_id?: string; limit?: string } },
+	}: {
+		params: Promise<{ appId: string; conversationId: string; first_id?: string; limit?: string }>
+	},
 ) {
 	try {
 		const { appId, conversationId } = await params
