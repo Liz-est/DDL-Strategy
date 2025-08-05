@@ -65,7 +65,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 	const [conversations, setConversations] = useState<IConversationItem[]>([])
 	const [currentConversationId, setCurrentConversationId] = useState<string>('')
 	const currentConversationInfo = useMemo(() => {
-		return conversations.find(item => item.id === currentConversationId)
+		return conversations?.find(item => item.id === currentConversationId)
 	}, [conversations, currentConversationId])
 	const isMobile = useIsMobile()
 
