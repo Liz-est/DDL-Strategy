@@ -826,6 +826,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.1.0(react@19.1.0)
+      react-infinite-scroll-component:
+        specifier: ^6.1.0
+        version: 6.1.0(react@19.1.0)
       react-markdown:
         specifier: 'catalog:'
         version: 10.1.0(@types/react@19.1.5)(react@19.1.0)
@@ -11168,6 +11171,14 @@ packages:
       react: ^16.6.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.6.0 || ^17.0.0 || ^18.0.0
 
+  react-infinite-scroll-component@6.1.0:
+    resolution:
+      {
+        integrity: sha512-SQu5nCqy8DxQWpnUVLx7V7b7LcA37aM7tvoWjTLZp1dk6EJibM5/4EJKzOnl07/BsM1Y40sKLuqjCwwH/xV0TQ==,
+      }
+    peerDependencies:
+      react: '>=16.0.0'
+
   react-is@16.13.1:
     resolution:
       {
@@ -12612,6 +12623,13 @@ packages:
     engines: { node: '>=10.18' }
     peerDependencies:
       tslib: ^2
+
+  throttle-debounce@2.3.0:
+    resolution:
+      {
+        integrity: sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==,
+      }
+    engines: { node: '>=8' }
 
   throttle-debounce@5.0.2:
     resolution:
@@ -20737,6 +20755,11 @@ snapshots:
       react-fast-compare: 3.2.2
       shallowequal: 1.1.0
 
+  react-infinite-scroll-component@6.1.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      throttle-debounce: 2.3.0
+
   react-is@16.13.1: {}
 
   react-is@17.0.2: {}
@@ -21848,6 +21871,8 @@ snapshots:
   thingies@1.21.0(tslib@2.8.1):
     dependencies:
       tslib: 2.8.1
+
+  throttle-debounce@2.3.0: {}
 
   throttle-debounce@5.0.2: {}
 
