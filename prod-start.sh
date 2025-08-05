@@ -1,0 +1,132 @@
+#!/bin/bash
+
+# 生产环境启动脚本
+# 使用 PM2 管理 Platform 服务，构建 React App 静态文件
+
+set -e
+
+echo "🚀 启动 Dify Chat 生产环境..."
+
+# 检查必要工具
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.js 未安装，请先安装 Node.js"
+    exit 1
+fi
+
+if ! command -v pnpm &> /dev/null; then
+    echo "❌ pnpm 未安装，正在安装..."
+    npm install -g pnpm
+fi
+
+if ! command -v pm2 &> /dev/null; then
+    echo "❌ PM2 未安装，正在安装..."
+    npm install -g pm2
+fi
+
+# 安装依赖
+echo "📦 安装依赖..."
+pnpm install --frozen-lockfile
+
+# 构建基础包
+echo "🔨 构建基础包..."
+pnpm build:pkgs
+
+# 构建 React App
+echo "🏗️ 构建 React App..."
+cd packages/react-app
+pnpm build
+echo "✅ React App 构建完成，静态文件位于: packages/react-app/dist"
+cd ../..
+
+# 配置 Platform 环境
+echo "⚙️ 配置 Platform 环境..."
+cd packages/platform
+
+# 检查生产环境配置文件
+if [ ! -f .env.production ]; then
+    echo "创建 Platform 生产环境配置文件..."
+    cat > .env.production << EOF
+# Database - 生产环境请使用 PostgreSQL 或 MySQL
+DATABASE_URL="file:./prod.db"
+
+# JWT - 请使用强密码
+JWT_SECRET="$(openssl rand -base64 32)"
+
+# CORS - 设置为实际的前端域名
+CORS_ORIGIN="https://your-domain.com"
+
+# Server
+PORT=3001
+NODE_ENV=production
+
+# 其他生产环境配置
+# 请根据实际需求修改
+EOF
+    echo "⚠️  请编辑 packages/platform/.env.production 文件，配置正确的生产环境参数"
+fi
+
+# 生成 Prisma 客户端
+echo "🗄️ 初始化数据库..."
+pnpm prisma generate
+pnpm prisma db push
+
+# 构建 Platform
+echo "🏗️ 构建 Platform..."
+pnpm build
+
+cd ../..
+
+# 创建 PM2 配置文件
+echo "📝 创建 PM2 配置..."
+cat > ecosystem.config.js << EOF
+module.exports = {
+  apps: [{
+    name: 'dify-chat-platform',
+    cwd: './packages/platform',
+    script: 'pnpm',
+    args: 'start',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3001
+    },
+    instances: 1,
+    exec_mode: 'fork',
+    watch: false,
+    max_memory_restart: '1G',
+    error_file: './logs/platform-error.log',
+    out_file: './logs/platform-out.log',
+    log_file: './logs/platform-combined.log',
+    time: true,
+    autorestart: true,
+    max_restarts: 10,
+    min_uptime: '10s'
+  }]
+};
+EOF
+
+# 创建日志目录
+mkdir -p logs
+
+# 停止可能存在的旧进程
+echo "🛑 停止旧进程..."
+pm2 delete dify-chat-platform 2>/dev/null || true
+
+# 启动 Platform 服务
+echo "🌟 启动 Platform 服务..."
+pm2 start ecosystem.config.js
+
+# 保存 PM2 进程列表
+pm2 save
+
+echo ""
+echo "✅ 生产环境启动成功！"
+echo ""
+echo "📱 React App 静态文件: packages/react-app/dist"
+echo "🔧 Platform API:      http://localhost:3001"
+echo ""
+echo "📊 查看服务状态: pm2 status"
+echo "📋 查看日志:     pm2 logs dify-chat-platform"
+echo "🛑 停止服务:     pm2 stop dify-chat-platform"
+echo "🔄 重启服务:     pm2 restart dify-chat-platform"
+echo ""
+echo "⚠️  请配置 Nginx 反向代理来提供前端静态文件和 API 服务"
