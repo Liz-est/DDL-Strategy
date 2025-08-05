@@ -437,7 +437,7 @@ export class DifyApi {
 	 * @Limited Dify v1.4.0 版本开始支持
 	 */
 	getAppSiteSetting = () => {
-		return this.baseRequest.get('/site') as Promise<IDifyAppSiteSetting>
+		return this.baseRequest.get('/site').then(res => res.data) as Promise<IDifyAppSiteSetting>
 	}
 
 	/**
