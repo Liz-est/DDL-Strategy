@@ -264,7 +264,7 @@ export const Chatbox = (props: ChatboxProps) => {
 	return (
 		<div className="w-full h-full overflow-hidden my-0 mx-auto box-border flex flex-col gap-4 relative">
 			<div
-				className="w-full h-full overflow-auto pt-4 pb-48"
+				className="w-full h-full overflow-auto pt-1 pb-24"
 				ref={scrollContainerRef}
 			>
 				<div
@@ -295,17 +295,6 @@ export const Chatbox = (props: ChatboxProps) => {
 							flexDirection: 'column-reverse',
 						}}
 					>
-						{/* 🌟 欢迎占位 + 对话参数 */}
-						<WelcomePlaceholder
-							showPrompts={promptsVisible}
-							onPromptItemClick={onPromptsItemClick}
-							formFilled={isFormFilled}
-							onStartConversation={onStartConversation}
-							conversationId={conversationId}
-							entryForm={entryForm}
-							uploadFileApi={(...params) => difyApi.uploadFile(...params)}
-						/>
-
 						<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
 							{/* 🌟 消息列表 */}
 							<Bubble.List
@@ -345,6 +334,16 @@ export const Chatbox = (props: ChatboxProps) => {
 								</div>
 							) : null}
 						</div>
+						{/* 🌟 欢迎占位 + 对话参数 */}
+						<WelcomePlaceholder
+							showPrompts={promptsVisible}
+							onPromptItemClick={onPromptsItemClick}
+							formFilled={isFormFilled}
+							onStartConversation={onStartConversation}
+							conversationId={conversationId}
+							entryForm={entryForm}
+							uploadFileApi={(...params) => difyApi.uploadFile(...params)}
+						/>
 					</InfiniteScroll>
 				</div>
 				<div

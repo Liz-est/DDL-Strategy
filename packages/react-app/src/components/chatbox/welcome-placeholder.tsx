@@ -7,8 +7,9 @@ import { Button, FormInstance, GetProp, message, Space } from 'antd'
 import classNames from 'classnames'
 import { useMemo } from 'react'
 
-import LucideIcon from '../lucide-icon'
 import { validateAndGenErrMsgs } from '@/utils'
+
+import LucideIcon from '../lucide-icon'
 import AppInputWrapper from './app-input-wrapper'
 
 interface IWelcomePlaceholderProps {
@@ -74,10 +75,14 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 			]
 		}
 		return []
-	}, [currentApp?.parameters?.suggested_questions, currentApp?.parameters?.opening_statement])
+	}, [
+		currentApp?.parameters?.suggested_questions,
+		currentApp?.parameters?.opening_statement,
+		currentApp?.config?.info?.name,
+	])
 
 	return (
-		<div className="flex justify-center w-full px-3 box-border mx-auto mb-3">
+		<div className="flex justify-center w-full px-3 box-border mx-auto my-3">
 			<Space
 				size={12}
 				direction="vertical"
