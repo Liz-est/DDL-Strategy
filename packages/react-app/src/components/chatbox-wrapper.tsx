@@ -112,21 +112,30 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	)
 
 	/**
-	 * 获取对话的历史消息
+	 * 初始化对话历史消息（从头开始加载，清空现有历史）
+	 * @param conversationId 对话ID
+	 * @param preserveLoadedCount 是否保持已加载的消息数量（用于反馈后刷新）
 	 */
-	const getConversationMessages = useCallback(
-		async (conversationId: string = currentConversationId) => {
+	const initConversationMessages = useCallback(
+		async (
+			conversationId: string = currentConversationId,
+			preserveLoadedCount: boolean = false,
+		) => {
 			// 如果是临时 ID，则不获取历史消息
 			if (isTempId(conversationId)) {
 				return
 			}
-			let firstId = ''
-			if (historyMessages[0]?.id) {
-				firstId = historyMessages[0]?.id.replace('question-', '')
+
+			// 计算要请求的消息数量
+			let requestLimit = 10 // 默认限制
+			if (preserveLoadedCount && historyMessages.length > 0) {
+				// 保持已加载的消息数量，每2条消息代表一轮对话（用户问题+AI回答）
+				requestLimit = Math.max(10, Math.ceil(historyMessages.length / 2))
 			}
+
 			const result = await difyApi.getConversationHistory(conversationId, {
-				first_id: firstId,
-				limit: 10,
+				first_id: '', // 从头开始加载
+				limit: requestLimit,
 			})
 
 			if (!result?.data?.length) {
@@ -181,18 +190,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				)
 			})
 
-			if (!firstId) {
-				// 第一页数据，替换历史消息
-				setHistoryMessages(newMessages)
-			} else {
-				// 后续页数据，追加到历史消息前面
-				setHistoryMessages(prev => [...newMessages, ...prev])
-			}
-
-			// 清空临时消息只在初始化时进行
-			if (!firstId) {
-				setMessages([])
-			}
+			// 替换历史消息
+			setHistoryMessages(newMessages)
+			// 清空临时消息
+			setMessages([])
 
 			if (newMessages?.length) {
 				// 如果下一步问题建议已开启，则请求接口获取
@@ -207,8 +208,82 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			currentAppId,
 			getNextSuggestions,
 			updateConversationInputs,
-			historyMessages,
+			currentConversationId,
+			historyMessages.length,
 		],
+	)
+
+	/**
+	 * 加载更多历史消息（分页加载）
+	 */
+	const loadMoreMessages = useCallback(
+		async (conversationId: string = currentConversationId) => {
+			// 如果是临时 ID，则不获取历史消息
+			if (isTempId(conversationId)) {
+				return
+			}
+
+			let firstId = ''
+			if (historyMessages[0]?.id) {
+				firstId = historyMessages[0]?.id.replace('question-', '')
+			}
+
+			const result = await difyApi.getConversationHistory(conversationId, {
+				first_id: firstId,
+				limit: 10,
+			})
+
+			if (!result?.data?.length) {
+				return
+			}
+
+			setHasMore(result.has_more || false)
+
+			const newMessages: IMessageItem4Render[] = []
+
+			result.data.forEach(item => {
+				const createdAt = dayjs(item.created_at * 1000).format('YYYY-MM-DD HH:mm:ss')
+				newMessages.push(
+					{
+						id: item.id,
+						content: item.query,
+						status: 'success',
+						isHistory: true,
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.user
+						}),
+						role: Roles.USER,
+						created_at: createdAt,
+					},
+					{
+						id: item.id,
+						content: item.answer,
+						status: item.status === 'error' ? item.status : 'success',
+						error: item.error || '',
+						isHistory: true,
+						files: item.message_files?.filter(item => {
+							return item.belongs_to === MessageFileBelongsToEnum.assistant
+						}),
+						feedback: item.feedback,
+						workflows:
+							workflowDataStorage.get({
+								appId: currentAppId || '',
+								conversationId,
+								messageId: item.id,
+								key: 'workflows',
+							}) || [],
+						agentThoughts: item.agent_thoughts || [],
+						retrieverResources: item.retriever_resources || [],
+						role: Roles.AI,
+						created_at: createdAt,
+					},
+				)
+			})
+
+			// 追加到历史消息前面
+			setHistoryMessages(prev => [...newMessages, ...prev])
+		},
+		[difyApi, historyMessages, currentConversationId],
 	)
 
 	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
@@ -217,7 +292,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		filesRef,
 		getNextSuggestions,
 		abortRef,
-		getConversationMessages,
+		getConversationMessages: (conversationId: string) =>
+			initConversationMessages(conversationId, false),
 		onConversationIdChange: id => {
 			setMessagesloadingEnabled(false)
 			setCurrentConversationId(id)
@@ -230,7 +306,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const initConversationInfo = async () => {
 		// 有对话 ID 且非临时 ID 时，获取历史消息
 		if (currentConversationId && !isTempId(currentConversationId)) {
-			await getConversationMessages(currentConversationId)
+			await initConversationMessages(currentConversationId, false)
 			setInitLoading(false)
 		} else {
 			// 不管有没有参数，都结束 loading，开始展示内容
@@ -311,10 +387,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 	const fallbackCallback = useCallback(
 		(conversationId: string) => {
-			// 反馈成功后，重新获取历史消息
-			getConversationMessages(conversationId)
+			// 反馈成功后，重新获取历史消息，保持已加载的数据量
+			initConversationMessages(conversationId, true)
 		},
-		[getConversationMessages],
+		[initConversationMessages],
 	)
 
 	// 如果应用配置 / 对话列表加载中，则展示 loading
@@ -365,11 +441,11 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 							abortRef.current()
 							if (currentTaskId) {
 								await difyApi.stopTask(currentTaskId)
-								getConversationMessages(currentConversationId!)
+								initConversationMessages(currentConversationId!, false)
 							}
 						}}
 						hasMore={hasMore}
-						onLoadMore={getConversationMessages}
+						onLoadMore={loadMoreMessages}
 						isFormFilled={isFormFilled}
 						onStartConversation={formValues => {
 							updateConversationInputs(formValues)

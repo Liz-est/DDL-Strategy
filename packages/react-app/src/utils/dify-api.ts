@@ -311,6 +311,8 @@ interface IMessageItem {
 
 interface IGetConversationHistoryResponse {
 	data: IMessageItem[]
+	has_more: boolean
+	limit: number
 }
 
 export interface IDifyApiOptions {
@@ -447,8 +449,8 @@ export class DifyApi {
 		return this.baseRequest.get('/conversations', {
 			user: this.options.user,
 			limit: (params?.limit || 100).toString(),
-			last_id: params?.last_id,
-			sort_by: params?.sort_by,
+			...(params?.last_id && { last_id: params.last_id }),
+			...(params?.sort_by && { sort_by: params.sort_by }),
 		}) as Promise<IGetConversationListResponse>
 	}
 
@@ -502,12 +504,23 @@ export class DifyApi {
 		},
 	) => {
 		const { first_id, limit } = options || {}
-		return this.baseRequest.get(`/conversation/${conversation_id}/messages`, {
+		const params: Record<string, string> = {
 			user: this.options.user,
 			conversation_id,
-			first_id,
-			limit,
-		}) as Promise<IGetConversationHistoryResponse>
+		}
+
+		if (first_id !== undefined && first_id !== null) {
+			params.first_id = first_id
+		}
+
+		if (limit !== undefined) {
+			params.limit = limit.toString()
+		}
+
+		return this.baseRequest.get(
+			`/conversation/${conversation_id}/messages`,
+			params,
+		) as Promise<IGetConversationHistoryResponse>
 	}
 
 	/**
