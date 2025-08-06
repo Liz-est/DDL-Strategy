@@ -69,6 +69,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([])
 	const [hasMore, setHasMore] = useState<boolean>(true)
 
+	// 添加一个状态来标记是否正在切换会话
+	const [isSwitchingConversation, setIsSwitchingConversation] = useState(false)
+
 	const [nextSuggestions, setNextSuggestions] = useState<string[]>([])
 	// 定义 ref, 用于获取最新的 conversationId
 	const latestProps = useLatest({
@@ -239,12 +242,22 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		} else {
 			// 只有允许 loading 时，才清空对话列表数据
 			setInitLoading(true)
+			setHasMore(false)
 			setMessages([])
 			setNextSuggestions([])
 			setHistoryMessages([])
+			setIsSwitchingConversation(true)
 		}
-		initConversationInfo()
 	}, [currentConversationId])
+
+	// 监听清空完成状态
+	useEffect(() => {
+		// 当所有状态都清空且正在切换会话时，获取新会话数据
+		if (isSwitchingConversation) {
+			initConversationInfo()
+			setIsSwitchingConversation(false) // 重置切换状态
+		}
+	}, [isSwitchingConversation, currentConversationId])
 
 	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
 		onRequest({
