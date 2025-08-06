@@ -1,15 +1,18 @@
+import { RedoOutlined } from '@ant-design/icons'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { Bubble, Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { useThemeContext } from '@dify-chat/theme'
-import { FormInstance, GetProp, message } from 'antd'
+import { FormInstance, GetProp, message, Spin } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
+
+import { validateAndGenErrMsgs } from '@/utils'
 
 import LucideIcon from '../lucide-icon'
 import { MessageSender } from '../message-sender'
-import { validateAndGenErrMsgs } from '@/utils'
 import AppIcon from './app-icon'
 import MessageContent from './message/content'
 import MessageFooter from './message/footer'
@@ -24,6 +27,17 @@ export interface ChatboxProps {
 	 * 是否正在请求
 	 */
 	isRequesting: boolean
+
+	/**
+	 * 是否有更多历史消息
+	 */
+	hasMore: boolean
+
+	/**
+	 * 加载更多历史消息
+	 */
+	onLoadMore: () => void
+
 	/**
 	 * 下一步问题建议
 	 */
@@ -99,6 +113,8 @@ export const Chatbox = (props: ChatboxProps) => {
 		isFormFilled,
 		onStartConversation,
 		entryForm,
+		hasMore,
+		onLoadMore,
 	} = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
@@ -251,57 +267,86 @@ export const Chatbox = (props: ChatboxProps) => {
 				className="w-full h-full overflow-auto pt-4 pb-48"
 				ref={scrollContainerRef}
 			>
-				{/* 🌟 欢迎占位 + 对话参数 */}
-				<WelcomePlaceholder
-					showPrompts={promptsVisible}
-					onPromptItemClick={onPromptsItemClick}
-					formFilled={isFormFilled}
-					onStartConversation={onStartConversation}
-					conversationId={conversationId}
-					entryForm={entryForm}
-					uploadFileApi={(...params) => difyApi.uploadFile(...params)}
-				/>
-
-				<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
-					{/* 🌟 消息列表 */}
-					<Bubble.List
-						items={items}
-						roles={roles}
-					/>
-
-					{/* 下一步问题建议 当存在消息列表，且非正在对话时才展示 */}
-					{nextSuggestions?.length && items.length && !isRequesting ? (
-						<div className="p-3 md:pl-[44px] mt-3">
-							<div className="text-desc">🤔 你可能还想问:</div>
-							<div>
-								{nextSuggestions?.map(item => {
-									return (
-										<div
-											key={item}
-											className="mt-3 flex items-center"
-										>
-											<div
-												className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-theme-border text-sm max-w-full text-theme-desc"
-												onClick={() => {
-													onPromptsItemClick({
-														data: {
-															key: item,
-															description: item,
-														},
-													})
-												}}
-											>
-												<span className="truncate">{item}</span>
-												<ArrowRightOutlined className="ml-1" />
-											</div>
-										</div>
-									)
-								})}
+				<div
+					id="scrollableDiv"
+					style={{
+						height: '100%', // Specify a value
+						overflow: 'auto',
+						display: 'flex',
+						flexDirection: messageItems.length > 4 ? 'column-reverse' : 'column',
+					}}
+				>
+					<InfiniteScroll
+						scrollableTarget="scrollableDiv"
+						hasMore={hasMore}
+						next={onLoadMore}
+						dataLength={messageItems.length}
+						loader={
+							<div style={{ textAlign: 'center' }}>
+								<Spin
+									indicator={<RedoOutlined spin />}
+									size="small"
+								/>
 							</div>
-						</div>
-					) : null}
-				</div>
+						}
+						inverse={true}
+						style={{
+							display: 'flex',
+							flexDirection: 'column-reverse',
+						}}
+					>
+						{/* 🌟 欢迎占位 + 对话参数 */}
+						<WelcomePlaceholder
+							showPrompts={promptsVisible}
+							onPromptItemClick={onPromptsItemClick}
+							formFilled={isFormFilled}
+							onStartConversation={onStartConversation}
+							conversationId={conversationId}
+							entryForm={entryForm}
+							uploadFileApi={(...params) => difyApi.uploadFile(...params)}
+						/>
 
+						<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
+							{/* 🌟 消息列表 */}
+							<Bubble.List
+								items={items}
+								roles={roles}
+							/>
+
+							{/* 下一步问题建议 当存在消息列表，且非正在对话时才展示 */}
+							{nextSuggestions?.length && items.length && !isRequesting ? (
+								<div className="p-3 md:pl-[44px] mt-3">
+									<div className="text-desc">🤔 你可能还想问:</div>
+									<div>
+										{nextSuggestions?.map(item => {
+											return (
+												<div
+													key={item}
+													className="mt-3 flex items-center"
+												>
+													<div
+														className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-theme-border text-sm max-w-full text-theme-desc"
+														onClick={() => {
+															onPromptsItemClick({
+																data: {
+																	key: item,
+																	description: item,
+																},
+															})
+														}}
+													>
+														<span className="truncate">{item}</span>
+														<ArrowRightOutlined className="ml-1" />
+													</div>
+												</div>
+											)
+										})}
+									</div>
+								</div>
+							) : null}
+						</div>
+					</InfiniteScroll>
+				</div>
 				<div
 					className="absolute bottom-0 bg-theme-main-bg w-full md:!w-3/4 left-1/2"
 					style={{

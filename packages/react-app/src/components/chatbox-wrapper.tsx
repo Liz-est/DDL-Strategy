@@ -7,7 +7,6 @@ import { isTempId } from '@dify-chat/helpers'
 import { Button, Empty, Form, GetProp, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { Chatbox } from '@/components'
 import { useLatest } from '@/hooks/use-latest'
@@ -67,7 +66,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 	const [messagesloadingEnabled, setMessagesloadingEnabled] = useState(true)
 	const [initLoading, setInitLoading] = useState<boolean>(false)
 	const [historyMessages, setHistoryMessages] = useState<IMessageItem4Render[]>([])
-	const [hasMore, setHasMore] = useState<boolean>(true)
+	const [hasMore, setHasMore] = useState<boolean>(false)
 
 	// 添加一个状态来标记是否正在切换会话
 	const [isSwitchingConversation, setIsSwitchingConversation] = useState(false)
@@ -125,7 +124,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			if (historyMessages[0]?.id) {
 				firstId = historyMessages[0]?.id.replace('question-', '')
 			}
-			const result = await difyApi.getConversationHistory(conversationId, { first_id: firstId })
+			const result = await difyApi.getConversationHistory(conversationId, {
+				first_id: firstId,
+				limit: 10,
+			})
 
 			if (!result?.data?.length) {
 				return
@@ -349,59 +351,39 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				) : null}
 
 				{currentConversationId ? (
-					<div
-						id="scrollableDiv"
-						style={{
-							height: '100%', // Specify a value
-							overflow: 'auto',
-							display: 'flex',
-							flexDirection: 'column-reverse',
+					<Chatbox
+						conversationId={currentConversationId!}
+						nextSuggestions={nextSuggestions}
+						messageItems={messageItems}
+						isRequesting={agent.isRequesting()}
+						onPromptsItemClick={(...params) => {
+							setNextSuggestions([])
+							return onPromptsItemClick(...params)
 						}}
-					>
-						<InfiniteScroll
-							scrollableTarget="scrollableDiv"
-							hasMore={hasMore}
-							next={getConversationMessages}
-							dataLength={messageItems.length}
-							loader={
-								<div className="system-xs-regular text-center text-text-tertiary">加载中...</div>
+						onSubmit={onSubmit}
+						onCancel={async () => {
+							abortRef.current()
+							if (currentTaskId) {
+								await difyApi.stopTask(currentTaskId)
+								getConversationMessages(currentConversationId!)
 							}
-							inverse={true}
-							style={{ display: 'flex', flexDirection: 'column-reverse' }}
-						>
-							<Chatbox
-								conversationId={currentConversationId!}
-								nextSuggestions={nextSuggestions}
-								messageItems={messageItems}
-								isRequesting={agent.isRequesting()}
-								onPromptsItemClick={(...params) => {
-									setNextSuggestions([])
-									return onPromptsItemClick(...params)
-								}}
-								onSubmit={onSubmit}
-								onCancel={async () => {
-									abortRef.current()
-									if (currentTaskId) {
-										await difyApi.stopTask(currentTaskId)
-										getConversationMessages(currentConversationId!)
-									}
-								}}
-								isFormFilled={isFormFilled}
-								onStartConversation={formValues => {
-									updateConversationInputs(formValues)
+						}}
+						hasMore={hasMore}
+						onLoadMore={getConversationMessages}
+						isFormFilled={isFormFilled}
+						onStartConversation={formValues => {
+							updateConversationInputs(formValues)
 
-									if (!currentConversationId) {
-										onAddConversation()
-									}
-								}}
-								feedbackApi={difyApi.feedbackMessage}
-								feedbackCallback={fallbackCallback}
-								uploadFileApi={difyApi.uploadFile}
-								difyApi={difyApi}
-								entryForm={entryForm}
-							/>
-						</InfiniteScroll>
-					</div>
+							if (!currentConversationId) {
+								onAddConversation()
+							}
+						}}
+						feedbackApi={difyApi.feedbackMessage}
+						feedbackCallback={fallbackCallback}
+						uploadFileApi={difyApi.uploadFile}
+						difyApi={difyApi}
+						entryForm={entryForm}
+					/>
 				) : (
 					<div className="w-full h-full flex items-center justify-center">
 						<Spin spinning />
