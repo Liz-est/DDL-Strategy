@@ -125,8 +125,10 @@ export default function AppInputForm(props: IAppInputFormProps) {
 							}
 						}
 						entryForm.setFieldValue(originalProps.variable, fieldValue)
+					} else {
+						// 如果是临时对话且没有 URL 参数，则清空表单字段
+						entryForm.setFieldValue(originalProps.variable, undefined)
 					}
-					// 如果是临时对话且没有 URL 参数，则不设置任何值，保持表单字段为空或默认值
 				}
 				if (originalProps.required) {
 					baseProps.required = true
