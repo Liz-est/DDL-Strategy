@@ -1,10 +1,9 @@
-import { Prompts } from '@ant-design/x'
 import { DifyApi, IFile, IMessageFileItem, MessageFileBelongsToEnum } from '@dify-chat/api'
 import { IMessageItem4Render } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
 import { Roles, useConversationsContext } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
-import { Button, Empty, Form, GetProp, Spin } from 'antd'
+import { Button, Empty, Form, Spin } from 'antd'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -337,9 +336,9 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		}
 	}, [isSwitchingConversation, currentConversationId])
 
-	const onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'> = info => {
+	const onPromptsItemClick = (content: string) => {
 		onRequest({
-			content: info.data.description as string,
+			content,
 		})
 	}
 

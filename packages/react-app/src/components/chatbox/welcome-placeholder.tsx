@@ -1,11 +1,7 @@
-import { EllipsisOutlined, ShareAltOutlined } from '@ant-design/icons'
-import { Prompts, Welcome } from '@ant-design/x'
 import { DifyApi } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
-import { useIsMobile } from '@dify-chat/helpers'
-import { Button, FormInstance, GetProp, message, Space } from 'antd'
+import { FormInstance, message, Space } from 'antd'
 import classNames from 'classnames'
-import { useMemo } from 'react'
 
 import { validateAndGenErrMsgs } from '@/utils'
 
@@ -20,7 +16,7 @@ interface IWelcomePlaceholderProps {
 	/**
 	 * 点击提示项时触发的回调函数
 	 */
-	onPromptItemClick: GetProp<typeof Prompts, 'onItemClick'>
+	onPromptItemClick: (content: string) => void
 	/**
 	 * 表单是否填写
 	 */
@@ -48,38 +44,9 @@ interface IWelcomePlaceholderProps {
  */
 export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 	const { onPromptItemClick, showPrompts, uploadFileApi } = props
-	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
 
-	const placeholderPromptsItems: GetProp<typeof Prompts, 'items'> = useMemo(() => {
-		if (
-			currentApp?.parameters?.opening_statement ||
-			currentApp?.parameters?.suggested_questions?.length
-		) {
-			// 开场白标题
-			const suggestedTitle =
-				currentApp?.parameters?.opening_statement ||
-				`你好，我是 ${currentApp?.config?.info?.name || 'Dify Chat'}`
-			return [
-				{
-					key: 'suggested_question',
-					label: <div className="whitespace-pre-wrap">{suggestedTitle}</div>,
-					description: '',
-					children: currentApp.parameters.suggested_questions?.map((item, index) => {
-						return {
-							key: `suggested_question-${index}`,
-							description: item,
-						}
-					}),
-				},
-			]
-		}
-		return []
-	}, [
-		currentApp?.parameters?.suggested_questions,
-		currentApp?.parameters?.opening_statement,
-		currentApp?.config?.info?.name,
-	])
+	console.log('currentApp?.parameters?.opening_statement', currentApp?.parameters)
 
 	return (
 		<div className="flex justify-center w-full px-3 box-border mx-auto my-3">
@@ -92,27 +59,48 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					'pt-3': showPrompts,
 				})}
 			>
-				{showPrompts ? (
-					<Welcome
-						variant="borderless"
-						icon={
-							<div className="flex items-center justify-center rounded-[50%] w-14 h-14 border-theme-border border-solid border-[1px] bg-theme-bg">
-								<LucideIcon
-									name="bot"
-									size={30}
-									className="text-3xl text-primary dark:text-theme-text"
-								/>
+				{currentApp?.parameters?.opening_statement ? (
+					<div className="flex items-center">
+						{/* 左侧展示图标 */}
+						<div className="flex items-center justify-center rounded-[50%] w-14 h-14 border-theme-border border-solid border-[1px] bg-theme-bg">
+							<LucideIcon
+								name="bot"
+								size={30}
+								className="text-3xl text-primary dark:text-theme-text"
+							/>
+						</div>
+						<div className="ml-4 flex-1 overflow-hidden">
+							{/* 右侧标题 */}
+							<div className="font-semibold text-lg truncate">
+								{currentApp?.parameters?.opening_statement}
 							</div>
-						}
-						title={"Hello, I'm Dify Chat"}
-						description="Base on Dify API, Dify Chat is a web app that can interact with AI."
-						extra={
-							<Space>
-								<Button icon={<ShareAltOutlined />} />
-								<Button icon={<EllipsisOutlined />} />
-							</Space>
-						}
-					/>
+							{/* 右侧建议选项 */}
+							{currentApp.parameters.suggested_questions?.length ? (
+								<div className="flex items-center flex-wrap w-full">
+									{currentApp.parameters.suggested_questions?.map(item => {
+										return (
+											<div
+												className="cursor-pointer text-theme-text mt-2 hover:text-primary mr-2 text-sm border border-desc hover:border-primary border-solid py-0.5 px-2 rounded-lg"
+												color="blue"
+												key={item}
+												onClick={() => {
+													validateAndGenErrMsgs(props.entryForm).then(res => {
+														if (res.isSuccess) {
+															onPromptItemClick(item)
+														} else {
+															message.error(res.errMsgs)
+														}
+													})
+												}}
+											>
+												{item}
+											</div>
+										)
+									})}
+								</div>
+							) : null}
+						</div>
+					</div>
 				) : null}
 
 				{/* 应用输入参数 */}
@@ -122,38 +110,6 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 					entryForm={props.entryForm}
 					uploadFileApi={uploadFileApi!}
 				/>
-
-				{showPrompts && placeholderPromptsItems.length ? (
-					<Prompts
-						// className="mt-3"
-						// title="问一问："
-						vertical={isMobile}
-						items={placeholderPromptsItems}
-						styles={{
-							list: {
-								width: '100%',
-							},
-							item: isMobile
-								? {
-										width: '100%',
-										color: 'var(--theme-text-color)',
-									}
-								: {
-										flex: 1,
-										color: 'var(--theme-text-color)',
-									},
-						}}
-						onItemClick={async (...params) => {
-							validateAndGenErrMsgs(props.entryForm).then(res => {
-								if (res.isSuccess) {
-									onPromptItemClick(...params)
-								} else {
-									message.error(res.errMsgs)
-								}
-							})
-						}}
-					/>
-				) : null}
 			</Space>
 		</div>
 	)

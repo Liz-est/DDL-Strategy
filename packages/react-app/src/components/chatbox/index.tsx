@@ -1,6 +1,6 @@
 import { RedoOutlined } from '@ant-design/icons'
 import { ArrowRightOutlined } from '@ant-design/icons'
-import { Bubble, Prompts } from '@ant-design/x'
+import { Bubble } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
@@ -45,7 +45,7 @@ export interface ChatboxProps {
 	/**
 	 * 推荐 Item 点击事件
 	 */
-	onPromptsItemClick: GetProp<typeof Prompts, 'onItemClick'>
+	onPromptsItemClick: (content: string) => void
 	/**
 	 * 内容提交事件
 	 * @param value 问题-文本
@@ -316,12 +316,7 @@ export const Chatbox = (props: ChatboxProps) => {
 													<div
 														className="p-2 shrink-0 cursor-pointer rounded-lg flex items-center border border-solid border-theme-border text-sm max-w-full text-theme-desc"
 														onClick={() => {
-															onPromptsItemClick({
-																data: {
-																	key: item,
-																	description: item,
-																},
-															})
+															onPromptsItemClick(item)
 														}}
 													>
 														<span className="truncate">{item}</span>
