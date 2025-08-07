@@ -172,13 +172,13 @@ interface IGetAppParametersResponse {
 #### 获取会话列表
 
 ```ts
-const conversations = await api.getConversationList({ limit: 20 })
+const conversations = await api.listConversations({ limit: 20 })
 ```
 
 **参数：**
 
 ```ts
-interface IGetConversationListRequest {
+interface IListConversationsRequest {
   limit: number
 }
 ```
@@ -235,13 +235,13 @@ await api.deleteConversation('conversation_id')
 #### 获取会话历史消息
 
 ```ts
-const history = await api.getConversationHistory('conversation_id')
+const history = await api.listMessages('conversation_id')
 ```
 
 **返回值类型：**
 
 ```ts
-interface IGetConversationHistoryResponse {
+interface IListMessagesResponse {
   data: IMessageItem[]
 }
 
@@ -341,7 +341,7 @@ const suggestions = await api.getNextSuggestions({
 #### 消息反馈
 
 ```ts
-await api.feedbackMessage({
+await api.createMessageFeedback({
   messageId: 'message_id',
   rating: 'like', // 'like' | 'dislike' | null
   content: '反馈内容',

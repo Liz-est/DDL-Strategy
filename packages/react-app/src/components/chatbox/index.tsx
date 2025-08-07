@@ -77,7 +77,7 @@ export interface ChatboxProps {
 	/**
 	 * 反馈 API
 	 */
-	feedbackApi: DifyApi['feedbackMessage']
+	feedbackApi: DifyApi['createMessageFeedback']
 	/**
 	 * 上传文件 API
 	 */
@@ -194,7 +194,7 @@ export const Chatbox = (props: ChatboxProps) => {
 					<div className="flex items-center">
 						<MessageFooter
 							ttsConfig={currentApp?.parameters?.text_to_speech}
-							feedbackApi={params => difyApi.feedbackMessage(params)}
+							feedbackApi={params => difyApi.createMessageFeedback(params)}
 							ttsApi={params => difyApi.text2Audio(params)}
 							messageId={messageItem.id}
 							messageContent={messageItem.content}

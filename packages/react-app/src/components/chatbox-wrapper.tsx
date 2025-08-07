@@ -134,7 +134,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				requestLimit = Math.max(defaultRequestLimit, Math.ceil(historyMessages.length / 2))
 			}
 
-			const result = await difyApi.getConversationHistory(conversationId, {
+			const result = await difyApi.listMessages(conversationId, {
 				first_id: '', // 从头开始加载
 				limit: requestLimit,
 			})
@@ -229,7 +229,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 				firstId = historyMessages[0]?.id.replace('question-', '')
 			}
 
-			const result = await difyApi.getConversationHistory(conversationId, {
+			const result = await difyApi.listMessages(conversationId, {
 				first_id: firstId,
 				limit: defaultRequestLimit,
 			})
@@ -455,7 +455,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 								onAddConversation()
 							}
 						}}
-						feedbackApi={difyApi.feedbackMessage}
+						feedbackApi={difyApi.createMessageFeedback}
 						feedbackCallback={fallbackCallback}
 						uploadFileApi={difyApi.uploadFile}
 						difyApi={difyApi}

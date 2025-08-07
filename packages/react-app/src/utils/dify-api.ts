@@ -205,7 +205,7 @@ export interface IGetWorkflowResultResponse {
 /**
  * 获取会话列表-参数
  */
-interface IGetConversationListRequest {
+interface IListConversationsRequest {
 	/**
 	 * 返回条数
 	 */
@@ -309,7 +309,7 @@ interface IMessageItem {
 	retriever_resources?: IRetrieverResource[]
 }
 
-interface IGetConversationHistoryResponse {
+interface IListMessagesResponse {
 	data: IMessageItem[]
 	has_more: boolean
 	limit: number
@@ -445,7 +445,7 @@ export class DifyApi {
 	/**
 	 * 获取当前用户的会话列表（默认返回最近20条）
 	 */
-	getConversationList = (params?: IGetConversationListRequest) => {
+	listConversations = (params?: IListConversationsRequest) => {
 		return this.baseRequest.get('/conversations', {
 			user: this.options.user,
 			limit: (params?.limit || 100).toString(),
@@ -490,7 +490,7 @@ export class DifyApi {
 	/**
 	 * 获取会话历史消息
 	 */
-	getConversationHistory = (
+	listMessages = (
 		conversation_id: string,
 		options?: {
 			/**
@@ -520,7 +520,7 @@ export class DifyApi {
 		return this.baseRequest.get(
 			`/conversation/${conversation_id}/messages`,
 			params,
-		) as Promise<IGetConversationHistoryResponse>
+		) as Promise<IListMessagesResponse>
 	}
 
 	/**
@@ -604,7 +604,7 @@ export class DifyApi {
 	/**
 	 * 消息反馈
 	 */
-	feedbackMessage = (params: {
+	createMessageFeedback = (params: {
 		/**
 		 * 消息 ID
 		 */

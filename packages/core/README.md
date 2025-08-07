@@ -137,12 +137,12 @@ const YourChatComponent = () => {
   const [currentConversationId, setCurrentConversationId] = useState('')
 
   // 实现获取对话列表的逻辑
-  const getConversationList = async () => {
+  const listConversations = async () => {
     setConversations([...])
   }
 
   useEffect(()=>{
-    getConversationList()
+    listConversations()
   }, [])
 
   return (

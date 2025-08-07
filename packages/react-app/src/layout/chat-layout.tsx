@@ -96,7 +96,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 			setCoversationListLoading(true)
 		}
 		try {
-			const result = await difyApi?.getConversationList()
+			const result = await difyApi?.listConversations()
 			const newItems =
 				result?.data?.map(item => {
 					return {
