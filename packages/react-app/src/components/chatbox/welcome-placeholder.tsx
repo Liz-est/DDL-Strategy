@@ -46,8 +46,6 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 	const { onPromptItemClick, showPrompts, uploadFileApi } = props
 	const { currentApp } = useAppContext()
 
-	console.log('currentApp?.parameters?.opening_statement', currentApp?.parameters)
-
 	return (
 		<div className="flex justify-center w-full px-3 box-border mx-auto my-3">
 			<Space
