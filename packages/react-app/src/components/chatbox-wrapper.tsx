@@ -80,6 +80,8 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		inputParams: currentConversationInfo?.inputs || {},
 	})
 
+	const defaultRequestLimit = 10
+
 	const filesRef = useRef<IFile[]>([])
 
 	/**
@@ -126,10 +128,10 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 			}
 
 			// 计算要请求的消息数量
-			let requestLimit = 10 // 默认限制
+			let requestLimit = defaultRequestLimit // 默认限制
 			if (preserveLoadedCount && historyMessages.length > 0) {
 				// 保持已加载的消息数量，每2条消息代表一轮对话（用户问题+AI回答）
-				requestLimit = Math.max(10, Math.ceil(historyMessages.length / 2))
+				requestLimit = Math.max(defaultRequestLimit, Math.ceil(historyMessages.length / 2))
 			}
 
 			const result = await difyApi.getConversationHistory(conversationId, {
@@ -229,7 +231,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 			const result = await difyApi.getConversationHistory(conversationId, {
 				first_id: firstId,
-				limit: 10,
+				limit: defaultRequestLimit,
 			})
 
 			if (!result?.data?.length) {

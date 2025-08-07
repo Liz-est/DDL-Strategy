@@ -197,9 +197,26 @@ export const Chatbox = (props: ChatboxProps) => {
 									message.error('消息不存在')
 									return
 								}
-								onSubmit(currentItem.content, {
+								const messageParams: {
+									inputs: Record<string, unknown>
+									files?: Array<{
+										type: string
+										transfer_method: string
+										url: string
+										upload_file_id: string
+									}>
+								} = {
 									inputs: entryForm.getFieldsValue(),
-								})
+								}
+								if (currentItem.files && currentItem.files.length > 0) {
+									messageParams.files = currentItem.files.map(file => ({
+										type: file.type,
+										transfer_method: file.transfer_method,
+										url: file.url,
+										upload_file_id: file.upload_file_id,
+									}))
+								}
+								onSubmit(currentItem.content, messageParams)
 							}}
 						/>
 						{messageItem.created_at && (
