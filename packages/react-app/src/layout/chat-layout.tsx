@@ -349,7 +349,18 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				)}
 			</Spin>
 		)
-	}, [conversations, onRenameConversation, onDeleteConversation, setCurrentConversationId])
+	}, [
+		conversations,
+		conversationListLoading,
+		currentConversationId,
+		onRenameConversation,
+		onDeleteConversation,
+		setCurrentConversationId,
+	])
+
+	const disableNewButton = useMemo(() => {
+		return conversations?.some(item => isTempId(item.id))
+	}, [conversations])
 
 	return (
 		<ConversationsContextProvider
@@ -398,7 +409,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 										{/* 添加会话 */}
 										{currentApp ? (
 											<Button
-												disabled={isTempId(currentConversationId)}
+												disabled={disableNewButton}
 												onClick={() => {
 													onAddConversation()
 												}}
