@@ -61,6 +61,10 @@ export interface IDifyAppItem4View {
 		 */
 		tags: string[]
 	}
+	/**
+	 * 应用状态 1-启用 2-禁用
+	 */
+	isEnabled: 1 | 2
 }
 
 /**

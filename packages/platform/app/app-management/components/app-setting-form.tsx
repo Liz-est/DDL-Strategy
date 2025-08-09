@@ -28,6 +28,7 @@ export default function SettingForm(props: ISettingFormProps) {
 				enableAnswerForm: false,
 				enableUpdateInputAfterStarts: false,
 				openingStatementDisplayMode: 'default',
+				isEnabled: 1,
 			}}
 		>
 			<div className="text-base mb-3 flex items-center">
@@ -109,6 +110,27 @@ export default function SettingForm(props: ISettingFormProps) {
 				) : (
 					<>无</>
 				)}
+			</Form.Item>
+			<Form.Item
+				name="isEnabled"
+				label="应用状态"
+				tooltip="设置应用的启用状态"
+				rules={[{ required: true, message: '应用状态不能为空' }]}
+				required
+			>
+				<Select
+					placeholder="请选择应用状态"
+					options={[
+						{
+							label: '启用',
+							value: 1,
+						},
+						{
+							label: '禁用',
+							value: 2,
+						},
+					]}
+				/>
 			</Form.Item>
 
 			<div className="text-base mb-3 flex items-center">

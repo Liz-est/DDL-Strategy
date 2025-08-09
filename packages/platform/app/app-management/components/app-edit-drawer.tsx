@@ -1,11 +1,13 @@
 'use client'
 
 import { DifyApi } from '@dify-chat/api'
-import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
+import { AppModeEnums } from '@dify-chat/core'
 import { generateUuidV4 } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Drawer, DrawerProps, Form, message, Space } from 'antd'
 import { useEffect, useState } from 'react'
+
+import { IDifyAppItem } from '@/types'
 
 import { AppDetailDrawerModeEnum } from '../enums'
 import SettingForm from './app-setting-form'
@@ -46,6 +48,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 				'info.name': appItem?.info.name,
 				'info.description': appItem?.info.description,
 				'info.mode': appItem?.info.mode || AppModeEnums.CHATBOT,
+				isEnabled: appItem?.isEnabled,
 				enableAnswerForm: appItem?.answerForm?.enabled || false,
 				'answerForm.feedbackText': appItem?.answerForm?.feedbackText || '',
 				enableUpdateInputAfterStarts: appItem?.inputParams?.enableUpdateAfterCvstStarts || false,
@@ -118,6 +121,7 @@ export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 										// 兼容处理，当 Dify API 返回的应用信息中没有 mode 时，使用表单中的 mode
 										mode: difyAppInfo.mode || values['info.mode'],
 									},
+									isEnabled: values['isEnabled'],
 									requestConfig: {
 										apiBase: values.apiBase,
 										apiKey: values.apiKey,

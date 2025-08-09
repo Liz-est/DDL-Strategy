@@ -14,6 +14,7 @@ export function dbAppToAppItem(dbApp: DifyApp): IDifyAppItem {
 			description: dbApp.description || '',
 			tags: dbApp.tags ? JSON.parse(dbApp.tags) : [],
 		},
+		isEnabled: dbApp.isEnabled || 1,
 		requestConfig: {
 			apiBase: dbApp.apiBase,
 			apiKey: dbApp.apiKey,
@@ -27,15 +28,13 @@ export function dbAppToAppItem(dbApp: DifyApp): IDifyAppItem {
 		inputParams: {
 			enableUpdateAfterCvstStarts: dbApp.enableUpdateInputAfterStarts,
 		},
-		extConfig: dbApp.openingStatementDisplayMode
-			? {
-					conversation: {
-						openingStatement: {
-							displayMode: dbApp.openingStatementDisplayMode as 'default' | 'always',
-						},
-					},
-				}
-			: undefined,
+		extConfig: {
+			conversation: {
+				openingStatement: {
+					displayMode: dbApp.openingStatementDisplayMode as 'default' | 'always' | undefined,
+				},
+			},
+		},
 	}
 }
 
@@ -50,6 +49,7 @@ export function appItemToDbApp(
 		mode: appItem.info.mode || null,
 		description: appItem.info.description || null,
 		tags: appItem.info.tags.length > 0 ? JSON.stringify(appItem.info.tags) : null,
+		isEnabled: appItem.isEnabled,
 		apiBase: appItem.requestConfig.apiBase,
 		apiKey: appItem.requestConfig.apiKey,
 		enableAnswerForm: appItem.answerForm?.enabled || false,

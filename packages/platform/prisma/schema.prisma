@@ -21,6 +21,9 @@ model DifyApp {
   description String?
   tags        String? // JSON 字符串存储数组
 
+  // 应用状态：1-启用，2-禁用
+  isEnabled Int? @default(1) @map("is_enabled")
+
   // 请求配置
   apiBase String @map("api_base")
   apiKey  String @map("api_key")

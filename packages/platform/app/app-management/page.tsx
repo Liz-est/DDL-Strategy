@@ -108,11 +108,15 @@ export default function AppManagementPage() {
 						},
 						{
 							title: '状态',
-							dataIndex: 'is_enabled',
-							key: 'is_enabled',
+							dataIndex: 'isEnabled',
+							key: 'isEnabled',
 							width: 140,
-							render: () => {
-								return <Tag color="success">已启用</Tag>
+							render: (_text, record) => {
+								return record.isEnabled === 1 ? (
+									<Tag color="success">已启用</Tag>
+								) : (
+									<Tag color="default">已禁用</Tag>
+								)
 							},
 						},
 						{
