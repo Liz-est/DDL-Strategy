@@ -40,3 +40,15 @@ model DifyApp {
 
   @@map("dify_apps")
 }
+
+// 用户表 - 仅用于后台管理员账户
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String   // 密码哈希
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}

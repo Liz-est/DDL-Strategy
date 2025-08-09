@@ -2,6 +2,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
+import AuthSessionProvider from '@/components/auth/session-provider'
 import PageLayoutWrapper from '@/components/layout/page-layout-wrapper'
 
 import './globals.css'
@@ -29,9 +30,11 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<AntdRegistry>
-					<PageLayoutWrapper>{children}</PageLayoutWrapper>
-				</AntdRegistry>
+				<AuthSessionProvider>
+					<AntdRegistry>
+						<PageLayoutWrapper>{children}</PageLayoutWrapper>
+					</AntdRegistry>
+				</AuthSessionProvider>
 			</body>
 		</html>
 	)

@@ -1,12 +1,14 @@
 'use client'
 
-import { AppstoreOutlined, SettingOutlined } from '@ant-design/icons'
-import { message, Segmented } from 'antd'
+import { AppstoreOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
+import { Button, Dropdown, message, Segmented, Space } from 'antd'
+import { signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 enum ETopMenuKeys {
 	AppManagement = 'app-management',
+	UserManagement = 'user-management',
 	SystemConfig = 'system-config',
 }
 
@@ -25,6 +27,12 @@ const TopMenuOptions: ITopMenuOption[] = [
 		route: '/app-management',
 	},
 	{
+		label: '用户管理',
+		icon: <UserOutlined />,
+		value: ETopMenuKeys.UserManagement,
+		route: '/user-management',
+	},
+	{
 		label: '系统配置',
 		icon: <SettingOutlined />,
 		value: ETopMenuKeys.SystemConfig,
@@ -34,6 +42,7 @@ const TopMenuOptions: ITopMenuOption[] = [
 
 export default function AdminHeaderTitle() {
 	const [activeKey, setActiveKey] = useState<ETopMenuKeys>()
+	const { data: session } = useSession()
 	const navigate = useRouter()
 	const pathname = usePathname()
 
@@ -44,20 +53,49 @@ export default function AdminHeaderTitle() {
 		}
 	}, [pathname])
 
+	const handleLogout = async () => {
+		await signOut({ redirect: false })
+		navigate.push('/login')
+	}
+
+	const menuItems = [
+		{
+			key: 'logout',
+			icon: <LogoutOutlined />,
+			label: '退出登录',
+			onClick: handleLogout,
+		},
+	]
+
 	return (
-		<Segmented
-			value={activeKey}
-			size="large"
-			shape="round"
-			options={TopMenuOptions}
-			onChange={key => {
-				const route = TopMenuOptions.find(item => item.value === key)?.route
-				if (route) {
-					navigate.push(route)
-				} else {
-					message.error('路径不存在')
-				}
-			}}
-		/>
+		<Space>
+			<Segmented
+				value={activeKey}
+				size="large"
+				shape="round"
+				options={TopMenuOptions}
+				onChange={key => {
+					const route = TopMenuOptions.find(item => item.value === key)?.route
+					if (route) {
+						navigate.push(route)
+					} else {
+						message.error('路径不存在')
+					}
+				}}
+			/>
+			{session?.user && (
+				<Dropdown
+					menu={{ items: menuItems }}
+					placement="bottomRight"
+				>
+					<Button
+						type="text"
+						icon={<UserOutlined />}
+					>
+						{session.user.name || session.user.email}
+					</Button>
+				</Dropdown>
+			)}
+		</Space>
 	)
 }
