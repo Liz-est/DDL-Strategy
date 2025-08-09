@@ -69,9 +69,20 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 						</div>
 						<div className="ml-4 flex-1 overflow-hidden">
 							{/* 右侧标题 */}
-							<div className="font-semibold text-lg truncate">
-								{currentApp?.parameters?.opening_statement}
-							</div>
+							{(() => {
+								const openingStatement = currentApp?.parameters?.opening_statement
+								// 检查是否包含 HTML 标签
+								const hasHtmlTags = openingStatement && /<[^>]*>/g.test(openingStatement)
+								return hasHtmlTags ? (
+									<div
+										dangerouslySetInnerHTML={{
+											__html: openingStatement,
+										}}
+									/>
+								) : (
+									<div className="font-semibold text-lg truncate">{openingStatement}</div>
+								)
+							})()}
 							{/* 右侧建议选项 */}
 							{currentApp.parameters.suggested_questions?.length ? (
 								<div className="flex items-center flex-wrap w-full">
