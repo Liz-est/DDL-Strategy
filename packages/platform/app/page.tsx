@@ -1,5 +1,6 @@
 'use client'
 
+import { Spin } from 'antd'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -44,8 +45,8 @@ export default function Home() {
 
 	// 已登录的情况下，显示重定向中的提示（实际上会很快跳转）
 	return (
-		<div className="flex items-center justify-center min-h-screen">
-			<div className="text-lg text-center w-full">正在跳转到应用管理...</div>
+		<div className="flex items-center justify-center w-full min-h-full">
+			<Spin spinning />
 		</div>
 	)
 }
