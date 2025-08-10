@@ -1,6 +1,8 @@
 import { IDifyAppItem } from '@dify-chat/core'
 import { BaseRequest } from '@dify-chat/helpers'
 
+import { getDebugApps, isDebugMode } from '@/components/debug-mode'
+
 // import { uniqueId } from 'lodash-es'
 
 // 支持多种存储方式
@@ -38,11 +40,28 @@ const baseRequest = new BaseRequest({
 
 class AppService implements IAppStorageAdapter {
 	async getApps(): Promise<IDifyAppItem[]> {
+		// 检查是否开启调试模式
+		if (isDebugMode()) {
+			const debugApps = getDebugApps()
+			if (debugApps.length > 0) {
+				return debugApps
+			}
+		}
+
 		const result = await baseRequest.get('/apps')
 		return Promise.resolve(result)
 	}
 
 	async getAppByID(id: string): Promise<IDifyAppItem> {
+		// 检查是否开启调试模式
+		if (isDebugMode()) {
+			const debugApps = getDebugApps()
+			const debugApp = debugApps.find(app => app.id === id)
+			if (debugApp) {
+				return debugApp
+			}
+		}
+
 		const appList = await this.getApps()
 		return Promise.resolve(appList.find(item => item.id === id) as IDifyAppItem)
 	}

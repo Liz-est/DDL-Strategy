@@ -1,0 +1,244 @@
+import { BugOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
+import { IDifyAppItem } from '@dify-chat/core'
+import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
+import { uniqueId } from 'lodash-es'
+import React, { useEffect, useState } from 'react'
+
+const { TextArea } = Input
+const { Text } = Typography
+
+// localStorage 键名
+const DEBUG_APPS_KEY = 'dify_debug_apps'
+
+interface DebugModeProps {
+	className?: string
+}
+
+/**
+ * 检查URL参数是否开启调试模式
+ */
+const isDebugModeFromURL = (): boolean => {
+	const urlParams = new URLSearchParams(window.location.search)
+	return urlParams.get('isDebug') === 'true'
+}
+
+/**
+ * 调试模式组件
+ */
+const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
+	const [drawerOpen, setDrawerOpen] = useState(false)
+	const [form] = Form.useForm()
+
+	// 检查是否应该显示调试按钮
+	const shouldShowDebugButton = isDebugModeFromURL()
+
+	useEffect(() => {
+		if (drawerOpen) {
+			// 打开抽屉时，加载当前的调试配置
+			const debugApps = getDebugApps()
+			if (debugApps.length > 0) {
+				form.setFieldsValue({
+					debugApps: JSON.stringify(debugApps, null, 2),
+				})
+			}
+		}
+	}, [drawerOpen, form])
+
+	/**
+	 * 保存调试配置
+	 */
+	const handleSaveConfig = async () => {
+		try {
+			const values = await form.validateFields()
+			const debugAppsText = values.debugApps?.trim()
+
+			if (!debugAppsText) {
+				localStorage.removeItem(DEBUG_APPS_KEY)
+				message.success('调试配置已清空')
+				return
+			}
+
+			// 验证 JSON 格式
+			const apps = JSON.parse(debugAppsText)
+
+			// 验证应用配置格式
+			if (!Array.isArray(apps)) {
+				throw new Error('配置必须是数组格式')
+			}
+
+			// 为每个应用添加 ID（如果没有的话）
+			const appsWithId = apps.map(app => ({
+				...app,
+				id: app.id || uniqueId('debug_app_'),
+			}))
+
+			localStorage.setItem(DEBUG_APPS_KEY, JSON.stringify(appsWithId))
+			message.success('调试配置保存成功')
+
+			// 刷新页面以应用新配置
+			window.location.reload()
+		} catch (error) {
+			message.error(`配置格式错误: ${error instanceof Error ? error.message : '未知错误'}`)
+		}
+	}
+
+	/**
+	 * 获取默认配置模板
+	 */
+	const getDefaultConfig = () => {
+		return `[
+  {
+    "info": {
+      "name": "调试应用示例",
+      "description": "这是一个调试模式下的示例应用",
+      "tags": ["调试", "示例"],
+      "mode": "chatbot"
+    },
+    "requestConfig": {
+      "apiBase": "https://api.dify.ai/v1",
+      "apiKey": "app-your-api-key-here"
+    }
+  }
+]`
+	}
+
+	// 如果URL中没有isDebug=true参数，不显示调试按钮
+	if (!shouldShowDebugButton) {
+		return null
+	}
+
+	return (
+		<>
+			<FloatButton
+				className={className}
+				icon={<BugOutlined />}
+				onClick={() => setDrawerOpen(true)}
+				tooltip="调试模式"
+				type="primary"
+			/>
+
+			<Drawer
+				title={
+					<div className="flex items-center">
+						<BugOutlined className="mr-2" />
+						调试模式配置
+					</div>
+				}
+				width={600}
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				extra={
+					<Button
+						icon={<CloseOutlined />}
+						onClick={() => setDrawerOpen(false)}
+					>
+						关闭
+					</Button>
+				}
+			>
+				<div className="space-y-6">
+					{/* 应用配置编辑 */}
+					<div>
+						<div className="font-semibold text-base">应用配置</div>
+						<Text
+							type="secondary"
+							className="block mb-3"
+						>
+							请输入 JSON 格式的应用配置数组。每个应用需要包含 info 和 requestConfig 字段。
+						</Text>
+
+						<Form
+							form={form}
+							layout="vertical"
+						>
+							<Form.Item
+								name="debugApps"
+								rules={[
+									{
+										validator: async (_, value) => {
+											if (!value?.trim()) return
+											try {
+												const parsed = JSON.parse(value)
+												if (!Array.isArray(parsed)) {
+													throw new Error('必须是数组格式')
+												}
+											} catch {
+												throw new Error('JSON 格式错误')
+											}
+										},
+									},
+								]}
+							>
+								<TextArea
+									rows={15}
+									placeholder={getDefaultConfig()}
+									className="font-mono text-sm"
+								/>
+							</Form.Item>
+						</Form>
+
+						<Space className="w-full justify-between">
+							<Button
+								onClick={() => {
+									form.setFieldsValue({
+										debugApps: getDefaultConfig(),
+									})
+								}}
+							>
+								使用示例配置
+							</Button>
+							<Button
+								type="primary"
+								icon={<SaveOutlined />}
+								onClick={handleSaveConfig}
+							>
+								保存配置
+							</Button>
+						</Space>
+					</div>
+
+					{/* 使用说明 */}
+					<div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+						<div className="font-semibold !mb-2 text-base">使用说明</div>
+						<div className="text-sm space-y-1 text-gray-600 dark:text-gray-300">
+							<div>• 在URL中添加 ?isDebug=true 参数才会显示调试按钮</div>
+							<div>• 调试模式开启后，应用列表将显示本地配置的应用</div>
+							<div>• 配置格式需要符合 IDifyAppItem 接口规范</div>
+							<div>• 保存配置后页面会自动刷新以应用新设置</div>
+						</div>
+					</div>
+				</div>
+			</Drawer>
+		</>
+	)
+}
+
+/**
+ * 获取调试模式状态
+ */
+export const isDebugMode = (): boolean => {
+	return isDebugModeFromURL()
+}
+
+/**
+ * 获取调试应用配置
+ */
+export const getDebugApps = (): IDifyAppItem[] => {
+	if (!isDebugMode()) {
+		return []
+	}
+
+	const debugApps = localStorage.getItem(DEBUG_APPS_KEY)
+	if (!debugApps) {
+		return []
+	}
+
+	try {
+		return JSON.parse(debugApps)
+	} catch (err) {
+		console.error('解析调试应用配置失败:', err)
+		return []
+	}
+}
+
+export default DebugMode

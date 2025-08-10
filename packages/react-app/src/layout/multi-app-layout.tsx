@@ -1,5 +1,4 @@
 import { DownCircleTwoTone } from '@ant-design/icons'
-import { LucideIcon } from '@/components'
 import {
 	AppContextProvider,
 	DEFAULT_APP_SITE_SETTING,
@@ -13,13 +12,18 @@ import { useHistory, useParams } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
+import { DebugMode, LucideIcon } from '@/components'
 import { useAuth } from '@/hooks/use-auth'
 import appService from '@/services/app'
 import { createDifyApiInstance, DifyApi } from '@/utils/dify-api'
 
 import MainLayout from './main-layout'
 
-const MultiAppLayout = () => {
+interface IMultiAppLayoutProps {
+	children: React.ReactNode
+}
+
+const MultiAppLayout: React.FC<IMultiAppLayoutProps> = ({ children: _children }) => {
 	const history = useHistory()
 	const { userId } = useAuth()
 
@@ -160,72 +164,75 @@ const MultiAppLayout = () => {
 				setCurrentApp,
 			}}
 		>
-			<MainLayout
-				difyApi={difyApi}
-				initLoading={initLoading}
-				renderCenterTitle={() => {
-					return (
-						<div className="flex items-center overflow-hidden">
-							<LucideIcon
-								name="layout-grid"
-								size={16}
-								className="mr-1"
-							/>
-							<span
-								className="cursor-pointer inline-block shrink-0"
-								onClick={() => {
-									history.push('/apps')
-								}}
-							>
-								应用列表
-							</span>
-							{selectedAppId ? (
-								<div className="flex items-center overflow-hidden">
-									<div className="mx-2 font-normal text-desc">/</div>
-									<Dropdown
-										arrow
-										placement="bottom"
-										trigger={['click']}
-										menu={{
-											selectedKeys: [selectedAppId],
-											items: [
-												...(appList?.map(item => {
-													const isSelected = selectedAppId === item.id
-													return {
-														key: item.id,
-														label: (
-															<div className={isSelected ? 'text-primary' : 'text-theme-text'}>
-																{item.info.name}
-															</div>
-														),
-														onClick: () => {
-															history.push(`/app/${item.id}`)
-															setSelectedAppId(item.id)
-														},
-														icon: (
-															<LucideIcon
-																name="bot"
-																size={18}
-															/>
-														),
-													}
-												}) || []),
-											],
-										}}
-									>
-										<div className="cursor-pointer flex-1 flex items-center overflow-hidden">
-											<span className="cursor-pointer w-full inline-block truncate">
-												{currentApp?.config?.info?.name}
-											</span>
-											<DownCircleTwoTone className="ml-1" />
-										</div>
-									</Dropdown>
-								</div>
-							) : null}
-						</div>
-					)
-				}}
-			/>
+			<>
+				<MainLayout
+					difyApi={difyApi}
+					initLoading={initLoading}
+					renderCenterTitle={() => {
+						return (
+							<div className="flex items-center overflow-hidden">
+								<LucideIcon
+									name="layout-grid"
+									size={16}
+									className="mr-1"
+								/>
+								<span
+									className="cursor-pointer inline-block shrink-0"
+									onClick={() => {
+										history.push('/apps')
+									}}
+								>
+									应用列表
+								</span>
+								{selectedAppId ? (
+									<div className="flex items-center overflow-hidden">
+										<div className="mx-2 font-normal text-desc">/</div>
+										<Dropdown
+											arrow
+											placement="bottom"
+											trigger={['click']}
+											menu={{
+												selectedKeys: [selectedAppId],
+												items: [
+													...(appList?.map(item => {
+														const isSelected = selectedAppId === item.id
+														return {
+															key: item.id,
+															label: (
+																<div className={isSelected ? 'text-primary' : 'text-theme-text'}>
+																	{item.info.name}
+																</div>
+															),
+															onClick: () => {
+																history.push(`/app/${item.id}`)
+																setSelectedAppId(item.id)
+															},
+															icon: (
+																<LucideIcon
+																	name="bot"
+																	size={18}
+																/>
+															),
+														}
+													}) || []),
+												],
+											}}
+										>
+											<div className="cursor-pointer flex-1 flex items-center overflow-hidden">
+												<span className="cursor-pointer w-full inline-block truncate">
+													{currentApp?.config?.info?.name}
+												</span>
+												<DownCircleTwoTone className="ml-1" />
+											</div>
+										</Dropdown>
+									</div>
+								) : null}
+							</div>
+						)
+					}}
+				/>
+				<DebugMode />
+			</>
 		</AppContextProvider>
 	)
 }
