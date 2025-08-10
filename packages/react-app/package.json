@@ -21,7 +21,6 @@
 		"@dify-chat/helpers": "workspace:^",
 		"@dify-chat/theme": "workspace:^",
 		"@heroicons/react": "catalog:",
-		"@rybbit/js": "catalog:",
 		"@svgdotjs/svg.js": "catalog:",
 		"@toolkit-fe/clipboard": "catalog:",
 		"@toolkit-fe/where-am-i": "catalog:",
