@@ -18,6 +18,7 @@ export default defineConfig({
 	},
 	html: {
 		template: path.resolve(__dirname, './public/template.html'),
+		favicon: path.resolve(__dirname, './public/logo.png'),
 	},
 	plugins: [
 		pluginSourceBuild(),
