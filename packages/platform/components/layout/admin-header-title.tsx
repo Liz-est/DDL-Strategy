@@ -1,6 +1,6 @@
 'use client'
 
-import { AppstoreOutlined, LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons'
 import { Button, Dropdown, message, Segmented, Space } from 'antd'
 import { signOut, useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
@@ -31,12 +31,6 @@ const TopMenuOptions: ITopMenuOption[] = [
 		icon: <UserOutlined />,
 		value: ETopMenuKeys.UserManagement,
 		route: '/user-management',
-	},
-	{
-		label: '系统配置',
-		icon: <SettingOutlined />,
-		value: ETopMenuKeys.SystemConfig,
-		route: '/system-config',
 	},
 ]
 

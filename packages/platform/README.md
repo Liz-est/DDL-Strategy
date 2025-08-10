@@ -177,7 +177,6 @@ packages/platform/
 │   ├── login/            # 登录页面
 │   ├── app-management/   # 应用管理页面
 │   ├── user-management/  # 用户管理页面
-│   └── system-config/    # 系统配置页面
 └── components/           # UI 组件
     ├── layout/           # 布局组件
     └── ui/               # 基础 UI 组件
