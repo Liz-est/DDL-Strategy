@@ -14,7 +14,7 @@ export function dbAppToAppItem(dbApp: DifyApp): IDifyAppItem {
 			description: dbApp.description || '',
 			tags: dbApp.tags ? JSON.parse(dbApp.tags) : [],
 		},
-		isEnabled: dbApp.isEnabled || 1,
+		isEnabled: (dbApp.isEnabled || 1) as 1 | 2,
 		requestConfig: {
 			apiBase: dbApp.apiBase,
 			apiKey: dbApp.apiKey,

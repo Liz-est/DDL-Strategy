@@ -126,7 +126,8 @@ export default function UserManagementPage() {
 					>
 						编辑
 					</Button>
-					{record.id !== session?.user?.id && (
+					{/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+					{record.id !== (session?.user as any)?.id && (
 						<Popconfirm
 							title="确认删除"
 							description="确定要删除这个用户吗？此操作不可恢复。"

@@ -1,14 +1,14 @@
 import bcrypt from 'bcryptjs'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 interface RouteParams {
-	params: {
+	params: Promise<{
 		id: string
-	}
+	}>
 }
 
 // 更新用户
@@ -20,7 +20,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 			return NextResponse.json({ message: '未授权' }, { status: 401 })
 		}
 
-		const { id } = params
+		const { id } = await params
 		const { name, email, password } = await request.json()
 
 		if (!name || !email) {
@@ -49,6 +49,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 		const updateData = {
 			name,
 			email,
+			password: '',
 		}
 
 		// 如果提供了密码，则更新密码
@@ -79,13 +80,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // 删除用户
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
 	try {
-		const session = await getServerSession(authOptions)
+		const session = (await getServerSession(authOptions)) as { user: { id: string } }
 
 		if (!session) {
 			return NextResponse.json({ message: '未授权' }, { status: 401 })
 		}
 
-		const { id } = params
+		const { id } = await params
 
 		// 检查是否尝试删除自己
 		if (session.user?.id === id) {
