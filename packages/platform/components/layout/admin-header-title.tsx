@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react'
 enum ETopMenuKeys {
 	AppManagement = 'app-management',
 	UserManagement = 'user-management',
-	SystemConfig = 'system-config',
 }
 
 interface ITopMenuOption {
