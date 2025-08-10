@@ -10,7 +10,7 @@
 
 **想要了解更多，可以访问 https://docs.dify-chat.lexmin.cn/ 查看使用文档。**
 
-| 加群沟通（加个人微信备注来意） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
+| 加群沟通（人数已超只能邀请，加我微信备注来意） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
 | --- | --- |
 | <img src="https://github.com/user-attachments/assets/63daca4a-5583-487b-9329-aed87decc61a" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
 
