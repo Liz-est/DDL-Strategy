@@ -3,8 +3,8 @@ import { defineConfig } from 'rspress/config';
 
 export default defineConfig({
 	root: path.join(__dirname, 'docs'),
-	title: 'Dify Chat 文档',
-	icon: '/rspress-icon.png',
+	title: 'Dify Chat Docs',
+	icon: '/logo.png',
 	multiVersion: {
 		default: 'Latest',
 		versions: ['Latest', 'v0.4.0'],
