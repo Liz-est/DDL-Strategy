@@ -31,7 +31,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 	const [form] = Form.useForm()
 
 	// 检查是否应该显示调试按钮
-	const shouldShowDebugButton = isDebugModeFromURL()
+	const shouldShowDebugButton = isDebugMode()
 
 	useEffect(() => {
 		if (shouldShowDebugButton) {
