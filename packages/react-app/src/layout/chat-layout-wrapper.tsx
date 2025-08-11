@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import { DebugMode, LucideIcon } from '@/components'
+import { isDebugMode } from '@/components/debug-mode'
 import { useAuth } from '@/hooks/use-auth'
 import appService from '@/services/app'
 import { createDifyApiInstance, DifyApi } from '@/utils/dify-api'
@@ -110,11 +111,17 @@ const MultiAppLayout = () => {
 		if (!appItem) {
 			return
 		}
-		difyApi.updateOptions({
-			user: userId,
-			...appItem.requestConfig,
-			apiBase: `/${selectedAppId}`,
-		})
+		const newOptions = isDebugMode()
+			? {
+					user: userId,
+					...appItem.requestConfig,
+				}
+			: {
+					user: userId,
+					...appItem.requestConfig,
+					apiBase: `/${selectedAppId}`,
+				}
+		difyApi.updateOptions(newOptions)
 		setInitLoading(true)
 		// 获取应用参数
 		const getParameters = () => getAppParameters(difyApi)
