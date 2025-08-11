@@ -4,40 +4,25 @@ import { useIsMobile } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Col, Empty, message, Row } from 'antd'
 import { useHistory } from 'pure-react-router'
-import { useEffect } from 'react'
 
 import { DebugMode, HeaderLayout, LucideIcon } from '@/components'
-import { difyChatRuntimeConfig } from '@/config/global'
 import appService from '@/services/app'
 
 export default function AppListPage() {
 	const history = useHistory()
-	const mode = difyChatRuntimeConfig.get().runningMode
 	const isMobile = useIsMobile()
 
-	const { runAsync: getAppList, data: list } = useRequest(
+	const { data: list } = useRequest(
 		() => {
 			return appService.getApps()
 		},
 		{
-			manual: true,
 			onError: error => {
 				message.error(`获取应用列表失败: ${error}`)
 				console.error(error)
 			},
 		},
 	)
-
-	useEffect(() => {
-		if (mode === 'multiApp') {
-			getAppList()
-		} else {
-			// FIXME: 若不加定时器，URL 会更新但是页面 UI 仍然停在当前页面
-			setTimeout(() => {
-				history.push('/chat')
-			}, 200)
-		}
-	}, [])
 
 	return (
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">

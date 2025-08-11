@@ -2,16 +2,14 @@ import { useMount } from 'ahooks'
 import { Route, useHistory, useSearchParams } from 'pure-react-router'
 import { useEffect, useState } from 'react'
 
-import { difyChatRuntimeConfig } from '@/config/global'
 import { useAuth } from '@/hooks/use-auth'
 import { useRedirect2Index } from '@/hooks/use-jump'
 import { useGlobalStore } from '@/store'
 
 const RedirectWrapper = () => {
 	const history = useHistory()
-	const mode = difyChatRuntimeConfig.get().runningMode
 	const { isAuthorized, goAuthorize } = useAuth()
-	const redirect2Index = useRedirect2Index(mode)
+	const redirect2Index = useRedirect2Index()
 
 	useEffect(() => {
 		const pathname = history.location.pathname
@@ -25,7 +23,7 @@ const RedirectWrapper = () => {
 		if (pathname === '' || pathname === '/') {
 			redirect2Index()
 		}
-	}, [history.location.pathname, mode, isAuthorized])
+	}, [history.location.pathname, isAuthorized])
 
 	return <Route />
 }

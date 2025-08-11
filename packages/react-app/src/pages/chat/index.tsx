@@ -1,13 +1,5 @@
-import { difyChatRuntimeConfig } from '@/config/global'
-import MultiAppLayout from '@/layout/multi-app-layout'
-import SingleAppLayout from '@/layout/single-app-layout'
+import MultiAppLayout from '@/layout/chat-layout-wrapper'
 
 export default function ChatPage() {
-	const mode = difyChatRuntimeConfig.get().runningMode
-
-	if (mode === 'singleApp') {
-		return <SingleAppLayout />
-	}
-
 	return <MultiAppLayout />
 }

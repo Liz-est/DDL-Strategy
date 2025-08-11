@@ -1,17 +1,15 @@
-import { Logo } from '@/components'
 import { LocalStorageKeys, LocalStorageStore } from '@dify-chat/helpers'
 import FingerPrintJS from '@fingerprintjs/fingerprintjs'
 import { useMount } from 'ahooks'
 import { Spin } from 'antd'
 
-import { difyChatRuntimeConfig } from '@/config/global'
+import { Logo } from '@/components'
 import { useAuth } from '@/hooks/use-auth'
 import { useRedirect2Index } from '@/hooks/use-jump'
 
 export default function AuthPage() {
 	const { userId } = useAuth()
-	const mode = difyChatRuntimeConfig.get().runningMode
-	const redirect2Index = useRedirect2Index(mode)
+	const redirect2Index = useRedirect2Index()
 
 	/**
 	 * 模拟登录接口

@@ -19,11 +19,7 @@ import { createDifyApiInstance, DifyApi } from '@/utils/dify-api'
 
 import MainLayout from './main-layout'
 
-interface IMultiAppLayoutProps {
-	children: React.ReactNode
-}
-
-const MultiAppLayout: React.FC<IMultiAppLayoutProps> = ({ children: _children }) => {
+const MultiAppLayout = () => {
 	const history = useHistory()
 	const { userId } = useAuth()
 
