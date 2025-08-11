@@ -8,7 +8,8 @@ const { TextArea } = Input
 const { Text } = Typography
 
 // localStorage 键名
-const DEBUG_APPS_KEY = 'dify_debug_apps'
+const DEBUG_APPS_KEY = '__DC__DEBUG_APPS'
+const DEBUG_MODE_KEY = '__DC__DEBUG_MODE'
 
 interface DebugModeProps {
 	className?: string
@@ -31,6 +32,12 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 
 	// 检查是否应该显示调试按钮
 	const shouldShowDebugButton = isDebugModeFromURL()
+
+	useEffect(() => {
+		if (shouldShowDebugButton) {
+			sessionStorage.setItem(DEBUG_MODE_KEY, 'true')
+		}
+	}, [shouldShowDebugButton])
 
 	useEffect(() => {
 		if (drawerOpen) {
@@ -217,7 +224,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
  * 获取调试模式状态
  */
 export const isDebugMode = (): boolean => {
-	return isDebugModeFromURL()
+	return sessionStorage.getItem(DEBUG_MODE_KEY) === 'true' || isDebugModeFromURL()
 }
 
 /**
