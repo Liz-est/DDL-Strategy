@@ -1,6 +1,9 @@
 import { IAgentThought, IFileType, IRetrieverResource } from '@dify-chat/api'
+import { DifyApi as DirectDifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyAppSiteSetting } from '@dify-chat/core'
 import { BaseRequest as XRequest } from '@dify-chat/helpers'
+
+import { isDebugMode } from '@/components/debug-mode'
 
 /**
  * 用户输入表单控件类型
@@ -723,5 +726,8 @@ export class DifyApi {
  * 创建 Dify API 实例
  */
 export const createDifyApiInstance = (options: IDifyApiOptions) => {
+	if (isDebugMode()) {
+		return new DirectDifyApi(options)
+	}
 	return new DifyApi(options)
 }
