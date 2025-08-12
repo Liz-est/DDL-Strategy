@@ -93,20 +93,24 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 	 * 获取默认配置模板
 	 */
 	const getDefaultConfig = () => {
-		return `[
-  {
-    "info": {
-      "name": "调试应用示例",
-      "description": "这是一个调试模式下的示例应用",
-      "tags": ["调试", "示例"],
-      "mode": "chatbot"
-    },
-    "requestConfig": {
-      "apiBase": "https://api.dify.ai/v1",
-      "apiKey": "app-your-api-key-here"
-    }
-  }
-]`
+		return JSON.stringify(
+			[
+				{
+					info: {
+						name: '调试应用示例',
+						description: '这是一个调试模式下的示例应用',
+						tags: ['调试', '示例'],
+						mode: 'advanced-chat',
+					},
+					requestConfig: {
+						apiBase: 'https://api.dify.ai/v1',
+						apiKey: 'app-your-api-key-here',
+					},
+				},
+			] as IDifyAppItem[],
+			null,
+			2,
+		)
 	}
 
 	// 如果URL中没有isDebug=true参数，不显示调试按钮
