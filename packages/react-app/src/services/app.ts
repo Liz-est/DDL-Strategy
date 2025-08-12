@@ -43,9 +43,7 @@ class AppService implements IAppStorageAdapter {
 		// 检查是否开启调试模式
 		if (isDebugMode()) {
 			const debugApps = getDebugApps()
-			if (debugApps.length > 0) {
-				return debugApps
-			}
+			return debugApps
 		}
 
 		const result = await baseRequest.get('/apps')
