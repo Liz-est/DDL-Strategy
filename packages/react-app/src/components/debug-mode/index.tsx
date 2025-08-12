@@ -1,4 +1,4 @@
-import { BugOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
+import { BugOutlined, ClearOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
 import { IDifyAppItem } from '@dify-chat/core'
 import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
 import { uniqueId } from 'lodash-es'
@@ -197,6 +197,18 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 								}}
 							>
 								使用示例配置
+							</Button>
+							<Button
+								type="default"
+								icon={<ClearOutlined />}
+								onClick={() => {
+									localStorage.removeItem(DEBUG_APPS_KEY)
+									sessionStorage.removeItem(DEBUG_MODE_KEY)
+									message.success('调试配置已清空')
+									window.location.href = '/dify-chat/apps'
+								}}
+							>
+								退出调试模式
 							</Button>
 							<Button
 								type="primary"
