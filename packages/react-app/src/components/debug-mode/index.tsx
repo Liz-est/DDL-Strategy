@@ -198,18 +198,20 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 							>
 								使用示例配置
 							</Button>
-							<Button
-								type="default"
-								icon={<ClearOutlined />}
-								onClick={() => {
-									localStorage.removeItem(DEBUG_APPS_KEY)
-									sessionStorage.removeItem(DEBUG_MODE_KEY)
-									message.success('调试配置已清空')
-									window.location.href = '/dify-chat/apps'
-								}}
-							>
-								退出调试模式
-							</Button>
+							{!isAlwaysDebugMode() && (
+								<Button
+									type="default"
+									icon={<ClearOutlined />}
+									onClick={() => {
+										localStorage.removeItem(DEBUG_APPS_KEY)
+										sessionStorage.removeItem(DEBUG_MODE_KEY)
+										message.success('调试配置已清空')
+										window.location.href = '/dify-chat/apps'
+									}}
+								>
+									退出调试模式
+								</Button>
+							)}
 							<Button
 								type="primary"
 								icon={<SaveOutlined />}
@@ -237,9 +239,22 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 }
 
 /**
+ * 检查是否固定调试模式
+ * 当环境变量中设置了 PUBLIC_DEBUG_MODE 为 true 时，调试模式固定为开启状态，不可退出
+ */
+export const isAlwaysDebugMode = (): boolean => {
+	return process.env.PUBLIC_DEBUG_MODE === 'true'
+}
+
+/**
  * 获取调试模式状态
  */
 export const isDebugMode = (): boolean => {
+	// 如果环境变量中设置了调试模式，则固定返回 true
+	if (isAlwaysDebugMode()) {
+		return true
+	}
+	// 否则，从 URL 或者 SessionStorage 中读取
 	return sessionStorage.getItem(DEBUG_MODE_KEY) === 'true' || isDebugModeFromURL()
 }
 
