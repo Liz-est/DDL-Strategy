@@ -1,6 +1,6 @@
 # 30 秒试用
 
-为方便演示，我们在 Github Pages 上部署了一个多应用模式的 React SPA 版本，你可以访问 https://lexmin0412.github.io/dify-chat/ 体验。
+为方便演示，我们在 Github Pages 上部署了一个前端应用，你可以访问 https://lexmin0412.github.io/dify-chat/?isDebug=true 来通过调试模式体验。
 
 点击以上链接，你会看到应用列表的初始界面：
 
