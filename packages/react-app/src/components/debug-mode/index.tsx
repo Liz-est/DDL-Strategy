@@ -97,7 +97,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 			message.success('调试配置保存成功')
 
 			// 刷新页面以应用新配置
-			window.location.reload()
+			window.location.href = '/dify-chat'
 		} catch (error) {
 			message.error(`配置格式错误: ${error instanceof Error ? error.message : '未知错误'}`)
 		}
