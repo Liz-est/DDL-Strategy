@@ -63,6 +63,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 			if (!debugAppsText) {
 				localStorage.removeItem(DEBUG_APPS_KEY)
 				message.success('调试配置已清空')
+				window.location.href = '/dify-chat'
 				return
 			}
 
@@ -206,20 +207,20 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 							>
 								使用示例配置
 							</Button>
-							{!isAlwaysDebugMode() && (
-								<Button
-									type="default"
-									icon={<ClearOutlined />}
-									onClick={() => {
-										localStorage.removeItem(DEBUG_APPS_KEY)
-										sessionStorage.removeItem(DEBUG_MODE_KEY)
-										message.success('调试配置已清空')
-										window.location.href = '/dify-chat/apps'
-									}}
-								>
-									退出调试模式
-								</Button>
-							)}
+							<Button
+								type="default"
+								icon={<ClearOutlined />}
+								onClick={() => {
+									localStorage.removeItem(DEBUG_APPS_KEY)
+									sessionStorage.removeItem(DEBUG_MODE_KEY)
+									message.success('调试配置已清空')
+									setTimeout(() => {
+										window.location.href = '/dify-chat'
+									}, 1000)
+								}}
+							>
+								{isAlwaysDebugMode() ? '清空调试配置' : '退出调试模式'}
+							</Button>
 							<Button
 								type="primary"
 								icon={<SaveOutlined />}
