@@ -1,6 +1,7 @@
 import { BugOutlined, ClearOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
 import { createDifyApiInstance } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
+import { useRequest } from 'ahooks'
 import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
 import { uniqueId } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
@@ -52,6 +53,56 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 		}
 	}, [drawerOpen, form])
 
+	const { loading: saveDebugAppsLoading, runAsync: saveDebugApps } = useRequest(
+		async (debugAppsText: string) => {
+			// 验证 JSON 格式
+			return new Promise((resolve, reject) => {
+				const apps = JSON.parse(debugAppsText)
+
+				// 验证应用配置格式
+				if (!Array.isArray(apps)) {
+					throw new Error('配置必须是数组格式')
+				}
+
+				// 为每个应用添加 ID（如果没有的话）
+				const appsWithId = apps.map(app => ({
+					...app,
+					id: app.id || uniqueId('debug_app_'),
+				}))
+				const appInfoMap = new Map()
+				// 遍历配置列表，根据 requestConfig 获取应用基本信息
+				const appInfoPromised = appsWithId?.map(item => {
+					const appDifyApi = createDifyApiInstance(item.requestConfig)
+					return () =>
+						appDifyApi.getAppInfo().then(res => {
+							appInfoMap.set(item.id, res)
+						})
+				})
+				Promise.all(appInfoPromised.map(item => item()))
+					.then(() => {
+						appsWithId.forEach(item => {
+							item.info = appInfoMap.get(item.id)
+						})
+						localStorage.setItem(DEBUG_APPS_KEY, JSON.stringify(appsWithId))
+						resolve()
+					})
+					.catch(err => {
+						reject(err)
+					})
+			}) as Promise<void>
+		},
+		{
+			manual: true,
+			onSuccess: () => {
+				message.success('调试配置保存成功')
+				setTimeout(() => {
+					// 刷新页面以应用新配置
+					window.location.href = '/dify-chat'
+				}, 1000)
+			},
+		},
+	)
+
 	/**
 	 * 保存调试配置
 	 */
@@ -63,42 +114,13 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 			if (!debugAppsText) {
 				localStorage.removeItem(DEBUG_APPS_KEY)
 				message.success('调试配置已清空')
-				window.location.href = '/dify-chat'
+				setTimeout(() => {
+					window.location.href = '/dify-chat'
+				}, 1000)
 				return
 			}
 
-			// 验证 JSON 格式
-			const apps = JSON.parse(debugAppsText)
-
-			// 验证应用配置格式
-			if (!Array.isArray(apps)) {
-				throw new Error('配置必须是数组格式')
-			}
-
-			// 为每个应用添加 ID（如果没有的话）
-			const appsWithId = apps.map(app => ({
-				...app,
-				id: app.id || uniqueId('debug_app_'),
-			}))
-			const appInfoMap = new Map()
-			// 遍历配置列表，根据 requestConfig 获取应用基本信息
-			const appInfoPromised = appsWithId?.map(item => {
-				const appDifyApi = createDifyApiInstance(item.requestConfig)
-				return () =>
-					appDifyApi.getAppInfo().then(res => {
-						appInfoMap.set(item.id, res)
-					})
-			})
-			await Promise.all(appInfoPromised.map(item => item()))
-			appsWithId.forEach(item => {
-				item.info = appInfoMap.get(item.id)
-			})
-
-			localStorage.setItem(DEBUG_APPS_KEY, JSON.stringify(appsWithId))
-			message.success('调试配置保存成功')
-
-			// 刷新页面以应用新配置
-			window.location.href = '/dify-chat'
+			await saveDebugApps(debugAppsText)
 		} catch (error) {
 			message.error(`配置格式错误: ${error instanceof Error ? error.message : '未知错误'}`)
 		}
@@ -224,6 +246,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 							<Button
 								type="primary"
 								icon={<SaveOutlined />}
+								loading={saveDebugAppsLoading}
 								onClick={handleSaveConfig}
 							>
 								保存配置
