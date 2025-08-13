@@ -1,6 +1,8 @@
 # 30 秒试用
 
-为方便演示，我们在 Github Pages 上部署了一个前端应用，你可以访问 https://lexmin0412.github.io/dify-chat/?isDebug=true 来通过调试模式体验。
+为方便演示，我们在 Github Pages 上部署了一个调试模式的应用，你可以点击 https://lexmin0412.github.io/dify-chat 来访问。
+
+> 在调试模式下，Dify Chat 内部不会将你填入的任何信息上传到开发者服务器，所有数据都保存在本地浏览器的 localStorage 中，前端页面直接与你的 Dify API 对接。
 
 点击以上链接，你会看到应用列表的初始界面：
 
