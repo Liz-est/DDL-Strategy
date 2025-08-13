@@ -45,6 +45,21 @@ export default function AppListPage() {
 						className="px-3 md:px-6"
 					>
 						{list.map(item => {
+							if (!item.info) {
+								return (
+									<Col
+										key={item.id}
+										span={isMobile ? 24 : 6}
+									>
+										<div
+											key={item.id}
+											className={`relative group p-3 bg-theme-btn-bg border border-solid border-theme-border rounded-2xl cursor-pointer hover:border-primary hover:text-primary`}
+										>
+											应用信息缺失，请检查
+										</div>
+									</Col>
+								)
+							}
 							const hasTags = item.info.tags?.length
 							return (
 								<Col
