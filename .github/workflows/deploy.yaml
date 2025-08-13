@@ -36,9 +36,13 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pnpm install
+      # 添加 .env 的调试模式环境变量
+      - name: Add .env
+        run: |
+          echo "PUBLIC_DEBUG_MODE=true" >> packages/react-app/.env
       - name: Build with Rsbuild and Rslib
         run: |
-          pnpm run build
+          pnpm build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
