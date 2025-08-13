@@ -1,4 +1,5 @@
 import { BugOutlined, ClearOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
+import { createDifyApiInstance } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
 import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
 import { uniqueId } from 'lodash-es'
@@ -78,6 +79,19 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 				...app,
 				id: app.id || uniqueId('debug_app_'),
 			}))
+			const appInfoMap = new Map()
+			// 遍历配置列表，根据 requestConfig 获取应用基本信息
+			const appInfoPromised = appsWithId?.map(item => {
+				const appDifyApi = createDifyApiInstance(item.requestConfig)
+				return () =>
+					appDifyApi.getAppInfo().then(res => {
+						appInfoMap.set(item.id, res)
+					})
+			})
+			await Promise.all(appInfoPromised.map(item => item()))
+			appsWithId.forEach(item => {
+				item.info = appInfoMap.get(item.id)
+			})
 
 			localStorage.setItem(DEBUG_APPS_KEY, JSON.stringify(appsWithId))
 			message.success('调试配置保存成功')
@@ -96,12 +110,6 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 		return JSON.stringify(
 			[
 				{
-					info: {
-						name: '调试应用示例',
-						description: '这是一个调试模式下的示例应用',
-						tags: ['调试', '示例'],
-						mode: 'advanced-chat',
-					},
 					requestConfig: {
 						apiBase: 'https://api.dify.ai/v1',
 						apiKey: 'app-your-api-key-here',
