@@ -8,6 +8,11 @@ import {
 	IMessageFileItem,
 	IWorkflowNode,
 } from '@dify-chat/api'
+import { AppModeEnums, useAppContext } from '@dify-chat/core'
+import { copyToClipboard } from '@toolkit-fe/clipboard'
+import { Button, Empty, Form, message, Tabs } from 'antd'
+import { useState } from 'react'
+
 import {
 	AppInfo,
 	AppInputForm,
@@ -16,10 +21,6 @@ import {
 	MessageFileList,
 	WorkflowLogs,
 } from '@/components'
-import { AppModeEnums, useAppContext } from '@dify-chat/core'
-import { copyToClipboard } from '@toolkit-fe/clipboard'
-import { Button, Empty, Form, message, Tabs } from 'antd'
-import { useState } from 'react'
 
 interface IWorkflowLayoutProps {
 	difyApi: DifyApi
@@ -244,9 +245,9 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 	].filter(item => item.visible)
 
 	return (
-		<div className="block md:flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden bg-gray-50">
+		<div className="block md:flex md:items-stretch w-full h-full overflow-y-auto md:overflow-y-hidden">
 			{/* 参数填写区域 */}
-			<div className="md:flex-1 overflow-hidden border-0 border-r border-solid border-theme-border bg-theme-bg pb-6 md:pb-0">
+			<div className="md:flex-1 overflow-hidden border-0 border-r border-solid border-theme-border pb-6 md:pb-0">
 				<div className="px-2">
 					<AppInfo />
 				</div>
@@ -281,7 +282,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 
 			{/* 工作流执行输出区域 */}
 			{appMode === AppModeEnums.WORKFLOW && (
-				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto bg-theme-bg">
+				<div className="md:flex-1 px-4 pt-6 overflow-x-hidden overflow-y-auto">
 					{!workflowItems?.length && workflowStatus !== 'running' ? (
 						<div className="w-full h-full flex items-center justify-center">
 							<Empty description={`点击 "运行" 试试看, AI 会给你带来意想不到的惊喜。 `} />
