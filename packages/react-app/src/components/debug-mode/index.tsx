@@ -283,7 +283,10 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
  * 当环境变量中设置了 PUBLIC_DEBUG_MODE 为 true 时，调试模式固定为开启状态，不可退出
  */
 export const isAlwaysDebugMode = (): boolean => {
-	return process.env.PUBLIC_DEBUG_MODE === 'true'
+	if (typeof process !== 'undefined' && process.env) {
+		return process.env.PUBLIC_DEBUG_MODE === 'true'
+	}
+	return false
 }
 
 /**
