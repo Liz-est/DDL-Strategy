@@ -34,12 +34,13 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 
 	// 检查是否应该显示调试按钮
 	const shouldShowDebugButton = isDebugMode()
+	const hasDebugFromUrl = isDebugModeFromURL()
 
 	useEffect(() => {
-		if (shouldShowDebugButton) {
+		if (hasDebugFromUrl) {
 			sessionStorage.setItem(DEBUG_MODE_KEY, 'true')
 		}
-	}, [shouldShowDebugButton])
+	}, [hasDebugFromUrl])
 
 	useEffect(() => {
 		if (drawerOpen) {
@@ -283,10 +284,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
  * 当环境变量中设置了 PUBLIC_DEBUG_MODE 为 true 时，调试模式固定为开启状态，不可退出
  */
 export const isAlwaysDebugMode = (): boolean => {
-	if (typeof process !== 'undefined' && process.env) {
-		return process.env.PUBLIC_DEBUG_MODE === 'true'
-	}
-	return false
+	return process.env.PUBLIC_DEBUG_MODE === 'true'
 }
 
 /**

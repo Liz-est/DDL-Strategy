@@ -12,6 +12,9 @@ export default defineConfig({
 	source: {
 		tsconfigPath: process.env.NODE_ENV === 'development' ? tsconfigDevPath : tsconfigProdPath,
 		include: [{ not: /[\\/]core-js[\\/]/ }],
+		define: {
+			'process.env.PUBLIC_DEBUG_MODE': JSON.stringify(process.env.PUBLIC_DEBUG_MODE),
+		},
 	},
 	output: {
 		polyfill: 'entry',
