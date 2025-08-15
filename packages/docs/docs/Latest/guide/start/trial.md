@@ -2,11 +2,11 @@
 
 为方便演示，我们在 Github Pages 上部署了一个调试模式的应用，你可以点击 https://lexmin0412.github.io/dify-chat 来访问。
 
-> 在调试模式下，Dify Chat 内部不会将你填入的任何信息上传到开发者服务器，所有数据都保存在本地浏览器的 localStorage 中，前端页面直接与你的 Dify API 对接。
+> 在调试模式下，Dify Chat 不会将你填入的任何信息上传到开发者服务器，所有数据都缓存在本地，前端页面直接与 Dify API 对接，你可以放心体验。
 
-点击以上链接，你会看到应用列表的初始界面：
+进入演示站点后，你会看到应用列表的初始界面, 页面右下角有一个调试按钮。
 
-![初始界面](/apps_init.png)
+![初始界面](/guide__debug_mode_main.png)
 
 ## 准备
 
@@ -36,28 +36,24 @@
 - API Base: `https://api.dify.ai/v1` OR `${SELF_HOSTED_API_DOMAIN}/v1`
 - API Key: `app-YOUR_API_KEY`
 
-## 添加应用配置
+## 填写应用配置
 
-点击页面底部的 "添加应用配置" 按钮：
+点击页面右下角的 "调试按钮"：
 
-![添加应用配置按钮](/guide_mtapp_setting.png)
+![调试模式按钮](/guide__debug_mode_button.png)
 
-依次填入应用信息：
+可以看到调试模式的数据配置抽屉, 点击输入框下方的 "使用示例配置" 按钮：
 
-- 请求配置：在上一步中获取的 API Base 和 API Secret
-- 应用类型：默认是聊天助手，如果是其他类型应用，需要切换到对应的类型
-- 其他配置非必需，先保持默认值，后续需要再编辑即可
+![使用示例配置按钮](/guide__debug_mode_use_sample_data_button.png)
 
-![添加应用配置抽屉-已填入信息](/guide_mtapp_setting_add_fulfilled.png)
+依次填入你的 apiBase 和 apiKey：
 
-点击确定按钮，提示 “添加配置成功”，在应用列表中会多出一条数据：
+![添加应用配置抽屉-填入信息](/guide__debug_mode_data_fulfilled.png)
 
-![添加应用配置成功](/guide_mtapp_setting_add_success.png)
+点击下方的 "保存配置" 按钮，提示 “调试配置保存成功”，在应用列表中会多出一条数据：
 
-此时你可以点击应用卡片右上角的 "更多" 图标，对应用进行编辑和删除操作：
-
-![应用卡片操作](/guide_mtapp_app_actions.png)
+![调试配置保存成功](/guide__debug_mode_save_success.png)
 
 点击应用卡片，即可进入应用详情页开始对话了～
 
-![主界面](/guide_mtapp_main.png)
+![主界面](/guide__sample_chat_main.png)
