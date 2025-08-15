@@ -6,17 +6,6 @@
 
 ![Dify Chat](/banner.png)
 
-## 技术栈
-
-- React v19
-- Next.js v15
-- Ant Design v5
-- Ant Design X v1
-- Rsbuild v1
-- Tailwind CSS v3
-- TypeScript v5
-- Pnpm v10
-
 ## 为什么选择 Dify Chat
 
 如果需要使用 Dify, 但官方 Web 应用的功能不满足需求，或者需要自定义界面，你会怎么选？
@@ -49,7 +38,7 @@ Dify Chat 采用 MIT 开源协议，所有源代码完全开放。你可以：
 
 ### 灵活架构
 
-Dify Chat 使用前后端分离的设计，充分考虑了性能、可扩展性和维护成本，分成两个子包：
+Dify Chat 使用前后端分离的设计，充分考虑了用户体验、可扩展性和维护成本，分成两个子包：
 
 - React APP，纯前端应用，提供了直接对接 Dify API 的能力，你只需要填入应用配置，即可直接使用
 - Platform，平台应用，提供了应用配置管理、数据存储和 Dify API 代理等功能，适合对安全性、稳定性要求更高的场景
@@ -79,3 +68,14 @@ Dify Chat 支持多种内容类型的渲染，让 AI 的回复更加生动和实
 **交互式元素**：支持表单等交互组件，让用户可以直接在对话界面中执行操作，提升交互效率。
 
 丰富的内容支持让你可以在 Dify 应用中进行任意编排，以最适合的方式表达信息，无论是技术文档、数据分析报告，还是创意内容创作，都能得到最佳的展示效果。
+
+## 技术栈
+
+- React v19
+- Next.js v15
+- Ant Design v5
+- Ant Design X v1
+- Rsbuild v1
+- Tailwind CSS v3
+- TypeScript v5
+- Pnpm v10

@@ -16,21 +16,21 @@ hero:
     src: /rspress-icon.png
     alt: Logo
 features:
-  - title: 低成本接入
-    details: 仅需 30 秒填写应用信息，即可开始使用，开箱即用的示例应用，助你快速体验。
-    icon: 🏃🏻‍♀️
-  - title: 多场景适用
-    details: 提供单应用、多应用模式，致力于满足不同场景下的深度应用。
+  - title: 开箱即用
+    details: 仅需一个命令即可完成所有安装和启动工作，无需复杂配置。你要做的只是：运行启动命令，填入 Dify API Key，直接开始使用。
     icon: 📦
-  - title: 功能可扩展
-    details: 源码全开放，你可以 Fork 原仓库后进行二开，扩展任意功能。
-    icon: 🎨
-  - title: 实现多样化
-    details: 提供 React SPA 和 Next.js 两种技术栈实现，满足不同开发者的喜好。
-    icon: 🌍
+  - title: 完全开源
+    details: 采用 MIT 开源协议，所有源代码完全开放。你可以 Fork 仓库，自由修改和分发，或者贡献代码，帮助项目持续完善。
+    icon: 👏
+  - title: 灵活架构
+    details: 使用前后端分离的设计，充分考虑了用户体验、可扩展性和维护成本。
+    icon: 🏠
+  - title: 响应式设计
+    details: 采用响应式设计理念，支持桌面端、平板和移动设备访问，确保在不同屏幕尺寸下都能提供一致的用户体验和功能表现
+    icon: 💻
   - title: 主题可定制
-    details: 兼容 TailwindCSS + Ant Design 设计系统，自由修改主题。
-    icon: 🌈
+    details: 基于 TailwindCSS 和 Ant Design 构建，提供了灵活的主题定制能力，让你可以根据品牌需求或个人喜好轻松调整界面风格。
+    icon: 🎨
   - title: 丰富内容支持
     details: 支持渲染图片、视频、代码、图表等丰富的交互性内容，让 AI 自由发挥。
     icon: 🔥
