@@ -82,7 +82,7 @@ export default function UserEditDrawer({
 			width={400}
 			open={visible}
 			onClose={onClose}
-			footer={
+			extra={
 				<div className="flex justify-end">
 					<Space>
 						<Button onClick={onClose}>取消</Button>
