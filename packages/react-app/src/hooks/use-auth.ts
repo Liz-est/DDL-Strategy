@@ -7,7 +7,6 @@ import { useHistory } from 'pure-react-router'
 export const useAuth = () => {
 	const history = useHistory()
 	const userId = LocalStorageStore.get(LocalStorageKeys.USER_ID)
-	const enableSetting = LocalStorageStore.get(LocalStorageKeys.ENABLE_SETTING)
 
 	/**
 	 * 跳转登录页
@@ -20,6 +19,5 @@ export const useAuth = () => {
 		isAuthorized: !!userId,
 		goAuthorize,
 		userId,
-		enableSetting,
 	}
 }

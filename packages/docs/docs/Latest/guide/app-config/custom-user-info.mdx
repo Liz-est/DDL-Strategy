@@ -2,17 +2,14 @@ import { Tab, Tabs } from 'rspress/theme';
 
 # 自定义用户信息
 
-Dify Chat 涉及到的用户信息，目前主要包含两个属性：
+Dify Chat 涉及到的用户信息，目前其实只有一个：`userId`。
 
-- 在调用大部分 Dify API 时，需要传入 `userId`，用于标识用户身份。
-- 在应用列表界面，需要通过 `enableSetting` 参数，控制是否展示应用编辑相关的功能呢
+在调用大部分 Dify API 时，需要传入 `userId`，用于标识用户身份。
 
-默认情况下，Dify Chat 会使用 `FingerprintJS` 生成一个唯一的用户 ID，并将其作为 `userId` 参数传入。同时，`enableSetting` 参数默认为 `true`。
+默认情况下，Dify Chat 会使用 `FingerprintJS` 生成一个唯一的用户 ID，并将其作为 `userId` 参数传入。
 
-如果你希望控制 `userId` 和 `enableSetting` 的生成逻辑，可以自定义登录逻辑：
+如果你有自定义的需求，可以修改授权页面的 `mockLogin` 函数，自定义 `userId` 的生成逻辑：
 
-<Tabs>
-  <Tab label="React SPA">
 ```tsx title="packages/react-app/src/pages/auth/index.tsx"
 /**
  * 模拟登录
@@ -22,23 +19,5 @@ const mockLogin = async () => {
 	const result = await fp.get()
 	return {
 		userId: result.visitorId,
-		enableSetting: true
 	}
 }
-```
-	</Tab>
-  <Tab label="Next.js">
-```tsx title="packages/nextjs-app/app/auth/login/page.tsx"
-/**
- * 模拟登录
- */
-const mockLogin = async (): Promise<{userId: string, enableSetting: boolean}> => {
-	const fp = await FingerPrintJS.load();
-	const result = await fp.get();
-	// 调用登录 server action
-	const userInfo = await loginAction(result.visitorId);
-	return userInfo
-};
-```
-	</Tab>
-</Tabs>

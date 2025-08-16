@@ -19,8 +19,6 @@ export default function AuthPage() {
 		const result = await fp.get()
 		return {
 			userId: result.visitorId,
-			// 为方便演示，默认开启设置，实际场景中需要根据用户信息判断是否开启设置
-			enableSetting: true,
 		}
 	}
 
@@ -30,7 +28,6 @@ export default function AuthPage() {
 	const handleLogin = async () => {
 		const userInfo = await mockLogin()
 		LocalStorageStore.set(LocalStorageKeys.USER_ID, userInfo.userId)
-		LocalStorageStore.set(LocalStorageKeys.ENABLE_SETTING, userInfo.enableSetting ? 'true' : '')
 		redirect2Index()
 	}
 
