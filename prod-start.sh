@@ -45,12 +45,22 @@ cd packages/platform
 # 检查生产环境配置文件
 if [ ! -f .env ]; then
     echo "创建 Platform 生产环境配置文件..."
-    cat > .env << EOF
-# Database - 生产环境请使用 PostgreSQL 或 MySQL
-DATABASE_URL="file:./prod.db"
+    touch .env
+fi
 
-EOF
-    echo "⚠️  请编辑 packages/platform/.env 文件，配置正确的生产环境参数"
+# 检查必要的环境变量
+if ! grep -q "^DATABASE_URL=" .env; then
+    echo "添加 DATABASE_URL 配置..."
+    echo "# Database - 生产环境请使用 PostgreSQL 或 MySQL" >> .env
+    echo "DATABASE_URL=\"file:./prod.db\"" >> .env
+    echo ""
+    echo "⚠️  请编辑 .env 文件中的 DATABASE_URL，配置正确的生产环境数据库连接"
+fi
+
+if ! grep -q "^NEXTAUTH_SECRET=" .env; then
+    echo "添加 NEXTAUTH_SECRET 配置..."
+    echo "NEXTAUTH_SECRET=$(openssl rand -base64 32)" >> .env
+    echo "✅ 已自动生成 NEXTAUTH_SECRET"
 fi
 
 # 生成 Prisma 客户端
