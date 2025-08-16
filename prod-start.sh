@@ -43,26 +43,14 @@ echo "⚙️ 配置 Platform 环境..."
 cd packages/platform
 
 # 检查生产环境配置文件
-if [ ! -f .env.production ]; then
+if [ ! -f .env ]; then
     echo "创建 Platform 生产环境配置文件..."
-    cat > .env.production << EOF
+    cat > .env << EOF
 # Database - 生产环境请使用 PostgreSQL 或 MySQL
 DATABASE_URL="file:./prod.db"
 
-# JWT - 请使用强密码
-JWT_SECRET="$(openssl rand -base64 32)"
-
-# CORS - 设置为实际的前端域名
-CORS_ORIGIN="https://your-domain.com"
-
-# Server
-PORT=3001
-NODE_ENV=production
-
-# 其他生产环境配置
-# 请根据实际需求修改
 EOF
-    echo "⚠️  请编辑 packages/platform/.env.production 文件，配置正确的生产环境参数"
+    echo "⚠️  请编辑 packages/platform/.env 文件，配置正确的生产环境参数"
 fi
 
 # 生成 Prisma 客户端
