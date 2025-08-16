@@ -2,7 +2,14 @@
 	{
 		"type": "dir",
 		"name": "start",
-		"label": "开始体验",
+		"label": "入门",
+		"collapsible": true,
+		"collapsed": false
+	},
+	{
+		"type": "dir",
+		"name": "quick-start",
+		"label": "快速上手",
 		"collapsible": true,
 		"collapsed": false
 	},

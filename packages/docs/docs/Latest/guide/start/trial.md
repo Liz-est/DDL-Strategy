@@ -1,4 +1,4 @@
-# 30 秒试用
+# 初步体验
 
 为方便演示，我们在 Github Pages 上部署了一个调试模式的应用，你可以点击 https://lexmin0412.github.io/dify-chat 来访问。
 
