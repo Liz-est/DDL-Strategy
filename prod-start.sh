@@ -53,6 +53,8 @@ if ! grep -q "^DATABASE_URL=" .env; then
     echo "添加 DATABASE_URL 配置..."
     echo "# Database - 生产环境请使用 PostgreSQL 或 MySQL" >> .env
     echo "DATABASE_URL=\"file:./prod.db\"" >> .env
+    echo "添加 NEXTAUTH_SECRET 配置..."
+    echo "NEXTAUTH_SECRET=\"$(openssl rand -base64 32)\"" >> .env
     echo ""
     echo "⚠️  请编辑 .env 文件中的 DATABASE_URL，配置正确的生产环境数据库连接"
 fi
