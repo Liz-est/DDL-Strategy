@@ -88,7 +88,7 @@ export default {
     args: 'start',
     env: {
       NODE_ENV: 'production',
-      PORT: 3001
+      PORT: 5300
     },
     instances: 1,
     exec_mode: 'fork',
@@ -126,7 +126,7 @@ echo ""
 echo "✅ 生产环境启动成功！"
 echo ""
 echo "📱 React App 静态文件: packages/react-app/dist"
-echo "🔧 Platform API:      http://localhost:3001"
+echo "🔧 Platform API:      http://localhost:5300"
 echo "🔑 生成管理员账户请运行: pnpm create-admin"
 echo ""
 echo "📊 查看服务状态: pm2 status"

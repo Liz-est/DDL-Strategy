@@ -118,7 +118,7 @@ packages/nextjs-admin/app/api/client/dify/[appId]/
 
 ```typescript
 // 基础 URL
-const API_BASE = 'http://localhost:3000/api/client'
+const API_BASE = 'http://localhost:5300/api/client'
 
 // 获取应用信息
 const appInfo = await fetch(`${API_BASE}/dify/${appId}/info`).then(r => r.json())

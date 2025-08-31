@@ -29,14 +29,14 @@ pnpm build:pkgs
 # 启动服务
 echo "🌟 启动服务..."
 
-# 启动 React App (端口 3000)
+# 启动 React App (端口 5200)
 echo "启动 React App..."
 cd packages/react-app
 pnpm dev &
 REACT_PID=$!
 cd ../..
 
-# 启动 Platform (端口 3001)
+# 启动 Platform (端口 5300)
 echo "启动 Platform..."
 cd packages/platform
 # 检查是否有 .env 文件
@@ -45,15 +45,6 @@ if [ ! -f .env ]; then
     cat > .env << EOF
 # Database
 DATABASE_URL="file:./dev.db"
-
-# JWT
-JWT_SECRET="your-jwt-secret-key-here"
-
-# CORS
-CORS_ORIGIN="http://localhost:3000"
-
-# Server
-PORT=3001
 EOF
 fi
 
@@ -68,8 +59,8 @@ cd ../..
 echo ""
 echo "✅ 服务启动成功！"
 echo ""
-echo "📱 React App:  http://localhost:3000"
-echo "🔧 Platform:   http://localhost:3001"
+echo "📱 React App:  http://localhost:5200"
+echo "🔧 Platform:   http://localhost:5300"
 echo ""
 echo "按 Ctrl+C 停止所有服务"
 

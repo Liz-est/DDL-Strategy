@@ -55,7 +55,7 @@ pnpm db:push
 pnpm dev
 ```
 
-访问 http://localhost:3000 查看管理后台。
+访问 http://localhost:5300 查看管理后台。
 
 > 📖 **重要提示**：关于不同环境下的数据库配置详情，请参考 [数据库配置指南](./docs/DATABASE_CONFIG.md)
 
@@ -154,28 +154,6 @@ pnpm build
 pnpm start
 ```
 
-#### 方式二：Docker 部署
-
-```bash
-# 构建镜像
-docker build -t dify-chat-admin .
-
-# 运行容器（重要：必须挂载数据卷以确保数据持久化）
-docker run -p 3000:3000 -v $(pwd)/data:/app/data dify-chat-admin
-```
-
-> ⚠️ **重要提示**：SQLite 数据库存储在单个文件中，如果不挂载数据卷，容器重启后数据将丢失！务必确保正确配置数据卷挂载。
-
-#### 方式三：Docker Compose
-
-```bash
-# 启动服务
-docker-compose up -d
-
-# 查看日志
-docker-compose logs -f
-```
-
 ### 环境变量
 
 生产环境需要设置以下环境变量：
@@ -183,9 +161,6 @@ docker-compose logs -f
 ```bash
 # 数据库连接
 DATABASE_URL="file:/app/data/prod.db"
-
-# 运行环境
-NODE_ENV="production"
 ```
 
 ## 🔧 故障排除

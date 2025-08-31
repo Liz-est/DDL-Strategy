@@ -82,7 +82,7 @@ pnpm create-admin
 pnpm dev
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看管理后台。
+访问 [http://localhost:5300](http://localhost:5300) 查看管理后台。
 
 ## 数据库管理
 
@@ -245,23 +245,6 @@ pnpm build
 
 # 时间戳：createdAt, updatedAt启动生产服务器
 pnpm start
-```
-
-### Docker 部署
-
-```dockerfile
-FROM node:18-alpine
-
-WORKDIR /app
-COPY . .
-
-RUN pnpm install
-RUN pnpm db:generate
-RUN pnpm build
-
-EXPOSE 3000
-
-CMD ["pnpm", "start"]
 ```
 
 ## 环境变量

@@ -4,7 +4,7 @@
 
 ## 基础信息
 
-- **基础 URL**: `http://localhost:3000/api/client` (开发环境)
+- **基础 URL**: `http://localhost:5300/api/client` (开发环境)
 - **响应格式**: JSON
 - **错误处理**: 统一的错误响应格式
 
@@ -297,7 +297,7 @@ cd packages/nextjs-admin
 npm run dev
 
 # 客户端应用配置
-API_BASE_URL=http://localhost:3000/api/client
+API_BASE_URL=http://localhost:5300/api/client
 ```
 
 ### 生产环境

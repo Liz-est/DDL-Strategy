@@ -1,4 +1,4 @@
-export default {
+module.exports = {
 	apps: [
 		{
 			name: 'dify-chat-platform',
@@ -7,7 +7,7 @@ export default {
 			args: 'start',
 			env: {
 				NODE_ENV: 'production',
-				PORT: 3001,
+				PORT: 5300,
 			},
 			instances: 1,
 			exec_mode: 'fork',

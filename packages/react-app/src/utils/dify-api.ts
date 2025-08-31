@@ -390,7 +390,7 @@ export interface IAudio2TextResponse {
 	text: string
 }
 
-const PLATFORM_API_BASE = 'http://localhost:3000/api/client/dify'
+const PLATFORM_API_BASE = 'http://localhost:5300/api/client/dify'
 
 /**
  * Dify API 类
