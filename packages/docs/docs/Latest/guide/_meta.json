@@ -22,29 +22,8 @@
 	},
 	{
 		"type": "dir",
-		"name": "app-config",
-		"label": "应用配置",
-		"collapsible": true,
-		"collapsed": false
-	},
-	{
-		"type": "dir",
 		"name": "platform",
 		"label": "Platform应用",
-		"collapsible": true,
-		"collapsed": false
-	},
-	{
-		"type": "dir",
-		"name": "development",
-		"label": "开发与部署",
-		"collapsible": true,
-		"collapsed": false
-	},
-	{
-		"type": "dir",
-		"name": "migrate",
-		"label": "迁移",
 		"collapsible": true,
 		"collapsed": false
 	}
