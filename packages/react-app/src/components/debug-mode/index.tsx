@@ -260,10 +260,6 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 						<div className="font-semibold !mb-2 text-base">使用说明</div>
 						<div className="text-sm space-y-1 text-gray-600 dark:text-gray-300">
 							<div>
-								• 在URL中添加 <span className="font-mono">?isDebug=true</span> 参数才会显示调试按钮
-							</div>
-							<div>• 调试模式开启后，应用列表将显示本地配置的应用</div>
-							<div>
 								• 配置格式需要符合{' '}
 								<span className="font-mono">
 									<a target="_blank">IDifyAppItem</a>
