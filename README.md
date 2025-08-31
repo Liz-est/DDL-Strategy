@@ -2,13 +2,14 @@
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lexmin0412/dify-chat) ![GitHub License](https://img.shields.io/github/license/lexmin0412/dify-chat) ![GitHub Created At](https://img.shields.io/github/created-at/lexmin0412/dify-chat) ![GitHub contributors](https://img.shields.io/github/contributors/lexmin0412/dify-chat) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/lexmin0412/dify-chat)![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lexmin0412/dify-chat)
 
-**Dify Chat**，一个基于 Dify API 的 AI Web 应用，支持单应用、多应用等多种模式，提供开箱即用的应用配置管理功能。支持运行不同类型的 Dify 应用，适配深度思考、思维链、图表等多种形式输出。
+**Dify Chat** 是一个 AI 应用平台，基于 Dify API 构建，提供深度优化的用户端交互界面，支持 Chatflow、Workflow 等多种 Dify 应用类型，适配深度思考、思维链、图表渲染、文件处理等丰富的 AI 输出形式，提供开箱即用的 AI 应用解决方案。
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
-> ⚠️ 注意：v0.5.0 版本处于早期开发阶段，在此版本正式发布之前，main 分支将处于不稳定状态，部分功能可能出现异常，如需部署使用，建议使用 v0.4.0 版本。
+相关站点：
 
-**想要了解更多，可以访问 https://docs.dify-chat.lexmin.cn/ 查看使用文档。**
+- 使用文档：[https://docs.dify-chat.lexmin.cn/](https://docs.dify-chat.lexmin.cn/)
+- 演示站点：[https://lexmin0412.github.io/dify-chat/](https://lexmin0412.github.io/dify-chat/)
 
 | 加群沟通（人数已超只能邀请，加我微信备注来意） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
 | --- | --- |
@@ -44,26 +45,16 @@
 
 ## 特性
 
-- 📦 开箱即用：仅需 30 秒配置，即可开始使用
-- 💬 随心所欲：支持单应用/多应用模式，满足不同企业级业务场景
-- 💃 灵活部署：自身无任何后端依赖，可无缝对接 Dify Cloud 及私有化部署的 API 服务
-- 📱 响应式设计：同时支持 PC 和移动端，双端功能同步
-- 📝 支持渲染图片、视频、图表等丰富内容，让 AI 自由发挥
-- 🔧 长期维护：日益增长的活跃社群，助力功能完善
-
-## 子包列表
-
-| 子包名称 | 描述 | 相关信息 | 文档 |
-| --- | --- | --- | --- |
-| `@dify-chat/api` | Dify API Client | ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api) | [packages/api/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/api) |
-| `@dify-chat/core` | 核心包 | ![version](https://img.shields.io/npm/v/@dify-chat/core) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/core) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/core) | [packages/core/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/core) |
-| `@dify-chat/theme` | 主题包 | ![version](https://img.shields.io/npm/v/@dify-chat/theme) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/theme) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/theme) | [packages/theme/README.md](https://github.com/lexmin0412/dify-chat/tree/main/packages/theme) |
-| `@dify-chat/helpers` | 工具包 | ![version](https://img.shields.io/npm/v/@dify-chat/helpers) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/helpers) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/helpers) | 敬请期待... |
-| `@dify-chat/components` | 核心 UI 组件库 | ![version](https://img.shields.io/npm/v/@dify-chat/components) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/components) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/components) | 敬请期待... |
+- 📦 开箱即用：运行启动脚本，填入 Dify API Key，直接开始使用
+- 👏 完全开源：采用 MIT 开源协议，所有源代码完全开放
+- 💃 灵活架构：你可以只部署轻量前端应用，也可以集成全栈 Platform 服务以获取完整功能
+- 📱 响应式设计：确保在不同屏幕尺寸下都能提供一致的用户体验和功能表现
+- 📝 支持渲染图片、视频、代码、图表等丰富的交互性内容，让 AI 自由发挥。
 
 ## 技术栈
 
-- React v18
+- React v19
+- Next.js v15
 - Ant Design v5
 - Ant Design X v1
 - Rsbuild v1
@@ -72,67 +63,12 @@
 
 ## 运行环境
 
-开发/生产构建环境要求：
+本地开发/生产部署均需满足以下要求：
 
 - Node.js ^22.5.1
 - pnpm ^10.8.1
 
 > 注意：本项目使用了 pnpm workspace 高级特性来实现 Monorepo 管理，其他包管理工具可能无法正常工作，请先确保你的环境满足以上要求。
-
-## Roadmap
-
-- [x] 支持多个会话切换
-- [x] 支持运行时用户自定义 Dify API 配置
-- [x] 移动端适配
-- [x] 消息更新时自动滚动到最底部
-- [x] 拆分独立组件库，方便二次开发
-- [x] 会话操作
-  - [x] 支持会话重命名
-- [x] 对话参数设置
-  - [x] 支持修改对话参数
-- [x] 消息发送区域功能
-  - [x] 支持发送图片
-  - [x] 支持发送其他类型的文件
-  - [x] 支持打断输出
-  - [x] 支持语音输入转文字
-- [x] 消息内容渲染
-  - [x] 支持深度思考标签展示（如 DeepSeek-R1 的输出）
-  - [x] 支持工作流信息展示
-  - [x] 支持思维链展示
-  - [x] 支持知识库引用列表展示
-  - [x] 支持图片展示
-  - [x] 支持图片放大查看
-  - [x] 支持 `Echarts` 渲染
-  - [x] 支持数学公式渲染
-  - [x] 支持文件卡片渲染
-  - [x] 支持 `Mermaid` 渲染
-  - [x] 支持图片/视频
-- [x] 消息内容交互
-  - [x] 支持内容复制
-  - [x] 支持点赞/点踩
-  - [x] 支持消息文件点击下载
-  - [x] 支持回复表单展示和提交
-  - [x] 支持文字转语音
-- [x] 支持多应用模式
-  - [x] Localstorage 实现
-  - [x] Restful API 实现
-  - [x] 支持自定义后端服务
-  - [x] 配置和切换功能分离，支持隐藏配置入口
-- [x] 支持单应用模式
-  - [x] 支持用户在界面上变更配置
-- [x] 子包发布
-  - [x] 发布 `@dify-chat/core` 包
-  - [x] 发布 `@dify-chat/helpers` 包
-  - [x] 发布 `@dify-chat/api` 包
-  - [x] 发布 `@dify-chat/components` 包
-- [ ] 国际化
-- [ ] 支持单个会话视图
-- [ ] 支持消息触顶/触底自动分页加载
-- [x] 支持回复重新生成
-- [x] 支持夜间模式
-- [x] 支持自定义主题
-- [ ] 补充不同类型应用场景的最佳实践
-- [ ] 容器化部署支持
 
 ## License
 
