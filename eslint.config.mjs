@@ -33,5 +33,5 @@ export default [
 			'react/prop-types': 'off',
 		},
 	},
-	{ ignores: ['dist/'] },
+	{ ignores: ['dist/', 'ecosystem.config.js'] },
 ]
