@@ -15,14 +15,7 @@
 		"format": "pnpm -r format",
 		"changeset": "changeset",
 		"version-packages": "changeset version",
-		"release": "pnpm build && changeset publish",
-		"docker:build": "./docker-deploy.sh build",
-		"docker:start": "./docker-deploy.sh start",
-		"docker:stop": "./docker-deploy.sh stop",
-		"docker:restart": "./docker-deploy.sh restart",
-		"docker:logs": "./docker-deploy.sh logs",
-		"docker:cleanup": "./docker-deploy.sh cleanup",
-		"docker:deploy": "./docker-deploy.sh deploy"
+		"release": "pnpm build && changeset publish"
 	},
 	"devDependencies": {
 		"@changesets/cli": "catalog:",
