@@ -77,9 +77,10 @@ pnpm build
 cd ../..
 
 # 创建 PM2 配置文件
-echo "📝 创建 PM2 配置..."
-cat > ecosystem.config.js << EOF
-module.exports = {
+if [ ! -f ecosystem.config.js ]; then
+    echo "📝 创建 PM2 配置..."
+    cat > ecosystem.config.js << EOF
+export default {
   apps: [{
     name: 'dify-chat-platform',
     cwd: './packages/platform',
@@ -103,6 +104,9 @@ module.exports = {
   }]
 };
 EOF
+else
+    echo "📝 PM2 配置文件已存在，跳过创建"
+fi
 
 # 创建日志目录
 mkdir -p logs
