@@ -1,5 +1,12 @@
 # @dify-chat/api
 
+## 0.5.0
+
+### Patch Changes
+
+- @dify-chat/core@0.5.0
+- @dify-chat/helpers@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,21 @@
 # @dify-chat/components
 
+## 0.5.0
+
+### Minor Changes
+
+- c000dd6: 文本转语音正在播放时禁用播放按钮
+- dd66d67: AppIcon 支持将 emoji 文本转换为 unicode 渲染
+- 2cd396f: 附件上传支持 .doc 文件类型
+- 98ae25e: 新增 MessageFileList 组件导出
+
+### Patch Changes
+
+- @dify-chat/api@0.5.0
+- @dify-chat/core@0.5.0
+- @dify-chat/helpers@0.5.0
+- @dify-chat/theme@0.5.0
+
 ## 0.4.0
 
 ### Minor Changes
