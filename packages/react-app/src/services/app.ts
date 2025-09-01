@@ -35,7 +35,7 @@ interface IAppStorageAdapter {
 // ]
 
 const baseRequest = new BaseRequest({
-	baseURL: 'http://localhost:5300/api/client',
+	baseURL: process.env.PUBLIC_APP_API_BASE as string,
 })
 
 class AppService implements IAppStorageAdapter {

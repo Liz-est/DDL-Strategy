@@ -34,6 +34,31 @@ pnpm build:pkgs
 # 构建 React App
 echo "🏗️ 构建 React App..."
 cd packages/react-app
+
+# 检查 React App 环境配置文件
+if [ ! -f .env ]; then
+    echo "创建 React App 环境配置文件..."
+    cat > .env << EOF
+# 应用配置 API 基础路径
+PUBLIC_APP_API_BASE=http://localhost:5300/api/client
+# Dify 代理 API 基础路径
+PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify
+EOF
+    echo "✅ 已创建 React App .env 配置文件"
+else
+    echo "📝 React App .env 配置文件已存在"
+    # 检查必要的环境变量
+    if ! grep -q "^PUBLIC_APP_API_BASE=" .env; then
+        echo "添加 PUBLIC_APP_API_BASE 配置..."
+        echo "PUBLIC_APP_API_BASE=http://localhost:5300/api/client" >> .env
+    fi
+
+    if ! grep -q "^PUBLIC_DIFY_PROXY_API_BASE=" .env; then
+        echo "添加 PUBLIC_DIFY_PROXY_API_BASE 配置..."
+        echo "PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify" >> .env
+    fi
+fi
+
 pnpm build
 echo "✅ React App 构建完成，静态文件位于: packages/react-app/dist"
 cd ../..

@@ -13,7 +13,14 @@ export default defineConfig({
 		tsconfigPath: process.env.NODE_ENV === 'development' ? tsconfigDevPath : tsconfigProdPath,
 		include: [{ not: /[\\/]core-js[\\/]/ }],
 		define: {
+			// 调试模式
 			'process.env.PUBLIC_DEBUG_MODE': JSON.stringify(process.env.PUBLIC_DEBUG_MODE),
+			// 应用配置 API 基础路径
+			'process.env.PUBLIC_APP_API_BASE': JSON.stringify(process.env.PUBLIC_APP_API_BASE),
+			// Dify 代理 API 基础路径
+			'process.env.PUBLIC_DIFY_PROXY_API_BASE': JSON.stringify(
+				process.env.PUBLIC_DIFY_PROXY_API_BASE,
+			),
 		},
 	},
 	output: {

@@ -390,7 +390,7 @@ export interface IAudio2TextResponse {
 	text: string
 }
 
-const PLATFORM_API_BASE = 'http://localhost:5300/api/client/dify'
+const PLATFORM_API_BASE = process.env.PUBLIC_DIFY_PROXY_API_BASE as string
 
 /**
  * Dify API 类
