@@ -32,6 +32,31 @@ echo "🌟 启动服务..."
 # 启动 React App (端口 5200)
 echo "启动 React App..."
 cd packages/react-app
+
+# 检查 React App 环境配置文件
+if [ ! -f .env ]; then
+    echo "创建 React App 环境配置文件..."
+    cat > .env << EOF
+# 应用配置 API 基础路径
+PUBLIC_APP_API_BASE=http://localhost:5300/api/client
+# Dify 代理 API 基础路径
+PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify
+EOF
+    echo "✅ 已创建 React App .env 配置文件"
+else
+    echo "📝 React App .env 配置文件已存在"
+    # 检查必要的环境变量
+    if ! grep -q "^PUBLIC_APP_API_BASE=" .env; then
+        echo "添加 PUBLIC_APP_API_BASE 配置..."
+        echo "PUBLIC_APP_API_BASE=http://localhost:5300/api/client" >> .env
+    fi
+
+    if ! grep -q "^PUBLIC_DIFY_PROXY_API_BASE=" .env; then
+        echo "添加 PUBLIC_DIFY_PROXY_API_BASE 配置..."
+        echo "PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify" >> .env
+    fi
+fi
+
 pnpm dev &
 REACT_PID=$!
 cd ../..
@@ -39,20 +64,31 @@ cd ../..
 # 启动 Platform (端口 5300)
 echo "启动 Platform..."
 cd packages/platform
-# 检查是否有 .env 文件
+
+# 检查开发环境配置文件
 if [ ! -f .env ]; then
-    echo "创建 Platform .env 文件..."
-    cat > .env << EOF
-# Database
-DATABASE_URL="file:./dev.db"
-EOF
+    echo "创建 Platform 开发环境配置文件..."
+    touch .env
+fi
+
+# 检查必要的环境变量
+if ! grep -q "^DATABASE_URL=" .env; then
+    echo "添加 DATABASE_URL 配置..."
+    echo "# Database - 开发环境使用 SQLite" >> .env
+    echo "DATABASE_URL=\"file:./dev.db\"" >> .env
+fi
+
+if ! grep -q "^NEXTAUTH_SECRET=" .env; then
+    echo "添加 NEXTAUTH_SECRET 配置..."
+    echo "NEXTAUTH_SECRET=$(openssl rand -base64 32)" >> .env
+    echo "✅ 已自动生成 NEXTAUTH_SECRET"
 fi
 
 # 生成 Prisma 客户端
 pnpm prisma generate
 pnpm prisma db push
 
-pnpm dev &
+PORT=5300 pnpm dev &
 PLATFORM_PID=$!
 cd ../..
 
