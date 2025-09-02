@@ -1,5 +1,11 @@
 # dify-chat-app-react
 
+## 0.5.1
+
+### Patch Changes
+
+- f941ce9: 修复下拉选项类型的对话参数选择后没有正确赋值的问题
+
 ## 0.5.0
 
 ### Minor Changes
