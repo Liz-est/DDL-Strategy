@@ -77,6 +77,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				}
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
 				const cachedValue = store.globalParams[originalProps.variable]
+				const currentConversationInputs = currentConversationInfo?.inputs || {}
 				if (searchValue || cachedValue) {
 					const { error, data } = unParseGzipString(searchValue || cachedValue)
 
@@ -98,6 +99,12 @@ export default function AppInputForm(props: IAppInputFormProps) {
 							currentConversationInfo?.inputs?.[originalProps.variable],
 						)
 					}
+				} else if (currentConversationInputs[originalProps.variable]) {
+					// 对话参数中存在该参数，且不是临时对话，则使用对话参数
+					entryForm.setFieldValue(
+						originalProps.variable,
+						currentConversationInputs[originalProps.variable],
+					)
 				} else {
 					// 只有在非临时对话时才使用 currentConversationInfo 的 inputs
 					// 临时对话的 inputs 通常是空的，不应该覆盖可能存在的默认值
@@ -157,7 +164,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						layout="vertical"
 						form={entryForm}
 						labelCol={{ span: 5 }}
-						onValuesChange={(_, allValues) => {
+						onValuesChange={(_changedValues, allValues) => {
 							setConversations(prev => {
 								return prev.map(item => {
 									if (item.id === currentConversationId) {
