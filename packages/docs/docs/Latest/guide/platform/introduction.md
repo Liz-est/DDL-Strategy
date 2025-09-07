@@ -6,7 +6,7 @@ Dify Chat Platform 是在 v0.5.0 中新增的一个子包，它是一个基于 D
 - 可供客户端访问的应用配置 API
 - Dify API 的代理服务，客户端可以通过一个 appID 和 Platform 交互，规避 Dify API Key 的泄露问题
 
-在 [一键启动](./../quick-start/one-key-start.md) 中，我们已经完成了整个应用的启动，并创建了管理员账号。使用管理员账号登录后，你可以看到如下的界面：
+在 [一键启动](/guide/quick-start/one-key-start.md) 中，我们已经完成了整个应用的启动，并创建了管理员账号。使用管理员账号登录后，你可以看到如下的界面：
 
 ![Platform首页](/guide__platform_app_init.png)
 
