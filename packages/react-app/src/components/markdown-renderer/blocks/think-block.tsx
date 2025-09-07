@@ -78,7 +78,7 @@ export const ThinkBlock = ({ children, ...props }: any) => {
 						/>
 					</svg>
 					{isComplete
-						? `已深度思考(${elapsedTime.toFixed(1)}s)`
+						? `已完成深度思考`
 						: `深度思考中...(${elapsedTime.toFixed(1)}s)`}
 				</div>
 			</summary>
