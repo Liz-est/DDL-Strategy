@@ -132,6 +132,8 @@ export default function AppInputForm(props: IAppInputFormProps) {
 							}
 						}
 						entryForm.setFieldValue(originalProps.variable, fieldValue)
+					} else if (originalProps.default) {
+						entryForm.setFieldValue(originalProps.variable, originalProps.default)
 					} else {
 						// 如果是临时对话且没有 URL 参数，则清空表单字段
 						entryForm.setFieldValue(originalProps.variable, undefined)
