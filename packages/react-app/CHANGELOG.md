@@ -1,5 +1,11 @@
 # dify-chat-app-react
 
+## 0.5.2
+
+### Patch Changes
+
+- 10a31d2: 对话参数支持默认值
+
 ## 0.5.1
 
 ### Patch Changes
