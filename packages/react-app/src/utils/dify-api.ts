@@ -585,7 +585,8 @@ export class DifyApi {
 				method: 'POST',
 				body: formData,
 			})
-			.then(res => res.json()) as Promise<IUploadFileResponse>
+			.then(res => res.json())
+			.then(res => res.data) as Promise<IUploadFileResponse>
 	}
 
 	/**
