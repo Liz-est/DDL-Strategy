@@ -160,8 +160,8 @@ catalogs:
       specifier: ^2.1.1
       version: 2.1.1
     dayjs:
-      specifier: ^1.11.13
-      version: 1.11.13
+      specifier: ^1.11.18
+      version: 1.11.18
     dompurify:
       specifier: ^3.2.5
       version: 3.2.6
@@ -719,7 +719,7 @@ importers:
         version: 2.1.1
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.13
+        version: 1.11.18
       lucide-react:
         specifier: 'catalog:'
         version: 0.508.0(react@19.1.0)
@@ -961,7 +961,7 @@ importers:
         version: 7.7.0
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.13
+        version: 1.11.18
       eslint:
         specifier: 'catalog:'
         version: 9.26.0(jiti@2.5.1)
@@ -6526,6 +6526,9 @@ packages:
       {
         integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==,
       }
+
+  dayjs@1.11.18:
+    resolution: {integrity: sha512-zFBQ7WFRvVRhKcWoUh+ZA1g2HVgUbsZm9sbddh8EC5iv93sui8DVVz1Npvz+r6meo9VKfa8NyLWBsQK1VvIKPA==}
 
   debug@3.2.7:
     resolution:
@@ -17632,6 +17635,8 @@ snapshots:
       is-data-view: 1.0.2
 
   dayjs@1.11.13: {}
+
+  dayjs@1.11.18: {}
 
   debug@3.2.7:
     dependencies:
