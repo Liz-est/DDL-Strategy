@@ -1,5 +1,6 @@
-import { IDifyAppItem } from '@dify-chat/core'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { IDifyAppItem } from '@/types'
 
 /**
  * 统一的 API 错误处理
