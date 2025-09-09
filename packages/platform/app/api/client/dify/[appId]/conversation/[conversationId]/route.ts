@@ -30,7 +30,7 @@ export async function DELETE(
 		const userId = getUserIdFromRequest(request)
 
 		// 代理请求到 Dify API
-		const response = await proxyDifyRequest(
+		await proxyDifyRequest(
 			app.requestConfig.apiBase,
 			app.requestConfig.apiKey,
 			`/conversations/${conversationId}`,
@@ -41,9 +41,7 @@ export async function DELETE(
 				}),
 			},
 		)
-
-		const data = await response.json()
-		return createDifyApiResponse(data, response.status)
+		return createDifyApiResponse({}, 200)
 	} catch (error) {
 		const resolvedParams = await params
 		return handleApiError(
