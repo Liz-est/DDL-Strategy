@@ -69,10 +69,17 @@ export default function AppInputWrapper(props: IAppInputFormProps) {
 		},
 	]
 
+	// 过滤出可见的输入参数个数
+	const visibleInputsLength = currentApp?.parameters.user_input_form?.filter(item => {
+		return !Object.values(item)?.[0]?.hide
+	})?.length
+
 	const panelStyle: React.CSSProperties = {
 		color: token.colorText,
 		border: `1px solid var(--theme-border-color)`,
 		borderRadius: '8px',
+		// 如果可见的输入参数个数为 0，则直接隐藏整个对话参数设置模块
+		display: visibleInputsLength > 0 ? 'block' : 'none',
 	}
 
 	return (
