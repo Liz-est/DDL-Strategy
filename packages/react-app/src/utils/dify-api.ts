@@ -478,7 +478,7 @@ export class DifyApi {
 		auto_generate?: boolean
 	}) => {
 		const { conversation_id, ...restParams } = params
-		return this.baseRequest.post(`/conversations/${conversation_id}/name`, {
+		return this.baseRequest.post(`/conversation/${conversation_id}/name`, {
 			...restParams,
 			user: this.options.user,
 		})
@@ -488,7 +488,7 @@ export class DifyApi {
 	 * 删除会话
 	 */
 	deleteConversation = (conversation_id: string) => {
-		return this.baseRequest.delete(`/conversations/${conversation_id}`, {
+		return this.baseRequest.delete(`/conversation/${conversation_id}`, {
 			user: this.options.user,
 		})
 	}
