@@ -1,11 +1,11 @@
 import { CloudUploadOutlined, LinkOutlined } from '@ant-design/icons'
 import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
 import { DifyApi, IFile, IUploadFileResponse } from '@dify-chat/api'
-import { useAppContext } from '@dify-chat/core'
+import { useAppContext, useConversationsContext } from '@dify-chat/core'
 import { useThemeContext } from '@dify-chat/theme'
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import { FileTypeMap, getDifyFileType, getFileExtByName } from './utils'
@@ -60,6 +60,12 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const attachmentsRef = useRef<GetRef<typeof Attachments>>(null)
 	const senderRef = useRef<GetRef<typeof Sender>>(null)
 	const { isLight } = useThemeContext()
+	const { currentConversationId } = useConversationsContext()
+
+	// 监听对话切换时，自动聚焦输入框
+	useEffect(() => {
+		senderRef.current?.focus()
+	}, [currentConversationId])
 
 	const onChange = (value: string) => {
 		setContent(value)
@@ -257,6 +263,7 @@ export const MessageSender = (props: IMessageSenderProps) => {
 
 	return (
 		<Sender
+			ref={senderRef}
 			allowSpeech={allowSpeechConfig}
 			header={senderHeader}
 			value={content}
