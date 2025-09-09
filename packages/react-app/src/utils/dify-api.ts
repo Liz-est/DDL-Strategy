@@ -1,7 +1,7 @@
 import { IAgentThought, IFileType, IRetrieverResource } from '@dify-chat/api'
 import { DifyApi as DirectDifyApi } from '@dify-chat/api'
 import { IDifyAppItem, IDifyAppSiteSetting } from '@dify-chat/core'
-import { BaseRequest as XRequest } from '@dify-chat/helpers'
+import { LocalStorageStore, BaseRequest as XRequest } from '@dify-chat/helpers'
 
 import { isDebugMode } from '@/components/debug-mode'
 
@@ -392,15 +392,20 @@ export interface IAudio2TextResponse {
 
 const PLATFORM_API_BASE = process.env.PUBLIC_DIFY_PROXY_API_BASE as string
 
+const genXRequestOptions = (options: IDifyApiOptions) => ({
+	baseURL: `${PLATFORM_API_BASE}${options.apiBase}`,
+	headers: {
+		'x-user-id': LocalStorageStore.get('USER_ID'),
+	},
+})
+
 /**
  * Dify API 类
  */
 export class DifyApi {
 	constructor(options: IDifyApiOptions) {
 		this.options = options
-		this.baseRequest = new XRequest({
-			baseURL: `${PLATFORM_API_BASE}${options.apiBase}`,
-		})
+		this.baseRequest = new XRequest(genXRequestOptions(options))
 	}
 
 	options: IDifyApiOptions
@@ -411,9 +416,7 @@ export class DifyApi {
 	 */
 	updateOptions = (options: IDifyApiOptions) => {
 		this.options = options
-		this.baseRequest = new XRequest({
-			baseURL: `${PLATFORM_API_BASE}${options.apiBase}`,
-		})
+		this.baseRequest = new XRequest(genXRequestOptions(options))
 	}
 
 	/**
