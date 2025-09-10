@@ -1,9 +1,9 @@
 import { BugOutlined, ClearOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons'
 import { createDifyApiInstance } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
+import { generateUuidV4 } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
 import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
-import { uniqueId } from 'lodash-es'
 import React, { useEffect, useState } from 'react'
 
 const { TextArea } = Input
@@ -68,7 +68,7 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
 				// 为每个应用添加 ID（如果没有的话）
 				const appsWithId = apps.map(app => ({
 					...app,
-					id: app.id || uniqueId('debug_app_'),
+					id: app.id || generateUuidV4(),
 				}))
 				const appInfoMap = new Map()
 				// 遍历配置列表，根据 requestConfig 获取应用基本信息
