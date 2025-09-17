@@ -46,8 +46,8 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-gray-50">
-			<Card className="w-full max-w-md">
+		<div className="min-h-screen flex items-center justify-center bg-theme-bg">
+			<Card className="w-full max-w-md dark:bg-gray-700">
 				<div className="text-center mb-8">
 					<div className="flex justify-center mb-4">
 						<Image
@@ -57,8 +57,8 @@ export default function LoginPage() {
 							alt="Dify Chat Platform"
 						/>
 					</div>
-					<h1 className="text-2xl font-bold text-gray-900">Dify Chat Platform</h1>
-					<p className="text-gray-600 mt-2">请登录您的账户</p>
+					<h1 className="text-2xl font-bold">Dify Chat Platform</h1>
+					<p className="mt-2">请登录您的账户</p>
 				</div>
 
 				<Form
