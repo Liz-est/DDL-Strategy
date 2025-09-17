@@ -32,6 +32,8 @@ jobs:
         with:
           node-version: 22.5.1
           cache: pnpm
+      - name: Provenance downgrade check
+        uses: danielroe/provenance-action@0.1.0
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install dependencies
