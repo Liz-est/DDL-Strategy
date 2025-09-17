@@ -307,10 +307,11 @@ export const Chatbox = (props: ChatboxProps) => {
 						style={{
 							display: 'flex',
 							flexDirection: 'column-reverse',
-							paddingTop: '12px',
+							// 减去除消息列表外其他纵向元素的高度
+							minHeight: 'calc(100vh - 10.25rem)',
 						}}
 					>
-						<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 md:px-0 box-border">
+						<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 pb-6 md:px-0 box-border">
 							{/* 🌟 消息列表 */}
 							<Bubble.List
 								items={items}
