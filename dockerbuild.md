@@ -27,6 +27,6 @@ pnpm create-admin
 ```
 
 # 访问方法
-- 后端：http://<serverip>:5300/
-- 前端：http://<server>/dify-chat/
+- 后端：http://serverip:5300/
+- 前端：http://server/dify-chat/
   
