@@ -11,6 +11,11 @@
 - 使用文档：[https://docs.dify-chat.lexmin.cn/](https://docs.dify-chat.lexmin.cn/)
 - 演示站点：[https://lexmin0412.github.io/dify-chat/](https://lexmin0412.github.io/dify-chat/)
 
+另外，如果你想要了解整个项目的架构或技术细节，推荐访问：
+
+- DeepWiki: [https://deepwiki.com/lexmin0412/dify-chat](https://deepwiki.com/lexmin0412/dify-chat)
+- Zread: [https://zread.ai/lexmin0412/dify-chat](https://zread.ai/lexmin0412/dify-chat)
+
 | 加群沟通（人数已超只能邀请，加我微信备注来意） | 喂我花生（请在留言中备注自己的 Github 用户名哦） |
 | --- | --- |
 | <img src="https://github.com/user-attachments/assets/63daca4a-5583-487b-9329-aed87decc61a" alt="wechat-group" style="width: 400px; height: 400px" /> | <img src="https://github.com/user-attachments/assets/f56d53b7-8529-4a1d-a0ce-27bfe60510ec" alt="sponsor" style="width: 400px; height: 400px" /> |
