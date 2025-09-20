@@ -17,6 +17,7 @@ import RemarkGfm from 'remark-gfm'
 import RemarkMath from 'remark-math'
 
 import LucideIcon from '../lucide-icon'
+import ButtonBlock from './blocks/button'
 import MarkdownForm from './blocks/form'
 import ImageBlock from './blocks/image'
 import Flowchart from './blocks/mermaid'
@@ -374,6 +375,16 @@ export function MarkdownRenderer(props: {
 					img: ImageBlock,
 					// @ts-expect-error FIXME: 类型错误待解决
 					video: VideoBlock,
+					button: props => {
+						return (
+							<ButtonBlock
+								{...props}
+								onSend={(values: string) => {
+									onSubmit?.(values)
+								}}
+							/>
+						)
+					},
 				}}
 			>
 				{text4Render}
