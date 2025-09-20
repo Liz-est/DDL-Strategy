@@ -11,7 +11,7 @@ export default function PageLayout(props: IPageLayoutProps) {
 		<div className="h-screen relative overflow-hidden flex flex-col bg-theme-bg w-full">
 			{/* 头部 */}
 			<HeaderLayout {...headerProps} />
-			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden flex items-center">
+			<div className="flex-1 bg-theme-main-bg rounded-t-3xl py-6 overflow-y-auto box-border overflow-x-hidden flex items-center">
 				{children}
 			</div>
 		</div>

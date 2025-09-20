@@ -38,7 +38,7 @@ export default function AppListPage() {
 					</div>
 				}
 			/>
-			<div className="flex-1 bg-theme-main-bg rounded-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
+			<div className="flex-1 bg-theme-main-bg rounded-t-3xl py-6 overflow-y-auto box-border overflow-x-hidden">
 				{list?.length ? (
 					<Row
 						gutter={[16, 16]}
