@@ -45,12 +45,13 @@
 
 .ant-bubble-list {
 	.ant-bubble {
+		margin-bottom: 12px;
+
 		.ant-bubble-content {
-			padding-top: 0;
-			padding-bottom: 0;
+			padding: 0;
 			min-height: auto;
 			overflow: hidden;
-			background-color: var(--theme-bubble-bg-color);
+			background-color: transparent;
 
 			think,
 			details {
@@ -62,6 +63,8 @@
 
 		&[role='user'] {
 			.ant-bubble-content {
+				padding-left: 10px;
+				padding-right: 10px;
 				background-color: var(--theme-bubble-bg-color);
 				color: #fff;
 			}

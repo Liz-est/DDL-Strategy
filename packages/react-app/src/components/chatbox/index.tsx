@@ -4,16 +4,13 @@ import { Bubble } from '@ant-design/x'
 import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
-import { useThemeContext } from '@dify-chat/theme'
 import { FormInstance, GetProp, message, Spin } from 'antd'
 import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { validateAndGenErrMsgs } from '@/utils'
 
-import LucideIcon from '../lucide-icon'
 import { MessageSender } from '../message-sender'
-import AppIcon from './app-icon'
 import MessageContent from './message/content'
 import MessageFooter from './message/footer'
 import { WelcomePlaceholder } from './welcome-placeholder'
@@ -118,57 +115,19 @@ export const Chatbox = (props: ChatboxProps) => {
 	} = props
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
-	const { isDark } = useThemeContext()
-	const aiIcon = currentApp?.site?.use_icon_as_answer_icon ? (
-		<AppIcon hasContainer />
-	) : (
-		<LucideIcon
-			name="bot"
-			size={18}
-		/>
-	)
 
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
 		ai: {
 			placement: 'start',
-			avatar: !isMobile
-				? {
-						icon: aiIcon,
-						style: {
-							background: currentApp?.site?.icon_background || (isDark ? 'transparent' : '#fde3cf'),
-							border: isDark ? '1px solid var(--theme-border-color)' : 'none',
-							color: isDark ? 'var(--theme-text-color)' : '#666',
-						},
-					}
-				: undefined,
-			style: isMobile
-				? undefined
-				: {
-						// 减去一个头像的宽度
-						maxWidth: 'calc(100% - 44px)',
-					},
 		},
 		user: {
 			placement: 'end',
-			avatar: !isMobile
-				? {
-						icon: (
-							<LucideIcon
-								name="user"
-								size={18}
-							/>
-						),
-						style: {
-							background: '#87d068',
-						},
-					}
-				: undefined,
 			style: isMobile
 				? undefined
 				: {
 						// 减去一个头像的宽度
-						maxWidth: 'calc(100% - 44px)',
-						marginLeft: '44px',
+						maxWidth: '80%',
+						marginLeft: '20%',
 					},
 		},
 	}
@@ -311,7 +270,7 @@ export const Chatbox = (props: ChatboxProps) => {
 							minHeight: 'calc(100vh - 10.25rem)',
 						}}
 					>
-						<div className="flex-1 w-full md:!w-3/4 mx-auto px-3 pb-6 md:px-0 box-border">
+						<div className="flex-1 w-full md:!w-[720px] mx-auto px-3 pb-6 md:px-0 box-border">
 							{/* 🌟 消息列表 */}
 							<Bubble.List
 								items={items}
@@ -320,7 +279,7 @@ export const Chatbox = (props: ChatboxProps) => {
 
 							{/* 下一步问题建议 当存在消息列表，且非正在对话时才展示 */}
 							{nextSuggestions?.length && items.length && !isRequesting ? (
-								<div className="p-3 md:pl-[44px] mt-3">
+								<div className="py-3 mt-3">
 									<div className="text-desc">🤔 你可能还想问:</div>
 									<div>
 										{nextSuggestions?.map(item => {
@@ -358,13 +317,13 @@ export const Chatbox = (props: ChatboxProps) => {
 					</InfiniteScroll>
 				</div>
 				<div
-					className="absolute bottom-0 bg-theme-main-bg w-full md:!w-3/4 left-1/2"
+					className="absolute bottom-0 bg-theme-main-bg w-full md:max-w-[720px] left-1/2"
 					style={{
 						transform: 'translateX(-50%)',
 					}}
 				>
 					{/* 🌟 输入框 */}
-					<div className="px-3">
+					<div>
 						<MessageSender
 							onSubmit={async (...params) => {
 								return validateAndGenErrMsgs(entryForm).then(res => {

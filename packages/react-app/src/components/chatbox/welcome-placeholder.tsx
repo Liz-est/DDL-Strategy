@@ -47,12 +47,12 @@ export const WelcomePlaceholder = (props: IWelcomePlaceholderProps) => {
 	const { currentApp } = useAppContext()
 
 	return (
-		<div className="flex justify-center w-full px-3 box-border mx-auto my-3">
+		<div className="flex justify-center w-full box-border mx-auto my-3">
 			<Space
 				size={12}
 				direction="vertical"
 				className={classNames({
-					'w-full md:!w-3/4': true,
+					'w-full md:w-[720px]': true,
 					'pb-6': !showPrompts && currentApp?.parameters.user_input_form?.length,
 					'pt-3': showPrompts,
 				})}
