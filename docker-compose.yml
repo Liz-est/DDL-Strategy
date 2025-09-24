@@ -3,11 +3,12 @@ services:
   react-app:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: react-app
+      dockerfile: Dockerfile_react_app
+      # 指定镜像中的 stage
+      target: runtime
     ports:
       - '5200:80'
-    container_name: dify-chat-react-app
+    container_name: dify-chat-app-react
     restart: unless-stopped
     networks:
       - dify-chat-network
