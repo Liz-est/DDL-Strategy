@@ -54,7 +54,7 @@ cp prisma/templates/schema.postgresql.template prisma/schema.prisma
 在代码中动态设置数据库连接 <mcreference link="https://spin.atomicobject.com/environment-database-prisma/" index="4">4</mcreference>：
 
 ```typescript
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/prisma/generated/client'
 
 const prisma = new PrismaClient({
   datasources: {
