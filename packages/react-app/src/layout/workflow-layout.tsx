@@ -196,7 +196,6 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 						if (parsedData.event === EventEnum.ERROR) {
 							message.error((parsedData as unknown as IErrorEvent).message)
 						}
-						console.log('result', result)
 					}
 				}
 			})
@@ -221,7 +220,7 @@ export default function WorkflowLayout(props: IWorkflowLayoutProps) {
 					) : null}
 				</div>
 			),
-			visible: resultDetailLength === 1,
+			visible: text || resultDetailLength === 1,
 		},
 		{
 			key: 'detail',
