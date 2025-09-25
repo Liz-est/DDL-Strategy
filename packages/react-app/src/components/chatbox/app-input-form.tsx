@@ -1,5 +1,5 @@
 import { DifyApi, IUserInputFormItemType, IUserInputFormItemValueBase } from '@dify-chat/api'
-import { useAppContext } from '@dify-chat/core'
+import { AppModeEnums, useAppContext } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
 import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
@@ -7,6 +7,7 @@ import { useHistory, useSearchParams } from 'pure-react-router'
 import { useEffect, useRef, useState } from 'react'
 
 import { useGlobalStore } from '@/store'
+import { isChatLikeApp } from '@/utils'
 
 import FileUpload, { IUploadFileItem } from './form-controls/file-upload'
 
@@ -108,7 +109,10 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				} else {
 					// 只有在非临时对话时才使用 currentConversationInfo 的 inputs
 					// 临时对话的 inputs 通常是空的，不应该覆盖可能存在的默认值
-					if (!isTempId(currentConversationId)) {
+					if (
+						isChatLikeApp(currentApp?.config?.info?.mode as AppModeEnums) &&
+						!isTempId(currentConversationId)
+					) {
 						let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
 						if (originalProps.type === 'file-list') {
 							fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
