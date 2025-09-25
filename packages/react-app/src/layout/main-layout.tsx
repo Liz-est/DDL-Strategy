@@ -3,6 +3,7 @@ import { AppModeEnums, IDifyAppItem, useAppContext } from '@dify-chat/core'
 import React from 'react'
 
 import { colors } from '@/theme/config'
+import { isChatLikeApp, isWorkflowLikeApp } from '@/utils'
 import { DifyApi } from '@/utils/dify-api'
 
 import ChatLayout from './chat-layout'
@@ -43,7 +44,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 
 	return (
 		<XProvider theme={{ token: { colorPrimary: colors.primary, colorText: colors['theme-text'] } }}>
-			{[AppModeEnums.CHATBOT, AppModeEnums.CHATFLOW, AppModeEnums.AGENT].includes(appMode) ? (
+			{isChatLikeApp(appMode) ? (
 				<ChatLayout {...props} />
 			) : (
 				<CommonLayout
@@ -51,7 +52,7 @@ const MainLayout = (props: IMainLayoutProps) => {
 					renderCenterTitle={props.renderCenterTitle}
 					extComponents={props.extComponents}
 				>
-					{[AppModeEnums.WORKFLOW, AppModeEnums.TEXT_GENERATOR].includes(appMode) ? (
+					{isWorkflowLikeApp(appMode) ? (
 						<WorkflowLayout difyApi={props.difyApi} />
 					) : (
 						<div>不支持的应用类型</div>

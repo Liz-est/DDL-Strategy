@@ -1,3 +1,4 @@
+import { AppModeEnums } from '@dify-chat/core'
 import { FormInstance } from 'antd'
 
 /**
@@ -53,4 +54,20 @@ export const completeFileUrl = (url: string, apiBase: string) => {
 		result = `${apiDomain}${url}`
 	}
 	return result
+}
+
+/**
+ * 判断应用是否是 Chat 模式的应用，包括 Chatbot、Chatflow、Agent
+ * @param appMode 应用模式
+ */
+export const isChatLikeApp = (appMode: AppModeEnums) => {
+	return [AppModeEnums.CHATBOT, AppModeEnums.CHATFLOW, AppModeEnums.AGENT].includes(appMode)
+}
+
+/**
+ * 判断应用是否是 Workflow 模式的应用，包括 Workflow、Text Generator
+ * @param appMode 应用模式
+ */
+export const isWorkflowLikeApp = (appMode: AppModeEnums) => {
+	return [AppModeEnums.WORKFLOW, AppModeEnums.TEXT_GENERATOR].includes(appMode)
 }
