@@ -1,5 +1,4 @@
-import { DifyApp } from '@prisma/client'
-
+import { DifyApp } from '@/prisma/generated/client'
 import { AppModeEnums, IDifyAppItem } from '@/types'
 
 /**

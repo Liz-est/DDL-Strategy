@@ -5,7 +5,8 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from './prisma'
 
 export const authOptions = {
-	adapter: PrismaAdapter(prisma),
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	adapter: PrismaAdapter(prisma as any),
 	providers: [
 		CredentialsProvider({
 			name: 'credentials',

@@ -1,0 +1,36 @@
+services:
+  # React App 前端应用
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile_react_app
+      # 指定镜像中的 stage
+      target: runtime
+    ports:
+      - '5200:80'
+    container_name: dify-chat-app-react
+    restart: unless-stopped
+    networks:
+      - dify-chat-network
+
+  # Platform 平台应用
+  platform:
+    image: dify-chat-platform:latest
+    ports:
+      - '5300:5300'
+    container_name: dify-chat-platform
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5300
+    networks:
+      - dify-chat-network
+
+# 网络配置
+networks:
+  dify-chat-network:
+    driver: bridge
+# 可选：数据卷配置（如果需要持久化数据）
+# volumes:
+#   app-data:
+#     driver: local
