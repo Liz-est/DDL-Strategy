@@ -22,7 +22,7 @@
 
 ## 🥇 Sponsors
 
-<img width="1678" height="1398" alt="fbf17c1b-a3b6-41cd-9e0c-e6f09703dba8" src="https://github.com/user-attachments/assets/74ebdf90-48a4-4654-ac57-2bca9acf2667" />
+<img width="1678" height="1398" alt="fbf17c1b-a3b6-41cd-9e0c-e6f09703dba8" src="https://github.com/user-attachments/assets/8be478f9-ba03-49b7-b6a1-85b99cb7059a" />
 
 ## Repobeats
 
