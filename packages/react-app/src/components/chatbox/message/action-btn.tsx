@@ -1,4 +1,4 @@
-import { Button, Spin } from 'antd'
+import { Spin } from 'antd'
 import classNames from 'classnames'
 import React from 'react'
 
@@ -41,14 +41,19 @@ export default function ActionButton(props: IActionButtonProps) {
 
 	return (
 		<div className="relative flex items-center">
-			<Button
-				color="default"
-				variant="text"
-				size="small"
-				icon={Icon}
-				onClick={onClick}
-				disabled={disabled}
-			/>
+			<div
+				className={classNames({
+					'text-desc': disabled,
+					'cursor-pointer hover:bg-gray-100 w-5 h-5 flex items-center justify-center rounded': true,
+				})}
+				onClick={() => {
+					if (!disabled) {
+						onClick?.()
+					}
+				}}
+			>
+				{Icon}
+			</div>
 			<Spin
 				className="!absolute left-0 top-0 w-full h-full"
 				spinning={loading}
