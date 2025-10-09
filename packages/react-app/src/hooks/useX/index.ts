@@ -26,9 +26,6 @@ export const useX = (options: {
 		appId?: string
 	}>
 	entryForm: FormInstance<Record<string, unknown>>
-	latestState: React.MutableRefObject<{
-		inputParams: Record<string, unknown>
-	}>
 	getNextSuggestions: (messageId: string) => void
 	filesRef: React.MutableRefObject<IFile[]>
 	abortRef: React.MutableRefObject<() => void>

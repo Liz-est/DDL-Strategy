@@ -76,9 +76,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationId: currentConversationId,
 		appId: currentAppId,
 	})
-	const latestState = useLatest({
-		inputParams: currentConversationInfo?.inputs || {},
-	})
 
 	const defaultRequestLimit = 10
 
@@ -289,7 +286,6 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 
 	const { agent, onRequest, messages, setMessages, currentTaskId } = useX({
 		latestProps,
-		latestState,
 		filesRef,
 		getNextSuggestions,
 		abortRef,
