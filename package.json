@@ -30,6 +30,7 @@
 		"lint-staged": "catalog:",
 		"prettier": "catalog:",
 		"prettier-plugin-tailwindcss": "catalog:",
+		"zod": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	},
