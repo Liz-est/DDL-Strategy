@@ -77,7 +77,6 @@
 		"prettier": "catalog:",
 		"prettier-plugin-tailwindcss": "catalog:",
 		"tailwindcss": "catalog:",
-		"zod": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	}
