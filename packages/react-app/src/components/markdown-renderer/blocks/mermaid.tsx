@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { LoadingOutlined } from '@ant-design/icons'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { usePrevious } from 'ahooks'
 import { Radio } from 'antd'
 import mermaid from 'mermaid'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useEffectEvent, useRef, useState } from 'react'
 
 export function cleanUpSvgCode(svgCode: string): string {
 	return svgCode.replaceAll('<br>', '<br/>')
@@ -29,7 +30,7 @@ const Flowchart = (
 	flowChartProps: {
 		PrimitiveCode: string
 	} & {
-		ref?: React.RefObject<unknown>
+		ref?: React.RefObject<HTMLDivElement | null>
 	},
 ) => {
 	const { ref, ...props } = flowChartProps
@@ -40,29 +41,24 @@ const Flowchart = (
 	const [isLoading, setIsLoading] = useState(true)
 	const timeRef = useRef<number>(0)
 	const [errMsg, setErrMsg] = useState('')
-	const [imagePreviewUrl, setImagePreviewUrl] = useState('')
+	const renderFlowchart = useEffectEvent(async (PrimitiveCode: string) => {
+		setSvgCode(null)
+		setIsLoading(true)
 
-	const renderFlowchart = useCallback(
-		async (PrimitiveCode: string) => {
-			setSvgCode(null)
-			setIsLoading(true)
-
-			try {
-				if (typeof window !== 'undefined' && mermaidAPI) {
-					const svgGraph = await mermaidAPI.render('flowchart', PrimitiveCode)
-					const base64Svg: any = await svgToBase64(cleanUpSvgCode(svgGraph.svg))
-					setSvgCode(base64Svg)
-					setIsLoading(false)
-				}
-			} catch (error) {
-				if (prevPrimitiveCode === props.PrimitiveCode) {
-					setIsLoading(false)
-					setErrMsg((error as Error).message)
-				}
+		try {
+			if (typeof window !== 'undefined' && mermaidAPI) {
+				const svgGraph = await mermaidAPI.render('flowchart', PrimitiveCode)
+				const base64Svg: any = await svgToBase64(cleanUpSvgCode(svgGraph.svg))
+				setSvgCode(base64Svg)
+				setIsLoading(false)
 			}
-		},
-		[props.PrimitiveCode],
-	)
+		} catch (error) {
+			if (prevPrimitiveCode === props.PrimitiveCode) {
+				setIsLoading(false)
+				setErrMsg((error as Error).message)
+			}
+		}
+	})
 
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
@@ -86,11 +82,13 @@ const Flowchart = (
 		timeRef.current = window.setTimeout(() => {
 			renderFlowchart(props.PrimitiveCode)
 		}, 300)
+
+		return () => {
+			clearTimeout(timeRef.current)
+		}
 	}, [props.PrimitiveCode])
 
 	return (
-		// eslint-disable-next-line ts/ban-ts-comment
-		// @ts-expect-error
 		<div ref={ref}>
 			<div className="msh-segmented msh-segmented-sm css-23bs09 css-var-r1">
 				<div className="msh-segmented-group">
@@ -111,10 +109,7 @@ const Flowchart = (
 				</div>
 			</div>
 			{svgCode && (
-				<div
-					className="mermaid object-fit: cover h-auto w-full cursor-pointer"
-					onClick={() => setImagePreviewUrl(svgCode)}
-				>
+				<div className="mermaid object-fit: cover h-auto w-full cursor-pointer">
 					{svgCode && (
 						<img
 							src={svgCode}
@@ -135,9 +130,6 @@ const Flowchart = (
 					{errMsg}
 				</div>
 			)}
-			{/* {
-        imagePreviewUrl && (<ImagePreview title='mermaid_chart' url={imagePreviewUrl} onCancel={() => setImagePreviewUrl('')} />)
-      } */}
 		</div>
 	)
 }

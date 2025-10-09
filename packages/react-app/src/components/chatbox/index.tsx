@@ -5,7 +5,7 @@ import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { FormInstance, GetProp, message, Spin } from 'antd'
-import { useDeferredValue, useEffect, useMemo, useRef } from 'react'
+import { useDeferredValue, useEffect, useEffectEvent, useMemo, useRef } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { validateAndGenErrMsgs } from '@/utils'
@@ -209,10 +209,12 @@ export const Chatbox = (props: ChatboxProps) => {
 
 	// 监听 items 更新，滚动到最底部
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
-	// 延迟更新，优化性能
-	const deferredItems = useDeferredValue(items)
-	useEffect(() => {
-		// 如果非请求中，不滚动（防止影响下拉刷新工能）
+
+	/**
+	 * 监听 items 更新，滚动到最底部
+	 */
+	const scroll2BottomWhenMessagesChange = useEffectEvent(() => {
+		// 如果非请求中，不滚动（防止影响下拉刷新功能）
 		if (!isRequesting) {
 			return
 		}
@@ -222,6 +224,12 @@ export const Chatbox = (props: ChatboxProps) => {
 				top: scrollContainerRef.current.scrollHeight,
 			})
 		}
+	})
+
+	// 延迟更新，优化性能
+	const deferredItems = useDeferredValue(items)
+	useEffect(() => {
+		scroll2BottomWhenMessagesChange()
 	}, [deferredItems])
 
 	// 获取应用的对话开场白展示模式
