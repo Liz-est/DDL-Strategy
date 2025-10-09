@@ -40,7 +40,7 @@
 		"pure-react-router": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",
-		"react-infinite-scroll-component": "^6.1.0",
+		"react-infinite-scroll-component": "catalog:",
 		"react-markdown": "catalog:",
 		"react-photo-view": "catalog:",
 		"react-syntax-highlighter": "catalog:",

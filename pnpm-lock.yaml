@@ -234,6 +234,9 @@ catalogs:
     react-dom:
       specifier: ^19.2.0
       version: 19.2.0
+    react-infinite-scroll-component:
+      specifier: ^6.1.0
+      version: 6.1.0
     react-markdown:
       specifier: ^10.1.0
       version: 10.1.0
@@ -869,7 +872,7 @@ importers:
         specifier: 'catalog:'
         version: 19.2.0(react@19.2.0)
       react-infinite-scroll-component:
-        specifier: ^6.1.0
+        specifier: 'catalog:'
         version: 6.1.0(react@19.2.0)
       react-markdown:
         specifier: 'catalog:'
