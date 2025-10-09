@@ -2,10 +2,11 @@ import { DifyApi, IGetAppParametersResponse, IRating } from '@dify-chat/api'
 import { copyToClipboard } from '@toolkit-fe/clipboard'
 import { useRequest, useSetState } from 'ahooks'
 import { message as antdMessage, Space } from 'antd'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import LucideIcon from '../../lucide-icon'
 import ActionButton from './action-btn'
+import DislikeConfirm from './dislike-confirm'
 
 interface IMessageFooterProps {
 	/**
@@ -91,12 +92,12 @@ export default function MessageFooter(props: IMessageFooterProps) {
 	/**
 	 * 用户对消息的反馈
 	 */
-	const { runAsync } = useRequest(
-		(rating: IRating) => {
+	const { runAsync: runFeedback } = useRequest(
+		(rating: IRating, content?: string) => {
 			return feedbackApi({
 				messageId: (messageId as string).replace('-answer', ''),
 				rating: rating,
-				content: '',
+				content: content || '',
 			})
 		},
 		{
@@ -153,81 +154,105 @@ export default function MessageFooter(props: IMessageFooterProps) {
 	/**
 	 * 操作按钮列表
 	 */
-	const actionButtons = [
-		// 重新生成回复
-		{
-			icon: <LucideIcon name="refresh-ccw" />,
-			hidden: false,
-			onClick: () => {
-				onRegenerateMessage?.()
+	const actionButtons = useMemo(() => {
+		return [
+			// 重新生成回复
+			{
+				icon: <LucideIcon name="refresh-ccw" />,
+				hidden: false,
+				onClick: () => {
+					onRegenerateMessage?.()
+				},
 			},
-		},
-		// 复制内容
-		{
-			icon: <LucideIcon name="copy" />,
-			onClick: async () => {
-				await copyToClipboard(messageContent)
-				antdMessage.success('复制成功')
+			// 复制内容
+			{
+				icon: <LucideIcon name="copy" />,
+				onClick: async () => {
+					await copyToClipboard(messageContent)
+					antdMessage.success('复制成功')
+				},
+				active: false,
+				loading: false,
+				hidden: false,
 			},
-			active: false,
-			loading: false,
-			hidden: false,
-		},
-		// 点赞
-		{
-			icon: <LucideIcon name="thumbs-up" />,
-			onClick: () => {
-				setLoading({
-					like: true,
-				})
-				runAsync(isLiked ? null : 'like')
+			// 点赞
+			{
+				icon: <LucideIcon name="thumbs-up" />,
+				onClick: () => {
+					setLoading({
+						like: true,
+					})
+					runFeedback(isLiked ? null : 'like')
+				},
+				active: isLiked,
+				loading: loading.like,
+				hidden: false,
 			},
-			active: isLiked,
-			loading: loading.like,
-			hidden: false,
-		},
-		// 点踩
-		{
-			icon: <LucideIcon name="thumbs-down" />,
-			onClick: () => {
-				setLoading({
-					dislike: true,
-				})
-				runAsync(isDisLiked ? null : 'dislike')
-			},
-			active: isDisLiked,
-			loading: loading.dislike,
-			hidden: false,
-		},
-		// 文本转语音
-		{
-			icon: (
-				<LucideIcon
-					color={
-						isRequesting
-							? undefined
-							: ttsPlaying
-								? 'var(--theme-primary-color)'
-								: 'var(--theme-text-color)'
+			// 点踩
+			{
+				icon: (
+					<DislikeConfirm
+						isDisLiked={isDisLiked}
+						runFeedback={runFeedback}
+					/>
+				),
+				// 如果已经点过踩了，则取消
+				onClick: () => {
+					if (isDisLiked) {
+						setLoading({
+							dislike: true,
+						})
+						runFeedback(null)
 					}
-					name={ttsPlaying ? 'volume-2' : 'volume-1'}
-					size={18}
-					strokeWidth={1.75}
-				/>
-			),
-			onClick: () => {
-				if (ttsPlaying) return
-				if (cachedAudioUrl) {
-					playAudio(cachedAudioUrl)
-				} else {
-					runTTS(messageContent)
-				}
+				},
+				active: isDisLiked,
+				loading: loading.dislike,
+				hidden: false,
 			},
-			active: ttsPlaying,
-			loading: ttsLoading,
-			hidden: !ttsConfig?.enabled,
-		},
-	]
+			// 文本转语音
+			{
+				icon: (
+					<LucideIcon
+						color={
+							isRequesting
+								? undefined
+								: ttsPlaying
+									? 'var(--theme-primary-color)'
+									: 'var(--theme-text-color)'
+						}
+						name={ttsPlaying ? 'volume-2' : 'volume-1'}
+						size={18}
+						strokeWidth={1.75}
+					/>
+				),
+				onClick: () => {
+					if (ttsPlaying) return
+					if (cachedAudioUrl) {
+						playAudio(cachedAudioUrl)
+					} else {
+						runTTS(messageContent)
+					}
+				},
+				active: ttsPlaying,
+				loading: ttsLoading,
+				hidden: !ttsConfig?.enabled,
+			},
+		]
+	}, [
+		onRegenerateMessage,
+		isRequesting,
+		ttsPlaying,
+		ttsLoading,
+		cachedAudioUrl,
+		isDisLiked,
+		isLiked,
+		loading,
+		runFeedback,
+		messageContent,
+		runTTS,
+		setLoading,
+		ttsConfig?.enabled,
+	])
 
 	return (
 		<Space>
