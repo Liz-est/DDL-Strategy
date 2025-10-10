@@ -47,6 +47,16 @@
         "example",
         "tutorial"
       ]
+    },
+    {
+      "login": "ARShl",
+      "name": "ArsHl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8003750?v=4",
+      "profile": "https://github.com/ARShl",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
