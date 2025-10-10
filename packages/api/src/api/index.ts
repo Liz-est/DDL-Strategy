@@ -691,6 +691,18 @@ export class DifyApi {
 			},
 		})
 	}
+
+	/**
+	 * 获取文件预览
+	 */
+	filePreview = async (params: { file_id: string; as_attachment?: boolean }) => {
+		return this.baseRequest.baseRequest(
+			`/files/${params.file_id}/preview${params.as_attachment ? '?as_attachment=true' : ''}`,
+			{
+				method: 'GET',
+			},
+		)
+	}
 }
 
 /**

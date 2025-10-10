@@ -1,5 +1,5 @@
 import { QuestionCircleOutlined, WarningOutlined } from '@ant-design/icons'
-import { IFile, IMessageItem4Render } from '@dify-chat/api'
+import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { AppModeEnums, Roles, useAppContext } from '@dify-chat/core'
 import { Tooltip } from 'antd'
 import { useMemo } from 'react'
@@ -11,6 +11,7 @@ import MessageReferrence from './referrence'
 import WorkflowLogs from './workflow-logs'
 
 interface IMessageContentProps {
+	previewApi: DifyApi['filePreview']
 	/**
 	 * 提交消息时触发的回调函数
 	 * @param nextContent 下一条消息的内容
@@ -34,6 +35,7 @@ interface IMessageContentProps {
  */
 export default function MessageContent(props: IMessageContentProps) {
 	const {
+		previewApi,
 		onSubmit,
 		messageItem: {
 			id,
@@ -100,7 +102,10 @@ export default function MessageContent(props: IMessageContentProps) {
 	// 消息附件列表 用户文件展示在消息体上方，AI 消息文件展示在消息体下方
 	const fileList = files?.length ? (
 		<div className="mt-3">
-			<MessageFileList files={files} />
+			<MessageFileList
+				previewApi={previewApi}
+				files={files}
+			/>
 		</div>
 	) : null
 

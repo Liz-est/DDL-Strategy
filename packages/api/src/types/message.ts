@@ -69,6 +69,7 @@ export interface IMessageFileItem {
 	size: number
 	transfer_method: string
 	belongs_to: string
+	upload_file_id?: string
 }
 
 export interface IAgentMessage {

@@ -144,6 +144,9 @@ export const Chatbox = (props: ChatboxProps) => {
 						<MessageContent
 							onSubmit={onSubmit}
 							messageItem={messageItem}
+							previewApi={params => {
+								return difyApi.filePreview(params)
+							}}
 						/>
 					)
 				},

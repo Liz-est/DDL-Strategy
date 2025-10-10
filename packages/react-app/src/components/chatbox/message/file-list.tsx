@@ -1,14 +1,52 @@
 import { FileJpgOutlined, FileTextOutlined } from '@ant-design/icons'
-import { IMessageFileItem } from '@dify-chat/api'
+import { DifyApi, IMessageFileItem } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
 import { useMemo } from 'react'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
 
-import { formatSize } from '../../message-sender/utils'
 import { completeFileUrl } from '@/utils'
 
+import { formatSize } from '../../message-sender/utils'
+
+const triggerDownload = (blob: Blob, filename: string) => {
+	const url = URL.createObjectURL(blob)
+	const a = document.createElement('a')
+	a.href = url
+	a.download = filename || 'download'
+	document.body.appendChild(a)
+	a.click()
+	a.remove()
+	URL.revokeObjectURL(url)
+}
+
+/**
+ * 从 Content-Disposition 头中解析文件名
+ * @param contentDisposition Content-Disposition 头值
+ * @param fallback  fallback 文件名
+ * @returns 解析后的文件名
+ */
+const parseFilenameFromCD = (contentDisposition: string | null, fallback: string) => {
+	if (!contentDisposition) return fallback
+	// 从 Content-Disposition 头中解析文件名
+	// e.g. attachment; filename="example.pdf"
+	const match = contentDisposition.match(/filename\*=UTF-8''([^;\n]+)|filename="?([^";\n]+)"?/i)
+	const encoded = match?.[1]
+	const plain = match?.[2]
+	try {
+		if (encoded) return decodeURIComponent(encoded)
+		if (plain) return plain
+	} catch (error) {
+		console.warn(`解析文件名失败: ${error}`, contentDisposition)
+	}
+	return fallback
+}
+
 interface IMessageFileListProps {
+	/**
+	 * 文件预览 API 函数
+	 */
+	previewApi: DifyApi['filePreview']
 	/**
 	 * 消息附件列表
 	 */
@@ -19,7 +57,7 @@ interface IMessageFileListProps {
  * 消息附件列表展示组件
  */
 export default function MessageFileList(props: IMessageFileListProps) {
-	const { files: filesInProps } = props
+	const { previewApi, files: filesInProps } = props
 	const { currentApp } = useAppContext()
 
 	/**
@@ -76,11 +114,31 @@ export default function MessageFileList(props: IMessageFileListProps) {
 				return (
 					<a
 						title="点击下载文件"
-						href={item.url}
 						target="_blank"
 						rel="noreferrer"
 						key={item.id}
 						className="p-3 bg-gray-50 rounded-lg w-60 flex items-center cursor-pointer no-underline mb-2"
+						onClick={async e => {
+							e.preventDefault()
+							try {
+								const result = await previewApi({
+									file_id: item.upload_file_id as string,
+									as_attachment: true,
+								})
+
+								// Case 1: API returns a fetch Response
+								if (typeof Response !== 'undefined' && result instanceof Response) {
+									const cd = result.headers?.get?.('content-disposition') || null
+									const filename = parseFilenameFromCD(cd, item.filename)
+									const blob = await result.blob()
+									triggerDownload(blob, filename)
+									return
+								}
+								console.warn('预览接口返回格式错误，无法下载', result)
+							} catch (err) {
+								console.error('下载失败', err)
+							}
+						}}
 					>
 						{item.type === 'image' ? (
 							<FileJpgOutlined className="text-3xl text-gray-400 mr-2" />
