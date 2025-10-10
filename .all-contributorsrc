@@ -57,6 +57,16 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "hitechbeijing",
+      "name": "hitechbeijing",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9780601?v=4",
+      "profile": "https://github.com/hitechbeijing",
+      "contributions": [
+        "code",
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 7,

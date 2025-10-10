@@ -31,7 +31,7 @@
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -45,6 +45,7 @@
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/GavinZha0"><img src="https://avatars.githubusercontent.com/u/88469005?v=4?s=100" width="100px;" alt="Gavin Zhao"/><br /><sub><b>Gavin Zhao</b></sub></a><br /><a href="#ideas-GavinZha0" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-GavinZha0" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ranzhengfeng"><img src="https://avatars.githubusercontent.com/u/204541953?v=4?s=100" width="100px;" alt="ranzhengfeng"/><br /><sub><b>ranzhengfeng</b></sub></a><br /><a href="#example-ranzhengfeng" title="Examples">💡</a> <a href="#tutorial-ranzhengfeng" title="Tutorials">✅</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ARShl"><img src="https://avatars.githubusercontent.com/u/8003750?v=4?s=100" width="100px;" alt="ArsHl"/><br /><sub><b>ArsHl</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=ARShl" title="Code">💻</a> <a href="#design-ARShl" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hitechbeijing"><img src="https://avatars.githubusercontent.com/u/9780601?v=4?s=100" width="100px;" alt="hitechbeijing"/><br /><sub><b>hitechbeijing</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=hitechbeijing" title="Code">💻</a> <a href="#example-hitechbeijing" title="Examples">💡</a></td>
     </tr>
   </tbody>
   <tfoot>
