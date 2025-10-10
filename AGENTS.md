@@ -23,3 +23,7 @@ Dify Chat 是一个基于 pnpm workspace 构建的 Monorepo 项目，包含以�
 
 - react-app 使用的是 Tailwind CSS v3, 版本是使用 pnpm catalog 协议定义，真正的版本存放在根目录的 pnpm-workspace.yaml 文件的 catalog 部分
 - platform 使用的是 Tailwind CSS v4, 版本直接在其 package.json 文件的 dependencies 部分定义
+
+## 开发调试
+
+在进行代码变更之后，**你不需要**尝试启动开发服务器来验证修改是否生效，因为此应用所有的页面都有登录校验，在你变更代码之后我会自行验证。
