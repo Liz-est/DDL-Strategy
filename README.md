@@ -31,7 +31,7 @@
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -47,6 +47,9 @@
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ARShl"><img src="https://avatars.githubusercontent.com/u/8003750?v=4?s=100" width="100px;" alt="ArsHl"/><br /><sub><b>ArsHl</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=ARShl" title="Code">💻</a> <a href="#design-ARShl" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/hitechbeijing"><img src="https://avatars.githubusercontent.com/u/9780601?v=4?s=100" width="100px;" alt="hitechbeijing"/><br /><sub><b>hitechbeijing</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=hitechbeijing" title="Code">💻</a> <a href="#example-hitechbeijing" title="Examples">💡</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://saowu.top/"><img src="https://avatars.githubusercontent.com/u/33569619?v=4?s=100" width="100px;" alt="saowu"/><br /><sub><b>saowu</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=saowu" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SickoGt"><img src="https://avatars.githubusercontent.com/u/17882380?v=4?s=100" width="100px;" alt="Sicko"/><br /><sub><b>Sicko</b></sub></a><br /><a href="https://github.com/lexmin0412/dify-chat/commits?author=SickoGt" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
