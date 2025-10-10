@@ -37,6 +37,16 @@
         "ideas",
         "design"
       ]
+    },
+    {
+      "login": "ranzhengfeng",
+      "name": "ranzhengfeng",
+      "avatar_url": "https://avatars.githubusercontent.com/u/204541953?v=4",
+      "profile": "https://github.com/ranzhengfeng",
+      "contributions": [
+        "example",
+        "tutorial"
+      ]
     }
   ],
   "contributorsPerLine": 7,
