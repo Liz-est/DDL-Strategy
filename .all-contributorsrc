@@ -27,6 +27,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "GavinZha0",
+      "name": "Gavin Zhao",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88469005?v=4",
+      "profile": "https://github.com/GavinZha0",
+      "contributions": [
+        "ideas",
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
