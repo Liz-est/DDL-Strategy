@@ -9,7 +9,18 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "angular",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "Amourtani",
+      "name": "子休",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48053221?v=4",
+      "profile": "https://github.com/Amourtani",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
-  "linkToUsage": true
+  "linkToUsage": true,
+  "commitType": "docs"
 }
