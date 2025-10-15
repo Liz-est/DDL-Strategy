@@ -1,0 +1,80 @@
+# Docker Compose 配置文件 - 本地开发环境
+# 适用场景：本地开发，需要构建镜像并支持代码修改
+# 使用方法: docker-compose -f docker-compose.dev.yml up --build
+
+services:
+  # React App 前端应用
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile_react_app
+    ports:
+      - '5200:80'
+    container_name: dify-chat-app-react
+    restart: unless-stopped
+    env_file:
+      - .env.react_app
+    networks:
+      - dify-chat-network
+    depends_on:
+      - platform
+    # 开发环境可以挂载源码目录实现热重载
+    # volumes:
+    #   - ./packages/react-app/src:/app/src
+
+  # Platform 平台应用
+  platform:
+    build:
+      context: .
+      dockerfile: Dockerfile_platform
+    ports:
+      - '5300:5300'
+    container_name: dify-chat-platform
+    restart: unless-stopped
+    env_file:
+      - .env.platform
+    networks:
+      - dify-chat-network
+    # 开发环境可以挂载源码目录实现热重载
+    # volumes:
+    #   - ./packages/platform:/app
+
+# 网络配置
+networks:
+  dify-chat-network:
+    driver: bridge
+# 可选：数据卷配置（如果需要持久化数据）
+# volumes:
+#   app-data:
+#     driver: local
+
+# ================================
+# 使用说明
+# ================================
+#
+# 适用场景：
+# - 本地开发环境
+# - 需要修改源码并实时构建
+# - 首次部署或需要自定义镜像
+#
+# 前置条件：
+# 1. 复制环境变量模板文件:
+#    cp .env.react_app.template .env.react_app
+#    cp .env.platform.template .env.platform
+#
+# 2. 编辑环境变量文件:
+#    nano .env.react_app
+#    nano .env.platform
+#
+# 构建并启动服务:
+#    docker-compose up --build
+#
+# 后台运行:
+#    docker-compose up --build -d
+#
+# 访问应用:
+#    - React App: http://localhost:5200
+#    - Platform API: http://localhost:5300
+#
+# 停止服务:
+#    docker-compose down
