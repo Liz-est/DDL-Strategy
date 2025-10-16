@@ -25,8 +25,8 @@ services:
       - '${DC_REACT_APP_PORT:-5200}:80'
     # 直接声明环境变量，更稳定可靠
     environment:
-      - PUBLIC_APP_API_BASE=http://localhost:-5300/api/client
-      - PUBLIC_DIFY_PROXY_API_BASE=http://localhost:-5300/api/client/dify
+      - PUBLIC_APP_API_BASE=http://localhost:5300/api/client
+      - PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify
       - PUBLIC_DEBUG_MODE=false
     depends_on:
       - platform
