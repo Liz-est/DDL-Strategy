@@ -92,41 +92,41 @@ if [ -n "$DOCKERHUB_USERNAME" ]; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_info "开始推送镜像到 DockerHub..."
-        
+
         # 检查是否已登录 Docker Hub
         if ! docker system info --format '{{.RegistryConfig.IndexConfigs}}' | grep -q "docker.io" 2>/dev/null && \
            ! [ -f ~/.docker/config.json ] || ! grep -q "index.docker.io" ~/.docker/config.json 2>/dev/null; then
             print_warning "请先登录 Docker Hub: docker login"
             exit 1
         fi
-        
+
         # 为镜像添加 DockerHub 标签
         print_info "添加 DockerHub 标签..."
         docker tag ${REACT_APP_IMAGE}:${VERSION} ${DOCKERHUB_USERNAME}/${REACT_APP_IMAGE}:${VERSION}
         docker tag ${PLATFORM_IMAGE}:${VERSION} ${DOCKERHUB_USERNAME}/${PLATFORM_IMAGE}:${VERSION}
-        
+
         if [ "$VERSION" != "latest" ]; then
             docker tag ${REACT_APP_IMAGE}:latest ${DOCKERHUB_USERNAME}/${REACT_APP_IMAGE}:latest
             docker tag ${PLATFORM_IMAGE}:latest ${DOCKERHUB_USERNAME}/${PLATFORM_IMAGE}:latest
         fi
-        
+
         # 推送镜像
         print_info "推送 React App 镜像..."
         docker push ${DOCKERHUB_USERNAME}/${REACT_APP_IMAGE}:${VERSION}
         if [ "$VERSION" != "latest" ]; then
             docker push ${DOCKERHUB_USERNAME}/${REACT_APP_IMAGE}:latest
         fi
-        
+
         print_info "推送 Platform 镜像..."
         docker push ${DOCKERHUB_USERNAME}/${PLATFORM_IMAGE}:${VERSION}
         if [ "$VERSION" != "latest" ]; then
             docker push ${DOCKERHUB_USERNAME}/${PLATFORM_IMAGE}:latest
         fi
-        
+
         print_success "镜像推送完成!"
         print_info "React App 镜像: ${DOCKERHUB_USERNAME}/${REACT_APP_IMAGE}:${VERSION}"
         print_info "Platform 镜像: ${DOCKERHUB_USERNAME}/${PLATFORM_IMAGE}:${VERSION}"
-        
+
         # 生成使用示例
         echo
         print_info "使用示例:"
@@ -141,4 +141,4 @@ if [ -n "$DOCKERHUB_USERNAME" ]; then
     fi
 fi
 
-print_success "构建脚本执行完成!"
+print_success "脚本执行完成!"
