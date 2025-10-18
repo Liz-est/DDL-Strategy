@@ -15,8 +15,6 @@
 # - 确保数据库服务已启动并可访问
 # - 生产环境中请使用强密码和安全的密钥
 
-version: '3.8'
-
 services:
   react-app:
     image: lexmin0412/dify-chat-app-react:latest
