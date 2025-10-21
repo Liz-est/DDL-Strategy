@@ -43,8 +43,6 @@ COPY --from=builder /app/packages/platform/.next/static ./packages/platform/.nex
 COPY --from=builder /app/packages/platform/public ./packages/platform/public
 # 复制 Prisma 生成的客户端文件（必需）
 COPY --from=builder /app/packages/platform/prisma/generated ./packages/platform/prisma/generated
-# 复制数据库文件（SQLite 模式下必需）
-COPY --from=builder /app/packages/platform/prisma/dev.db ./packages/platform/prisma/dev.db
 
 ENV NODE_ENV=production
 ENV PORT=5300
