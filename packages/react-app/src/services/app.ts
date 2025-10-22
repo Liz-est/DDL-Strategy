@@ -2,22 +2,6 @@ import { IDifyAppItem } from '@dify-chat/core'
 import { BaseRequest } from '@dify-chat/helpers'
 
 import { getDebugApps, isDebugMode } from '@/components/debug-mode'
-
-// import { uniqueId } from 'lodash-es'
-
-// 支持多种存储方式
-interface IAppStorageAdapter {
-	/**
-	 * 获取应用列表
-	 * 如果是单应用模式，将会直接取第一个
-	 */
-	getApps(): Promise<IDifyAppItem[]>
-	/**
-	 * 通过 ID 获取应用，多应用模式下使用
-	 */
-	getAppByID(id: string): Promise<IDifyAppItem>
-}
-
 // 固定的应用列表
 // const appList = [
 // 	{
@@ -34,8 +18,25 @@ interface IAppStorageAdapter {
 // 	} as IDifyAppItem,
 // ]
 
+import config from '@/config'
+
+// import { uniqueId } from 'lodash-es'
+
+// 支持多种存储方式
+interface IAppStorageAdapter {
+	/**
+	 * 获取应用列表
+	 * 如果是单应用模式，将会直接取第一个
+	 */
+	getApps(): Promise<IDifyAppItem[]>
+	/**
+	 * 通过 ID 获取应用，多应用模式下使用
+	 */
+	getAppByID(id: string): Promise<IDifyAppItem>
+}
+
 const baseRequest = new BaseRequest({
-	baseURL: process.env.PUBLIC_APP_API_BASE as string,
+	baseURL: config.PUBLIC_APP_API_BASE as string,
 })
 
 class AppService implements IAppStorageAdapter {

@@ -4,6 +4,7 @@ import { IDifyAppItem, IDifyAppSiteSetting } from '@dify-chat/core'
 import { LocalStorageStore, BaseRequest as XRequest } from '@dify-chat/helpers'
 
 import { isDebugMode } from '@/components/debug-mode'
+import config from '@/config'
 
 /**
  * 用户输入表单控件类型
@@ -390,7 +391,7 @@ export interface IAudio2TextResponse {
 	text: string
 }
 
-const PLATFORM_API_BASE = process.env.PUBLIC_DIFY_PROXY_API_BASE as string
+const PLATFORM_API_BASE = config.PUBLIC_DIFY_PROXY_API_BASE as string
 
 const genXRequestOptions = (options: IDifyApiOptions) => ({
 	baseURL: `${PLATFORM_API_BASE}${options.apiBase}`,

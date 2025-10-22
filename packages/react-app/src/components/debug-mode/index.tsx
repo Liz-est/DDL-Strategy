@@ -6,6 +6,8 @@ import { useRequest } from 'ahooks'
 import { Button, Drawer, FloatButton, Form, Input, message, Space, Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
 
+import config from '@/config'
+
 const { TextArea } = Input
 const { Text } = Typography
 
@@ -280,7 +282,8 @@ const DebugMode: React.FC<DebugModeProps> = ({ className }) => {
  * 当环境变量中设置了 PUBLIC_DEBUG_MODE 为 true 时，调试模式固定为开启状态，不可退出
  */
 export const isAlwaysDebugMode = (): boolean => {
-	return process.env.PUBLIC_DEBUG_MODE === 'true'
+	const debugModeValueFromEnv = config.PUBLIC_DEBUG_MODE
+	return debugModeValueFromEnv === 'true'
 }
 
 /**
