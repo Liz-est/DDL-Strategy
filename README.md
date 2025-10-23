@@ -6,6 +6,23 @@
 
 如果你觉得这个项目还不错的话，请动动你的小手指点个 Star ⭐️ 吧～
 
+## 快速开始
+
+使用 Docker Compose 启动 `Dify Chat` 是最便捷的方式。在执行以下命令前，请确保你的机器已安装 Docker 和 Docker Compose：
+
+```shell
+# 创建项目目录并进入
+mkdir dify-chat && cd dify-chat
+# 下载 Docker Compose 文件
+curl -O https://raw.githubusercontent.com/lexmin0412/dify-chat/main/docker-compose.yml
+# 修改环境变量，主要是 DATABASE_URL
+nano docker-compose.yml
+# 启动服务
+docker compose up -d
+```
+
+## 社区
+
 相关站点：
 
 - 使用文档：[https://docs.dify-chat.lexmin.cn/](https://docs.dify-chat.lexmin.cn/)
@@ -31,7 +48,9 @@
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
