@@ -73,8 +73,11 @@ COPY --from=builder /app/packages/react-app/dist /usr/share/nginx/html/dify-chat
 # 暴露端口
 EXPOSE 80
 
+# 入口脚本
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
 # 启动 nginx
-CMD ["/docker-entrypoint.sh", "nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
 
 # ================================
 # 构建说明和使用指南
