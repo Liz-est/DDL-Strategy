@@ -12,6 +12,14 @@ export default defineConfig({
 	source: {
 		tsconfigPath: process.env.NODE_ENV === 'development' ? tsconfigDevPath : tsconfigProdPath,
 		include: [{ not: /[\\/]core-js[\\/]/ }],
+		// 把 .env 中的变量注入到 process.env，供前端代码读取
+		define: {
+			'process.env.PUBLIC_DEBUG_MODE': JSON.stringify(process.env.PUBLIC_DEBUG_MODE ?? ''),
+			'process.env.PUBLIC_APP_API_BASE': JSON.stringify(process.env.PUBLIC_APP_API_BASE ?? ''),
+			'process.env.PUBLIC_DIFY_PROXY_API_BASE': JSON.stringify(
+				process.env.PUBLIC_DIFY_PROXY_API_BASE ?? '',
+			),
+		},
 	},
 	output: {
 		polyfill: 'entry',
