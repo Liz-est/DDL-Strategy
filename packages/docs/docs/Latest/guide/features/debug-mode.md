@@ -35,18 +35,26 @@
 http://localhost:5200/dify-chat/?isDebug=true
 ```
 
-### 3.2. 配置本地环境变量
+### 3.2. 指定环境变量
 
 这种方案适合长期开启调试模式的场景，不支持退出。
 
-开启方式：在项目的根目录下创建一个名为 `.env` 的文件，添加以下内容：
+开启方式：在 `packages/react-app/public/env.js` 文件中，将调试模式的开关直接设置为 `'true'`（注意是字符串）, 然后运行 `pnpm --filter dify-chat-app-react build` 重新构建产物即可生效。
 
-```bash
-# 开启调试模式
-PUBLIC_DEBUG_MODE=true
+```js title="packages/react-app/public/env.js"
+window.__DIFY_CHAT_ENV__ = {
+  PUBLIC_DEBUG_MODE: 'true',
+};
 ```
 
-然后运行 `pnpm build` 重新构建产物方可生效。
+如果你是基于 docker compose 构建的，更方便的方式是在 `docker-compose.yml` 中，将 `react-app` 服务的 `PUBLIC_DEBUG_MODE` 变量值改为 `true` 之后重启容器。
+
+```yaml title="docker-compose.yml"
+services:
+  react-app:
+    environment:
+      - PUBLIC_DEBUG_MODE=true
+```
 
 ## 4. 使用说明
 
