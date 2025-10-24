@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Determine the correct sed -i syntax based on OS
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOS (BSD sed)
+  SED_INPLACE="sed -i ''"
+else
+  # Linux (GNU sed)
+  SED_INPLACE="sed -i"
+fi
+
 # 生产环境启动脚本
 # 使用 PM2 管理 Platform 服务，构建 React App 静态文件
 
@@ -60,6 +69,28 @@ else
 fi
 
 pnpm build
+
+echo "🔄 替换 React App 环境变量..."
+
+# Load environment variables from .env
+if [ -f .env ]; then
+  source .env
+else
+  echo "⚠️ .env file not found in packages/react-app. Using default values for replacement."
+fi
+
+# Ensure variables are set, using defaults if not present in .env or environment
+PUBLIC_APP_API_BASE=${PUBLIC_APP_API_BASE:-"http://localhost:5300/api/client"}
+PUBLIC_DIFY_PROXY_API_BASE=${PUBLIC_DIFY_PROXY_API_BASE:-"http://localhost:5300/api/client/dify"}
+PUBLIC_DEBUG_MODE=${PUBLIC_DEBUG_MODE:-"false"}
+
+# Perform replacements in dist/env.js
+${SED_INPLACE} "s|{{__PUBLIC_APP_API_BASE__}}|$PUBLIC_APP_API_BASE|g" dist/env.js
+${SED_INPLACE} "s|{{__PUBLIC_DIFY_PROXY_API_BASE__}}|$PUBLIC_DIFY_PROXY_API_BASE|g" dist/env.js
+${SED_INPLACE} "s|{{__PUBLIC_DEBUG_MODE__}}|$PUBLIC_DEBUG_MODE|g" dist/env.js
+
+echo "✅ React App 环境变量替换完成"
+
 echo "✅ React App 构建完成，静态文件位于: packages/react-app/dist"
 cd ../..
 
@@ -77,7 +108,7 @@ fi
 if ! grep -q "^DATABASE_URL=" .env; then
     echo "添加 DATABASE_URL 配置..."
     echo "# Database - 生产环境请使用 PostgreSQL 或 MySQL" >> .env
-    echo "DATABASE_URL=\"file:./prod.db\"" >> .env
+    echo "DATABASE_URL=\"mysql://username:password@host:port/database_name\"" >> .env
     echo "添加 NEXTAUTH_SECRET 配置..."
     echo "NEXTAUTH_SECRET=\"$(openssl rand -base64 32)\"" >> .env
     echo ""
