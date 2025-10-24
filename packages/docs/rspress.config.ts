@@ -7,7 +7,7 @@ export default defineConfig({
 	icon: '/logo.png',
 	multiVersion: {
 		default: 'Latest',
-		versions: ['Latest', 'v0.4.0'],
+		versions: ['Latest', 'v0.5.x', 'v0.4.x'],
 	},
 	search: {
 		versioned: true,
