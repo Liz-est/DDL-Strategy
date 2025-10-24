@@ -3,8 +3,10 @@ import { Attachments, AttachmentsProps, Sender } from '@ant-design/x'
 import { DifyApi, IFile, IUploadFileResponse } from '@dify-chat/api'
 import { useAppContext, useConversationsContext } from '@dify-chat/core'
 import { useThemeContext } from '@dify-chat/theme'
+import { useMount } from 'ahooks'
 import { Badge, Button, GetProp, GetRef, message } from 'antd'
 import { RcFile } from 'antd/es/upload'
+import { useSearchParams } from 'pure-react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -61,6 +63,16 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	const senderRef = useRef<GetRef<typeof Sender>>(null)
 	const { isLight } = useThemeContext()
 	const { currentConversationId } = useConversationsContext()
+	const searchParams = useSearchParams()
+
+	// 初始化时，从 URL 参数中获取 sender_text 并解码
+	useMount(() => {
+		const originalSenderText = searchParams.get('sender_text') || ''
+		if (originalSenderText) {
+			const decodedSenderText = decodeURIComponent(originalSenderText)
+			setContent(decodedSenderText)
+		}
+	})
 
 	// 监听对话切换时，自动聚焦输入框
 	useEffect(() => {
