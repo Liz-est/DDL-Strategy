@@ -2,11 +2,13 @@
 
 本小节将会教你如何通过脚本一键完成 Dify Chat 的项目构建和启动。
 
-Clone 项目源码：
+## 1. Clone 项目源码
 
 ```bash
 git clone git@github.com:lexmin0412/dify-chat.git
 ```
+
+## 2. 配置环境变量
 
 进入项目目录：
 
@@ -14,7 +16,22 @@ git clone git@github.com:lexmin0412/dify-chat.git
 cd dify-chat
 ```
 
-运行一键启动脚本：
+配置 react-app 的环境变量：
+
+```bash
+cd packages/react-app
+cp .env.template .env
+```
+
+配置 platform 的环境变量：
+
+```bash
+cd packages/platform
+# 注意这里要替换 DATABASE_URL 为你自己的数据库连接
+cp .env.template .env
+```
+
+## 3. 运行一键启动脚本
 
 ```bash
 chmod +x ./prod-start.sh
@@ -25,12 +42,6 @@ chmod +x ./prod-start.sh
 
 ![启动成功提示](/guide__one_key_start.png)
 
-访问 `http://localhost:5300`，即可看到 `Platform` 应用的登录页面：
-
-![Platform 登录](/guide__platform_login.png)
-
-回到项目目录，运行 `pnpm create-admin`，按照提示依次输入邮箱、密码、用户名，即可创建一个管理员账号。此账号可用于 `Dify Chat Platform` 的登录。
+访问 `http://localhost:5300`，你会看到 Platform 的初始化界面，依次输入用户名、邮箱、密码，即可创建一个管理员账号。此账号可用于 `Dify Chat Platform` 的登录。
 
 对于前端应用，你需要将 `packages/react-app/dist` 中的产物通过 nginx 等静态文件服务器进行部署。
-
-注意：Platform 应用的端口默认为 `5300`，不要随意改动。
