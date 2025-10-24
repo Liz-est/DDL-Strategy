@@ -69,8 +69,14 @@ export const MessageSender = (props: IMessageSenderProps) => {
 	useMount(() => {
 		const originalSenderText = searchParams.get('sender_text') || ''
 		if (originalSenderText) {
-			const decodedSenderText = decodeURIComponent(originalSenderText)
-			setContent(decodedSenderText)
+			try {
+				const decodedSenderText = decodeURIComponent(originalSenderText)
+				setContent(decodedSenderText)
+			} catch (error) {
+				console.warn('Failed to decode sender_text parameter:', error)
+				// Fallback: use the original text as-is
+				setContent(originalSenderText)
+			}
 		}
 	})
 
