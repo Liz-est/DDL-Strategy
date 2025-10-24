@@ -1,27 +1,12 @@
 # Dify Chat 独立部署配置
 # 此文件可以独立使用，无需 clone 源码仓库
-# 使用 DockerHub 上的预构建镜像
-
-# 使用说明：
-# 2. 配置 DATABASE_URL 为实际的数据库连接地址
-# 3. 配置 NEXTAUTH_SECRET 为安全的密钥
-# 5. 可选：设置端口环境变量（如不设置将使用默认值）：
-#    export DC_REACT_APP_PORT=5200
-#    export DC_PLATFORM_PORT=5300
-# 6. 运行命令：docker-compose up -d
-# 7. 访问应用：http://localhost:${DC_REACT_APP_PORT:-5200}
-#
-# 注意事项：
-# - 确保数据库服务已启动并可访问
-# - 生产环境中请使用强密码和安全的密钥
-
 services:
   react-app:
     image: lexmin0412/dify-chat-app-react:latest
     container_name: dify-chat-app-react
     ports:
-      - '${DC_REACT_APP_PORT:-5200}:80'
-    # 直接声明环境变量，更稳定可靠
+      - '5200:80'
+    # 自定义环境变量
     environment:
       - PUBLIC_APP_API_BASE=http://localhost:5300/api/client
       - PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify
@@ -36,10 +21,10 @@ services:
     image: lexmin0412/dify-chat-platform:latest
     container_name: dify-chat-platform
     ports:
-      - '${DC_PLATFORM_PORT:-5300}:5300'
-    # 启动时替换
+      - '5300:5300'
+    # 自定义环境变量
     environment:
-      - DATABASE_URL=postgresql://username:password@host:port/database_name
+      - DATABASE_URL=mysql://username:password@host:port/database_name
       - NEXTAUTH_SECRET=your-secret-key-here
     restart: unless-stopped
     networks:
