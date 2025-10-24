@@ -45,6 +45,9 @@ jobs:
       - name: Build with Rsbuild and Rslib
         run: |
           pnpm build
+      - name: Replace PUBLIC_DEBUG_MODE in env.js
+        run: |
+          sed -i "s|PUBLIC_DEBUG_MODE: '{{__PUBLIC_DEBUG_MODE__}}',|PUBLIC_DEBUG_MODE: 'true',|" packages/react-app/dist/env.js
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
