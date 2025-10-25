@@ -1,5 +1,18 @@
 # @dify-chat/theme
 
+## 0.6.0
+
+### Minor Changes
+
+- 895900a: 支持 Docker 容器化部署
+
+### Patch Changes
+
+- 6fdb311: 对消息进行点踩时，支持填写原因
+- Updated dependencies [895900a]
+- Updated dependencies [6fdb311]
+  - @dify-chat/helpers@0.6.0
+
 ## 0.5.5
 
 ### Patch Changes
