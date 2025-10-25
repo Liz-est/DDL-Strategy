@@ -17,9 +17,13 @@ export default function AuthPage() {
 	const mockLogin = async () => {
 		const fp = await FingerPrintJS.load()
 		const result = await fp.get()
-		return {
-			userId: result.visitorId,
-		}
+		return await new Promise<{ userId: string }>(resolve => {
+			setTimeout(() => {
+				resolve({
+					userId: result.visitorId,
+				})
+			}, 2000)
+		})
 	}
 
 	/**
