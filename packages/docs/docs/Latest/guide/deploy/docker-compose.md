@@ -1,4 +1,4 @@
-# Docker Compose 部署
+# Docker Compose 一键部署
 
 使用 Docker Compose 时，我们提供了两种方式供你部署，你可以按需选用。
 
@@ -25,7 +25,7 @@ curl -O https://raw.githubusercontent.com/lexmin0412/dify-chat/main/docker-compo
 nano docker-compose.yml
 ```
 
-### 4. 启动服务
+### 4. 启动容器
 
 ```bash
 docker-compose -f docker-compose.yml up -d
@@ -50,19 +50,21 @@ git clone git@github.com:lexmin0412/dify-chat.git
 
 ### 2. 配置本地环境变量
 
-配置 react-app 的环境变量：
+复制 react-app 的环境变量配置文件：
 
 ```bash
 cd packages/react-app
 cp .env.template .env
 ```
 
-配置 platform 的环境变量：
+复制 platform 的环境变量配置文件：
 
 ```bash
 cd packages/platform
 cp .env.template .env
 ```
+
+注意：默认情况下，Dify Chat 使用 MySQL 进行应用配置的持久化存储，如果你需要配置其他类型的数据库，请查看 [使用其他数据库](/guide/deploy/db-config#2-使用其他数据库)。
 
 ### 3. 修改源码
 

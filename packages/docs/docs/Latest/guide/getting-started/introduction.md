@@ -1,4 +1,4 @@
-# 简介
+# 项目简介
 
 **Dify Chat**，一个基于 Dify API 的 AI Web 应用，提供开箱即用的应用配置管理功能，支持运行不同类型的 Dify 应用，适配深度思考、思维链、图表等多种丰富的输出形式。
 
@@ -73,6 +73,7 @@ Dify Chat 支持多种内容类型的渲染，让 AI 的回复更加生动和实
 
 - React v19
 - Next.js v15
+- Prisma ORM v6
 - Ant Design v5
 - Ant Design X v1
 - Rsbuild v1
