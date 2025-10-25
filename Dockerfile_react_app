@@ -1,11 +1,5 @@
-# React App 容器化部署方案
-# 多阶段构建：1. 构建子包 2. 构建 React 应用 3. 运行时环境
-#
-# 优化构建命令：
-# docker build -f Dockerfile_react_app --dockerignore-file .dockerignore_react_app -t dify-chat-app-react:latest .
-
 # ================================
-# 阶段 1: 基础环境和依赖安装
+# 阶段 1: 基础环境和依赖安装、构建
 # ================================
 FROM node:22.5.1-alpine AS builder
 
@@ -58,7 +52,7 @@ ENV PUBLIC_DIFY_PROXY_API_BASE=${PUBLIC_DIFY_PROXY_API_BASE}
 RUN pnpm --filter dify-chat-app-react build
 
 # ================================
-# 阶段 4: 运行时环境 (Nginx) - 优化版
+# 阶段 2: 运行时
 # ================================
 FROM nginx:latest AS runtime
 
@@ -78,47 +72,3 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # 启动 nginx
 CMD ["nginx", "-g", "daemon off;"]
-
-# ================================
-# 构建说明和使用指南
-# ================================
-#
-# 基础构建命令：
-# docker build -f Dockerfile_react_app -t dify-chat-app-react:latest .
-#
-# 优化构建命令（推荐）：
-# docker build -f Dockerfile_react_app --dockerignore-file .dockerignore_react_app -t dify-chat-app-react:latest .
-#
-# 带环境变量构建：
-# docker build -f Dockerfile_react_app \
-#   --build-arg PUBLIC_DEBUG_MODE=true \
-#   --build-arg PUBLIC_APP_API_BASE=https://api.example.com \
-#   --build-arg PUBLIC_DIFY_PROXY_API_BASE=https://dify.example.com \
-#   -t dify-chat-app-react:latest .
-#
-# 使用 BuildKit 缓存优化构建：
-# DOCKER_BUILDKIT=1 docker build -f Dockerfile_react_app \
-#   --dockerignore-file .dockerignore_react_app \
-#   --cache-from=type=local,src=/tmp/.buildx-cache \
-#   --cache-to=type=local,dest=/tmp/.buildx-cache \
-#   -t dify-chat-app-react:latest .
-#
-# 运行容器：
-# docker run -d -p 5200:80 --name dify-chat-app-react dify-chat-app-react:latest
-#
-# 带环境变量运行：
-# docker run -d -p 5200:80 \
-#   -e PUBLIC_DEBUG_MODE=false \
-#   -e PUBLIC_APP_API_BASE=/api \
-#   --name dify-chat-app-react dify-chat-app-react:latest
-#
-# 访问应用：
-# http://localhost:5200/dify-chat/
-#
-# ================================
-# 镜像优化特性
-# ================================
-# 1. 多阶段构建，最小化最终镜像大小
-# 2. 使用 Alpine Linux 基础镜像
-# 3. 专用 .dockerignore 文件减少构建上下文
-# 4. 静态文件压缩和缓存策略
