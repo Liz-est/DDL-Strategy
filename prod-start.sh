@@ -124,7 +124,7 @@ fi
 # 生成 Prisma 客户端
 echo "🗄️ 初始化数据库..."
 pnpm prisma generate
-pnpm prisma db push
+pnpm prisma migrate deploy
 
 # 构建 Platform
 echo "🏗️ 构建 Platform..."
