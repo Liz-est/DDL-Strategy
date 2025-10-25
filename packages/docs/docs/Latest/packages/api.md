@@ -1,4 +1,4 @@
-# @dify-chat/api
+# `@dify-chat/api`
 
 ![version](https://img.shields.io/npm/v/@dify-chat/api) ![NPM Last Update](https://img.shields.io/npm/last-update/@dify-chat/api) ![NPM Downloads](https://img.shields.io/npm/dm/@dify-chat/api)
 
