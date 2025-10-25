@@ -42,11 +42,13 @@ COPY --from=builder /app/packages/platform/.next/standalone ./
 COPY --from=builder /app/packages/platform/.next/static ./packages/platform/.next/static
 COPY --from=builder /app/packages/platform/public ./packages/platform/public
 # 复制 Prisma 生成的客户端文件（必需）
-COPY --from=builder /app/packages/platform/prisma/generated ./packages/platform/prisma/generated
+COPY --from=builder /app/packages/platform/prisma ./packages/platform/prisma
 
 ENV NODE_ENV=production
 ENV PORT=5300
 
 EXPOSE 5300
 
-CMD ["node", "packages/platform/server.js"]
+WORKDIR /app/packages/platform
+
+CMD ["sh", "-c", "npx prisma@6.1.0 migrate deploy && node server.js"]
