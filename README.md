@@ -21,7 +21,7 @@ nano docker-compose.yml
 docker compose up -d
 ```
 
-更多部署方式，详见 [官方文档](https://docs.dify-chat.lexmin.cn/guide/quick-start/docker-compose.html)。
+更多部署方式，详见 [官方文档](https://docs.dify-chat.lexmin.cn/guide/deploy/docker-compose.html)。
 
 ## 相关链接
 
