@@ -85,11 +85,16 @@ fi
 print_info "构建完成的镜像:"
 docker images | grep -E "(${REACT_APP_IMAGE}|${PLATFORM_IMAGE})" | head -10
 
-# 如果提供了 DockerHub 用户名，询问是否推送
+# 如果提供了 DockerHub 用户名，询问是否推送；在 CI 或设置 AUTO_PUSH=true 时自动推送
 if [ -n "$DOCKERHUB_USERNAME" ]; then
-    echo
-    read -p "是否要推送镜像到 DockerHub ($DOCKERHUB_USERNAME)? [y/N]: " -n 1 -r
-    echo
+    if [ "$CI" = "true" ] || [ "$AUTO_PUSH" = "true" ]; then
+        REPLY="y"
+    else
+        echo
+        read -p "是否要推送镜像到 DockerHub ($DOCKERHUB_USERNAME)? [y/N]: " -n 1 -r
+        echo
+    fi
+
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_info "开始推送镜像到 DockerHub..."
 
