@@ -1,5 +1,11 @@
 # @dify-chat/helpers
 
+## 0.6.1
+
+### Patch Changes
+
+- 661dae5: 修复 Docker 部署环境刷新应用详情页时加载 env.js 失败导致页面报错的问题
+
 ## 0.6.0
 
 ### Minor Changes
