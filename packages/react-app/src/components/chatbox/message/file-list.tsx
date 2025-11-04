@@ -1,4 +1,4 @@
-import { FileJpgOutlined, FileTextOutlined } from '@ant-design/icons'
+import { Attachments } from '@ant-design/x'
 import { DifyApi, IMessageFileItem } from '@dify-chat/api'
 import { useAppContext } from '@dify-chat/core'
 import { useMemo } from 'react'
@@ -6,8 +6,6 @@ import { PhotoProvider, PhotoView } from 'react-photo-view'
 import 'react-photo-view/dist/react-photo-view.css'
 
 import { completeFileUrl } from '@/utils'
-
-import { formatSize } from '../../message-sender/utils'
 
 const triggerDownload = (blob: Blob, filename: string) => {
 	const url = URL.createObjectURL(blob)
@@ -117,8 +115,14 @@ export default function MessageFileList(props: IMessageFileListProps) {
 						target="_blank"
 						rel="noreferrer"
 						key={item.id}
-						className="p-3 bg-gray-50 rounded-lg w-60 flex items-center cursor-pointer no-underline mb-2"
+						href={item.url}
+						className="cursor-pointer no-underline"
 						onClick={async e => {
+							if (item.belongs_to === 'assistant') {
+								// 如果是 AI 生成的文件，直接使用 a 标签下载功能，因为 preview API 只能用于用户上传的文件
+								return
+							}
+							// 否则阻止默认行为，调用专用的预览 API
 							e.preventDefault()
 							try {
 								const result = await previewApi({
@@ -140,15 +144,17 @@ export default function MessageFileList(props: IMessageFileListProps) {
 							}
 						}}
 					>
-						{item.type === 'image' ? (
-							<FileJpgOutlined className="text-3xl text-gray-400 mr-2" />
-						) : (
-							<FileTextOutlined className="text-3xl text-gray-400 mr-2" />
-						)}
-						<div className="overflow-hidden">
-							<div className="text-theme-text truncate">{item.filename}</div>
-							{item.size ? <div className="text-desc truncate">{formatSize(item.size)}</div> : null}
-						</div>
+						<Attachments.FileCard
+							key={item.id}
+							item={{
+								...item,
+								uid: item.upload_file_id || item.id,
+								name: item.filename,
+								size: item.size,
+								thumbUrl: item.url,
+								url: item.url,
+							}}
+						/>
 					</a>
 				)
 			})}
