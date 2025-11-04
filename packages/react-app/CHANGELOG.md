@@ -1,5 +1,17 @@
 # dify-chat-app-react
 
+## 0.6.2
+
+### Patch Changes
+
+- c78f1db: 对话消息中的文件卡片和表格样式优化
+- Updated dependencies [c78f1db]
+  - @dify-chat/api@0.6.2
+  - @dify-chat/components@0.6.2
+  - @dify-chat/core@0.6.2
+  - @dify-chat/helpers@0.6.2
+  - @dify-chat/theme@0.6.2
+
 ## 0.6.1
 
 ### Patch Changes

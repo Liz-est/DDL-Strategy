@@ -1,5 +1,11 @@
 # @dify-chat/helpers
 
+## 0.6.2
+
+### Patch Changes
+
+- c78f1db: 对话消息中的文件卡片和表格样式优化
+
 ## 0.6.1
 
 ### Patch Changes
