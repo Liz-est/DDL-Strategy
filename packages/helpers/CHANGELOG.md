@@ -1,5 +1,11 @@
 # @dify-chat/helpers
 
+## 0.6.3
+
+### Patch Changes
+
+- 4ef0c95: 升级 Next 到 v16
+
 ## 0.6.2
 
 ### Patch Changes

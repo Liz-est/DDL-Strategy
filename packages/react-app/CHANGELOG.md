@@ -1,5 +1,17 @@
 # dify-chat-app-react
 
+## 0.6.3
+
+### Patch Changes
+
+- 4ef0c95: 升级 Next 到 v16
+- Updated dependencies [4ef0c95]
+  - @dify-chat/api@0.6.3
+  - @dify-chat/components@0.6.3
+  - @dify-chat/core@0.6.3
+  - @dify-chat/helpers@0.6.3
+  - @dify-chat/theme@0.6.3
+
 ## 0.6.2
 
 ### Patch Changes
