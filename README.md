@@ -21,13 +21,13 @@ nano docker-compose.yml
 docker compose up -d
 ```
 
-更多部署方式，详见 [官方文档](https://docs.dify-chat.lexmin.cn/guide/deploy/docker-compose.html)。
+更多部署方式，详见 [官方文档](https://lexmin0412.github.io/dify-chat-docs/guide/deploy/docker-compose.html)。
 
 ## 相关链接
 
 官方站点：
 
-- 使用文档：[https://docs.dify-chat.lexmin.cn/](https://docs.dify-chat.lexmin.cn/)
+- 使用文档：[https://lexmin0412.github.io/dify-chat-docs/](https://lexmin0412.github.io/dify-chat-docs/)
 - 演示站点：[https://lexmin0412.github.io/dify-chat/](https://lexmin0412.github.io/dify-chat/)
 
 另外，如果你想要了解整个项目的架构或技术细节，推荐访问：
