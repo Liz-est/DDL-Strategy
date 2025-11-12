@@ -5,6 +5,7 @@ export default defineConfig({
 	root: path.join(__dirname, 'docs'),
 	title: 'Dify Chat Docs',
 	icon: '/logo.png',
+	base: '/dify-chat-docs/',
 	multiVersion: {
 		default: 'Latest',
 		versions: ['Latest', 'v0.5.x', 'v0.4.x'],
