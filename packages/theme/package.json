@@ -45,6 +45,7 @@
 		"lucide-react": "catalog:",
 		"prettier": "catalog:",
 		"react": "catalog:",
+		"react-dom": "catalog:",
 		"typescript": "catalog:",
 		"typescript-eslint": "catalog:"
 	},

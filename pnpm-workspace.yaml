@@ -22,7 +22,6 @@ catalog:
   '@ant-design/cssinjs': ^1.24.0
   '@ant-design/icons': ^5.6.1
   '@ant-design/nextjs-registry': ^1.2.0
-  '@ant-design/v5-patch-for-react-19': ^1.0.3
   '@ant-design/x': ^1.6.1
   '@auth/prisma-adapter': ^2.10.0
   '@biomejs/biome': ^1.9.4
@@ -63,7 +62,7 @@ catalog:
   '@types/react-dom': ^19.2.1
   '@types/react-syntax-highlighter': ^15.5.13
   ahooks: ^3.8.4
-  antd: ^5.27.3
+  antd: ^6.0.0
   antd-style: ^3.7.1
   bcryptjs: ^3.0.2
   classnames: ^2.5.1

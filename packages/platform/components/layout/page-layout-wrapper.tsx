@@ -1,6 +1,5 @@
 'use client'
 
-import '@ant-design/v5-patch-for-react-19'
 import { initResponsiveConfig } from '@dify-chat/helpers'
 import { ThemeContextProvider, useThemeContext } from '@dify-chat/theme'
 import { ConfigProvider, theme } from 'antd'

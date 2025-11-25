@@ -57,7 +57,7 @@ export const ConversationList = (props: IConversationListProps) => {
 			name: conversation.label,
 		})
 		Modal.confirm({
-			destroyOnClose: true,
+			destroyOnHidden: true,
 			title: '编辑对话名称',
 			content: (
 				<Form

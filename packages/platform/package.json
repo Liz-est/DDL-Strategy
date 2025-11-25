@@ -22,7 +22,6 @@
 	"dependencies": {
 		"@ant-design/icons": "catalog:",
 		"@ant-design/nextjs-registry": "catalog:",
-		"@ant-design/v5-patch-for-react-19": "catalog:",
 		"@auth/prisma-adapter": "catalog:",
 		"@dify-chat/api": "workspace:^",
 		"@dify-chat/components": "workspace:^",
