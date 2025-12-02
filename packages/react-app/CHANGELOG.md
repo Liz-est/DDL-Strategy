@@ -1,5 +1,17 @@
 # dify-chat-app-react
 
+## 0.6.4
+
+### Patch Changes
+
+- 2291d88: 回复表单时支持隐藏类型的输入字段，以实现隐藏字段提交
+- Updated dependencies [2291d88]
+  - @dify-chat/api@0.6.4
+  - @dify-chat/components@0.6.4
+  - @dify-chat/core@0.6.4
+  - @dify-chat/helpers@0.6.4
+  - @dify-chat/theme@0.6.4
+
 ## 0.6.3
 
 ### Patch Changes
