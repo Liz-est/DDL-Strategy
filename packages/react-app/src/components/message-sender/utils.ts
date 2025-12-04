@@ -36,7 +36,7 @@ export const getFileExtByName = (filename: string) => {
 }
 
 export const getFileTypeByName = (filename: string): IFileType => {
-	const ext = filename.split('.').pop()
+	const ext = filename?.split('.')?.pop()
 
 	// 使用文件扩展名和 FileTypeMap 进行匹配
 	let fileType: IFileType = 'custom'
