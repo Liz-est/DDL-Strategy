@@ -2,14 +2,25 @@ import { DifyApi, IUserInputFormItemType, IUserInputFormItemValueBase } from '@d
 import { AppModeEnums, useAppContext } from '@dify-chat/core'
 import { useConversationsContext } from '@dify-chat/core'
 import { isTempId, unParseGzipString } from '@dify-chat/helpers'
-import { Form, FormInstance, FormItemProps, Input, InputNumber, message, Select } from 'antd'
+import {
+	Form,
+	FormInstance,
+	FormItemProps,
+	GetProp,
+	Input,
+	InputNumber,
+	message,
+	Select,
+	Upload,
+} from 'antd'
 import { useHistory, useSearchParams } from 'pure-react-router'
 import { useEffect, useRef, useState } from 'react'
 
 import { useGlobalStore } from '@/store'
 import { isChatLikeApp } from '@/utils'
 
-import FileUpload, { IUploadFileItem } from './form-controls/file-upload'
+import FileUpload from './form-controls/file-upload'
+import { IDifyConversationInputFile } from './types'
 
 export type IConversationEntryFormItem = FormItemProps &
 	Pick<IUserInputFormItemValueBase, 'options' | 'max_length' | 'allowed_file_types'> & {
@@ -37,6 +48,36 @@ export interface IAppInputFormProps {
 	// FIXME: any 类型后续优化 @ts-expect-error
 	entryForm: FormInstance<Record<string, unknown>>
 	uploadFileApi: DifyApi['uploadFile']
+}
+
+type IUploadFileItem = GetProp<typeof Upload, 'fileList'>[0]
+
+type IFileItem = IUploadFileItem | IDifyConversationInputFile
+
+/**
+ * 把 Dify 对话列表返回的参数值转换为对应控件需要的格式
+ * @param type 参数类型
+ * @param value 原始参数值
+ */
+function normalizeFieldValue(type: IUserInputFormItemType, value: unknown): unknown {
+	const transferFileItem = (file: IFileItem) => ({
+		...file,
+		name: (file as IUploadFileItem).name || (file as IDifyConversationInputFile).filename,
+		url: (file as IUploadFileItem).url || (file as IDifyConversationInputFile).remote_url,
+		status: (file as IUploadFileItem).status || 'done',
+		upload_file_id:
+			(file as IUploadFileItem).upload_file_id || (file as IDifyConversationInputFile).related_id,
+	})
+	if (type === 'file-list' && Array.isArray(value)) {
+		const result = (value as IFileItem[]).map(file => transferFileItem(file))
+		return result
+	}
+	if (type === 'file' && value) {
+		const f = value as IDifyConversationInputFile
+		return transferFileItem(f) as IDifyConversationInputFile
+	}
+
+	return value
 }
 
 /**
@@ -79,6 +120,7 @@ export default function AppInputForm(props: IAppInputFormProps) {
 				const searchValue = cachedSearchParams.current.get(originalProps.variable)
 				const cachedValue = store.globalParams[originalProps.variable]
 				const currentConversationInputs = currentConversationInfo?.inputs || {}
+				// 如果 URL 或者缓存中存在该参数，则使用它
 				if (searchValue || cachedValue) {
 					const { error, data } = unParseGzipString(searchValue || cachedValue)
 
@@ -102,10 +144,11 @@ export default function AppInputForm(props: IAppInputFormProps) {
 					}
 				} else if (currentConversationInputs[originalProps.variable]) {
 					// 对话参数中存在该参数，且不是临时对话，则使用对话参数
-					entryForm.setFieldValue(
-						originalProps.variable,
+					const fieldValue = normalizeFieldValue(
+						originalProps.type,
 						currentConversationInputs[originalProps.variable],
 					)
+					entryForm.setFieldValue(originalProps.variable, fieldValue)
 				} else {
 					// 只有在非临时对话时才使用 currentConversationInfo 的 inputs
 					// 临时对话的 inputs 通常是空的，不应该覆盖可能存在的默认值
@@ -113,28 +156,10 @@ export default function AppInputForm(props: IAppInputFormProps) {
 						isChatLikeApp(currentApp?.config?.info?.mode as AppModeEnums) &&
 						!isTempId(currentConversationId)
 					) {
-						let fieldValue = currentConversationInfo?.inputs?.[originalProps.variable]
-						if (originalProps.type === 'file-list') {
-							fieldValue = (fieldValue as IUploadFileItem[])?.map(file => ({
-								...file,
-								name: file.name || file.filename,
-								url: file.url || file.remote_url,
-								status: file.status || 'done',
-								upload_file_id: file.upload_file_id || file.related_id,
-							}))
-						} else if (originalProps.type === 'file') {
-							if (fieldValue) {
-								const { name, filename, url, remote_url, upload_file_id, related_id, status } =
-									fieldValue as IUploadFileItem
-								fieldValue = {
-									...fieldValue,
-									name: name || filename,
-									url: url || remote_url,
-									status: status || 'done',
-									upload_file_id: upload_file_id || related_id,
-								} as IUploadFileItem
-							}
-						}
+						const fieldValue = normalizeFieldValue(
+							originalProps.type,
+							currentConversationInfo?.inputs?.[originalProps.variable],
+						)
 						entryForm.setFieldValue(originalProps.variable, fieldValue)
 					} else if (originalProps.default) {
 						entryForm.setFieldValue(originalProps.variable, originalProps.default)
