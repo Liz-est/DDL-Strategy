@@ -56,7 +56,9 @@ export default function FileUpload(props: IFileUploadProps) {
 			setFiles(value ? [value as IUploadFileItem] : [])
 		} else {
 			const multiModeValues = value as IUploadFileItem[] | undefined
-			if (multiModeValues?.length && multiModeValues?.length !== files.length) {
+			if (!multiModeValues?.length) {
+				setFiles([])
+			} else if (multiModeValues?.length !== files.length) {
 				setFiles(multiModeValues)
 			}
 		}
