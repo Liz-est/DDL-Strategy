@@ -1,5 +1,16 @@
 # @dify-chat/components
 
+## 0.6.5
+
+### Patch Changes
+
+- e74d395: 对话输入参数组件优化: 修复多文件组件跨对话切换时没有清空的问题, 并重构渲染组件和 Dify 接口返回字段的映射逻辑
+- Updated dependencies [e74d395]
+  - @dify-chat/api@0.6.5
+  - @dify-chat/core@0.6.5
+  - @dify-chat/helpers@0.6.5
+  - @dify-chat/theme@0.6.5
+
 ## 0.6.4
 
 ### Patch Changes
