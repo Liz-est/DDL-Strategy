@@ -1,7 +1,7 @@
 {
 	"name": "dify-chat-root",
 	"private": true,
-	"version": "0.6.5",
+	"version": "0.6.6",
 	"scripts": {
 		"build": "pnpm -r build",
 		"build:pkgs": "pnpm --filter @dify-chat/* build",

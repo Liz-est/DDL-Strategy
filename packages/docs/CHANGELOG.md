@@ -1,5 +1,12 @@
 # dify-chat-docs
 
+## 0.6.6
+
+### Patch Changes
+
+- 09188ff: - 修复侧边栏收起时可无限添加新对话的问题
+  - 优化移动端和小屏下的响应式布局
+
 ## 0.6.5
 
 ### Patch Changes
