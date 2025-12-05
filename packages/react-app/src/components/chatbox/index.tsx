@@ -281,7 +281,7 @@ export const Chatbox = (props: ChatboxProps) => {
 							minHeight: 'calc(100vh - 10.25rem)',
 						}}
 					>
-						<div className="flex-1 w-full md:!w-[720px] mx-auto px-3 pb-6 md:px-0 box-border">
+						<div className="flex-1 w-full md:max-w-[720px] mx-auto px-3 md:px-6 pb-6 box-border">
 							{/* 🌟 消息列表 */}
 							<Bubble.List
 								items={items}
@@ -328,33 +328,31 @@ export const Chatbox = (props: ChatboxProps) => {
 					</InfiniteScroll>
 				</div>
 				<div
-					className="absolute bottom-0 bg-theme-main-bg w-full md:max-w-[720px] left-1/2"
+					className="absolute bottom-0 bg-theme-main-bg w-full md:max-w-[720px] px-3 md:px-6 left-1/2 box-border"
 					style={{
 						transform: 'translateX(-50%)',
 					}}
 				>
 					{/* 🌟 输入框 */}
-					<div>
-						<MessageSender
-							onSubmit={async (...params) => {
-								return validateAndGenErrMsgs(entryForm).then(res => {
-									if (res.isSuccess) {
-										return onSubmit(...params)
-									} else {
-										message.error(res.errMsgs)
-										return Promise.reject(`表单校验失败: ${res.errMsgs}`)
-									}
-								})
-							}}
-							isRequesting={isRequesting}
-							className="w-full !text-theme-text"
-							uploadFileApi={(...params) => {
-								return difyApi.uploadFile(...params)
-							}}
-							audio2TextApi={(...params) => difyApi.audio2Text(...params)}
-							onCancel={onCancel}
-						/>
-					</div>
+					<MessageSender
+						onSubmit={async (...params) => {
+							return validateAndGenErrMsgs(entryForm).then(res => {
+								if (res.isSuccess) {
+									return onSubmit(...params)
+								} else {
+									message.error(res.errMsgs)
+									return Promise.reject(`表单校验失败: ${res.errMsgs}`)
+								}
+							})
+						}}
+						isRequesting={isRequesting}
+						className="w-full !text-theme-text"
+						uploadFileApi={(...params) => {
+							return difyApi.uploadFile(...params)
+						}}
+						audio2TextApi={(...params) => difyApi.audio2Text(...params)}
+						onCancel={onCancel}
+					/>
 					<div className="text-theme-desc text-sm text-center h-8 leading-8 truncate">
 						{currentApp?.site?.custom_disclaimer || '内容由 AI 生成, 仅供参考'}
 					</div>
