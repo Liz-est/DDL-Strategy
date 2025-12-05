@@ -222,7 +222,7 @@ export default function ChatLayout(props: IChatLayoutProps) {
 				key: 'add_conversation',
 				icon: <PlusCircleOutlined />,
 				label: '新增对话',
-				disabled: isTempId(currentConversationId),
+				disabled: disableNewButton,
 				onClick: () => {
 					onAddConversation()
 				},
@@ -442,8 +442,9 @@ export default function ChatLayout(props: IChatLayoutProps) {
 													name="plus-circle"
 													strokeWidth={1.25}
 													size={28}
-													className="cursor-pointer"
+													className={`${disableNewButton ? 'text-gray-400 cursor-not-allowed' : 'text-theme-text cursor-pointer'}`}
 													onClick={() => {
+														if (disableNewButton) return
 														onAddConversation()
 													}}
 												/>
