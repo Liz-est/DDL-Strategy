@@ -1,5 +1,17 @@
 # dify-chat-app-react
 
+## 0.6.7
+
+### Patch Changes
+
+- 4e62081: 修复安全漏洞(CVE-2025-55182)
+- Updated dependencies [4e62081]
+  - @dify-chat/api@0.6.7
+  - @dify-chat/components@0.6.7
+  - @dify-chat/core@0.6.7
+  - @dify-chat/helpers@0.6.7
+  - @dify-chat/theme@0.6.7
+
 ## 0.6.6
 
 ### Patch Changes
