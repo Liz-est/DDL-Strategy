@@ -1,5 +1,17 @@
 # dify-chat-platform
 
+## 0.6.8
+
+### Patch Changes
+
+- 70b38ad: 修复安全漏洞 CVE-2025-55183 和 CVE-2025-55184
+- Updated dependencies [70b38ad]
+  - @dify-chat/api@0.6.8
+  - @dify-chat/components@0.6.8
+  - @dify-chat/core@0.6.8
+  - @dify-chat/helpers@0.6.8
+  - @dify-chat/theme@0.6.8
+
 ## 0.6.7
 
 ### Patch Changes

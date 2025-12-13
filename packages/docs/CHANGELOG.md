@@ -1,5 +1,11 @@
 # dify-chat-docs
 
+## 0.6.8
+
+### Patch Changes
+
+- 70b38ad: 修复安全漏洞 CVE-2025-55183 和 CVE-2025-55184
+
 ## 0.6.7
 
 ### Patch Changes
