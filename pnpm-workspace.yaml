@@ -85,14 +85,14 @@ catalog:
   lodash-es: ^4.17.21
   lucide-react: ^0.508.0
   mermaid: ^11.11.0
-  next: ^16.0.7
+  next: ^16.0.10
   pako: ^2.1.0
   prettier: ^3.5.3
   prettier-plugin-tailwindcss: ^0.7.0
   prisma: ^6.1.0
   pure-react-router: ^0.2.4
-  react: ^19.2.1
-  react-dom: ^19.2.1
+  react: ^19.2.3
+  react-dom: ^19.2.3
   react-infinite-scroll-component: ^6.1.0
   react-markdown: ^10.1.0
   react-photo-view: ^1.2.7
