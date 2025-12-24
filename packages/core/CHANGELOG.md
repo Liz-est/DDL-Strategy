@@ -1,5 +1,13 @@
 # @dify-chat/core
 
+## 0.6.9
+
+### Patch Changes
+
+- d87bc7a: AI回复过程中支持阻止自动滚动
+- Updated dependencies [d87bc7a]
+  - @dify-chat/helpers@0.6.9
+
 ## 0.6.8
 
 ### Patch Changes

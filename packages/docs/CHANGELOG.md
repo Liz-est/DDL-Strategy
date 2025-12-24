@@ -1,5 +1,11 @@
 # dify-chat-docs
 
+## 0.6.9
+
+### Patch Changes
+
+- d87bc7a: AI回复过程中支持阻止自动滚动
+
 ## 0.6.8
 
 ### Patch Changes

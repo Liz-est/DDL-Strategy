@@ -1,6 +1,6 @@
 {
 	"name": "dify-chat-platform",
-	"version": "0.6.8",
+	"version": "0.6.9",
 	"private": true,
 	"scripts": {
 		"dev": "PORT=5300 next dev",
