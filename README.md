@@ -41,7 +41,7 @@ docker compose up -d
 
 ## 🥇 Sponsors
 
-<img width="1678" height="1398" alt="fbf17c1b-a3b6-41cd-9e0c-e6f09703dba8" src="https://github.com/user-attachments/assets/8be478f9-ba03-49b7-b6a1-85b99cb7059a" />
+<img width="1908" height="1618" alt="image" src="https://github.com/user-attachments/assets/3df5561d-ab54-4278-8c7c-4f66756421f6" />
 
 ## Repobeats
 
