@@ -101,11 +101,11 @@ docker compose up -d
 ## 技术栈
 
 - React v19
-- Next.js v15
-- Ant Design v5
+- Next.js v16 (App Router)
+- Ant Design v6
 - Ant Design X v1
 - Rsbuild v1
-- Tailwind CSS v3
+- Tailwind CSS (v3 in react-app and v4 in platform)
 - TypeScript v5
 
 ## 运行环境
