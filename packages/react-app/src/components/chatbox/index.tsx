@@ -5,7 +5,7 @@ import { DifyApi, IFile, IMessageItem4Render } from '@dify-chat/api'
 import { OpeningStatementDisplayMode, Roles, useAppContext } from '@dify-chat/core'
 import { isTempId, useIsMobile } from '@dify-chat/helpers'
 import { FormInstance, GetProp, message, Spin } from 'antd'
-import { useDeferredValue, useEffect, useEffectEvent, useMemo, useRef } from 'react'
+import { useDeferredValue, useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { validateAndGenErrMsgs } from '@/utils'
@@ -116,6 +116,24 @@ export const Chatbox = (props: ChatboxProps) => {
 	const isMobile = useIsMobile()
 	const { currentApp } = useAppContext()
 
+	// 控制回答过程中是否需要自动滚动到最底部
+	const [shouldAutoScroll2Bottom, setShouldAutoScroll2Bottom] = useState(false)
+
+	useEffect(() => {
+		if (isRequesting) {
+			setShouldAutoScroll2Bottom(true)
+		} else {
+			setShouldAutoScroll2Bottom(false)
+		}
+	}, [isRequesting])
+
+	// 如果用户自行滚动，则将自动滚动开关关闭
+	const handleUserScroll = () => {
+		if (isRequesting) {
+			setShouldAutoScroll2Bottom(false)
+		}
+	}
+
 	const roles: GetProp<typeof Bubble.List, 'roles'> = {
 		ai: {
 			placement: 'start',
@@ -218,7 +236,7 @@ export const Chatbox = (props: ChatboxProps) => {
 	 */
 	const scroll2BottomWhenMessagesChange = useEffectEvent(() => {
 		// 如果非请求中，不滚动（防止影响下拉刷新功能）
-		if (!isRequesting) {
+		if (!isRequesting || !shouldAutoScroll2Bottom) {
 			return
 		}
 		if (scrollContainerRef.current) {
@@ -259,6 +277,9 @@ export const Chatbox = (props: ChatboxProps) => {
 						display: 'flex',
 						flexDirection: 'column-reverse',
 					}}
+					onWheel={handleUserScroll}
+					onTouchMove={handleUserScroll}
+					onMouseDown={handleUserScroll}
 				>
 					<InfiniteScroll
 						scrollableTarget="scrollableDiv"
