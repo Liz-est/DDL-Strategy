@@ -29,7 +29,7 @@
 		"@dify-chat/core": "workspace:^",
 		"@dify-chat/helpers": "workspace:^",
 		"@dify-chat/theme": "workspace:^",
-		"@prisma/adapter-mariadb": "^7.2.0",
+		"@prisma/adapter-mariadb": "^7.4.2",
 		"@prisma/client": "^7.2.0",
 		"@radix-ui/react-dialog": "catalog:",
 		"@radix-ui/react-slot": "catalog:",
