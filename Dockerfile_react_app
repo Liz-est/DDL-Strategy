@@ -30,7 +30,8 @@ FROM nginx:alpine-slim AS runtime
 # 复制自定义 nginx 配置
 COPY packages/react-app/docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY packages/react-app/docker/replace_env.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+# 👇 核心修改：用 sed 命令把所有的 \r 删掉，解决 Windows 到 Linux 的换行符乱码问题
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
 # 复制构建产物到 nginx 静态文件目录（优化权限）
 COPY --from=builder /app/packages/react-app/dist /usr/share/nginx/html/dify-chat

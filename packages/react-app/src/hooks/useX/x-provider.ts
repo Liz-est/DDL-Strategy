@@ -247,6 +247,8 @@ export class CustomProvider<
 			} as ChatMessage
 		}
 		if (parsedData.event === EventEnum.MESSAGE) {
+			// 当 AI 返回内容时，发一个全局广播
+			window.dispatchEvent(new CustomEvent('dify-data-update', { detail: parsedData.answer }));
 			return {
 				...originMessage,
 				taskId: this.currentTaskId,
