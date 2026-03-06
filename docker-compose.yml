@@ -1,12 +1,13 @@
-# Dify Chat 独立部署配置
-# 此文件可以独立使用，无需 clone 源码仓库
+version: '3'
 services:
+  # 1. 前端 React 应用 (本地构建版)
   react-app:
-    image: lexmin0412/dify-chat-app-react:latest
+    build:
+      context: .
+      dockerfile: Dockerfile_react_app
     container_name: dify-chat-app-react
     ports:
       - '5200:80'
-    # 自定义环境变量
     environment:
       - PUBLIC_APP_API_BASE=http://localhost:5300/api/client
       - PUBLIC_DIFY_PROXY_API_BASE=http://localhost:5300/api/client/dify
@@ -17,15 +18,37 @@ services:
     networks:
       - dify-chat-network
 
+  # 2. 中间层 Platform
   platform:
     image: lexmin0412/dify-chat-platform:latest
     container_name: dify-chat-platform
     ports:
       - '5300:5300'
-    # 自定义环境变量
     environment:
-      - DATABASE_URL=mysql://username:password@host:port/database_name
-      - NEXTAUTH_SECRET=your-secret-key-here
+      # 请确保这里的密码和你下面 db 服务的一致
+      - DATABASE_URL=mysql://root:123456@db:3306/dify_chat
+      - NEXTAUTH_SECRET=random-secret-key-123
+      
+      # 👇 这里填入你的 Dify API Key (Chatflow类型)
+      - DIFY_API_KEY=app-Nl7KXqV994rCBFXDZLCDKNxK
+      - DIFY_API_URL=https://api.dify.ai/v1
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - dify-chat-network
+
+  # 3. 数据库服务
+  db:
+    image: mysql:8.0
+    container_name: dify-chat-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=dify_chat
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
     restart: unless-stopped
     networks:
       - dify-chat-network
