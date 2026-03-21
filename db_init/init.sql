@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS `_prisma_migrations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `_prisma_migrations` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `checksum` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `checksum` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `finished_at` datetime(3) DEFAULT NULL,
-  `migration_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logs` text COLLATE utf8mb4_unicode_ci,
+  `migration_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logs` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `rolled_back_at` datetime(3) DEFAULT NULL,
   `started_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `applied_steps_count` int unsigned NOT NULL DEFAULT '0',
@@ -46,6 +46,64 @@ INSERT INTO `_prisma_migrations` VALUES ('a4261ee1-ea99-4a8d-8c55-58f222055a1e',
 UNLOCK TABLES;
 
 --
+-- Table structure for table `academic_tasks`
+--
+
+DROP TABLE IF EXISTS `academic_tasks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `academic_tasks` (
+  `id` varchar(191) NOT NULL,
+  `user_id` varchar(191) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `due_date` date NOT NULL,
+  `weight` int DEFAULT '0',
+  `type` varchar(50) DEFAULT 'Task',
+  `course_code` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `academic_tasks`
+--
+
+LOCK TABLES `academic_tasks` WRITE;
+/*!40000 ALTER TABLE `academic_tasks` DISABLE KEYS */;
+/*!40000 ALTER TABLE `academic_tasks` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `course_policies`
+--
+
+DROP TABLE IF EXISTS `course_policies`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `course_policies` (
+  `id` varchar(191) NOT NULL,
+  `user_id` varchar(191) NOT NULL,
+  `course_code` varchar(50) NOT NULL,
+  `late_policy` text,
+  `absence_policy` text,
+  `grading_notes` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_course_unique` (`user_id`,`course_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `course_policies`
+--
+
+LOCK TABLES `course_policies` WRITE;
+/*!40000 ALTER TABLE `course_policies` DISABLE KEYS */;
+/*!40000 ALTER TABLE `course_policies` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `dify_apps`
 --
 
@@ -53,20 +111,20 @@ DROP TABLE IF EXISTS `dify_apps`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dify_apps` (
-  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mode` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `tags` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `mode` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tags` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_enabled` int DEFAULT '1',
-  `api_base` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `api_key` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `api_base` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `api_key` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `enable_answer_form` tinyint(1) NOT NULL DEFAULT '0',
-  `answer_form_feedback_text` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `answer_form_feedback_text` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enable_update_input_after_starts` tinyint(1) NOT NULL DEFAULT '0',
-  `opening_statement_display_mode` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `opening_statement_display_mode` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `enable_annotation` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -78,7 +136,7 @@ CREATE TABLE `dify_apps` (
 
 LOCK TABLES `dify_apps` WRITE;
 /*!40000 ALTER TABLE `dify_apps` DISABLE KEYS */;
-INSERT INTO `dify_apps` VALUES ('cmm9gaoo2000101nu78lnxx2v','2026-03-02 17:26:29.470','2026-03-02 17:26:29.470','DDL Strategist A','workflow',NULL,NULL,1,'https://api.dify.ai/v1','app-Nl7KXqV994rCBFXDZLCDKNxK',0,NULL,0,'default',0);
+INSERT INTO `dify_apps` VALUES ('cmm9gaoo2000101nu78lnxx2v','2026-03-02 17:26:29.470','2026-03-02 17:26:29.470','DDL Strategist A','workflow',NULL,NULL,1,'https://api.dify.ai/v1','app-Nl7KXqV994rCBFXDZLCDKNxK',0,NULL,0,'default',0),('cmn024lbg000001mqnwzwa2w7','2026-03-21 08:19:37.321','2026-03-21 08:19:37.321','DDL Strategist','advanced-chat',NULL,NULL,1,'https://api.dify.ai/v1','app-NMT4ERBsbv6OZtshfECHHqOw',0,NULL,0,'default',0);
 /*!40000 ALTER TABLE `dify_apps` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,10 +148,10 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) NOT NULL,
   PRIMARY KEY (`id`),
@@ -120,4 +178,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-06  8:43:39
+-- Dump completed on 2026-03-21 15:19:11

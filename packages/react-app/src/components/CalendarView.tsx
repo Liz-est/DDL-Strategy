@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import React from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -64,9 +64,21 @@ export default function CalendarView({ events, onEventChange }: CalendarProps) {
           eventContent={renderEventContent} // 👈 使用自定义美化渲染
           
           // 移除 alert，改用控制台记录
-          eventClick={(info) => {
-            console.log('Event Details:', info.event.extendedProps);
-            // 这里未来可以改为弹出一个漂亮的自定义 Modal
+           eventClick={(info) => {
+            const { weight, type, estimated_hours, rationale } = info.event.extendedProps;
+            
+            // 3. 将 alert 替换为控制台打印，或在 UI 侧边栏显示详情
+            console.log('Task Details:', {
+              title: info.event.title,
+              type,
+              weight,
+              estimated_hours,
+              rationale
+            });
+
+            // 💡 演示小技巧：如果想给教授看，可以在控制台直接打出一段漂亮的文字
+            console.info(`%c 📋 [${type}] ${info.event.title} `, 'background: #3b82f6; color: white; font-weight: bold;');
+            console.info(`Estimated Workload: ${estimated_hours}h | Rationale: ${rationale}`);
           }}
           
           eventDrop={(info) => {
