@@ -1,42 +1,90 @@
 'use client'
+import React from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
-// 1. 核心修复：在这里定义 Interface，明确告诉 TS 我们可以接收这两个属性
 interface CalendarProps {
   events: any[];
-  onEventChange: (updatedEvent: any) => void; 
+  onEventChange: (updatedEvent: any) => void;
 }
 
 export default function CalendarView({ events, onEventChange }: CalendarProps) {
-  return (
-    <div className="h-full bg-white p-4 flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-blue-600">📅 DDL Strategist Timeline</h2>
+  
+  // 自定义事件渲染：根据权重和类型显示不同的样式 (Proposal 4.2 需求)
+  const renderEventContent = (eventInfo: any) => {
+    const { weight, type } = eventInfo.event.extendedProps;
+    const isHighRisk = weight >= 30 || type === 'Exam';
+
+    return (
+      <div className={`
+        flex flex-col px-2 py-1 rounded-md border-l-4 shadow-sm transition-all hover:brightness-95
+        ${isHighRisk 
+          ? 'bg-red-50 border-red-500 text-red-700' 
+          : 'bg-indigo-50 border-indigo-500 text-indigo-700'}
+      `}>
+        <div className="flex justify-between items-center overflow-hidden">
+          <span className="text-[9px] font-bold uppercase truncate opacity-80">
+            {type || 'Assignment'}
+          </span>
+          {isHighRisk && <span className="text-[10px]">🔥</span>}
+        </div>
+        <div className="text-xs font-bold truncate leading-tight">
+          {eventInfo.event.title}
+        </div>
+        {weight && (
+          <div className="text-[9px] mt-0.5 font-medium opacity-60">
+            Weight: {weight}%
+          </div>
+        )}
       </div>
-      <div className="flex-1 border rounded-xl overflow-hidden shadow-sm">
+    );
+  };
+
+  return (
+    <div className="h-full flex flex-col bg-white">
+      {/* 注入 CSS 覆盖 FullCalendar 默认样式，使其更美观 */}
+      <style>{`
+        .fc { --fc-border-color: #e2e8f0; --fc-button-bg-color: #4f46e5; --fc-button-border-color: #4f46e5; --fc-button-hover-bg-color: #4338ca; }
+        .fc .fc-toolbar-title { font-size: 1.25rem; font-weight: 700; color: #1e293b; }
+        .fc .fc-col-header-cell-cushion { padding: 8px 0; font-size: 0.875rem; color: #64748b; text-transform: uppercase; }
+        .fc .fc-daygrid-day-number { font-size: 0.875rem; color: #94a3b8; padding: 8px; }
+        .fc .fc-day-today { background-color: #f8fafc !important; }
+        .fc-theme-standard .fc-scrollgrid { border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .fc-event { background: transparent !important; border: none !important; margin: 2px 4px !important; }
+      `}</style>
+
+      <div className="flex-1 p-4">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={events}
-          editable={true} // 允许拖拽
+          editable={true}
           droppable={true}
-          // 2. 当事件被拖拽停止时，调用父组件传进来的函数
+          eventContent={renderEventContent} // 👈 使用自定义美化渲染
+          
+          // 移除 alert，改用控制台记录
+          eventClick={(info) => {
+            console.log('Event Details:', info.event.extendedProps);
+            // 这里未来可以改为弹出一个漂亮的自定义 Modal
+          }}
+          
           eventDrop={(info) => {
             const updated = {
               id: info.event.id,
               title: info.event.title,
-              start: info.event.startStr, // 获取拖拽后的新日期
+              start: info.event.startStr,
             };
             onEventChange(updated);
           }}
+          
           height="100%"
           headerToolbar={{
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth'
           }}
+          dayMaxEvents={true}
         />
       </div>
     </div>

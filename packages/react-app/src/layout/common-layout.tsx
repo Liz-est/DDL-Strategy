@@ -1,4 +1,4 @@
-import { HeaderLayout } from '@/components'
+import { HeaderLayout } from '@/components' // 修复：使用命名导入匹配模块导出
 import { IDifyAppItem, useAppContext } from '@dify-chat/core'
 import { Empty, Spin } from 'antd'
 import { useTranslation } from 'react-i18next'
