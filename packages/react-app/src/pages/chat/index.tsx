@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react' // 删掉了多余的 React
+import { useState, useEffect, useMemo } from 'react'
 import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
 import CalendarView from '@/components/CalendarView'
 
@@ -10,7 +10,7 @@ interface AcademicEvent {
   color?: string;
   weight?: number;
   type?: string;
-  extendedProps?: any; // 允许存储额外信息
+  extendedProps?: any;
 }
 
 export default function ChatPage() {
@@ -25,7 +25,7 @@ export default function ChatPage() {
     return { label: 'Balanced', color: 'text-green-500', bg: 'bg-green-100' };
   }, [academicEvents]);
 
-  // 1. 定义 handleRePlan，解决“找不到名称”报错
+  // 【核心修复】：必须定义这个函数，否则页面会崩溃
   const handleRePlan = (updatedEvent: any) => {
     console.log('Task Rescheduled:', updatedEvent);
     setAcademicEvents(prev => 
@@ -34,23 +34,26 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    const handler = (e: any) => {
-      const text = e.detail;
-      const jsonMatch = text.match(/(\[[\s\S]*?due_date_raw[\s\S]*?\]|\{[\s\S]*?assessments[\s\S]*?\})/);
+    console.log("战略家：实时监听器已启动...");
 
-      if (jsonMatch) {
+    const handler = (text: string) => {
+      // 1. 这里的正则可以抓取 [ ... ] 形式的任务列表
+      const jsonRegex = /\[[\s\S]*?due_date_raw[\s\S]*?\]/;
+      const match = text.match(jsonRegex);
+
+      if (match) {
         try {
-          const rawJson = jsonMatch[0].replace(/```json|```/g, "");
-          const parsed = JSON.parse(rawJson);
-          const taskList = Array.isArray(parsed) ? parsed : (parsed.assessments || []);
+          console.log("战略家：检测到潜在 JSON 数据，开始解析...");
+          const rawJson = match[0].replace(/```json|```/g, "");
+          const taskList = JSON.parse(rawJson);
           
-          if (taskList.length > 0) {
+          if (Array.isArray(taskList) && taskList.length > 0) {
             const newEvents = taskList.map((item: any, index: number) => ({
               id: `ai-${item.name}-${index}`,
               title: item.name || "Unnamed Task",
-              start: item.due_date_raw || new Date().toISOString().split('T')[0],
+              start: item.due_date_raw, // 使用 AI 返回的 YYYY-MM-DD
               weight: item.weight || 0,
-              type: item.type || 'Task',
+              type: item.task_type_standardized || item.type,
               extendedProps: {
                 weight: item.weight,
                 type: item.task_type_standardized || item.type,
@@ -63,52 +66,60 @@ export default function ChatPage() {
             setAcademicEvents(prev => {
               const existingTitles = new Set(prev.map(ev => ev.title));
               const uniqueNew = newEvents.filter((ev: any) => !existingTitles.has(ev.title));
+              if (uniqueNew.length > 0) {
+                console.log(`战略家：成功同步 ${uniqueNew.length} 个新任务到日历！`);
+              }
               return [...prev, ...uniqueNew];
             });
           }
-        } catch { // 2. 删掉 err 变量，解决“caught but never used”报错
-          // 静默等待 JSON 生成完整
+        } catch {
+          // 这里的报错通常是因为 JSON 还在流式输出中，尚未闭合，属于正常现象
         }
       }
     };
 
-    window.addEventListener('dify-data-update', handler);
-    window.addEventListener('dify-api-response', handler);
+    // 方案 A: 监听自定义事件 (如果你已经按照之前的步骤改了底层代码)
+    const eventHandler = (e: any) => handler(e.detail);
+    window.addEventListener('dify-data-update', eventHandler);
+    window.addEventListener('dify-api-response', eventHandler);
+
+    // 方案 B: DOM 深度观察者 (针对工作流结果页面的暴力抓取)
+    const observer = new MutationObserver(() => {
+      // 这里的 .chat-message-content 是消息容器的常见类名，针对你的界面进行调整
+      const content = document.body.innerText; 
+      handler(content);
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
     return () => {
-      window.removeEventListener('dify-data-update', handler);
-      window.removeEventListener('dify-api-response', handler);
+      window.removeEventListener('dify-data-update', eventHandler);
+      window.removeEventListener('dify-api-response', eventHandler);
+      observer.disconnect();
     };
   }, []);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#f1f5f9]">
-      {/* 侧边栏 */}
       <div className="w-16 h-full bg-[#1e293b] flex flex-col items-center py-6 gap-8 text-white/50">
-        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-900/20">DS</div>
-        <div className="flex flex-col gap-6 text-xl">
-          <div className="text-white cursor-pointer transition-colors">📅</div>
-        </div>
+        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DS</div>
+        <div className="text-white cursor-pointer">📅</div>
       </div>
 
-      {/* 主面板 */}
       <div className="flex-1 h-full flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm">
           <div>
-            <h1 className="text-lg font-bold text-slate-800 tracking-tight">Academic Strategist</h1>
-            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">AIE1902 Project Hub</p>
+            <h1 className="text-lg font-bold text-slate-800">Academic Strategist</h1>
+            <p className="text-[10px] text-slate-400">PROJECT HUB</p>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Workload Status</span>
-              <span className={`text-sm font-black ${pressureInfo.color}`}>{pressureInfo.label}</span>
-            </div>
-            <div className={`w-8 h-8 ${pressureInfo.bg} rounded-full flex items-center justify-center`}>
-              <span className={`text-xs animate-pulse ${pressureInfo.color}`}>●</span>
-            </div>
+            <span className={`text-sm font-black ${pressureInfo.color}`}>{pressureInfo.label}</span>
+            <div className={`w-3 h-3 ${pressureInfo.bg.replace('bg-', 'text-')} animate-pulse`}>●</div>
           </div>
         </header>
 
         <main className="flex-1 p-6 overflow-hidden">
+          {/* 这里的 w-[60%] 改成了父容器控制，修复了那个 width 警告 */}
           <div className="h-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
             <CalendarView 
               events={academicEvents} 
