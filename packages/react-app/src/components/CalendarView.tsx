@@ -1,102 +1,96 @@
 ﻿'use client'
-import React from 'react'
+import React, { useRef } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import multiMonthPlugin from '@fullcalendar/multimonth'
+import listPlugin from '@fullcalendar/list'
 
 interface CalendarProps {
   events: any[];
   onEventChange: (updatedEvent: any) => void;
+  onDateSelect: (selectInfo: any) => void; // 👈 新增：处理用户手动选择日期创建日程
 }
 
-export default function CalendarView({ events, onEventChange }: CalendarProps) {
-  
-  // 自定义事件渲染：根据权重和类型显示不同的样式 (Proposal 4.2 需求)
+export default function CalendarView({ events, onEventChange, onDateSelect }: CalendarProps) {
+  const calendarRef = useRef<FullCalendar>(null!);
+
+  // 视图切换函数
+  const changeView = (viewName: string) => {
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.changeView(viewName);
+  };
+
   const renderEventContent = (eventInfo: any) => {
     const { weight, type } = eventInfo.event.extendedProps;
     const isHighRisk = weight >= 30 || type === 'Exam';
-
     return (
-      <div className={`
-        flex flex-col px-2 py-1 rounded-md border-l-4 shadow-sm transition-all hover:brightness-95
-        ${isHighRisk 
-          ? 'bg-red-50 border-red-500 text-red-700' 
-          : 'bg-indigo-50 border-indigo-500 text-indigo-700'}
-      `}>
-        <div className="flex justify-between items-center overflow-hidden">
-          <span className="text-[9px] font-bold uppercase truncate opacity-80">
-            {type || 'Assignment'}
-          </span>
-          {isHighRisk && <span className="text-[10px]">🔥</span>}
-        </div>
-        <div className="text-xs font-bold truncate leading-tight">
-          {eventInfo.event.title}
-        </div>
-        {weight && (
-          <div className="text-[9px] mt-0.5 font-medium opacity-60">
-            Weight: {weight}%
-          </div>
-        )}
+      <div className={`flex flex-col px-1 py-0.5 rounded border-l-2 shadow-sm truncate ${
+        isHighRisk ? 'bg-red-50 border-red-500 text-red-700' : 'bg-blue-50 border-blue-500 text-blue-700'
+      }`}>
+        <div className="font-bold text-[9px] truncate">{eventInfo.event.title}</div>
       </div>
     );
   };
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* 注入 CSS 覆盖 FullCalendar 默认样式，使其更美观 */}
-      <style>{`
-        .fc { --fc-border-color: #e2e8f0; --fc-button-bg-color: #4f46e5; --fc-button-border-color: #4f46e5; --fc-button-hover-bg-color: #4338ca; }
-        .fc .fc-toolbar-title { font-size: 1.25rem; font-weight: 700; color: #1e293b; }
-        .fc .fc-col-header-cell-cushion { padding: 8px 0; font-size: 0.875rem; color: #64748b; text-transform: uppercase; }
-        .fc .fc-daygrid-day-number { font-size: 0.875rem; color: #94a3b8; padding: 8px; }
-        .fc .fc-day-today { background-color: #f8fafc !important; }
-        .fc-theme-standard .fc-scrollgrid { border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; }
-        .fc-event { background: transparent !important; border: none !important; margin: 2px 4px !important; }
-      `}</style>
+      {/* --- 自定义顶部导航栏 (模仿手机日历) --- */}
+      <div className="flex items-center justify-between px-6 py-3 border-b bg-gray-50/50">
+        <div className="flex bg-white border rounded-lg p-1 shadow-sm">
+          {[
+            { label: '年', view: 'multiMonthYear' },
+            { label: '月', view: 'dayGridMonth' },
+            { label: '周', view: 'timeGridWeek' },
+            { label: '日', view: 'timeGridDay' },
+            { label: '日程', view: 'listMonth' },
+          ].map((item) => (
+            <button
+              key={item.view}
+              onClick={() => changeView(item.view)}
+              className="px-4 py-1 text-sm font-medium hover:bg-indigo-50 hover:text-indigo-600 rounded-md transition-all active:scale-95"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => calendarRef.current.getApi().prev()} className="p-2 hover:bg-gray-200 rounded-full">往前</button>
+          <button onClick={() => calendarRef.current.getApi().today()} className="px-4 py-1 bg-indigo-600 text-white rounded-md text-sm font-bold shadow-md shadow-indigo-200">今天</button>
+          <button onClick={() => calendarRef.current.getApi().next()} className="p-2 hover:bg-gray-200 rounded-full">往后</button>
+        </div>
+      </div>
 
-      <div className="flex-1 p-4">
+      {/* --- 日历主体 --- */}
+      <div className="flex-1 p-4 overflow-hidden">
+        <style>{`
+          .fc { font-family: inherit; --fc-border-color: #f1f5f9; --fc-today-bg-color: #f8fafc; }
+          .fc-header-toolbar { display: none !important; } /* 隐藏自带标题栏 */
+          .fc .fc-col-header-cell-cushion { padding: 12px 0; color: #64748b; font-size: 0.8rem; }
+          .fc-multimonth { background: white; }
+        `}</style>
         <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
+          ref={calendarRef}
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, listPlugin]}
           initialView="dayGridMonth"
           events={events}
           editable={true}
-          droppable={true}
-          eventContent={renderEventContent} // 👈 使用自定义美化渲染
-          
-          // 移除 alert，改用控制台记录
-           eventClick={(info) => {
-            const { weight, type, estimated_hours, rationale } = info.event.extendedProps;
-            
-            // 3. 将 alert 替换为控制台打印，或在 UI 侧边栏显示详情
-            console.log('Task Details:', {
-              title: info.event.title,
-              type,
-              weight,
-              estimated_hours,
-              rationale
-            });
-
-            // 💡 演示小技巧：如果想给教授看，可以在控制台直接打出一段漂亮的文字
-            console.info(`%c 📋 [${type}] ${info.event.title} `, 'background: #3b82f6; color: white; font-weight: bold;');
-            console.info(`Estimated Workload: ${estimated_hours}h | Rationale: ${rationale}`);
-          }}
-          
-          eventDrop={(info) => {
-            const updated = {
-              id: info.event.id,
-              title: info.event.title,
-              start: info.event.startStr,
-            };
-            onEventChange(updated);
-          }}
-          
-          height="100%"
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth'
-          }}
+          selectable={true}    // 👈 核心：允许点击/拖拽空白处
+          selectMirror={true}
           dayMaxEvents={true}
+          height="100%"
+          
+          // 当用户点击并拖拽选择一个时段时
+          select={(info) => {
+            onDateSelect(info);
+            calendarRef.current.getApi().unselect(); // 选择完成后取消高亮
+          }}
+          
+          eventContent={renderEventContent}
+          eventDrop={(info) => {
+            onEventChange({ id: info.event.id, title: info.event.title, start: info.event.startStr });
+          }}
         />
       </div>
     </div>
