@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
+import { Modal, Input, message } from 'antd' // 👈 引入真实的 UI 组件
 import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
 import CalendarView from '@/components/CalendarView'
 
@@ -7,6 +8,8 @@ interface AcademicEvent {
   id: string;
   title: string;
   start: string;
+  end?: string;
+  allDay?: boolean;
   color?: string;
   weight?: number;
   type?: string;
@@ -15,23 +18,58 @@ interface AcademicEvent {
 
 export default function ChatPage() {
   const [academicEvents, setAcademicEvents] = useState<AcademicEvent[]>([
-    { id: '1', title: 'Demo: Project Start', start: '2026-03-10', color: '#3b82f6', weight: 10, type: 'Project' }
+    { id: '1', title: 'AIE1902: Project Start', start: '2026-03-10', color: '#3b82f6', weight: 10, type: 'Project' }
   ])
 
-  const pressureInfo = useMemo(() => {
-    const totalWeight = academicEvents.reduce((acc, curr) => acc + (curr.weight || 0), 0);
-    if (totalWeight > 50) return { label: 'High Risk', color: 'text-red-500', bg: 'bg-red-100' };
-    if (totalWeight > 20) return { label: 'Moderate', color: 'text-orange-500', bg: 'bg-orange-100' };
-    return { label: 'Balanced', color: 'text-green-500', bg: 'bg-green-100' };
-  }, [academicEvents]);
+  // --- 状态管理：用于控制新建日程的弹窗 ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newEventTitle, setNewEventTitle] = useState('');
+  const [currentSelection, setCurrentSelection] = useState<any>(null);
 
-  // 【核心修复】：必须定义这个函数，否则页面会崩溃
+  // 1. 处理日历点击选择：打开真实弹窗
+  const handleDateSelect = (selectInfo: any) => {
+    setCurrentSelection(selectInfo);
+    setIsModalOpen(true); // 打开弹窗
+  };
+
+  // 2. 弹窗确认按钮：真正创建日程
+  const handleModalOk = () => {
+    if (!newEventTitle.trim()) {
+      message.warning('Please enter a task name');
+      return;
+    }
+
+    const newEvent: AcademicEvent = {
+      id: `user-${Date.now()}`,
+      title: newEventTitle,
+      start: currentSelection.startStr,
+      end: currentSelection.endStr,
+      allDay: currentSelection.allDay,
+      color: '#8b5cf6', // 手动创建的用紫色区分
+      extendedProps: {
+        type: 'Manual',
+        weight: 0
+      }
+    };
+
+    setAcademicEvents(prev => [...prev, newEvent]);
+    setIsModalOpen(false);
+    setNewEventTitle('');
+    message.success('Task added to calendar');
+  };
+
+  // 之前的逻辑保持不变 (handleRePlan, useEffect 等)
   const handleRePlan = (updatedEvent: any) => {
-    console.log('Task Rescheduled:', updatedEvent);
     setAcademicEvents(prev => 
       prev.map(ev => ev.id === updatedEvent.id ? { ...ev, start: updatedEvent.start } : ev)
     );
   };
+
+  const pressureInfo = useMemo(() => {
+    const totalWeight = academicEvents.reduce((acc, curr) => acc + (curr.weight || 0), 0);
+    if (totalWeight > 50) return { label: 'High Risk', color: 'text-red-500', bg: 'bg-red-100' };
+    return { label: 'Balanced', color: 'text-green-500', bg: 'bg-green-100' };
+  }, [academicEvents]);
 
   useEffect(() => {
     console.log("战略家：实时监听器已启动...");
@@ -101,29 +139,28 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#f1f5f9]">
+      {/* 侧边栏和布局保持不变 */}
       <div className="w-16 h-full bg-[#1e293b] flex flex-col items-center py-6 gap-8 text-white/50">
         <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DS</div>
         <div className="text-white cursor-pointer">📅</div>
       </div>
 
       <div className="flex-1 h-full flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
           <div>
             <h1 className="text-lg font-bold text-slate-800">Academic Strategist</h1>
-            <p className="text-[10px] text-slate-400">PROJECT HUB</p>
           </div>
-          <div className="flex items-center gap-6">
-            <span className={`text-sm font-black ${pressureInfo.color}`}>{pressureInfo.label}</span>
-            <div className={`w-3 h-3 ${pressureInfo.bg.replace('bg-', 'text-')} animate-pulse`}>●</div>
+          <div className="flex items-center gap-4">
+            <span className={`text-sm font-bold ${pressureInfo.color}`}>{pressureInfo.label}</span>
           </div>
         </header>
 
         <main className="flex-1 p-6 overflow-hidden">
-          {/* 这里的 w-[60%] 改成了父容器控制，修复了那个 width 警告 */}
           <div className="h-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
             <CalendarView 
               events={academicEvents} 
-              onEventChange={handleRePlan} 
+              onEventChange={handleRePlan}
+              onDateSelect={handleDateSelect} // 👈 传递处理函数
             />
           </div>
         </main>
@@ -132,6 +169,31 @@ export default function ChatPage() {
       <div className="w-[420px] h-full bg-white border-l border-slate-200 shadow-2xl z-20">
         <ChatLayoutWrapper />
       </div>
+
+      {/* --- 真实的产品交互：新建日程弹窗 --- */}
+      <Modal
+        title="Create New Academic Task"
+        open={isModalOpen}
+        onOk={handleModalOk}
+        onCancel={() => setIsModalOpen(false)}
+        okText="Save to Calendar"
+        cancelText="Cancel"
+      >
+        <div className="py-4">
+          <p className="text-xs text-gray-400 mb-2 uppercase font-bold">Task Name</p>
+          <Input 
+            placeholder="e.g. Study for Quiz, Lab Work..." 
+            value={newEventTitle}
+            onChange={(e) => setNewEventTitle(e.target.value)}
+            onPressEnter={handleModalOk}
+            autoFocus
+          />
+          <p className="mt-4 text-xs text-gray-400 uppercase font-bold">Selected Time</p>
+          <div className="bg-gray-50 p-2 rounded text-sm text-gray-600">
+            {currentSelection?.startStr} {currentSelection?.endStr ? ` to ${currentSelection.endStr}` : ''}
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

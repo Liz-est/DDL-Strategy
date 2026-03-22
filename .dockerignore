@@ -187,3 +187,11 @@ docker-compose*
 **/.pnpm-store/
 **/.yarn/
 **/.npm/
+
+# ================================
+# 系统文件
+# ================================
+mysql_data
+node_modules
+.git
+.vscode
