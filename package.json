@@ -30,7 +30,7 @@
 		"husky": "catalog:",
 		"lint-staged": "catalog:",
 		"oxfmt": "^0.23.0",
-		"oxlint": "^1.38.0",
+		"oxlint": "^1.39.0",
 		"oxlint-tsgolint": "^0.10.1",
 		"prettier": "catalog:",
 		"prettier-plugin-tailwindcss": "catalog:",
