@@ -44,6 +44,39 @@ model DifyApp {
   @@map("dify_apps")
 }
 
+model AcademicTask {
+  id         String   @id
+  userId     String   @map("user_id")
+  title      String
+  dueDate    String?  @map("due_date")
+  weight     Float?
+  type       String?
+  courseCode String?  @map("course_code")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("academic_tasks")
+}
+
+// 文档处理结果 - 存储前端返回的完整JSON数据
+model ProcessingResult {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  courseCode  String?  @map("course_code")
+  
+  // 存储完整的JSON数据（以JSON字符串形式存储）
+  rawData     String   @db.LongText @map("raw_data")    // 前端返回的完整JSON
+  processedAt DateTime @default(now()) @map("processed_at")
+  
+  // 元数据
+  sourceType  String?  @map("source_type")              // "academic" | "document" | "custom"
+  description String?  @db.Text
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("processing_results")
+}
+
 // 用户表 - 仅用于后台管理员账户
 model User {
   id        String   @id @default(cuid())

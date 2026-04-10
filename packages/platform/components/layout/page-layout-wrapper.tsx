@@ -2,7 +2,7 @@
 
 import { initResponsiveConfig } from '@dify-chat/helpers'
 import { ThemeContextProvider, useThemeContext } from '@dify-chat/theme'
-import { ConfigProvider, theme } from 'antd'
+import { App, ConfigProvider, theme } from 'antd'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
@@ -20,7 +20,7 @@ const ThemeContextWrapper = ({ children }: { children: React.ReactNode }) => {
 				algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
 			}}
 		>
-			{children}
+			<App>{children}</App>
 		</ConfigProvider>
 	)
 }

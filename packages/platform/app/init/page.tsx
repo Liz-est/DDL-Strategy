@@ -1,11 +1,12 @@
 'use client'
 
-import { Alert, Button, Form, Input, message, Typography } from 'antd'
+import { Alert, App, Button, Form, Input, Typography } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function InitPage() {
+function InitPageInner() {
 	const router = useRouter()
+	const { message } = App.useApp()
 	const [loading, setLoading] = useState(false)
 	const [initialized, setInitialized] = useState<boolean | null>(null)
 
@@ -72,7 +73,7 @@ export default function InitPage() {
 					<Alert
 						type="info"
 						showIcon
-						message="系统未初始化，请创建管理员账户"
+						title="系统未初始化，请创建管理员账户"
 						className="mb-4"
 					/>
 				)}
@@ -128,5 +129,13 @@ export default function InitPage() {
 				</Form>
 			</div>
 		</div>
+	)
+}
+
+export default function InitPage() {
+	return (
+		<App>
+			<InitPageInner />
+		</App>
 	)
 }
