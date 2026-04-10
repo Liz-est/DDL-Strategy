@@ -25,7 +25,7 @@ COPY --from=builder /app/packages/platform/prisma ./packages/platform/prisma
 # Prisma 配置文件，执行 Prisma CLI 时必需
 COPY --from=builder /app/packages/platform/prisma.config.ts ./packages/platform/prisma.config.ts
 COPY packages/platform/docker/entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
 ENV NODE_ENV=production
 ENV PORT=5300

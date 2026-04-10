@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, Drawer, Form, Input, message, Space } from 'antd'
+import { App, Button, Drawer, Form, Input, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface User {
@@ -30,6 +30,7 @@ export default function UserEditDrawer({
 	onClose,
 	onSaveSuccess,
 }: UserEditDrawerProps) {
+	const { message } = App.useApp()
 	const [form] = Form.useForm()
 	const [loading, setLoading] = useState(false)
 	const isEditing = !!user
@@ -82,6 +83,7 @@ export default function UserEditDrawer({
 			size={400}
 			open={visible}
 			onClose={onClose}
+			destroyOnClose
 			extra={
 				<div className="flex justify-end">
 					<Space>

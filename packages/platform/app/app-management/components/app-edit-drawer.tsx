@@ -4,7 +4,7 @@ import { DifyApi } from '@dify-chat/api'
 import { AppModeEnums } from '@dify-chat/core'
 import { generateUuidV4 } from '@dify-chat/helpers'
 import { useRequest } from 'ahooks'
-import { Button, Drawer, DrawerProps, Form, message, Space } from 'antd'
+import { Button, Drawer, DrawerProps, Form, App, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { IDifyAppItem } from '@/types'
@@ -27,6 +27,7 @@ interface IAppEditDrawerProps extends DrawerProps {
  */
 export const AppEditDrawer = (props: IAppEditDrawerProps) => {
 	const { detailDrawerMode, appItem, open, onClose, confirmCallback, addApi, updateApi } = props
+	const { message } = App.useApp()
 	const [settingForm] = Form.useForm()
 	const [confirmLoading, setConfirmBtnLoading] = useState(false)
 

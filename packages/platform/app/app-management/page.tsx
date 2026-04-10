@@ -4,7 +4,7 @@ import { DifyApi } from '@dify-chat/api'
 import { AppModeEnums, IDifyAppItem } from '@dify-chat/core'
 import { AppModeNames } from '@dify-chat/core'
 import { useMount, useRequest } from 'ahooks'
-import { Button, message, Popconfirm, Space, Table, Tag } from 'antd'
+import { App, Button, Popconfirm, Space, Table, Tag } from 'antd'
 import Title from 'antd/es/typography/Title'
 import { useState } from 'react'
 
@@ -16,6 +16,7 @@ import { AppEditDrawer } from './components/app-edit-drawer'
 import { AppDetailDrawerModeEnum } from './enums'
 
 export default function AppManagementPage() {
+	const { message } = App.useApp()
 	const [appEditDrawerOpen, setAppEditDrawerOpen] = useState(false)
 	const [appEditDrawerMode, setAppEditDrawerMode] = useState<AppDetailDrawerModeEnum>()
 	const [appEditDrawerAppItem, setAppEditDrawerAppItem] = useState<IDifyAppItem>()
@@ -59,6 +60,7 @@ export default function AppManagementPage() {
 					</Button>
 				</div>
 				<Table
+					rowKey="id"
 					dataSource={list}
 					loading={listLoading}
 					scroll={{ x: 1200 }}

@@ -286,10 +286,7 @@ const ChatLayoutWrapper = () => {
 	if (initLoading || (!difyApi && appExists)) {
 		return (
 			<div className="flex h-screen w-screen items-center justify-center">
-				<Spin
-					size="large"
-					tip="应用加载中..."
-				/>
+				<Spin size="large">应用加载中...</Spin>
 			</div>
 		)
 	}

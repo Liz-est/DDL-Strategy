@@ -1,7 +1,7 @@
 import { DifyApi, IAnnotationItem } from '@dify-chat/api'
 import { IDifyAppItem } from '@dify-chat/core'
 import { useRequest } from 'ahooks'
-import { Button, Drawer, Form, Input, message, Popconfirm, Popover, Space, Table } from 'antd'
+import { App, Button, Drawer, Form, Input, Popconfirm, Popover, Space, Table } from 'antd'
 import { useEffect, useState } from 'react'
 
 interface IAnnotationManagerDrawerProps {
@@ -14,6 +14,7 @@ const DEFAULT_PAGE_SIZE = 10
 
 export const AnnotationManagerDrawer = (props: IAnnotationManagerDrawerProps) => {
 	const { open, onClose, appItem } = props
+	const { message } = App.useApp()
 	const [difyApi, setDifyApi] = useState<DifyApi>()
 
 	// State for Add/Edit Modal
@@ -263,6 +264,7 @@ export const AnnotationManagerDrawer = (props: IAnnotationManagerDrawerProps) =>
 				open={modalOpen}
 				onClose={() => setModalOpen(false)}
 				destroyOnHidden
+				destroyOnClose
 				size={600}
 				extra={
 					<Space>

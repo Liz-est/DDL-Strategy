@@ -20,12 +20,14 @@ COPY packages/helpers/package.json ./packages/helpers/
 COPY packages/theme/package.json ./packages/theme/
 COPY packages/react-app/package.json ./packages/react-app/
 COPY packages/platform/package.json ./packages/platform/
+COPY packages/platform/prisma ./packages/platform/prisma
+COPY packages/platform/prisma.config.ts ./packages/platform/prisma.config.ts
 
 # 在 RUN pnpm install 之前添加环境设置
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 # 修改安装命令，增加重试次数和网络超时限制
-RUN pnpm install --registry=https://mirrors.cloud.tencent.com/npm/ --network-timeout 1000000
+RUN pnpm install --registry=https://mirrors.cloud.tencent.com/npm/ --fetch-timeout=1000000
 
 # 复制子包源码
 COPY packages/api ./packages/api
