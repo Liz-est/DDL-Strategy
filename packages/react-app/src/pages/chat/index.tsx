@@ -105,7 +105,44 @@ export default function ChatPage() {
       }
     };
 
-    // 2. 独立定义数据库同步函数
+    // 2. 保存课程政策到 course_policies 表的函数
+    const saveCoursePolicies = async (courseCode: string, gradingPolicy: any) => {
+      try {
+        if (!gradingPolicy || courseCode === 'UNKNOWN') {
+          console.log("⏭️ [Course Policies] 政策数据为空或课程代码无效，跳过保存");
+          return;
+        }
+
+        const payload = {
+          userId,
+          courseCode,
+          late_policy: gradingPolicy.late_policy || null,
+          absence_policy: gradingPolicy.absence_policy || null,
+          grading_notes: gradingPolicy.grading_notes || null
+        };
+
+        console.log("💾 [Course Policies] 准备保存课程政策到数据库...", payload);
+
+        const url = API_BASE ? `${API_BASE}/policies/save` : '/api/client/policies/save'
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log("✅ [Course Policies] 课程政策已成功保存到数据库，ID:", data.policyId);
+        } else {
+          const errorData = await response.text();
+          console.error("❌ [Course Policies] 保存失败:", errorData);
+        }
+      } catch (err) {
+        console.error("📡 [Course Policies] 网络请求异常:", err);
+      }
+    };
+
+    // 3. 独立定义数据库同步函数
     const syncToDatabase = async (taskList: any[], courseCode: string) => {
       try {
         const payload = {
@@ -245,9 +282,24 @@ export default function ChatPage() {
         }
 
         const taskList = Array.isArray(parsed) ? parsed : (parsed.assessments || []);
-        const courseCode = !Array.isArray(parsed) && parsed.course_info ? parsed.course_info.course_code : 'UNKNOWN';
+        
+        // 🔑 映射逻辑：优先使用 course_name，其次 course_code，最后用 UNKNOWN
+        let courseCode = 'UNKNOWN';
+        let courseInfo = null;
+        let gradingPolicy = null;
+        
+        if (!Array.isArray(parsed) && parsed.course_info) {
+          courseInfo = parsed.course_info;
+          // 优先使用 course_name，如果为空则使用 course_code
+          courseCode = courseInfo.course_name || courseInfo.course_code || 'UNKNOWN';
+        }
+        
+        // 提取 grading_policy（用于存储到 course_policies 表）
+        if (!Array.isArray(parsed) && parsed.grading_policy) {
+          gradingPolicy = parsed.grading_policy;
+        }
 
-        console.log('[战略家.handler] extracted tasks:', taskList.length, 'courseCode:', courseCode);
+        console.log('[战略家.handler] extracted tasks:', taskList.length, 'courseCode:', courseCode, 'gradingPolicy:', gradingPolicy);
 
         if (taskList.length > 0) {
           const newEvents = taskList.map((item: any, index: number) => ({
@@ -280,6 +332,11 @@ export default function ChatPage() {
               console.log(`战略家：成功抓取 ${uniqueNew.length} 个新任务！`);
               // 仅当存在真正的新任务时，同步任务表，避免重复插入
               syncToDatabase(taskList, courseCode);
+              
+              // 同时保存课程政策（如果存在）
+              if (gradingPolicy) {
+                saveCoursePolicies(courseCode, gradingPolicy);
+              }
             }
             return [...prev, ...uniqueNew];
           });
