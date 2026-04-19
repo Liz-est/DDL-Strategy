@@ -82,8 +82,8 @@ catalogs:
       specifier: ^8.6.12
       version: 8.6.14
     '@svgdotjs/svg.js':
-      specifier: ^3.2.4
-      version: 3.2.4
+      specifier: ^3.2.5
+      version: 3.2.5
     '@tailwindcss/postcss':
       specifier: ^4
       version: 4.1.7
@@ -404,7 +404,7 @@ importers:
         version: 2.2.0(react@19.2.3)
       '@svgdotjs/svg.js':
         specifier: 'catalog:'
-        version: 3.2.4
+        version: 3.2.5
       '@toolkit-fe/clipboard':
         specifier: 'catalog:'
         version: 0.1.22
@@ -823,7 +823,7 @@ importers:
         version: 2.2.0(react@19.2.3)
       '@svgdotjs/svg.js':
         specifier: 'catalog:'
-        version: 3.2.4
+        version: 3.2.5
       '@toolkit-fe/clipboard':
         specifier: 'catalog:'
         version: 0.1.22
@@ -3393,8 +3393,8 @@ packages:
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
 
-  '@svgdotjs/svg.js@3.2.4':
-    resolution: {integrity: sha512-BjJ/7vWNowlX3Z8O4ywT58DqbNRyYlkk6Yz/D13aB7hGmfQTvGX4Tkgtm/ApYlu9M7lCQi15xUEidqMUmdMYwg==}
+  '@svgdotjs/svg.js@3.2.5':
+    resolution: {integrity: sha512-/VNHWYhNu+BS7ktbYoVGrCmsXDh+chFMaONMwGNdIBcFHrWqk2jY8fNyr3DLdtQUIalvkPfM554ZSFa3dm3nxQ==}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -11760,7 +11760,7 @@ snapshots:
     dependencies:
       storybook: 8.6.14(prettier@3.5.3)
 
-  '@svgdotjs/svg.js@3.2.4': {}
+  '@svgdotjs/svg.js@3.2.5': {}
 
   '@swc/helpers@0.5.15':
     dependencies:
