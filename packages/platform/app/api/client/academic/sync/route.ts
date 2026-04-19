@@ -50,15 +50,34 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { userId, courseCode, tasks } = body;
 
+    if (!userId || !Array.isArray(tasks)) {
+      return addCorsHeaders(
+        NextResponse.json({ error: 'Missing required fields: userId or tasks' }, { status: 400 }),
+        origin
+      );
+    }
+
     console.log("📥 后端收到同步请求, 任务数量:", tasks?.length);
 
     // 写入数据库逻辑 (使用 INSERT IGNORE 防止重复插入报错)
     const result = await Promise.all(
       tasks.map((task: any) => 
         prisma.$executeRawUnsafe(
-          `INSERT IGNORE INTO academic_tasks (id, user_id, title, due_date, weight, type, course_code) 
-           VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          task.id, userId, task.title, task.dueDate, task.weight, task.type, courseCode
+          `INSERT IGNORE INTO academic_tasks (id, user_id, title, due_date, weight, type, course_code, course_name, detail, source_quote, page_numbers_json, estimated_hours, rationale) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          task.id,
+          userId,
+          task.title,
+          task.dueDate,
+          task.weight,
+          task.type,
+          courseCode,
+          task.courseName || null,
+          task.detail || null,
+          task.sourceQuote || null,
+          task.pageNumbers ? JSON.stringify(task.pageNumbers) : null,
+          task.estimatedHours ?? null,
+          task.rationale || null
         )
       )
     );
