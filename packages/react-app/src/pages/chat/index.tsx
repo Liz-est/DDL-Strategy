@@ -1,426 +1,478 @@
 "use client"
-import { useState, useEffect, useMemo } from 'react'
-import { Modal, Input, message } from 'antd'
-import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
-import CalendarView from '@/components/CalendarView'
-import config from '@/config/runtime-config'
 
-interface AcademicEvent {
-  id: string;
-  title: string;
-  start: string;
-  end?: string;
-  allDay?: boolean;
-  color?: string;
-  weight?: number;
-  type?: string;
-  extendedProps?: any;
+import { useEffect, useMemo, useRef, useState } from 'react'
+import dayjs from 'dayjs'
+import { Button, DatePicker, Input, InputNumber, Modal, Select, Tag, message } from 'antd'
+import type { DateSelectArg } from '@fullcalendar/core'
+import CalendarView from '@/components/CalendarView'
+import CoursePlanBoard from '@/components/planner/CoursePlanBoard'
+import RiskHeatPanel from '@/components/planner/RiskHeatPanel'
+import SemesterProgress from '@/components/planner/SemesterProgress'
+import config from '@/config/runtime-config'
+import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
+import {
+	buildCoursePlans,
+	extractAcademicPayloadFromText,
+	loadAcademicSnapshots,
+	mapTaskToEvent,
+	mergeUniqueEvents,
+	saveCoursePolicies,
+	saveJsonToDatabase,
+	syncAcademicTasks,
+} from '@/services/academic-sync'
+import { type AcademicEvent, useAcademicPlannerStore } from '@/store/academic-planner'
+
+const DEFAULT_USER_ID = 'cmm9gaoo2000101nu78lnxx2v'
+const LOCAL_DRAFT_KEY = 'academic-events-draft-v1'
+
+const getSemesterProgress = (events: AcademicEvent[]) => {
+	if (events.length === 0) return 0
+	const sorted = [...events].sort((a, b) => a.start.localeCompare(b.start))
+	const start = dayjs(sorted[0].start)
+	const end = dayjs(sorted[sorted.length - 1].start)
+	const totalDays = Math.max(end.diff(start, 'day'), 1)
+	const elapsed = Math.min(Math.max(dayjs().diff(start, 'day'), 0), totalDays)
+	return Math.round((elapsed / totalDays) * 100)
 }
 
 export default function ChatPage() {
-  const [academicEvents, setAcademicEvents] = useState<AcademicEvent[]>([
-    { id: '1', title: 'AIE1902: Project Start', start: '2026-03-10', color: '#3b82f6', weight: 10, type: 'Project' }
-  ])
+	const apiBase = useMemo(() => (config.PUBLIC_APP_API_BASE || '').replace(/\/$/, ''), [])
+	const {
+		uiMode,
+		calendarViewType,
+		selectedCourseId,
+		semesterProgress,
+		events,
+		courses,
+		syncStatus,
+		lastSyncError,
+		lastOperationSnapshot,
+		setUiMode,
+		setCalendarViewType,
+		setSelectedCourseId,
+		setSemesterProgress,
+		setEvents,
+		upsertEvent,
+		setCourses,
+		setSyncStatus,
+		saveSnapshot,
+		restoreSnapshot,
+	} = useAcademicPlannerStore()
+	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [newEventTitle, setNewEventTitle] = useState('')
+	const [selectedTimeRange, setSelectedTimeRange] = useState<[string, string | undefined] | null>(null)
+	const [eventCourseCode, setEventCourseCode] = useState('MANUAL')
+	const [eventType, setEventType] = useState('Task')
+	const [eventWeight, setEventWeight] = useState(0)
+	const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
+	const [hasInitialized, setHasInitialized] = useState(false)
+	const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+	const observeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+	const lastPayloadFingerprint = useRef<string>('')
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newEventTitle, setNewEventTitle] = useState('');
-  const [currentSelection, setCurrentSelection] = useState<any>(null);
+	const pressureInfo = useMemo(() => {
+		const totalWeight = events.reduce((acc, curr) => acc + (curr.weight || 0), 0)
+		if (totalWeight > 50) return { label: 'High Risk', color: 'red' }
+		return { label: 'Balanced', color: 'green' }
+	}, [events])
 
-  const handleDateSelect = (selectInfo: any) => {
-    setCurrentSelection(selectInfo);
-    setIsModalOpen(true);
-  };
+	useEffect(() => {
+		let active = true
+		const hydrate = async () => {
+			setSyncStatus('syncing')
+			try {
+				const { events: remoteEvents } = await loadAcademicSnapshots({
+					apiBase,
+					userId: DEFAULT_USER_ID,
+				})
+				if (!active) return
+				const merged = mergeUniqueEvents(events, remoteEvents)
+				const finalEvents = merged.length > 0 ? merged : events
+				setEvents(finalEvents)
+				setCourses(buildCoursePlans(finalEvents))
+				setSemesterProgress(getSemesterProgress(finalEvents))
+				localStorage.removeItem(LOCAL_DRAFT_KEY)
+				setSyncStatus('success')
+			} catch (error) {
+				if (!active) return
+				const localDraft = localStorage.getItem(LOCAL_DRAFT_KEY)
+				if (localDraft) {
+					try {
+						const parsed = JSON.parse(localDraft) as AcademicEvent[]
+						setEvents(parsed)
+						setCourses(buildCoursePlans(parsed))
+						setSemesterProgress(getSemesterProgress(parsed))
+					} catch {
+						// no-op
+					}
+				}
+				setSyncStatus('error', (error as Error).message)
+			} finally {
+				if (active) {
+					setHasInitialized(true)
+				}
+			}
+		}
 
-  const handleModalOk = () => {
-    if (!newEventTitle.trim()) {
-      message.warning('Please enter a task name');
-      return;
-    }
+		void hydrate()
+		return () => {
+			active = false
+		}
+	}, [apiBase, events, setCourses, setEvents, setSemesterProgress, setSyncStatus])
 
-    const newEvent: AcademicEvent = {
-      id: `user-${Date.now()}`,
-      title: newEventTitle,
-      start: currentSelection.startStr,
-      end: currentSelection.endStr,
-      allDay: currentSelection.allDay,
-      color: '#8b5cf6',
-      extendedProps: { type: 'Manual', weight: 0 }
-    };
+	useEffect(() => {
+		setCourses(buildCoursePlans(events))
+		setSemesterProgress(getSemesterProgress(events))
+	}, [events, setCourses, setSemesterProgress])
 
-    setAcademicEvents(prev =>[...prev, newEvent]);
-    setIsModalOpen(false);
-    setNewEventTitle('');
-    message.success('Task added to calendar');
-  };
+	useEffect(() => {
+		if (!hasInitialized) return
+		if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+		syncTimerRef.current = setTimeout(() => {
+			const grouped = events.reduce<Record<string, AcademicEvent[]>>((acc, item) => {
+				const key = item.courseCode || 'GENERAL'
+				acc[key] = acc[key] || []
+				acc[key].push(item)
+				return acc
+			}, {})
+			void (async () => {
+				try {
+					setSyncStatus('syncing')
+					await Promise.all(
+						Object.entries(grouped).map(([courseCode, courseEvents]) =>
+							syncAcademicTasks({
+								apiBase,
+								userId: DEFAULT_USER_ID,
+								courseCode,
+								events: courseEvents,
+							})
+						)
+					)
+					localStorage.removeItem(LOCAL_DRAFT_KEY)
+					setSyncStatus('success')
+				} catch (error) {
+					localStorage.setItem(LOCAL_DRAFT_KEY, JSON.stringify(events))
+					setSyncStatus('error', (error as Error).message)
+				}
+			})()
+		}, 1200)
 
-  const handleRePlan = (updatedEvent: any) => {
-    setAcademicEvents(prev => 
-      prev.map(ev => ev.id === updatedEvent.id ? { ...ev, start: updatedEvent.start } : ev)
-    );
-  };
+		return () => {
+			if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
+		}
+	}, [apiBase, events, hasInitialized, setSyncStatus])
 
-  const pressureInfo = useMemo(() => {
-    const totalWeight = academicEvents.reduce((acc, curr) => acc + (curr.weight || 0), 0);
-    if (totalWeight > 50) return { label: 'High Risk', color: 'text-red-500', bg: 'bg-red-100' };
-    return { label: 'Balanced', color: 'text-green-500', bg: 'bg-green-100' };
-  }, [academicEvents]);
+	useEffect(() => {
+		const observer = new MutationObserver(() => {
+			if (observeTimerRef.current) clearTimeout(observeTimerRef.current)
+			observeTimerRef.current = setTimeout(() => {
+				const content = document.body?.innerText || ''
+				const payload = extractAcademicPayloadFromText(content)
+				if (!payload) return
 
-  // 【核心修复区域】：剥离数据库同步逻辑
-  useEffect(() => {
-    console.log("战略家：实时监听器已启动...");
+				const fingerprint = `${payload.courseCode}-${payload.taskList.length}-${payload.taskList[0]?.name || ''}`
+				if (fingerprint === lastPayloadFingerprint.current) return
+				lastPayloadFingerprint.current = fingerprint
 
-    const userId = 'cmm9gaoo2000101nu78lnxx2v'; // 替换为你截图中的真实 ID
+				const newEvents = payload.taskList.map((task, index) =>
+					mapTaskToEvent(task, payload.courseCode, index)
+				)
+				const merged = mergeUniqueEvents(useAcademicPlannerStore.getState().events, newEvents)
+				if (merged.length === useAcademicPlannerStore.getState().events.length) return
 
-    const API_BASE = (config.PUBLIC_APP_API_BASE || '').replace(/\/$/, '')
+				setEvents(merged)
+				setCourses(buildCoursePlans(merged))
+				void saveJsonToDatabase({
+					apiBase,
+					userId: DEFAULT_USER_ID,
+					courseCode: payload.courseCode,
+					jsonData: payload.parsed,
+					description: `Extracted ${newEvents.length} tasks`,
+				})
+				if (payload.gradingPolicy) {
+					void saveCoursePolicies({
+						apiBase,
+						userId: DEFAULT_USER_ID,
+						courseCode: payload.courseCode,
+						gradingPolicy: payload.gradingPolicy,
+					})
+				}
+				message.success(`Imported ${newEvents.length} tasks from AI result`)
+			}, 900)
+		})
 
-    // 1. 保存完整JSON数据到数据库的函数
-    const saveJsonToDatabase = async (jsonData: any, courseCode: string, description?: string) => {
-      try {
-        const payload = {
-          userId,
-          courseCode: courseCode || null,
-          jsonData,
-          sourceType: 'academic',
-          description: description || 'Academic tasks processing result'
-        };
+		const target = document.body || document.documentElement
+		observer.observe(target, { childList: true, subtree: true })
 
-        console.log("💾 [JSON Save] 准备保存完整JSON到数据库...");
+		return () => {
+			observer.disconnect()
+			if (observeTimerRef.current) clearTimeout(observeTimerRef.current)
+		}
+	}, [apiBase, setCourses, setEvents])
 
-        const url = API_BASE ? `${API_BASE}/document/save` : '/api/client/document/save'
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+	const handleDateSelect = (selectInfo: DateSelectArg) => {
+		setSelectedTimeRange([selectInfo.startStr, selectInfo.endStr])
+		setEventCourseCode('MANUAL')
+		setEventType('Task')
+		setEventWeight(0)
+		setPriority('medium')
+		setNewEventTitle('')
+		setIsModalOpen(true)
+	}
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("✅ [JSON Save] JSON数据已成功保存到数据库，ID:", data.resultId);
-        } else {
-          const errorData = await response.text();
-          console.error("❌ [JSON Save] 保存失败:", errorData);
-        }
-      } catch (err) {
-        console.error("📡 [JSON Save] 网络请求异常:", err);
-      }
-    };
+	const handleModalOk = () => {
+		if (!newEventTitle.trim()) {
+			message.warning('Please enter a task name')
+			return
+		}
+		if (!selectedTimeRange?.[0]) {
+			message.warning('Please choose a valid date range')
+			return
+		}
+		const [start, end] = selectedTimeRange
+		const highRisk = eventType === 'Exam' || eventWeight >= 30
+		const newEvent: AcademicEvent = {
+			id: `user-${Date.now()}`,
+			title: newEventTitle.trim(),
+			start,
+			end,
+			allDay: true,
+			color: highRisk ? '#ef4444' : '#8b5cf6',
+			weight: eventWeight,
+			type: eventType,
+			courseCode: eventCourseCode,
+			priority,
+			extendedProps: { source: 'manual' },
+		}
+		saveSnapshot()
+		upsertEvent(newEvent)
+		setIsModalOpen(false)
+		message.success('Task added to calendar')
+	}
 
-    // 2. 保存课程政策到 course_policies 表的函数
-    const saveCoursePolicies = async (courseCode: string, gradingPolicy: any) => {
-      try {
-        if (!gradingPolicy || courseCode === 'UNKNOWN') {
-          console.log("⏭️ [Course Policies] 政策数据为空或课程代码无效，跳过保存");
-          return;
-        }
+	const handleCalendarEventChange = async (updatedEvent: {
+		id: string
+		title: string
+		start: string
+		end?: string
+		allDay?: boolean
+	}) => {
+		const snapshot = useAcademicPlannerStore.getState().events
+		const nextEvents = snapshot.map(item =>
+			item.id === updatedEvent.id
+				? { ...item, start: updatedEvent.start, end: updatedEvent.end, allDay: updatedEvent.allDay }
+				: item
+		)
+		setEvents(nextEvents)
 
-        const payload = {
-          userId,
-          courseCode,
-          late_policy: gradingPolicy.late_policy || null,
-          absence_policy: gradingPolicy.absence_policy || null,
-          grading_notes: gradingPolicy.grading_notes || null
-        };
+		const changed = nextEvents.find(item => item.id === updatedEvent.id)
+		if (!changed) return false
 
-        console.log("💾 [Course Policies] 准备保存课程政策到数据库...", payload);
+		try {
+			setSyncStatus('syncing')
+			await syncAcademicTasks({
+				apiBase,
+				userId: DEFAULT_USER_ID,
+				courseCode: changed.courseCode || 'GENERAL',
+				events: nextEvents.filter(item => (item.courseCode || 'GENERAL') === (changed.courseCode || 'GENERAL')),
+			})
+			setSyncStatus('success')
+			return true
+		} catch (error) {
+			setEvents(snapshot)
+			setSyncStatus('error', (error as Error).message)
+			message.error('Update failed, reverted to previous schedule')
+			return false
+		}
+	}
 
-        const url = API_BASE ? `${API_BASE}/policies/save` : '/api/client/policies/save'
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+	const syncStatusTag = useMemo(() => {
+		if (syncStatus === 'syncing') return <Tag color="processing">Syncing</Tag>
+		if (syncStatus === 'error') return <Tag color="error">Sync Failed</Tag>
+		if (syncStatus === 'success') return <Tag color="success">Synced</Tag>
+		return <Tag>Idle</Tag>
+	}, [syncStatus])
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("✅ [Course Policies] 课程政策已成功保存到数据库，ID:", data.policyId);
-        } else {
-          const errorData = await response.text();
-          console.error("❌ [Course Policies] 保存失败:", errorData);
-        }
-      } catch (err) {
-        console.error("📡 [Course Policies] 网络请求异常:", err);
-      }
-    };
+	const selectedCourseEvents = selectedCourseId
+		? events.filter(item => `course-${item.courseCode || 'UNKNOWN'}` === selectedCourseId)
+		: events
 
-    // 3. 独立定义数据库同步函数
-    const syncToDatabase = async (taskList: any[], courseCode: string) => {
-      try {
-        const payload = {
-          userId,
-          courseCode: courseCode || 'UNKNOWN',
-          tasks: taskList.map(task => ({
-            id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-            title: task.name || task.title,
-            dueDate: task.due_date_raw,
-            weight: task.weight || 0,
-            type: task.task_type_standardized || task.type || 'Task'
-          }))
-        };
+	return (
+		<div className="flex h-screen w-screen overflow-hidden bg-[#f1f5f9]">
+			<div className="flex h-full w-16 flex-col items-center gap-8 bg-[#1e293b] py-6 text-white/60">
+				<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
+					DS
+				</div>
+				<button
+					type="button"
+					className={`h-9 w-9 rounded-lg text-xs font-semibold transition ${
+						uiMode === 'calendar' ? 'bg-white text-slate-800' : 'bg-slate-700 text-white'
+					}`}
+					onClick={() => setUiMode('calendar')}
+					aria-pressed={uiMode === 'calendar'}
+					title="Calendar Mode"
+				>
+					CAL
+				</button>
+				<button
+					type="button"
+					className={`h-9 w-9 rounded-lg text-xs font-semibold transition ${
+						uiMode === 'planner' ? 'bg-white text-slate-800' : 'bg-slate-700 text-white'
+					}`}
+					onClick={() => setUiMode('planner')}
+					aria-pressed={uiMode === 'planner'}
+					title="Planner Mode"
+				>
+					PLAN
+				</button>
+			</div>
 
-        console.log("🚀 [DB Sync] 准备发送同步请求到后端...", payload);
+			<div className="flex h-full min-w-0 flex-1 flex-col">
+				<header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
+					<div>
+						<h1 className="text-lg font-bold text-slate-800">Academic Strategist</h1>
+						<p className="text-xs text-slate-500">
+							{uiMode === 'calendar' ? 'Calendar Scheduling View' : 'Course Planning View'}
+						</p>
+					</div>
+					<div className="flex items-center gap-3">
+						{syncStatusTag}
+						<Tag color={pressureInfo.color}>{pressureInfo.label}</Tag>
+						<Button size="small" onClick={restoreSnapshot} disabled={!lastOperationSnapshot}>
+							Undo
+						</Button>
+					</div>
+				</header>
 
-        const url = API_BASE ? `${API_BASE}/academic/sync` : '/api/client/academic/sync'
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+				<main className="flex-1 overflow-hidden p-6">
+					<div className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+						{uiMode === 'calendar' ? (
+							<CalendarView
+								events={events}
+								currentView={calendarViewType}
+								onViewChange={setCalendarViewType}
+								onEventChange={handleCalendarEventChange}
+								onDateSelect={handleDateSelect}
+							/>
+						) : (
+							<div className="grid h-full grid-cols-5 gap-4 p-4">
+								<div className="col-span-3 overflow-y-auto rounded-xl border bg-slate-50 p-4">
+									<CoursePlanBoard
+										courses={courses}
+										selectedCourseId={selectedCourseId}
+										onSelectCourse={setSelectedCourseId}
+									/>
+								</div>
+								<div className="col-span-2 flex flex-col gap-4 overflow-y-auto">
+									<SemesterProgress semesterProgress={semesterProgress} events={selectedCourseEvents} />
+									<RiskHeatPanel events={selectedCourseEvents} />
+									{syncStatus === 'error' && lastSyncError ? (
+										<div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600">
+											Sync error: {lastSyncError}
+										</div>
+									) : null}
+								</div>
+							</div>
+						)}
+					</div>
+				</main>
+			</div>
 
-        if (response.ok) {
-          console.log("✅[DB Sync] 数据库同步成功！");
-        } else {
-          const errorData = await response.text();
-          console.error("❌ [DB Sync] 数据库同步失败:", errorData);
-        }
-      } catch (err) {
-        console.error("📡 [DB Sync] 网络请求异常:", err);
-      }
-    };
+			<div className="z-20 h-full w-[420px] border-l border-slate-200 bg-white shadow-2xl">
+				<ChatLayoutWrapper />
+			</div>
 
-    // 3. 文本解析处理器（增强版：加入健壮的JSON提取与调试日志）
-    const handler = (text: string) => {
-      try {
-        console.log('[战略家.handler] invoked, text length:', text?.length ?? 0);
-
-        const jsonRegex = /(\[[\s\S]*?due_date_raw[\s\S]*?\]|\{[\s\S]*?assessments[\s\S]*?\})/;
-        const execResult = jsonRegex.exec(text || '');
-        console.log('[战略家.handler] match found:', !!execResult);
-
-        if (!execResult) return;
-
-        // 寻找 JSON 起始位置（'[' 或 '{'）
-        const searchStart = execResult.index ?? 0;
-        const idxArray = text!.indexOf('[', searchStart);
-        const idxObj = text!.indexOf('{', searchStart);
-        let startPos = -1;
-        if (idxArray !== -1 && idxObj !== -1) startPos = Math.min(idxArray, idxObj);
-        else startPos = Math.max(idxArray, idxObj);
-        if (startPos === -1) startPos = execResult.index || 0;
-
-        // helper: 判断位置前是否被转义
-        const isEscaped = (s: string, pos: number) => {
-          let i = pos - 1;
-          let count = 0;
-          while (i >= 0 && s[i] === '\\') { count++; i--; }
-          return count % 2 === 1;
-        };
-
-        // helper: 提取平衡的 JSON 字符串
-        const extractBalanced = (s: string, start: number) => {
-          const open = s[start];
-          const pairs: any = { '[': ']', '{': '}' };
-          const close = pairs[open];
-          if (!close) return null;
-          const stack: string[] = [open];
-          let inString = false;
-          let strChar: string | null = null;
-          for (let i = start + 1; i < s.length; i++) {
-            const ch = s[i];
-            if ((ch === '"' || ch === "'") && !isEscaped(s, i)) {
-              if (!inString) { inString = true; strChar = ch; }
-              else if (strChar === ch) { inString = false; strChar = null; }
-              continue;
-            }
-            if (inString) continue;
-            if (ch === '{' || ch === '[') stack.push(ch);
-            else if (ch === '}' || ch === ']') {
-              const last = stack[stack.length - 1];
-              if ((last === '{' && ch === '}') || (last === '[' && ch === ']')) stack.pop();
-              else return null; // mismatch
-              if (stack.length === 0) return s.slice(start, i + 1);
-            }
-          }
-          return null; // not balanced
-        };
-
-        const candidate = extractBalanced(text!, startPos);
-        let rawJson = candidate ?? execResult[0];
-        rawJson = rawJson.replace(/```json|```/g, '');
-        console.log('[战略家.handler] rawJson preview:', rawJson.slice(0, 400));
-
-        // 尝试解析，若失败则尝试清理尾随逗号后再解析
-        const tryParse = (str: string) => {
-          try { return JSON.parse(str); } catch (e) { return null; }
-        };
-
-        let parsed: any = tryParse(rawJson);
-        if (!parsed) {
-          // 移除尾随逗号（对象或数组中最后一个元素后的逗号）
-          const cleaned = rawJson.replace(/,\s*(?=[}\]])/g, '');
-          parsed = tryParse(cleaned);
-          if (parsed) rawJson = cleaned;
-        }
-
-        // 如果仍无法解析，尝试提取其中的对象并单独解析（宽松模式）
-        if (!parsed) {
-          console.warn('[战略家.handler] primary JSON.parse failed, trying object-extraction fallback');
-          const objs: any[] = [];
-          for (let i = 0; i < rawJson.length; i++) {
-            if (rawJson[i] === '{' && !isEscaped(rawJson, i)) {
-              const objStr = extractBalanced(rawJson, i);
-              if (objStr) {
-                const cleanedObj = objStr.replace(/,\s*(?=[}\]])/g, '');
-                const o = tryParse(cleanedObj);
-                if (o) objs.push(o);
-                i += objStr.length - 1;
-              }
-            }
-          }
-          console.log('[战略家.handler] fallback extracted objects:', objs.length);
-          if (objs.length > 0) {
-            // 过滤出像任务结构的对象
-            const tasksFromObjs = objs.filter(o => o && (o.due_date_raw || o.task_type_standardized || o.name || o.weight));
-            if (tasksFromObjs.length > 0) {
-              parsed = tasksFromObjs;
-            }
-          }
-        }
-
-        if (!parsed) {
-          console.error('[战略家.handler] JSON parse/error: unable to parse extracted JSON');
-          return;
-        }
-
-        const taskList = Array.isArray(parsed) ? parsed : (parsed.assessments || []);
-        
-        // 🔑 映射逻辑：优先使用 course_name，其次 course_code，最后用 UNKNOWN
-        let courseCode = 'UNKNOWN';
-        let courseInfo = null;
-        let gradingPolicy = null;
-        
-        if (!Array.isArray(parsed) && parsed.course_info) {
-          courseInfo = parsed.course_info;
-          // 优先使用 course_name，如果为空则使用 course_code
-          courseCode = courseInfo.course_name || courseInfo.course_code || 'UNKNOWN';
-        }
-        
-        // 提取 grading_policy（用于存储到 course_policies 表）
-        if (!Array.isArray(parsed) && parsed.grading_policy) {
-          gradingPolicy = parsed.grading_policy;
-        }
-
-        console.log('[战略家.handler] extracted tasks:', taskList.length, 'courseCode:', courseCode, 'gradingPolicy:', gradingPolicy);
-
-        if (taskList.length > 0) {
-          const newEvents = taskList.map((item: any, index: number) => ({
-            id: `ai-${item.name}-${index}`,
-            title: item.name || 'Unnamed Task',
-            start: item.due_date_raw || new Date().toISOString().split('T')[0],
-            weight: item.weight || 0,
-            type: item.task_type_standardized || item.type,
-            extendedProps: {
-              weight: item.weight,
-              type: item.task_type_standardized || item.type,
-              estimated_hours: item.estimated_hours,
-              rationale: item.rationale,
-            },
-            color: (item.type === 'Exam' || item.weight >= 30) ? '#ef4444' : '#10b981',
-          }));
-
-          // 无论是否有新事件，都保存完整的JSON到数据库，以便审计及校验
-          try {
-            saveJsonToDatabase(parsed, courseCode, `Extracted ${newEvents.length} tasks`);
-          } catch (err) {
-            console.error('[战略家.handler] saveJsonToDatabase error:', err);
-          }
-
-          setAcademicEvents(prev => {
-            const existingTitles = new Set(prev.map(ev => ev.title));
-            const uniqueNew = newEvents.filter((ev: any) => !existingTitles.has(ev.title));
-            console.log('[战略家.handler] newEvents:', newEvents.length, 'uniqueNew:', uniqueNew.length);
-            if (uniqueNew.length > 0) {
-              console.log(`战略家：成功抓取 ${uniqueNew.length} 个新任务！`);
-              // 仅当存在真正的新任务时，同步任务表，避免重复插入
-              syncToDatabase(taskList, courseCode);
-              
-              // 同时保存课程政策（如果存在）
-              if (gradingPolicy) {
-                saveCoursePolicies(courseCode, gradingPolicy);
-              }
-            }
-            return [...prev, ...uniqueNew];
-          });
-        }
-      } catch (err) {
-        console.error('[战略家.handler] unexpected error:', err);
-      }
-    };
-
-    // MutationObserver 调试：记录触发次数与内容预览
-    const observer = new MutationObserver((mutationsList) => {
-      try {
-        console.log('[战略家.observer] fired, mutations:', mutationsList.length);
-        const content = document.body ? document.body.innerText : '';
-        console.log('[战略家.observer] document length:', content.length, 'preview:', content.slice(0, 300));
-        handler(content);
-      } catch (err) {
-        console.error('[战略家.observer] error:', err);
-      }
-    });
-
-    const target = document.body || document.documentElement;
-    observer.observe(target, { childList: true, subtree: true });
-
-    return () => {
-      observer.disconnect();
-    };
-  },[]);
-
-  return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#f1f5f9]">
-      <div className="w-16 h-full bg-[#1e293b] flex flex-col items-center py-6 gap-8 text-white/50">
-        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">DS</div>
-        <div className="text-white cursor-pointer">📅</div>
-      </div>
-
-      <div className="flex-1 h-full flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8">
-          <div>
-            <h1 className="text-lg font-bold text-slate-800">Academic Strategist</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className={`text-sm font-bold ${pressureInfo.color}`}>{pressureInfo.label}</span>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6 overflow-hidden">
-          <div className="h-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-            <CalendarView 
-              events={academicEvents} 
-              onEventChange={handleRePlan}
-              onDateSelect={handleDateSelect}
-            />
-          </div>
-        </main>
-      </div>
-
-      <div className="w-[420px] h-full bg-white border-l border-slate-200 shadow-2xl z-20">
-        <ChatLayoutWrapper />
-      </div>
-
-      <Modal
-        title="Create New Academic Task"
-        open={isModalOpen}
-        onOk={handleModalOk}
-        onCancel={() => setIsModalOpen(false)}
-        okText="Save to Calendar"
-        cancelText="Cancel"
-      >
-        <div className="py-4">
-          <p className="text-xs text-gray-400 mb-2 uppercase font-bold">Task Name</p>
-          <Input 
-            placeholder="e.g. Study for Quiz, Lab Work..." 
-            value={newEventTitle}
-            onChange={(e) => setNewEventTitle(e.target.value)}
-            onPressEnter={handleModalOk}
-            autoFocus
-          />
-          <p className="mt-4 text-xs text-gray-400 uppercase font-bold">Selected Time</p>
-          <div className="bg-gray-50 p-2 rounded text-sm text-gray-600">
-            {currentSelection?.startStr} {currentSelection?.endStr ? ` to ${currentSelection.endStr}` : ''}
-          </div>
-        </div>
-      </Modal>
-    </div>
-  )
+			<Modal
+				title="Create New Academic Task"
+				open={isModalOpen}
+				onOk={handleModalOk}
+				onCancel={() => setIsModalOpen(false)}
+				okText="Save to Calendar"
+				cancelText="Cancel"
+			>
+				<div className="space-y-3 py-2">
+					<div>
+						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Task Name</p>
+						<Input
+							placeholder="e.g. Study for quiz"
+							value={newEventTitle}
+							onChange={event => setNewEventTitle(event.target.value)}
+							onPressEnter={handleModalOk}
+							autoFocus
+						/>
+					</div>
+					<div>
+						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Selected Time</p>
+						<div className="rounded bg-gray-50 p-2 text-sm text-gray-600">
+							{selectedTimeRange?.[0]} {selectedTimeRange?.[1] ? `to ${selectedTimeRange[1]}` : ''}
+						</div>
+					</div>
+					<div className="grid grid-cols-2 gap-3">
+						<div>
+							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Course</p>
+							<Input value={eventCourseCode} onChange={event => setEventCourseCode(event.target.value)} />
+						</div>
+						<div>
+							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Type</p>
+							<Select
+								value={eventType}
+								onChange={value => setEventType(value)}
+								options={[
+									{ value: 'Task', label: 'Task' },
+									{ value: 'Exam', label: 'Exam' },
+									{ value: 'Project', label: 'Project' },
+									{ value: 'Quiz', label: 'Quiz' },
+								]}
+								className="w-full"
+							/>
+						</div>
+						<div>
+							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Weight (%)</p>
+							<InputNumber
+								min={0}
+								max={100}
+								value={eventWeight}
+								onChange={value => setEventWeight(Number(value) || 0)}
+								className="w-full"
+							/>
+						</div>
+						<div>
+							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Priority</p>
+							<Select
+								value={priority}
+								onChange={value => setPriority(value)}
+								options={[
+									{ value: 'low', label: 'Low' },
+									{ value: 'medium', label: 'Medium' },
+									{ value: 'high', label: 'High' },
+								]}
+								className="w-full"
+							/>
+						</div>
+					</div>
+					<div>
+						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Adjust Date Range</p>
+						<DatePicker.RangePicker
+							className="w-full"
+							value={
+								selectedTimeRange?.[0]
+									? [
+											dayjs(selectedTimeRange[0]),
+											selectedTimeRange[1] ? dayjs(selectedTimeRange[1]) : dayjs(selectedTimeRange[0]),
+										]
+									: null
+							}
+							onChange={value => {
+								if (!value?.[0]) return
+								setSelectedTimeRange([
+									value[0].format('YYYY-MM-DD'),
+									value[1] ? value[1].format('YYYY-MM-DD') : undefined,
+								])
+							}}
+						/>
+					</div>
+				</div>
+			</Modal>
+		</div>
+	)
 }

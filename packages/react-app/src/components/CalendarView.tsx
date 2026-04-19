@@ -1,98 +1,165 @@
 ﻿'use client'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
+import type { DateSelectArg, DatesSetArg, EventContentArg, EventDropArg, EventResizeDoneArg } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import listPlugin from '@fullcalendar/list'
+import type { AcademicEvent, CalendarViewType } from '@/store/academic-planner'
 
 interface CalendarProps {
-  events: any[];
-  onEventChange: (updatedEvent: any) => void;
-  onDateSelect: (selectInfo: any) => void; // 👈 新增：处理用户手动选择日期创建日程
+	events: AcademicEvent[]
+	currentView: CalendarViewType
+	onViewChange: (view: CalendarViewType) => void
+	onEventChange: (updatedEvent: {
+		id: string
+		title: string
+		start: string
+		end?: string
+		allDay?: boolean
+	}) => Promise<boolean> | boolean
+	onDateSelect: (selectInfo: DateSelectArg) => void
 }
 
-export default function CalendarView({ events, onEventChange, onDateSelect }: CalendarProps) {
-  const calendarRef = useRef<FullCalendar>(null!);
+const VIEW_OPTIONS: { label: string; view: CalendarViewType }[] = [
+	{ label: '年', view: 'multiMonthYear' },
+	{ label: '月', view: 'dayGridMonth' },
+	{ label: '周', view: 'timeGridWeek' },
+	{ label: '日', view: 'timeGridDay' },
+	{ label: '日程', view: 'listWeek' },
+]
 
-  // 视图切换函数
-  const changeView = (viewName: string) => {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.changeView(viewName);
-  };
+export default function CalendarView({
+	events,
+	currentView,
+	onViewChange,
+	onEventChange,
+	onDateSelect,
+}: CalendarProps) {
+	const calendarRef = useRef<FullCalendar>(null)
+	const [activeView, setActiveView] = useState<CalendarViewType>(currentView)
 
-  const renderEventContent = (eventInfo: any) => {
-    const { weight, type } = eventInfo.event.extendedProps;
-    const isHighRisk = weight >= 30 || type === 'Exam';
-    return (
-      <div className={`flex flex-col px-1 py-0.5 rounded border-l-2 shadow-sm truncate ${
-        isHighRisk ? 'bg-red-50 border-red-500 text-red-700' : 'bg-blue-50 border-blue-500 text-blue-700'
-      }`}>
-        <div className="font-bold text-[9px] truncate">{eventInfo.event.title}</div>
-      </div>
-    );
-  };
+	useEffect(() => {
+		const calendarApi = calendarRef.current?.getApi()
+		if (calendarApi && calendarApi.view.type !== currentView) {
+			calendarApi.changeView(currentView)
+		}
+		setActiveView(currentView)
+	}, [currentView])
 
-  return (
-    <div className="h-full flex flex-col bg-white">
-      {/* --- 自定义顶部导航栏 (模仿手机日历) --- */}
-      <div className="flex items-center justify-between px-6 py-3 border-b bg-gray-50/50">
-        <div className="flex bg-white border rounded-lg p-1 shadow-sm">
-          {[
-            { label: '年', view: 'multiMonthYear' },
-            { label: '月', view: 'dayGridMonth' },
-            { label: '周', view: 'timeGridWeek' },
-            { label: '日', view: 'timeGridDay' },
-            { label: '日程', view: 'listMonth' },
-          ].map((item) => (
-            <button
-              key={item.view}
-              onClick={() => changeView(item.view)}
-              className="px-4 py-1 text-sm font-medium hover:bg-indigo-50 hover:text-indigo-600 rounded-md transition-all active:scale-95"
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => calendarRef.current.getApi().prev()} className="p-2 hover:bg-gray-200 rounded-full">往前</button>
-          <button onClick={() => calendarRef.current.getApi().today()} className="px-4 py-1 bg-indigo-600 text-white rounded-md text-sm font-bold shadow-md shadow-indigo-200">今天</button>
-          <button onClick={() => calendarRef.current.getApi().next()} className="p-2 hover:bg-gray-200 rounded-full">往后</button>
-        </div>
-      </div>
+	const changeView = (viewName: CalendarViewType) => {
+		const calendarApi = calendarRef.current?.getApi()
+		if (!calendarApi) return
+		calendarApi.changeView(viewName)
+		setActiveView(viewName)
+		onViewChange(viewName)
+	}
 
-      {/* --- 日历主体 --- */}
-      <div className="flex-1 p-4 overflow-hidden">
-        <style>{`
+	const renderEventContent = (eventInfo: EventContentArg) => {
+		const { weight, type } = eventInfo.event.extendedProps || {}
+		const isHighRisk = Number(weight) >= 30 || type === 'Exam'
+		return (
+			<div
+				className={`flex flex-col truncate rounded border-l-2 px-1 py-0.5 shadow-sm transition-colors ${
+					isHighRisk ? 'border-red-500 bg-red-50 text-red-700' : 'border-blue-500 bg-blue-50 text-blue-700'
+				}`}
+			>
+				<div className="truncate text-[9px] font-bold">{eventInfo.event.title}</div>
+			</div>
+		)
+	}
+
+	return (
+		<div className="flex h-full flex-col bg-white">
+			<div className="flex items-center justify-between border-b bg-gray-50/50 px-6 py-3">
+				<div className="flex rounded-lg border bg-white p-1 shadow-sm">
+					{VIEW_OPTIONS.map(item => (
+						<button
+							key={item.view}
+							onClick={() => changeView(item.view)}
+							className={`rounded-md px-4 py-1 text-sm font-medium transition-all active:scale-95 ${
+								activeView === item.view
+									? 'bg-indigo-600 text-white shadow-sm'
+									: 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'
+							}`}
+						>
+							{item.label}
+						</button>
+					))}
+				</div>
+				<div className="flex gap-2">
+					<button
+						onClick={() => calendarRef.current?.getApi().prev()}
+						className="rounded-full p-2 hover:bg-gray-200"
+					>
+						往前
+					</button>
+					<button
+						onClick={() => calendarRef.current?.getApi().today()}
+						className="rounded-md bg-indigo-600 px-4 py-1 text-sm font-bold text-white shadow-md shadow-indigo-200"
+					>
+						今天
+					</button>
+					<button
+						onClick={() => calendarRef.current?.getApi().next()}
+						className="rounded-full p-2 hover:bg-gray-200"
+					>
+						往后
+					</button>
+				</div>
+			</div>
+
+			<div className="flex-1 overflow-hidden p-4">
+				<style>{`
           .fc { font-family: inherit; --fc-border-color: #f1f5f9; --fc-today-bg-color: #f8fafc; }
           .fc-header-toolbar { display: none !important; } /* 隐藏自带标题栏 */
           .fc .fc-col-header-cell-cushion { padding: 12px 0; color: #64748b; font-size: 0.8rem; }
           .fc-multimonth { background: white; }
         `}</style>
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, listPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          editable={true}
-          selectable={true}    // 👈 核心：允许点击/拖拽空白处
-          selectMirror={true}
-          dayMaxEvents={true}
-          height="100%"
-          
-          // 当用户点击并拖拽选择一个时段时
-          select={(info) => {
-            onDateSelect(info);
-            calendarRef.current.getApi().unselect(); // 选择完成后取消高亮
-          }}
-          
-          eventContent={renderEventContent}
-          eventDrop={(info) => {
-            onEventChange({ id: info.event.id, title: info.event.title, start: info.event.startStr });
-          }}
-        />
-      </div>
-    </div>
-  )
+				<FullCalendar
+					ref={calendarRef}
+					plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, multiMonthPlugin, listPlugin]}
+					initialView={currentView}
+					events={events}
+					editable
+					selectable
+					selectMirror
+					dayMaxEvents
+					height="100%"
+					select={(info: DateSelectArg) => {
+						onDateSelect(info)
+						calendarRef.current?.getApi().unselect()
+					}}
+					eventContent={renderEventContent}
+					eventDrop={async (info: EventDropArg) => {
+						const accepted = await onEventChange({
+							id: info.event.id,
+							title: info.event.title,
+							start: info.event.startStr,
+							end: info.event.endStr ?? undefined,
+							allDay: info.event.allDay,
+						})
+						if (!accepted) info.revert()
+					}}
+					eventResize={async (info: EventResizeDoneArg) => {
+						const accepted = await onEventChange({
+							id: info.event.id,
+							title: info.event.title,
+							start: info.event.startStr,
+							end: info.event.endStr ?? undefined,
+							allDay: info.event.allDay,
+						})
+						if (!accepted) info.revert()
+					}}
+					datesSet={(dateInfo: DatesSetArg) => {
+						const view = dateInfo.view.type as CalendarViewType
+						setActiveView(view)
+						onViewChange(view)
+					}}
+				/>
+			</div>
+		</div>
+	)
 }
