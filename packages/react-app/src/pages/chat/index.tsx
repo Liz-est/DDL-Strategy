@@ -9,6 +9,7 @@ import CoursePlanBoard from '@/components/planner/CoursePlanBoard'
 import RiskHeatPanel from '@/components/planner/RiskHeatPanel'
 import SemesterProgress from '@/components/planner/SemesterProgress'
 import config from '@/config/runtime-config'
+import { useAuth } from '@/hooks/use-auth'
 import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
 import {
 	buildCoursePlans,
@@ -22,7 +23,6 @@ import {
 } from '@/services/academic-sync'
 import { type AcademicEvent, useAcademicPlannerStore } from '@/store/academic-planner'
 
-const DEFAULT_USER_ID = 'cmm9gaoo2000101nu78lnxx2v'
 const LOCAL_DRAFT_KEY = 'academic-events-draft-v1'
 
 const getSemesterProgress = (events: AcademicEvent[]) => {
@@ -36,6 +36,7 @@ const getSemesterProgress = (events: AcademicEvent[]) => {
 }
 
 export default function ChatPage() {
+	const { userId } = useAuth()
 	const apiBase = useMemo(() => (config.PUBLIC_APP_API_BASE || '').replace(/\/$/, ''), [])
 	const {
 		uiMode,
@@ -78,12 +79,19 @@ export default function ChatPage() {
 
 	useEffect(() => {
 		let active = true
+		if (!userId) {
+			setHasInitialized(true)
+			setSyncStatus('idle')
+			return () => {
+				active = false
+			}
+		}
 		const hydrate = async () => {
 			setSyncStatus('syncing')
 			try {
 				const { events: remoteEvents } = await loadAcademicSnapshots({
 					apiBase,
-					userId: DEFAULT_USER_ID,
+					userId,
 				})
 				if (!active) return
 				const merged = mergeUniqueEvents(events, remoteEvents)
@@ -118,7 +126,7 @@ export default function ChatPage() {
 		return () => {
 			active = false
 		}
-	}, [apiBase, events, setCourses, setEvents, setSemesterProgress, setSyncStatus])
+	}, [apiBase, events, setCourses, setEvents, setSemesterProgress, setSyncStatus, userId])
 
 	useEffect(() => {
 		setCourses(buildCoursePlans(events))
@@ -126,6 +134,7 @@ export default function ChatPage() {
 	}, [events, setCourses, setSemesterProgress])
 
 	useEffect(() => {
+		if (!userId) return
 		if (!hasInitialized) return
 		if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
 		syncTimerRef.current = setTimeout(() => {
@@ -142,7 +151,7 @@ export default function ChatPage() {
 						Object.entries(grouped).map(([courseCode, courseEvents]) =>
 							syncAcademicTasks({
 								apiBase,
-								userId: DEFAULT_USER_ID,
+								userId,
 								courseCode,
 								events: courseEvents,
 							})
@@ -160,7 +169,7 @@ export default function ChatPage() {
 		return () => {
 			if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
 		}
-	}, [apiBase, events, hasInitialized, setSyncStatus])
+	}, [apiBase, events, hasInitialized, setSyncStatus, userId])
 
 	useEffect(() => {
 		const observer = new MutationObserver(() => {
@@ -170,32 +179,42 @@ export default function ChatPage() {
 				const payload = extractAcademicPayloadFromText(content)
 				if (!payload) return
 
-				const fingerprint = `${payload.courseCode}-${payload.taskList.length}-${payload.taskList[0]?.name || ''}`
+				const firstTaskTitle =
+					typeof payload.rows[0]?.task?.title === 'string'
+						? payload.rows[0].task.title
+						: typeof payload.rows[0]?.task?.name === 'string'
+							? payload.rows[0].task.name
+							: ''
+				const fingerprint = `${payload.courseCode}-${payload.rows.length}-${firstTaskTitle}`
 				if (fingerprint === lastPayloadFingerprint.current) return
 				lastPayloadFingerprint.current = fingerprint
 
-				const newEvents = payload.taskList.map((task, index) =>
-					mapTaskToEvent(task, payload.courseCode, index)
+				const newEvents = payload.rows.map((row, index) =>
+					mapTaskToEvent(row.task, row.courseCode, index, row.courseName)
 				)
 				const merged = mergeUniqueEvents(useAcademicPlannerStore.getState().events, newEvents)
 				if (merged.length === useAcademicPlannerStore.getState().events.length) return
 
 				setEvents(merged)
 				setCourses(buildCoursePlans(merged))
-				void saveJsonToDatabase({
-					apiBase,
-					userId: DEFAULT_USER_ID,
-					courseCode: payload.courseCode,
-					jsonData: payload.parsed,
-					description: `Extracted ${newEvents.length} tasks`,
-				})
-				if (payload.gradingPolicy) {
-					void saveCoursePolicies({
+				if (userId) {
+					void saveJsonToDatabase({
 						apiBase,
-						userId: DEFAULT_USER_ID,
+						userId,
 						courseCode: payload.courseCode,
-						gradingPolicy: payload.gradingPolicy,
+						jsonData: payload.parsed,
+						adviceText: payload.advice,
+						courseSummaryJson: payload.courseSummaryJson,
+						description: `Extracted ${newEvents.length} tasks`,
 					})
+					if (payload.gradingPolicy) {
+						void saveCoursePolicies({
+							apiBase,
+							userId,
+							courseCode: payload.courseCode,
+							gradingPolicy: payload.gradingPolicy,
+						})
+					}
 				}
 				message.success(`Imported ${newEvents.length} tasks from AI result`)
 			}, 900)
@@ -208,7 +227,7 @@ export default function ChatPage() {
 			observer.disconnect()
 			if (observeTimerRef.current) clearTimeout(observeTimerRef.current)
 		}
-	}, [apiBase, setCourses, setEvents])
+	}, [apiBase, setCourses, setEvents, userId])
 
 	const handleDateSelect = (selectInfo: DateSelectArg) => {
 		setSelectedTimeRange([selectInfo.startStr, selectInfo.endStr])
@@ -267,12 +286,13 @@ export default function ChatPage() {
 
 		const changed = nextEvents.find(item => item.id === updatedEvent.id)
 		if (!changed) return false
+		if (!userId) return true
 
 		try {
 			setSyncStatus('syncing')
 			await syncAcademicTasks({
 				apiBase,
-				userId: DEFAULT_USER_ID,
+				userId,
 				courseCode: changed.courseCode || 'GENERAL',
 				events: nextEvents.filter(item => (item.courseCode || 'GENERAL') === (changed.courseCode || 'GENERAL')),
 			})

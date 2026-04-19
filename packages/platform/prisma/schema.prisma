@@ -52,6 +52,12 @@ model AcademicTask {
   weight     Float?
   type       String?
   courseCode String?  @map("course_code")
+  courseName String?  @map("course_name")
+  detail     String?  @db.Text
+  sourceQuote String? @map("source_quote") @db.Text
+  pageNumbersJson String? @map("page_numbers_json") @db.LongText
+  estimatedHours Float? @map("estimated_hours")
+  rationale  String?  @db.Text
   createdAt  DateTime @default(now()) @map("created_at")
 
   @@map("academic_tasks")
@@ -70,6 +76,8 @@ model ProcessingResult {
   // 元数据
   sourceType  String?  @map("source_type")              // "academic" | "document" | "custom"
   description String?  @db.Text
+  adviceText  String?  @db.LongText @map("advice_text")
+  courseSummaryJson String? @db.LongText @map("course_summary_json")
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

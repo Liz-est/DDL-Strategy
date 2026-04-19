@@ -7,7 +7,8 @@
 		"dev": "rsbuild dev",
 		"format": "prettier --write .",
 		"lint": "eslint .",
-		"preview": "rsbuild preview"
+		"preview": "rsbuild preview",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@ant-design/cssinjs": "catalog:",
@@ -87,7 +88,8 @@
 		"prettier-plugin-tailwindcss": "catalog:",
 		"tailwindcss": "catalog:",
 		"typescript": "catalog:",
-		"typescript-eslint": "catalog:"
+		"typescript-eslint": "catalog:",
+		"vitest": "catalog:"
 	},
 	"packageManager": "pnpm@10.8.1"
 }

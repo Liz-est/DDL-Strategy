@@ -48,7 +48,15 @@ export async function POST(request: Request) {
   try {
     // App Router 获取 body 的正确方式
     const body = await request.json();
-    const { userId, courseCode, jsonData, sourceType = 'document', description } = body;
+    const {
+      userId,
+      courseCode,
+      jsonData,
+      sourceType = 'document',
+      description,
+      adviceText,
+      courseSummaryJson,
+    } = body;
 
     if (!userId || !jsonData) {
       return addCorsHeaders(
@@ -70,6 +78,13 @@ export async function POST(request: Request) {
         rawData: typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData),
         sourceType,
         description: description || null,
+        adviceText: typeof adviceText === 'string' ? adviceText : null,
+        courseSummaryJson:
+          typeof courseSummaryJson === 'string'
+            ? courseSummaryJson
+            : courseSummaryJson
+              ? JSON.stringify(courseSummaryJson)
+              : null,
       },
     });
 
