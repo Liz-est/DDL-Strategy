@@ -252,8 +252,55 @@ export const createApiUrl = (apiBase: string, path: string) => {
 	return normalizedBase ? `${normalizedBase}${path}` : `/api/client${path}`
 }
 
+/** Avoid generic `"due_date":` — it appears often in large DOM `innerText` and is slow/noisy. */
+const JSON_KEY_ANCHORS = ['"courses":', '"assessments":', '"deadlines":', '"due_date_raw":'] as const
+
+/**
+ * Scan for academic JSON inside noisy text (e.g. whole `document.body.innerText`).
+ * Tries each anchor and each `{` before it, keeps the longest balanced block that normalizes.
+ */
+const extractPayloadFromAnchors = (text: string): { normalized: ParsedPayload; jsonStart: number; rawJson: string } | null => {
+	let best: { normalized: ParsedPayload; jsonStart: number; rawJson: string } | null = null
+
+	for (const anchor of JSON_KEY_ANCHORS) {
+		let from = 0
+		while (true) {
+			const p = text.indexOf(anchor, from)
+			if (p === -1) break
+			for (let j = p; j >= 0; j--) {
+				if (text[j] !== '{') continue
+				const rawJson = extractBalanced(text, j)
+				if (!rawJson) continue
+				const parsed = parseLooseJson(rawJson)
+				if (!parsed) continue
+				const normalized = normalizeAcademicPayload(parsed)
+				if (!normalized || normalized.rows.length === 0) continue
+				if (!best || rawJson.length > best.rawJson.length) {
+					best = { normalized, jsonStart: j, rawJson }
+				}
+			}
+			from = p + 1
+		}
+	}
+
+	return best
+}
+
 export const extractAcademicPayloadFromText = (text: string): ParsedPayload | null => {
 	if (!text) return null
+
+	const fromAnchors = extractPayloadFromAnchors(text)
+	if (fromAnchors) {
+		let advice = fromAnchors.normalized.advice
+		if (!advice) {
+			const tail = text.slice(fromAnchors.jsonStart + fromAnchors.rawJson.length).trim()
+			if (tail.length > 40) advice = tail
+		}
+		if (advice !== fromAnchors.normalized.advice) {
+			return { ...fromAnchors.normalized, advice }
+		}
+		return fromAnchors.normalized
+	}
 
 	const jsonRegex =
 		/(\{[\s\S]*?("courses"|"assessments"|"deadlines"|"due_date_raw"|"due_date")[\s\S]*?\}|\[[\s\S]*?("due_date_raw"|"due_date")[\s\S]*?\])/
@@ -311,8 +358,13 @@ export const mapTaskToEvent = (
 			detail: typeof task.description === 'string' ? task.description : null,
 			sourceQuote: typeof task.source_quote === 'string' ? task.source_quote : null,
 			pageNumbers: Array.isArray(task.page_numbers) ? task.page_numbers : [],
-			estimated_hours: task.estimated_hours,
-			rationale: task.rationale,
+			estimated_hours:
+				typeof task.estimated_hours === 'number' && Number.isFinite(task.estimated_hours)
+					? task.estimated_hours
+					: typeof task.estimated_hours === 'string'
+						? Number.parseFloat(task.estimated_hours.replace(/,/g, '')) || undefined
+						: undefined,
+			rationale: typeof task.rationale === 'string' ? task.rationale : undefined,
 		},
 	}
 }
@@ -434,12 +486,15 @@ export const syncAcademicTasks = async (params: {
 					: null,
 		sourceQuote: typeof event.extendedProps?.sourceQuote === 'string' ? event.extendedProps.sourceQuote : null,
 		pageNumbers: Array.isArray(event.extendedProps?.pageNumbers) ? event.extendedProps.pageNumbers : [],
-		estimatedHours:
-			typeof event.extendedProps?.estimated_hours === 'number'
-				? event.extendedProps.estimated_hours
-				: typeof event.extendedProps?.estimatedHours === 'number'
-					? event.extendedProps.estimatedHours
-					: null,
+		estimatedHours: (() => {
+			const raw = event.extendedProps?.estimated_hours ?? event.extendedProps?.estimatedHours
+			if (typeof raw === 'number' && Number.isFinite(raw)) return raw
+			if (typeof raw === 'string') {
+				const n = Number.parseFloat(raw.replace(/,/g, ''))
+				return Number.isFinite(n) ? n : null
+			}
+			return null
+		})(),
 		rationale: typeof event.extendedProps?.rationale === 'string' ? event.extendedProps.rationale : null,
 		courseName: typeof event.extendedProps?.courseName === 'string' ? event.extendedProps.courseName : null,
 	}))

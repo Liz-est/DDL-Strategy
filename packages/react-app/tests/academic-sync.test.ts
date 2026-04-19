@@ -61,6 +61,27 @@ describe('academic-sync utilities', () => {
 		expect(payload?.advice).toBe('start early')
 	})
 
+	test('extractAcademicPayloadFromText should parse courses JSON with noisy DOM prefix and trailing report', () => {
+		const core = JSON.stringify({
+			courses: [
+				{
+					course_info: { name: 'AI Exploration II' },
+					deadlines: [
+						{ title: 'Lab', due_date: '2026-01-09', weight: '20%' },
+						{ title: 'Final', due_date: '2026-04-10', weight: '30%' },
+					],
+				},
+			],
+		})
+		const noisy =
+			'{ broken: true } nav { x: 1 } \n' +
+			core +
+			'\n\nSemester Preparation Report — Reference Date: 2026-04-10\nThis tail is long enough to be captured as advice text after the JSON block ends.'
+		const payload = extractAcademicPayloadFromText(noisy)
+		expect(payload?.rows).toHaveLength(2)
+		expect(payload?.advice?.includes('Semester Preparation Report')).toBe(true)
+	})
+
 	test('normalizeAcademicPayload should parse courses JSON string payload', () => {
 		const normalized = normalizeAcademicPayload({
 			courses: JSON.stringify([

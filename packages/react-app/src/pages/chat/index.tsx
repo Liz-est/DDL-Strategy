@@ -94,8 +94,11 @@ export default function ChatPage() {
 					userId,
 				})
 				if (!active) return
-				const merged = mergeUniqueEvents(events, remoteEvents)
-				const finalEvents = merged.length > 0 ? merged : events
+				// Always merge against latest store — async hydrate must not use a stale
+				// `events` closure (often []) or it will wipe AI-imported tasks that landed first.
+				const localEvents = useAcademicPlannerStore.getState().events
+				const merged = mergeUniqueEvents(localEvents, remoteEvents)
+				const finalEvents = merged.length > 0 ? merged : localEvents
 				setEvents(finalEvents)
 				setCourses(buildCoursePlans(finalEvents))
 				setSemesterProgress(getSemesterProgress(finalEvents))
@@ -126,7 +129,7 @@ export default function ChatPage() {
 		return () => {
 			active = false
 		}
-	}, [apiBase, events, setCourses, setEvents, setSemesterProgress, setSyncStatus, userId])
+	}, [apiBase, setCourses, setEvents, setSemesterProgress, setSyncStatus, userId])
 
 	useEffect(() => {
 		setCourses(buildCoursePlans(events))
@@ -221,7 +224,11 @@ export default function ChatPage() {
 		})
 
 		const target = document.body || document.documentElement
-		observer.observe(target, { childList: true, subtree: true })
+		observer.observe(target, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+		})
 
 		return () => {
 			observer.disconnect()
