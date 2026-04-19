@@ -1,4 +1,12 @@
-import type { AcademicEvent, CourseMilestone, CoursePlan } from '@/store/academic-planner'
+import type {
+	AcademicEvent,
+	CourseDetail,
+	CourseMilestone,
+	CoursePlan,
+	CoursePolicyProfile,
+	CoursePolicyRule,
+	IngestionSnapshotItem,
+} from '@/store/academic-planner'
 
 type JsonPrimitive = string | number | boolean | null
 type JsonValue = JsonPrimitive | JsonObject | JsonValue[]
@@ -18,6 +26,64 @@ interface ParsedPayload {
 interface AcademicSnapshotItem {
 	rawData: string | JsonObject | JsonObject[]
 	courseCode: string | null
+}
+
+interface OverviewCourseItem {
+	course_code: string
+	name?: string | null
+	course_name?: string | null
+	description?: string | null
+	source_quote?: string | null
+}
+
+interface OverviewPolicyItem {
+	id: string
+	course_code: string
+	raw_policy_text?: string | null
+	late_policy?: string | null
+	absence_policy?: string | null
+	grading_notes?: string | null
+	extension_rule?: string | null
+	integrity_rule?: string | null
+	collaboration_rule?: string | null
+	exam_aid_rule?: string | null
+}
+
+interface OverviewPolicyRuleItem {
+	id: string
+	policy_id: string
+	rule_type: string
+	threshold_value?: number | null
+	penalty_percent?: number | null
+	time_unit?: string | null
+	raw_quote?: string | null
+	rule_order?: number | null
+}
+
+interface OverviewTaskItem {
+	id: string
+	title: string
+	course_code?: string | null
+	course_name?: string | null
+	type?: string | null
+	weight?: number | null
+	start_at?: string | null
+	end_at?: string | null
+	is_all_day?: boolean | null
+	due_date?: string | null
+	detail?: string | null
+	source_quote?: string | null
+	page_numbers_json?: string | null
+	estimated_hours?: number | null
+	rationale?: string | null
+}
+
+interface OverviewSnapshotItem {
+	id: string
+	course_code?: string | null
+	source_type?: string | null
+	report_text?: string | null
+	created_at?: string
 }
 
 interface NormalizedTaskRow {
@@ -136,6 +202,108 @@ const parseAdvice = (payload: JsonObject) => {
 	return typeof payload.advice === 'string' && payload.advice.trim() ? payload.advice : null
 }
 
+const pickFirstText = (...values: JsonValue[]) => {
+	for (const value of values) {
+		if (typeof value === 'string' && value.trim()) return value.trim()
+	}
+	return null
+}
+
+export const parseGradingPolicyText = (rawPolicy: JsonValue | undefined) => {
+	const policyText =
+		typeof rawPolicy === 'string'
+			? rawPolicy
+			: rawPolicy && typeof rawPolicy === 'object'
+				? JSON.stringify(rawPolicy)
+				: ''
+	const text = policyText.replace(/\s+/g, ' ').trim()
+	if (!text) {
+		return {
+			rawPolicyText: null,
+			latePolicy: null,
+			absencePolicy: null,
+			gradingNotes: null,
+			extensionRule: null,
+			integrityRule: null,
+			collaborationRule: null,
+			examAidRule: null,
+			rules: [] as CoursePolicyRule[],
+			parsedPolicyJson: null as string | null,
+		}
+	}
+
+	const segments = text.split(/(?<=[.;])\s+/).filter(Boolean)
+	const rules: CoursePolicyRule[] = []
+	let extensionRule: string | null = null
+	let integrityRule: string | null = null
+	let collaborationRule: string | null = null
+	let examAidRule: string | null = null
+	let absencePolicy: string | null = null
+
+	segments.forEach((segment, index) => {
+		const lateRange = segment.match(/(\d+)\s*[-–]\s*(\d+)\s*hours?.*?(\d+)\s*%/i)
+		const lateUnder = segment.match(/up to\s*(\d+)\s*hours?.*?(\d+)\s*%/i)
+		const lateOver = segment.match(/more than\s*(\d+)\s*hours?.*?(?:not accepted|0|zero|score\s*=\s*0)/i)
+		if (lateRange) {
+			rules.push({
+				id: `rule-${index}`,
+				ruleType: 'late_penalty',
+				thresholdValue: Number.parseFloat(lateRange[2]),
+				penaltyPercent: Number.parseFloat(lateRange[3]),
+				timeUnit: 'hour',
+				rawQuote: segment,
+				ruleOrder: index,
+			})
+		} else if (lateUnder) {
+			rules.push({
+				id: `rule-${index}`,
+				ruleType: 'late_penalty',
+				thresholdValue: Number.parseFloat(lateUnder[1]),
+				penaltyPercent: Number.parseFloat(lateUnder[2]),
+				timeUnit: 'hour',
+				rawQuote: segment,
+				ruleOrder: index,
+			})
+		} else if (lateOver) {
+			rules.push({
+				id: `rule-${index}`,
+				ruleType: 'late_penalty',
+				thresholdValue: Number.parseFloat(lateOver[1]),
+				penaltyPercent: 100,
+				timeUnit: 'hour',
+				rawQuote: segment,
+				ruleOrder: index,
+			})
+		}
+		if (!extensionRule && /(extension|accommodation|emergenc)/i.test(segment)) extensionRule = segment
+		if (!integrityRule && /(integrity|demerit|disciplinary|zero)/i.test(segment)) integrityRule = segment
+		if (!collaborationRule && /(collaboration|group|copying|communicat)/i.test(segment)) collaborationRule = segment
+		if (!examAidRule && /(cheat sheet|a4|double-sided|exam)/i.test(segment)) examAidRule = segment
+		if (!absencePolicy && /(absence|attendance)/i.test(segment)) absencePolicy = segment
+	})
+
+	const parsedPolicy = {
+		rawText: text,
+		rules,
+		extensionRule,
+		integrityRule,
+		collaborationRule,
+		examAidRule,
+	}
+	return {
+		rawPolicyText: text,
+		latePolicy: rules.length > 0 ? JSON.stringify(rules) : null,
+		absencePolicy,
+		gradingNotes: text,
+		extensionRule,
+		integrityRule,
+		collaborationRule,
+		examAidRule,
+		rules,
+		parsedPolicyJson: JSON.stringify(parsedPolicy),
+	}
+}
+
 export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): ParsedPayload | null => {
 	const rootPayload: JsonObject = Array.isArray(parsed) ? { assessments: parsed } : parsed
 	const rows: NormalizedTaskRow[] = []
@@ -148,18 +316,8 @@ export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): Par
 
 	if (directAssessments.length > 0) {
 		const rootCourseInfo = toObject(rootPayload.course_info) ?? {}
-		const courseName =
-			typeof rootCourseInfo.course_name === 'string'
-				? rootCourseInfo.course_name
-				: typeof rootCourseInfo.course_code === 'string'
-					? rootCourseInfo.course_code
-					: DEFAULT_COURSE
-		const courseCode =
-			typeof rootCourseInfo.course_code === 'string'
-				? rootCourseInfo.course_code
-				: typeof rootCourseInfo.course_name === 'string'
-					? rootCourseInfo.course_name
-					: DEFAULT_COURSE
+		const courseName = pickFirstText(rootCourseInfo.course_name, rootCourseInfo.name, rootCourseInfo.course_code) || DEFAULT_COURSE
+		const courseCode = pickFirstText(rootCourseInfo.course_code, rootCourseInfo.course_name, rootCourseInfo.name) || DEFAULT_COURSE
 		directAssessments.forEach(task => {
 			rows.push({ task, courseCode, courseName })
 		})
@@ -169,22 +327,8 @@ export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): Par
 	if (normalizedCourses.length > 0) {
 		normalizedCourses.forEach(courseItem => {
 			const courseInfo = toObject(courseItem.course_info) ?? {}
-			const courseName =
-				typeof courseInfo.course_name === 'string'
-					? courseInfo.course_name
-					: typeof courseInfo.name === 'string'
-						? courseInfo.name
-						: typeof courseInfo.course_code === 'string'
-							? courseInfo.course_code
-							: DEFAULT_COURSE
-			const courseCode =
-				typeof courseInfo.course_code === 'string'
-					? courseInfo.course_code
-					: typeof courseInfo.course_name === 'string'
-						? courseInfo.course_name
-						: typeof courseInfo.name === 'string'
-							? courseInfo.name
-							: DEFAULT_COURSE
+			const courseName = pickFirstText(courseInfo.course_name, courseInfo.name, courseInfo.course_code) || DEFAULT_COURSE
+			const courseCode = pickFirstText(courseInfo.course_code, courseInfo.course_name, courseInfo.name) || DEFAULT_COURSE
 			const deadlines = Array.isArray(courseItem.deadlines)
 				? courseItem.deadlines.filter(
 						(item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
@@ -324,6 +468,7 @@ export const mapTaskToEvent = (
 	index: number,
 	courseName?: string
 ): AcademicEvent => {
+	const stableId = typeof task.id === 'string' && task.id.trim() ? task.id.trim() : null
 	const title =
 		typeof task.name === 'string' ? task.name : typeof task.title === 'string' ? task.title : `Task ${index + 1}`
 	const dueDate =
@@ -332,6 +477,26 @@ export const mapTaskToEvent = (
 			: typeof task.due_date === 'string'
 				? task.due_date
 				: new Date().toISOString().split('T')[0]
+	const startAt =
+		typeof task.start_at === 'string'
+			? task.start_at
+			: typeof task.startAt === 'string'
+				? task.startAt
+				: dueDate
+	const endAt =
+		typeof task.end_at === 'string'
+			? task.end_at
+			: typeof task.endAt === 'string'
+				? task.endAt
+				: typeof task.end_date === 'string'
+					? task.end_date
+					: undefined
+	const allDay =
+		typeof task.is_all_day === 'boolean'
+			? task.is_all_day
+			: typeof task.allDay === 'boolean'
+				? task.allDay
+				: !startAt.includes('T')
 	const weight = parseWeightValue(task.weight)
 	const type =
 		typeof task.task_type_standardized === 'string'
@@ -342,11 +507,11 @@ export const mapTaskToEvent = (
 	const highRisk = weight >= 30 || type === 'Exam'
 
 	return {
-		id: `ai-${courseCode}-${title}-${index}`.replace(/\s+/g, '-'),
+		id: stableId || `ai-${courseCode}-${title}-${index}`.replace(/\s+/g, '-'),
 		title,
-		start: dueDate,
-		end: typeof task.end_date === 'string' ? task.end_date : undefined,
-		allDay: true,
+		start: startAt,
+		end: endAt,
+		allDay,
 		color: highRisk ? '#ef4444' : '#10b981',
 		weight,
 		type,
@@ -380,13 +545,17 @@ export const mergeUniqueEvents = (current: AcademicEvent[], incoming: AcademicEv
 	return [...current, ...unique]
 }
 
-export const buildCoursePlans = (events: AcademicEvent[]): CoursePlan[] => {
+export const buildCoursePlans = (events: AcademicEvent[], courseDetails: CourseDetail[] = []): CoursePlan[] => {
 	const grouped = events.reduce<Record<string, AcademicEvent[]>>((acc, event) => {
 		const code = event.courseCode || DEFAULT_COURSE
 		acc[code] = acc[code] || []
 		acc[code].push(event)
 		return acc
 	}, {})
+	courseDetails.forEach(detail => {
+		const code = detail.courseCode || DEFAULT_COURSE
+		if (!grouped[code]) grouped[code] = []
+	})
 
 	return Object.entries(grouped).map(([courseCode, courseEvents]) => {
 		const milestones: CourseMilestone[] = courseEvents
@@ -404,7 +573,10 @@ export const buildCoursePlans = (events: AcademicEvent[]): CoursePlan[] => {
 		return {
 			id: `course-${courseCode}`,
 			courseCode,
-			courseName: courseCode,
+			courseName:
+				courseDetails.find(item => item.courseCode === courseCode)?.courseName ||
+				courseDetails.find(item => item.courseCode === courseCode)?.name ||
+				courseCode,
 			completionRate,
 			milestones,
 		}
@@ -447,6 +619,7 @@ export const saveCoursePolicies = async (params: {
 }) => {
 	const { apiBase, userId, courseCode, gradingPolicy } = params
 	if (!gradingPolicy || !courseCode || courseCode === DEFAULT_COURSE) return null
+	const parsed = parseGradingPolicyText(gradingPolicy as JsonValue)
 
 	const url = createApiUrl(apiBase, '/policies/save')
 	return withRetry(() =>
@@ -459,6 +632,13 @@ export const saveCoursePolicies = async (params: {
 				late_policy: gradingPolicy.late_policy || null,
 				absence_policy: gradingPolicy.absence_policy || null,
 				grading_notes: gradingPolicy.grading_notes || null,
+				rawPolicyText: parsed.rawPolicyText,
+				extensionRule: parsed.extensionRule,
+				integrityRule: parsed.integrityRule,
+				collaborationRule: parsed.collaborationRule,
+				examAidRule: parsed.examAidRule,
+				parsedPolicyJson: parsed.parsedPolicyJson,
+				rules: parsed.rules,
 			}),
 		})
 	)
@@ -472,9 +652,13 @@ export const syncAcademicTasks = async (params: {
 }) => {
 	const { apiBase, userId, courseCode, events } = params
 	const url = createApiUrl(apiBase, '/academic/sync')
-	const tasks = events.map(event => ({
-		id: event.id,
-		title: event.title,
+	const tasks = events
+		.map(event => ({
+		id: String(event.id || '').trim(),
+		title: String(event.title || '').trim(),
+		startAt: event.start,
+		endAt: event.end || null,
+		allDay: event.allDay ?? true,
 		dueDate: event.start,
 		weight: event.weight || 0,
 		type: event.type || 'Task',
@@ -498,6 +682,7 @@ export const syncAcademicTasks = async (params: {
 		rationale: typeof event.extendedProps?.rationale === 'string' ? event.extendedProps.rationale : null,
 		courseName: typeof event.extendedProps?.courseName === 'string' ? event.extendedProps.courseName : null,
 	}))
+		.filter(item => item.id && item.title)
 
 	return withRetry(() =>
 		requestJson(url, {
@@ -513,20 +698,118 @@ export const syncAcademicTasks = async (params: {
 }
 
 export const loadAcademicSnapshots = async (params: { apiBase: string; userId: string }) => {
-	const url = createApiUrl(params.apiBase, `/document/save?userId=${encodeURIComponent(params.userId)}`)
-	const response = await requestJson<{ data?: AcademicSnapshotItem[] }>(url)
-	const records = Array.isArray(response.data) ? response.data : []
-	const events = records.flatMap(item => {
-		const parsed =
-			typeof item.rawData === 'string' ? parseLooseJson(item.rawData) : Array.isArray(item.rawData) || item.rawData ? item.rawData : null
-		if (!parsed) return []
-		const normalized = normalizeAcademicPayload(parsed)
-		if (!normalized) return []
-		return normalized.rows.map((row, index) => mapTaskToEvent(row.task, row.courseCode, index, row.courseName))
-	})
+	const overviewUrl = createApiUrl(params.apiBase, `/academic/overview?userId=${encodeURIComponent(params.userId)}`)
+	try {
+		const overview = await requestJson<{
+			data?: {
+				courses?: OverviewCourseItem[]
+				policies?: OverviewPolicyItem[]
+				rules?: OverviewPolicyRuleItem[]
+				tasks?: OverviewTaskItem[]
+				snapshots?: OverviewSnapshotItem[]
+			}
+		}>(overviewUrl)
+		const data = overview.data || {}
+		const tasks = Array.isArray(data.tasks) ? data.tasks : []
+		const events = tasks.map((task, index) =>
+			mapTaskToEvent(
+				{
+					id: task.id,
+					title: task.title,
+					due_date: task.due_date ?? undefined,
+					start_at: task.start_at ?? undefined,
+					end_at: task.end_at ?? undefined,
+					is_all_day: task.is_all_day ?? undefined,
+					weight: task.weight ?? undefined,
+					type: task.type ?? undefined,
+					detail: task.detail ?? undefined,
+					source_quote: task.source_quote ?? undefined,
+					page_numbers: task.page_numbers_json ? parseJsonSafe(task.page_numbers_json) ?? [] : [],
+					estimated_hours: task.estimated_hours ?? undefined,
+					rationale: task.rationale ?? undefined,
+				},
+				task.course_code || DEFAULT_COURSE,
+				index,
+				task.course_name || task.course_code || undefined
+			)
+		)
+		const courses = (Array.isArray(data.courses) ? data.courses : []).map(
+			item =>
+				({
+					courseCode: item.course_code,
+					name: item.name ?? null,
+					courseName: item.course_name ?? null,
+					description: item.description ?? null,
+					sourceQuote: item.source_quote ?? null,
+				}) satisfies CourseDetail
+		)
+		const policyRulesByPolicyId = new Map<string, CoursePolicyRule[]>()
+		;(Array.isArray(data.rules) ? data.rules : []).forEach(rule => {
+			const next: CoursePolicyRule = {
+				id: rule.id,
+				ruleType: rule.rule_type,
+				thresholdValue: rule.threshold_value ?? null,
+				penaltyPercent: rule.penalty_percent ?? null,
+				timeUnit: rule.time_unit ?? null,
+				rawQuote: rule.raw_quote ?? null,
+				ruleOrder: rule.rule_order ?? null,
+			}
+			const list = policyRulesByPolicyId.get(rule.policy_id) || []
+			list.push(next)
+			policyRulesByPolicyId.set(rule.policy_id, list)
+		})
+		const policies = (Array.isArray(data.policies) ? data.policies : []).map(
+			item =>
+				({
+					courseCode: item.course_code,
+					rawPolicyText: item.raw_policy_text ?? null,
+					latePolicy: item.late_policy ?? null,
+					absencePolicy: item.absence_policy ?? null,
+					gradingNotes: item.grading_notes ?? null,
+					extensionRule: item.extension_rule ?? null,
+					integrityRule: item.integrity_rule ?? null,
+					collaborationRule: item.collaboration_rule ?? null,
+					examAidRule: item.exam_aid_rule ?? null,
+					rules: policyRulesByPolicyId.get(item.id) || [],
+				}) satisfies CoursePolicyProfile
+		)
+		const snapshots = (Array.isArray(data.snapshots) ? data.snapshots : []).map(
+			item =>
+				({
+					id: item.id,
+					courseCode: item.course_code ?? null,
+					sourceType: item.source_type ?? null,
+					reportText: item.report_text ?? null,
+					createdAt: item.created_at,
+				}) satisfies IngestionSnapshotItem
+		)
 
-	return {
-		events,
-		courses: buildCoursePlans(events),
+		return {
+			events,
+			courses: buildCoursePlans(events, courses),
+			courseDetails: courses,
+			coursePolicies: policies,
+			snapshots,
+		}
+	} catch {
+		// Fallback to legacy endpoint for compatibility
+		const url = createApiUrl(params.apiBase, `/document/save?userId=${encodeURIComponent(params.userId)}`)
+		const response = await requestJson<{ data?: AcademicSnapshotItem[] }>(url)
+		const records = Array.isArray(response.data) ? response.data : []
+		const events = records.flatMap(item => {
+			const parsed =
+				typeof item.rawData === 'string' ? parseLooseJson(item.rawData) : Array.isArray(item.rawData) || item.rawData ? item.rawData : null
+			if (!parsed) return []
+			const normalized = normalizeAcademicPayload(parsed)
+			if (!normalized) return []
+			return normalized.rows.map((row, index) => mapTaskToEvent(row.task, row.courseCode, index, row.courseName))
+		})
+		return {
+			events,
+			courses: buildCoursePlans(events),
+			courseDetails: [],
+			coursePolicies: [],
+			snapshots: [],
+		}
 	}
 }

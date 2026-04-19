@@ -1,7 +1,14 @@
 ﻿'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
-import type { DateSelectArg, DatesSetArg, EventContentArg, EventDropArg, EventResizeDoneArg } from '@fullcalendar/core'
+import type {
+	DateSelectArg,
+	DatesSetArg,
+	EventClickArg,
+	EventContentArg,
+	EventDropArg,
+	EventResizeDoneArg,
+} from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -13,6 +20,7 @@ interface CalendarProps {
 	events: AcademicEvent[]
 	currentView: CalendarViewType
 	onViewChange: (view: CalendarViewType) => void
+	onEventClick: (eventId: string) => void
 	onEventChange: (updatedEvent: {
 		id: string
 		title: string
@@ -21,25 +29,29 @@ interface CalendarProps {
 		allDay?: boolean
 	}) => Promise<boolean> | boolean
 	onDateSelect: (selectInfo: DateSelectArg) => void
+	onQuickAdd: () => void
 }
 
 const VIEW_OPTIONS: { label: string; view: CalendarViewType }[] = [
-	{ label: '年', view: 'multiMonthYear' },
-	{ label: '月', view: 'dayGridMonth' },
-	{ label: '周', view: 'timeGridWeek' },
-	{ label: '日', view: 'timeGridDay' },
-	{ label: '日程', view: 'listWeek' },
+	{ label: 'Year', view: 'multiMonthYear' },
+	{ label: 'Month', view: 'dayGridMonth' },
+	{ label: 'Week', view: 'timeGridWeek' },
+	{ label: 'Day', view: 'timeGridDay' },
+	{ label: 'Agenda', view: 'listWeek' },
 ]
 
 export default function CalendarView({
 	events,
 	currentView,
 	onViewChange,
+	onEventClick,
 	onEventChange,
 	onDateSelect,
+	onQuickAdd,
 }: CalendarProps) {
 	const calendarRef = useRef<FullCalendar>(null)
 	const [activeView, setActiveView] = useState<CalendarViewType>(currentView)
+	const [currentTitle, setCurrentTitle] = useState('')
 
 	useEffect(() => {
 		const calendarApi = calendarRef.current?.getApi()
@@ -47,6 +59,7 @@ export default function CalendarView({
 			calendarApi.changeView(currentView)
 		}
 		setActiveView(currentView)
+		setCurrentTitle(calendarApi?.view.title || '')
 	}, [currentView])
 
 	const changeView = (viewName: CalendarViewType) => {
@@ -58,65 +71,144 @@ export default function CalendarView({
 	}
 
 	const renderEventContent = (eventInfo: EventContentArg) => {
-		const { weight, type } = eventInfo.event.extendedProps || {}
+		const { weight, type, courseName } = eventInfo.event.extendedProps || {}
 		const isHighRisk = Number(weight) >= 30 || type === 'Exam'
 		return (
-			<div
-				className={`flex flex-col truncate rounded border-l-2 px-1 py-0.5 shadow-sm transition-colors ${
-					isHighRisk ? 'border-red-500 bg-red-50 text-red-700' : 'border-blue-500 bg-blue-50 text-blue-700'
-				}`}
-			>
-				<div className="truncate text-[9px] font-bold">{eventInfo.event.title}</div>
+			<div className="min-w-0 rounded-md border border-white/60 bg-white/85 px-2 py-1 shadow-sm backdrop-blur">
+				<div className="truncate text-[11px] font-semibold text-slate-800">{eventInfo.event.title}</div>
+				<div className="truncate text-[10px] text-slate-500">
+					{!eventInfo.event.allDay ? eventInfo.timeText : 'All day'}
+					{courseName ? ` · ${courseName}` : ''}
+				</div>
+				{isHighRisk ? <div className="mt-0.5 text-[9px] font-medium text-rose-600">High impact</div> : null}
 			</div>
 		)
 	}
 
+	const jumpTo = (direction: 'prev' | 'next' | 'today') => {
+		const calendarApi = calendarRef.current?.getApi()
+		if (!calendarApi) return
+		if (direction === 'prev') calendarApi.prev()
+		if (direction === 'today') calendarApi.today()
+		if (direction === 'next') calendarApi.next()
+		setCurrentTitle(calendarApi.view.title)
+	}
+
 	return (
-		<div className="flex h-full flex-col bg-white">
-			<div className="flex items-center justify-between border-b bg-gray-50/50 px-6 py-3">
-				<div className="flex rounded-lg border bg-white p-1 shadow-sm">
+		<div className="calendar-shell flex h-full flex-col bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+			<div className="flex items-center justify-between border-b border-slate-200/70 bg-white/92 px-6 py-4 backdrop-blur">
+				<div className="space-y-1">
+					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Calendar</p>
+					<h2 className="text-lg font-semibold text-slate-800">{currentTitle || 'Schedule'}</h2>
+				</div>
+				<div className="flex items-center gap-2">
+					<button
+						onClick={() => jumpTo('prev')}
+						className="rounded-xl bg-white/90 px-3 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200/70 transition hover:bg-white hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+					>
+						Prev
+					</button>
+					<button
+						onClick={() => jumpTo('today')}
+						className="rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm shadow-indigo-200 transition hover:from-indigo-400 hover:to-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+					>
+						Today
+					</button>
+					<button
+						onClick={() => jumpTo('next')}
+						className="rounded-xl bg-white/90 px-3 py-1.5 text-sm text-slate-600 shadow-sm ring-1 ring-slate-200/70 transition hover:bg-white hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
+					>
+						Next
+					</button>
+					<button
+						onClick={onQuickAdd}
+						className="ml-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm shadow-emerald-200 transition hover:from-emerald-400 hover:to-teal-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+					>
+						New task
+					</button>
+				</div>
+			</div>
+
+			<div className="border-b border-slate-200/70 bg-white/80 px-6 py-2">
+				<div className="inline-flex rounded-xl bg-slate-100/80 p-1 ring-1 ring-slate-200/80">
 					{VIEW_OPTIONS.map(item => (
 						<button
 							key={item.view}
 							onClick={() => changeView(item.view)}
-							className={`rounded-md px-4 py-1 text-sm font-medium transition-all active:scale-95 ${
+							className={`rounded-lg px-3 py-1.5 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
 								activeView === item.view
-									? 'bg-indigo-600 text-white shadow-sm'
-									: 'text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'
+									? 'bg-white text-indigo-600 shadow-sm'
+									: 'text-slate-500 hover:bg-white/80 hover:text-slate-800'
 							}`}
 						>
 							{item.label}
 						</button>
 					))}
 				</div>
-				<div className="flex gap-2">
-					<button
-						onClick={() => calendarRef.current?.getApi().prev()}
-						className="rounded-full p-2 hover:bg-gray-200"
-					>
-						往前
-					</button>
-					<button
-						onClick={() => calendarRef.current?.getApi().today()}
-						className="rounded-md bg-indigo-600 px-4 py-1 text-sm font-bold text-white shadow-md shadow-indigo-200"
-					>
-						今天
-					</button>
-					<button
-						onClick={() => calendarRef.current?.getApi().next()}
-						className="rounded-full p-2 hover:bg-gray-200"
-					>
-						往后
-					</button>
-				</div>
 			</div>
 
-			<div className="flex-1 overflow-hidden p-4">
+			<div className="calendar-panel flex-1 overflow-hidden px-4 pb-4 pt-3">
 				<style>{`
-          .fc { font-family: inherit; --fc-border-color: #f1f5f9; --fc-today-bg-color: #f8fafc; }
-          .fc-header-toolbar { display: none !important; } /* 隐藏自带标题栏 */
-          .fc .fc-col-header-cell-cushion { padding: 12px 0; color: #64748b; font-size: 0.8rem; }
-          .fc-multimonth { background: white; }
+          .calendar-shell .fc {
+            font-family: inherit;
+            --fc-border-color: #e2e8f0;
+            --fc-today-bg-color: #eff6ff;
+            --fc-list-event-hover-bg-color: #f8fafc;
+            --fc-neutral-bg-color: #f8fafc;
+            --fc-page-bg-color: transparent;
+          }
+          .calendar-shell button {
+            border: none;
+          }
+          .calendar-shell .fc-header-toolbar {
+            display: none !important;
+          }
+          .calendar-shell .fc .fc-col-header-cell-cushion {
+            padding: 10px 0;
+            color: #64748b;
+            font-size: 0.76rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+          }
+          .calendar-shell .fc .fc-daygrid-day-frame,
+          .calendar-shell .fc .fc-timegrid-slot {
+            background: #ffffff;
+          }
+          .calendar-shell .fc .fc-daygrid-day.fc-day-today,
+          .calendar-shell .fc .fc-timegrid-col.fc-day-today {
+            background: #eff6ff;
+          }
+          .calendar-shell .fc .fc-event {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+          }
+          .calendar-shell .fc a:focus,
+          .calendar-shell .fc button:focus {
+            outline: none;
+            box-shadow: none;
+          }
+          .calendar-shell .fc .fc-list-event-dot {
+            border-color: #6366f1;
+          }
+          .calendar-shell .fc .fc-list-event-title a,
+          .calendar-shell .fc .fc-list-event-time {
+            color: #334155;
+          }
+          .calendar-panel .fc-scroller,
+          .calendar-panel .fc-scroller-liquid-absolute {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .calendar-panel .fc-scroller::-webkit-scrollbar,
+          .calendar-panel .fc-scroller-liquid-absolute::-webkit-scrollbar {
+            display: none;
+          }
+          .calendar-shell .fc-theme-standard td,
+          .calendar-shell .fc-theme-standard th {
+            border-color: #e2e8f0;
+          }
         `}</style>
 				<FullCalendar
 					ref={calendarRef}
@@ -127,11 +219,25 @@ export default function CalendarView({
 					selectable
 					selectMirror
 					dayMaxEvents
+					nowIndicator
+					allDaySlot
+					slotDuration="00:30:00"
+					snapDuration="00:15:00"
+					eventTimeFormat={{ hour: '2-digit', minute: '2-digit', hour12: false }}
+					scrollTime="08:00:00"
 					height="100%"
+					buttonText={{
+						today: 'Today',
+						month: 'Month',
+						week: 'Week',
+						day: 'Day',
+						list: 'Agenda',
+					}}
 					select={(info: DateSelectArg) => {
 						onDateSelect(info)
 						calendarRef.current?.getApi().unselect()
 					}}
+					eventClick={(info: EventClickArg) => onEventClick(info.event.id)}
 					eventContent={renderEventContent}
 					eventDrop={async (info: EventDropArg) => {
 						const accepted = await onEventChange({
@@ -156,6 +262,7 @@ export default function CalendarView({
 					datesSet={(dateInfo: DatesSetArg) => {
 						const view = dateInfo.view.type as CalendarViewType
 						setActiveView(view)
+						setCurrentTitle(dateInfo.view.title)
 						onViewChange(view)
 					}}
 				/>

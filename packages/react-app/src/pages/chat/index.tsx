@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { Button, DatePicker, Input, InputNumber, Modal, Select, Tag, message } from 'antd'
+import { Button, DatePicker, Input, InputNumber, Modal, Select, Switch, Tag, message } from 'antd'
 import type { DateSelectArg } from '@fullcalendar/core'
 import CalendarView from '@/components/CalendarView'
 import CoursePlanBoard from '@/components/planner/CoursePlanBoard'
@@ -54,14 +54,24 @@ export default function ChatPage() {
 		setSemesterProgress,
 		setEvents,
 		upsertEvent,
+		removeEvent,
 		setCourses,
+		courseDetails,
+		coursePolicies,
+		snapshots,
+		setCourseDetails,
+		setCoursePolicies,
+		setSnapshots,
 		setSyncStatus,
 		saveSnapshot,
 		restoreSnapshot,
 	} = useAcademicPlannerStore()
 	const [isModalOpen, setIsModalOpen] = useState(false)
+	const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
+	const [editingEventId, setEditingEventId] = useState<string | null>(null)
 	const [newEventTitle, setNewEventTitle] = useState('')
 	const [selectedTimeRange, setSelectedTimeRange] = useState<[string, string | undefined] | null>(null)
+	const [isAllDayEvent, setIsAllDayEvent] = useState(false)
 	const [eventCourseCode, setEventCourseCode] = useState('MANUAL')
 	const [eventType, setEventType] = useState('Task')
 	const [eventWeight, setEventWeight] = useState(0)
@@ -70,6 +80,18 @@ export default function ChatPage() {
 	const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const observeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const lastPayloadFingerprint = useRef<string>('')
+	const syncedCourseCodesRef = useRef<Set<string>>(new Set())
+
+	const getDefaultTimeRange = (allDay = false): [string, string] => {
+		if (allDay) {
+			const start = dayjs().format('YYYY-MM-DD')
+			const end = dayjs().add(1, 'day').format('YYYY-MM-DD')
+			return [start, end]
+		}
+		const startAt = dayjs().startOf('hour')
+		const endAt = startAt.add(1, 'hour')
+		return [startAt.format('YYYY-MM-DDTHH:mm:ss'), endAt.format('YYYY-MM-DDTHH:mm:ss')]
+	}
 
 	const pressureInfo = useMemo(() => {
 		const totalWeight = events.reduce((acc, curr) => acc + (curr.weight || 0), 0)
@@ -89,7 +111,12 @@ export default function ChatPage() {
 		const hydrate = async () => {
 			setSyncStatus('syncing')
 			try {
-				const { events: remoteEvents } = await loadAcademicSnapshots({
+				const {
+					events: remoteEvents,
+					courseDetails: remoteCourseDetails,
+					coursePolicies: remoteCoursePolicies,
+					snapshots: remoteSnapshots,
+				} = await loadAcademicSnapshots({
 					apiBase,
 					userId,
 				})
@@ -100,7 +127,10 @@ export default function ChatPage() {
 				const merged = mergeUniqueEvents(localEvents, remoteEvents)
 				const finalEvents = merged.length > 0 ? merged : localEvents
 				setEvents(finalEvents)
-				setCourses(buildCoursePlans(finalEvents))
+				setCourses(buildCoursePlans(finalEvents, remoteCourseDetails))
+				setCourseDetails(remoteCourseDetails)
+				setCoursePolicies(remoteCoursePolicies)
+				setSnapshots(remoteSnapshots)
 				setSemesterProgress(getSemesterProgress(finalEvents))
 				localStorage.removeItem(LOCAL_DRAFT_KEY)
 				setSyncStatus('success')
@@ -111,7 +141,10 @@ export default function ChatPage() {
 					try {
 						const parsed = JSON.parse(localDraft) as AcademicEvent[]
 						setEvents(parsed)
-						setCourses(buildCoursePlans(parsed))
+						setCourses(buildCoursePlans(parsed, []))
+						setCourseDetails([])
+						setCoursePolicies([])
+						setSnapshots([])
 						setSemesterProgress(getSemesterProgress(parsed))
 					} catch {
 						// no-op
@@ -129,12 +162,12 @@ export default function ChatPage() {
 		return () => {
 			active = false
 		}
-	}, [apiBase, setCourses, setEvents, setSemesterProgress, setSyncStatus, userId])
+	}, [apiBase, setCourseDetails, setCoursePolicies, setCourses, setEvents, setSemesterProgress, setSnapshots, setSyncStatus, userId])
 
 	useEffect(() => {
-		setCourses(buildCoursePlans(events))
+		setCourses(buildCoursePlans(events, courseDetails))
 		setSemesterProgress(getSemesterProgress(events))
-	}, [events, setCourses, setSemesterProgress])
+	}, [courseDetails, events, setCourses, setSemesterProgress])
 
 	useEffect(() => {
 		if (!userId) return
@@ -147,19 +180,22 @@ export default function ChatPage() {
 				acc[key].push(item)
 				return acc
 			}, {})
+			const currentCourseCodes = new Set(Object.keys(grouped))
+			const codesToSync = new Set<string>([...Array.from(syncedCourseCodesRef.current), ...Array.from(currentCourseCodes)])
 			void (async () => {
 				try {
 					setSyncStatus('syncing')
 					await Promise.all(
-						Object.entries(grouped).map(([courseCode, courseEvents]) =>
+						Array.from(codesToSync).map(courseCode =>
 							syncAcademicTasks({
 								apiBase,
 								userId,
 								courseCode,
-								events: courseEvents,
+								events: grouped[courseCode] || [],
 							})
 						)
 					)
+					syncedCourseCodesRef.current = currentCourseCodes
 					localStorage.removeItem(LOCAL_DRAFT_KEY)
 					setSyncStatus('success')
 				} catch (error) {
@@ -199,7 +235,7 @@ export default function ChatPage() {
 				if (merged.length === useAcademicPlannerStore.getState().events.length) return
 
 				setEvents(merged)
-				setCourses(buildCoursePlans(merged))
+				setCourses(buildCoursePlans(merged, useAcademicPlannerStore.getState().courseDetails))
 				if (userId) {
 					void saveJsonToDatabase({
 						apiBase,
@@ -236,17 +272,63 @@ export default function ChatPage() {
 		}
 	}, [apiBase, setCourses, setEvents, userId])
 
-	const handleDateSelect = (selectInfo: DateSelectArg) => {
-		setSelectedTimeRange([selectInfo.startStr, selectInfo.endStr])
+	const resetEditor = () => {
+		setEditingEventId(null)
+		setModalMode('create')
+		setNewEventTitle('')
+		setEventCourseCode('MANUAL')
+		setEventType('Task')
+		setEventWeight(0)
+		setIsAllDayEvent(false)
+		setPriority('medium')
+		setSelectedTimeRange(getDefaultTimeRange(false))
+	}
+
+	const openCreateModal = (range?: [string, string | undefined], allDay?: boolean) => {
+		const shouldAllDay = Boolean(allDay)
+		setModalMode('create')
+		setEditingEventId(null)
 		setEventCourseCode('MANUAL')
 		setEventType('Task')
 		setEventWeight(0)
 		setPriority('medium')
 		setNewEventTitle('')
+		setIsAllDayEvent(shouldAllDay)
+		setSelectedTimeRange(range || getDefaultTimeRange(shouldAllDay))
 		setIsModalOpen(true)
 	}
 
-	const handleModalOk = () => {
+	const handleDateSelect = (selectInfo: DateSelectArg) => {
+		const allDay = !(selectInfo.startStr.includes('T') || (selectInfo.endStr || '').includes('T'))
+		openCreateModal([selectInfo.startStr, selectInfo.endStr], allDay)
+	}
+
+	const handleQuickAdd = () => {
+		openCreateModal()
+	}
+
+	const handleEventClick = (eventId: string) => {
+		const target = events.find(item => item.id === eventId)
+		if (!target) return
+		setModalMode('edit')
+		setEditingEventId(target.id)
+		setNewEventTitle(target.title)
+		setEventCourseCode(target.courseCode || 'MANUAL')
+		setEventType(target.type || 'Task')
+		setEventWeight(target.weight || 0)
+		setPriority(target.priority || 'medium')
+		const allDay = target.allDay ?? !target.start.includes('T')
+		setIsAllDayEvent(allDay)
+		setSelectedTimeRange([target.start, target.end || target.start])
+		setIsModalOpen(true)
+	}
+
+	const handleModalClose = () => {
+		setIsModalOpen(false)
+		resetEditor()
+	}
+
+	const handleModalOk = async () => {
 		if (!newEventTitle.trim()) {
 			message.warning('Please enter a task name')
 			return
@@ -256,24 +338,48 @@ export default function ChatPage() {
 			return
 		}
 		const [start, end] = selectedTimeRange
+		if (end && dayjs(end).isBefore(dayjs(start))) {
+			message.warning('End time must be later than start time')
+			return
+		}
 		const highRisk = eventType === 'Exam' || eventWeight >= 30
-		const newEvent: AcademicEvent = {
-			id: `user-${Date.now()}`,
+		const normalizedCourseCode = eventCourseCode.trim() || 'MANUAL'
+		const nextEvent: AcademicEvent = {
+			id: editingEventId || `user-${Date.now()}`,
 			title: newEventTitle.trim(),
 			start,
 			end,
-			allDay: true,
+			allDay: isAllDayEvent,
 			color: highRisk ? '#ef4444' : '#8b5cf6',
 			weight: eventWeight,
 			type: eventType,
-			courseCode: eventCourseCode,
+			courseCode: normalizedCourseCode,
 			priority,
 			extendedProps: { source: 'manual' },
 		}
 		saveSnapshot()
-		upsertEvent(newEvent)
-		setIsModalOpen(false)
-		message.success('Task added to calendar')
+		upsertEvent(nextEvent)
+		handleModalClose()
+		message.success(modalMode === 'edit' ? 'Task updated' : 'Task added to calendar')
+	}
+
+	const handleDeleteEvent = async () => {
+		if (!editingEventId) return
+		const target = events.find(item => item.id === editingEventId)
+		if (!target) return
+		Modal.confirm({
+			title: 'Delete this task?',
+			content: 'This action removes the task from your calendar and synced planner data.',
+			okText: 'Delete',
+			okButtonProps: { danger: true },
+			cancelText: 'Cancel',
+			onOk: async () => {
+				saveSnapshot()
+				removeEvent(editingEventId)
+				handleModalClose()
+				message.success('Task deleted')
+			},
+		})
 	}
 
 	const handleCalendarEventChange = async (updatedEvent: {
@@ -284,9 +390,10 @@ export default function ChatPage() {
 		allDay?: boolean
 	}) => {
 		const snapshot = useAcademicPlannerStore.getState().events
+		saveSnapshot()
 		const nextEvents = snapshot.map(item =>
 			item.id === updatedEvent.id
-				? { ...item, start: updatedEvent.start, end: updatedEvent.end, allDay: updatedEvent.allDay }
+				? { ...item, title: updatedEvent.title, start: updatedEvent.start, end: updatedEvent.end, allDay: updatedEvent.allDay }
 				: item
 		)
 		setEvents(nextEvents)
@@ -323,46 +430,79 @@ export default function ChatPage() {
 	const selectedCourseEvents = selectedCourseId
 		? events.filter(item => `course-${item.courseCode || 'UNKNOWN'}` === selectedCourseId)
 		: events
+	const selectedCourseCode = selectedCourseId?.replace(/^course-/, '') || null
+	const selectedCourseDetail = selectedCourseCode
+		? courseDetails.find(item => item.courseCode === selectedCourseCode)
+		: null
+	const selectedCoursePolicy = selectedCourseCode
+		? coursePolicies.find(item => item.courseCode === selectedCourseCode)
+		: null
 
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-[#f1f5f9]">
-			<div className="flex h-full w-16 flex-col items-center gap-8 bg-[#1e293b] py-6 text-white/60">
-				<div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
-					DS
+		<div className="flex h-screen w-screen overflow-hidden bg-slate-100">
+			<aside className="flex h-full w-64 flex-col border-r border-slate-200 bg-white">
+				<div className="border-b border-slate-200 px-4 py-4">
+					<p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Academic Workspace</p>
+					<h2 className="mt-1 text-lg font-bold text-slate-800">DDL Strategist</h2>
 				</div>
-				<button
-					type="button"
-					className={`h-9 w-9 rounded-lg text-xs font-semibold transition ${
-						uiMode === 'calendar' ? 'bg-white text-slate-800' : 'bg-slate-700 text-white'
-					}`}
-					onClick={() => setUiMode('calendar')}
-					aria-pressed={uiMode === 'calendar'}
-					title="Calendar Mode"
-				>
-					CAL
-				</button>
-				<button
-					type="button"
-					className={`h-9 w-9 rounded-lg text-xs font-semibold transition ${
-						uiMode === 'planner' ? 'bg-white text-slate-800' : 'bg-slate-700 text-white'
-					}`}
-					onClick={() => setUiMode('planner')}
-					aria-pressed={uiMode === 'planner'}
-					title="Planner Mode"
-				>
-					PLAN
-				</button>
-			</div>
+				<div className="space-y-2 p-3">
+					<button
+						type="button"
+						className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+							uiMode === 'calendar'
+								? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm shadow-indigo-200'
+								: 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
+						}`}
+						onClick={() => setUiMode('calendar')}
+					>
+						Calendar
+					</button>
+					<button
+						type="button"
+						className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+							uiMode === 'planner'
+								? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm shadow-indigo-200'
+								: 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
+						}`}
+						onClick={() => setUiMode('planner')}
+					>
+						Course Planner
+					</button>
+				</div>
+				<div className="flex-1 overflow-y-auto border-t border-slate-200 p-3">
+					<p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">All Stored Courses</p>
+					<div className="space-y-2">
+						{courses.map(course => (
+							<button
+								key={course.id}
+								type="button"
+								onClick={() => setSelectedCourseId(course.id)}
+								className={`w-full rounded-lg border px-3 py-2 text-left transition ${
+									selectedCourseId === course.id
+										? 'border-indigo-400 bg-indigo-50'
+										: 'border-slate-200 bg-white hover:border-slate-300'
+								}`}
+							>
+								<p className="truncate text-sm font-semibold text-slate-800">{course.courseCode}</p>
+								<p className="text-xs text-slate-500">{course.milestones.length} tasks</p>
+							</button>
+						))}
+						{courses.length === 0 ? <p className="text-xs text-slate-400">No courses synced yet.</p> : null}
+					</div>
+				</div>
+			</aside>
 
-			<div className="flex h-full min-w-0 flex-1 flex-col">
-				<header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
+			<section className="flex h-full min-w-0 flex-1 flex-col">
+				<header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
 					<div>
-						<h1 className="text-lg font-bold text-slate-800">Academic Strategist</h1>
+						<h1 className="text-lg font-bold text-slate-800">
+							{uiMode === 'calendar' ? 'Calendar Scheduling' : 'Planner Insights'}
+						</h1>
 						<p className="text-xs text-slate-500">
-							{uiMode === 'calendar' ? 'Calendar Scheduling View' : 'Course Planning View'}
+							{courses.length} courses · {events.length} tasks · {snapshots.length} snapshots
 						</p>
 					</div>
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-2">
 						{syncStatusTag}
 						<Tag color={pressureInfo.color}>{pressureInfo.label}</Tag>
 						<Button size="small" onClick={restoreSnapshot} disabled={!lastOperationSnapshot}>
@@ -371,50 +511,100 @@ export default function ChatPage() {
 					</div>
 				</header>
 
-				<main className="flex-1 overflow-hidden p-6">
-					<div className="h-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
-						{uiMode === 'calendar' ? (
+				<main className="flex-1 overflow-hidden p-4">
+					{uiMode === 'calendar' ? (
+						<div className="h-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 							<CalendarView
 								events={events}
 								currentView={calendarViewType}
 								onViewChange={setCalendarViewType}
+								onEventClick={handleEventClick}
 								onEventChange={handleCalendarEventChange}
 								onDateSelect={handleDateSelect}
+								onQuickAdd={handleQuickAdd}
 							/>
-						) : (
-							<div className="grid h-full grid-cols-5 gap-4 p-4">
-								<div className="col-span-3 overflow-y-auto rounded-xl border bg-slate-50 p-4">
+						</div>
+					) : (
+						<div className="grid h-full grid-cols-12 gap-4">
+							<div className="col-span-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+								<div className="h-full overflow-y-auto p-4">
 									<CoursePlanBoard
 										courses={courses}
 										selectedCourseId={selectedCourseId}
 										onSelectCourse={setSelectedCourseId}
 									/>
 								</div>
-								<div className="col-span-2 flex flex-col gap-4 overflow-y-auto">
-									<SemesterProgress semesterProgress={semesterProgress} events={selectedCourseEvents} />
-									<RiskHeatPanel events={selectedCourseEvents} />
-									{syncStatus === 'error' && lastSyncError ? (
-										<div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600">
-											Sync error: {lastSyncError}
-										</div>
-									) : null}
-								</div>
 							</div>
-						)}
-					</div>
+
+							<div className="col-span-4 flex h-full flex-col gap-3 overflow-y-auto">
+								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+									<h3 className="text-sm font-semibold text-slate-800">Course Profile</h3>
+									<p className="mt-2 text-xs text-slate-500">
+										{selectedCourseDetail?.courseName || selectedCourseDetail?.name || selectedCourseCode || 'Select a course'}
+									</p>
+									{selectedCourseDetail?.description ? (
+										<p className="mt-2 line-clamp-5 text-xs text-slate-600">{selectedCourseDetail.description}</p>
+									) : (
+										<p className="mt-2 text-xs text-slate-400">No course description stored.</p>
+									)}
+								</div>
+
+								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+									<h3 className="text-sm font-semibold text-slate-800">Policy Snapshot</h3>
+									{selectedCoursePolicy?.rawPolicyText ? (
+										<>
+											<p className="mt-2 line-clamp-4 text-xs text-slate-600">{selectedCoursePolicy.rawPolicyText}</p>
+											<div className="mt-2 space-y-1 text-xs text-slate-500">
+												{selectedCoursePolicy.extensionRule ? <p>Extension: {selectedCoursePolicy.extensionRule}</p> : null}
+												{selectedCoursePolicy.integrityRule ? <p>Integrity: {selectedCoursePolicy.integrityRule}</p> : null}
+												{selectedCoursePolicy.examAidRule ? <p>Exam aid: {selectedCoursePolicy.examAidRule}</p> : null}
+												<p>Parsed rules: {selectedCoursePolicy.rules.length}</p>
+											</div>
+										</>
+									) : (
+										<p className="mt-2 text-xs text-slate-400">No policy parsed for current course.</p>
+									)}
+								</div>
+
+								<SemesterProgress semesterProgress={semesterProgress} events={selectedCourseEvents} />
+								<RiskHeatPanel events={selectedCourseEvents} />
+
+								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+									<h3 className="text-sm font-semibold text-slate-800">Ingestion History</h3>
+									<div className="mt-2 max-h-40 space-y-2 overflow-y-auto">
+										{snapshots.slice(0, 8).map(item => (
+											<div key={item.id} className="rounded border border-slate-100 bg-slate-50 px-2 py-1 text-xs text-slate-600">
+												<p className="font-medium">{item.courseCode || 'UNKNOWN'}</p>
+												<p>{item.sourceType || 'academic'} · {item.createdAt ? dayjs(item.createdAt).format('MM-DD HH:mm') : '--'}</p>
+											</div>
+										))}
+										{snapshots.length === 0 ? <p className="text-xs text-slate-400">No snapshots yet.</p> : null}
+									</div>
+								</div>
+
+								{syncStatus === 'error' && lastSyncError ? (
+									<div className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-600">
+										Sync error: {lastSyncError}
+									</div>
+								) : null}
+							</div>
+						</div>
+					)}
 				</main>
-			</div>
+			</section>
 
 			<div className="z-20 h-full w-[420px] border-l border-slate-200 bg-white shadow-2xl">
 				<ChatLayoutWrapper />
 			</div>
 
 			<Modal
-				title="Create New Academic Task"
+				title={modalMode === 'edit' ? 'Edit Scheduled Task' : 'Create New Academic Task'}
 				open={isModalOpen}
-				onOk={handleModalOk}
-				onCancel={() => setIsModalOpen(false)}
-				okText="Save to Calendar"
+				onOk={() => {
+					void handleModalOk()
+				}}
+				onCancel={handleModalClose}
+				okText={modalMode === 'edit' ? 'Update Task' : 'Save to Calendar'}
 				cancelText="Cancel"
 			>
 				<div className="space-y-3 py-2">
@@ -433,6 +623,10 @@ export default function ChatPage() {
 						<div className="rounded bg-gray-50 p-2 text-sm text-gray-600">
 							{selectedTimeRange?.[0]} {selectedTimeRange?.[1] ? `to ${selectedTimeRange[1]}` : ''}
 						</div>
+					</div>
+					<div className="flex items-center justify-between rounded bg-gray-50 p-2 text-sm text-gray-600">
+						<span>All Day Event</span>
+						<Switch checked={isAllDayEvent} onChange={setIsAllDayEvent} />
 					</div>
 					<div className="grid grid-cols-2 gap-3">
 						<div>
@@ -481,6 +675,8 @@ export default function ChatPage() {
 						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Adjust Date Range</p>
 						<DatePicker.RangePicker
 							className="w-full"
+							showTime={!isAllDayEvent}
+							format={isAllDayEvent ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'}
 							value={
 								selectedTimeRange?.[0]
 									? [
@@ -492,12 +688,19 @@ export default function ChatPage() {
 							onChange={value => {
 								if (!value?.[0]) return
 								setSelectedTimeRange([
-									value[0].format('YYYY-MM-DD'),
-									value[1] ? value[1].format('YYYY-MM-DD') : undefined,
+									value[0].format(isAllDayEvent ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm:ss'),
+									value[1] ? value[1].format(isAllDayEvent ? 'YYYY-MM-DD' : 'YYYY-MM-DDTHH:mm:ss') : undefined,
 								])
 							}}
 						/>
 					</div>
+					{modalMode === 'edit' ? (
+						<div className="border-t border-slate-200 pt-3">
+							<Button danger block onClick={() => void handleDeleteEvent()}>
+								Delete task
+							</Button>
+						</div>
+					) : null}
 				</div>
 			</Modal>
 		</div>

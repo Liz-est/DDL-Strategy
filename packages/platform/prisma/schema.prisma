@@ -48,6 +48,9 @@ model AcademicTask {
   id         String   @id
   userId     String   @map("user_id")
   title      String
+  startAt    DateTime? @map("start_at")
+  endAt      DateTime? @map("end_at")
+  isAllDay   Boolean? @default(true) @map("is_all_day")
   dueDate    String?  @map("due_date")
   weight     Float?
   type       String?
@@ -81,8 +84,85 @@ model ProcessingResult {
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
+  snapshots   IngestionSnapshot[]
 
   @@map("processing_results")
+}
+
+model AcademicCourse {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  courseCode        String   @map("course_code")
+  name              String?
+  courseName        String?  @map("course_name")
+  description       String?  @db.LongText
+  sourceQuote       String?  @map("source_quote") @db.LongText
+  rawCourseInfoJson String?  @map("raw_course_info_json") @db.LongText
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  policies          CoursePolicy[]
+  snapshots         IngestionSnapshot[]
+
+  @@unique([userId, courseCode], map: "academic_courses_user_id_course_code_key")
+  @@map("academic_courses")
+}
+
+model CoursePolicy {
+  id             String   @id
+  courseId       String?  @map("course_id")
+  userId         String   @map("user_id")
+  courseCode     String   @map("course_code")
+  latePolicy     String?  @map("late_policy") @db.LongText
+  absencePolicy  String?  @map("absence_policy") @db.LongText
+  gradingNotes   String?  @map("grading_notes") @db.LongText
+  rawPolicyText  String?  @map("raw_policy_text") @db.LongText
+  extensionRule  String?  @map("extension_rule") @db.Text
+  integrityRule  String?  @map("integrity_rule") @db.Text
+  collaborationRule String? @map("collaboration_rule") @db.Text
+  examAidRule    String?  @map("exam_aid_rule") @db.Text
+  parsedPolicyJson String? @map("parsed_policy_json") @db.LongText
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  course         AcademicCourse? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  rules          CoursePolicyRule[]
+
+  @@unique([userId, courseCode], map: "course_policies_user_id_course_code_key")
+  @@map("course_policies")
+}
+
+model CoursePolicyRule {
+  id             String   @id @default(cuid())
+  policyId       String   @map("policy_id")
+  ruleType       String   @map("rule_type")
+  thresholdValue Float?   @map("threshold_value")
+  penaltyPercent Float?   @map("penalty_percent")
+  timeUnit       String?  @map("time_unit")
+  rawQuote       String?  @map("raw_quote") @db.LongText
+  ruleOrder      Int?     @map("rule_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+  policy         CoursePolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@index([policyId], map: "course_policy_rules_policy_id_idx")
+  @@map("course_policy_rules")
+}
+
+model IngestionSnapshot {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  courseCode       String?  @map("course_code")
+  courseId         String?  @map("course_id")
+  processingResultId String? @map("processing_result_id")
+  sourceType       String?  @map("source_type")
+  rawJson          String   @map("raw_json") @db.LongText
+  reportText       String?  @map("report_text") @db.LongText
+  parsedPolicyJson String?  @map("parsed_policy_json") @db.LongText
+  createdAt        DateTime @default(now()) @map("created_at")
+  course           AcademicCourse? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  processingResult ProcessingResult? @relation(fields: [processingResultId], references: [id], onDelete: SetNull)
+
+  @@index([userId], map: "ingestion_snapshots_user_id_idx")
+  @@index([courseId], map: "ingestion_snapshots_course_id_idx")
+  @@map("ingestion_snapshots")
 }
 
 // 用户表 - 仅用于后台管理员账户

@@ -39,6 +39,45 @@ export interface CoursePlan {
 	milestones: CourseMilestone[]
 }
 
+export interface CoursePolicyRule {
+	id: string
+	ruleType: string
+	thresholdValue?: number | null
+	penaltyPercent?: number | null
+	timeUnit?: string | null
+	rawQuote?: string | null
+	ruleOrder?: number | null
+}
+
+export interface CoursePolicyProfile {
+	courseCode: string
+	rawPolicyText?: string | null
+	latePolicy?: string | null
+	absencePolicy?: string | null
+	gradingNotes?: string | null
+	extensionRule?: string | null
+	integrityRule?: string | null
+	collaborationRule?: string | null
+	examAidRule?: string | null
+	rules: CoursePolicyRule[]
+}
+
+export interface CourseDetail {
+	courseCode: string
+	name?: string | null
+	courseName?: string | null
+	description?: string | null
+	sourceQuote?: string | null
+}
+
+export interface IngestionSnapshotItem {
+	id: string
+	courseCode?: string | null
+	sourceType?: string | null
+	reportText?: string | null
+	createdAt?: string
+}
+
 interface PlannerState {
 	uiMode: PlannerUiMode
 	calendarViewType: CalendarViewType
@@ -46,6 +85,9 @@ interface PlannerState {
 	semesterProgress: number
 	events: AcademicEvent[]
 	courses: CoursePlan[]
+	courseDetails: CourseDetail[]
+	coursePolicies: CoursePolicyProfile[]
+	snapshots: IngestionSnapshotItem[]
 	syncStatus: PlannerSyncStatus
 	lastSyncError: string | null
 	lastOperationSnapshot: AcademicEvent[] | null
@@ -55,8 +97,12 @@ interface PlannerState {
 	setSemesterProgress: (progress: number) => void
 	setEvents: (events: AcademicEvent[]) => void
 	upsertEvent: (event: AcademicEvent) => void
+	updateEvent: (id: string, patch: Partial<AcademicEvent>) => void
 	removeEvent: (id: string) => void
 	setCourses: (courses: CoursePlan[]) => void
+	setCourseDetails: (items: CourseDetail[]) => void
+	setCoursePolicies: (items: CoursePolicyProfile[]) => void
+	setSnapshots: (items: IngestionSnapshotItem[]) => void
 	setSyncStatus: (status: PlannerSyncStatus, error?: string | null) => void
 	saveSnapshot: () => void
 	restoreSnapshot: () => void
@@ -69,6 +115,9 @@ export const useAcademicPlannerStore = create<PlannerState>((set, get) => ({
 	semesterProgress: 0,
 	events: [],
 	courses: [],
+	courseDetails: [],
+	coursePolicies: [],
+	snapshots: [],
 	syncStatus: 'idle',
 	lastSyncError: null,
 	lastOperationSnapshot: null,
@@ -88,8 +137,15 @@ export const useAcademicPlannerStore = create<PlannerState>((set, get) => ({
 			}
 			return { events: [...state.events, event] }
 		}),
+	updateEvent: (id, patch) =>
+		set(state => ({
+			events: state.events.map(item => (item.id === id ? { ...item, ...patch } : item)),
+		})),
 	removeEvent: id => set(state => ({ events: state.events.filter(item => item.id !== id) })),
 	setCourses: courses => set({ courses }),
+	setCourseDetails: items => set({ courseDetails: items }),
+	setCoursePolicies: items => set({ coursePolicies: items }),
+	setSnapshots: items => set({ snapshots: items }),
 	setSyncStatus: (status, error = null) =>
 		set({
 			syncStatus: status,

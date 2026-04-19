@@ -7,6 +7,7 @@ import {
 	mapTaskToEvent,
 	mergeUniqueEvents,
 	normalizeAcademicPayload,
+	parseGradingPolicyText,
 	saveJsonToDatabase,
 	syncAcademicTasks,
 } from '@/services/academic-sync'
@@ -96,6 +97,18 @@ describe('academic-sync utilities', () => {
 		expect(normalized?.rows).toHaveLength(1)
 	})
 
+	test('normalizeAcademicPayload should fallback when course_name is empty string', () => {
+		const normalized = normalizeAcademicPayload({
+			courses: [
+				{
+					course_info: { name: 'Honours Optimization', course_name: '' },
+					deadlines: [{ title: 'Midterm Exam', due_date: '2026-03-13', weight: '40%' }],
+				},
+			],
+		})
+		expect(normalized?.rows[0]?.courseCode).toBe('Honours Optimization')
+	})
+
 	test('mapTaskToEvent should parse percentage weight and due_date', () => {
 		const event = mapTaskToEvent(
 			{
@@ -109,6 +122,27 @@ describe('academic-sync utilities', () => {
 		)
 		expect(event.start).toBe('2026-02-13')
 		expect(event.weight).toBe(20)
+	})
+
+	test('mapTaskToEvent should reuse stable id when provided', () => {
+		const event = mapTaskToEvent(
+			{
+				id: 'task-stable-1',
+				title: 'Stable task',
+				due_date: '2026-03-01',
+			},
+			'AIE1902',
+			0
+		)
+		expect(event.id).toBe('task-stable-1')
+	})
+
+	test('parseGradingPolicyText should extract strict late rules', () => {
+		const parsed = parseGradingPolicyText(
+			'Up to 24 hours late: 20% deduction. 24-48 hours late: 40% deduction. More than 48 hours late: not accepted (score = 0). Extensions are granted only in documented emergencies.'
+		)
+		expect(parsed.rules.length).toBeGreaterThanOrEqual(3)
+		expect(parsed.extensionRule?.includes('Extensions')).toBe(true)
 	})
 
 	test('mergeUniqueEvents should deduplicate by title/start/courseCode', () => {
@@ -194,18 +228,49 @@ describe('academic-sync requests', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(3)
 	})
 
-	test('loadAcademicSnapshots should convert snapshot records to events and courses', async () => {
-		const rawData = JSON.stringify({
-			courses: [
-				{
-					course_info: { course_code: 'AIE1902' },
-					deadlines: [{ title: 'Final Exam', due_date: '2026-06-01', weight: '50%', task_type_standardized: 'Exam' }],
-				},
-			],
-		})
+	test('syncAcademicTasks should send empty tasks for reconciliation delete', async () => {
 		const fetchMock = vi.fn(async () => ({
 			ok: true,
-			json: async () => ({ data: [{ rawData, courseCode: 'AIE1902' }] }),
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await syncAcademicTasks({
+			apiBase: '',
+			userId: 'user-123',
+			courseCode: 'AIE1902',
+			events: [],
+		})
+
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.tasks).toEqual([])
+	})
+
+	test('loadAcademicSnapshots should convert snapshot records to events and courses', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({
+				data: {
+					courses: [{ course_code: 'AIE1902', course_name: 'AIE1902' }],
+					policies: [{ id: 'policy-1', course_code: 'AIE1902', raw_policy_text: 'late policy' }],
+					rules: [{ id: 'rule-1', policy_id: 'policy-1', rule_type: 'late_penalty', penalty_percent: 20 }],
+					tasks: [
+						{
+							id: 'task-1',
+							title: 'Final Exam',
+							course_code: 'AIE1902',
+							type: 'Exam',
+							weight: 50,
+							due_date: '2026-06-01',
+							is_all_day: true,
+						},
+					],
+					snapshots: [{ id: 'snap-1', course_code: 'AIE1902', source_type: 'academic' }],
+				},
+			}),
 			text: async () => '',
 		}))
 		vi.stubGlobal('fetch', fetchMock)
@@ -216,9 +281,12 @@ describe('academic-sync requests', () => {
 		})
 
 		expect(result.events).toHaveLength(1)
+		expect(result.events[0]?.id).toBe('task-1')
 		expect(result.events[0]?.title).toBe('Final Exam')
 		expect(result.events[0]?.weight).toBe(50)
 		expect(result.courses).toHaveLength(1)
 		expect(result.courses[0]?.courseCode).toBe('AIE1902')
+		expect(result.coursePolicies).toHaveLength(1)
+		expect(result.courseDetails).toHaveLength(1)
 	})
 })
