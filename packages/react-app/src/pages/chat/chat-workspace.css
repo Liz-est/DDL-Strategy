@@ -1,0 +1,74 @@
+/* Chat / planner workspace: accessible focus without default black outlines */
+
+.chat-workspace button:focus {
+	outline: none;
+}
+
+.chat-workspace button:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45);
+}
+
+/* Left rail Calendar / Course Planner: kill Windows/WebKit default focus rectangle */
+.chat-workspace .planner-mode-toggle {
+	-webkit-tap-highlight-color: transparent;
+}
+
+.chat-workspace .planner-mode-toggle::-moz-focus-inner {
+	border: 0;
+}
+
+.chat-workspace .planner-mode-toggle:focus,
+.chat-workspace .planner-mode-toggle:focus-visible {
+	outline: none !important;
+}
+
+.chat-workspace .planner-mode-toggle:focus-visible {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.55) !important;
+}
+
+.chat-workspace .ant-btn:focus,
+.chat-workspace .ant-btn:focus-visible {
+	outline: none !important;
+}
+
+.chat-workspace .ant-btn:focus-visible {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45) !important;
+}
+
+.chat-workspace .ant-btn-dangerous:focus-visible {
+	box-shadow: 0 0 0 2px rgba(248, 113, 113, 0.55) !important;
+}
+
+.chat-workspace .ant-segmented .ant-segmented-item:focus {
+	outline: none;
+}
+
+.chat-workspace .ant-segmented .ant-segmented-item:focus-visible {
+	outline: none !important;
+	box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
+.chat-workspace .ant-picker:focus,
+.chat-workspace .ant-picker-focused {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35) !important;
+}
+
+.chat-workspace .ant-select-focused .ant-select-selector {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.35) !important;
+}
+
+.chat-workspace .ant-input:focus,
+.chat-workspace .ant-input-focused,
+.chat-workspace .ant-input-affix-wrapper:focus,
+.chat-workspace .ant-input-affix-wrapper-focused {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3) !important;
+}
+
+.chat-workspace .ant-switch:focus {
+	outline: none;
+}
+
+.chat-workspace .ant-switch:focus-visible {
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45) !important;
+}

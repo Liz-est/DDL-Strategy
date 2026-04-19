@@ -66,6 +66,23 @@ model AcademicTask {
   @@map("academic_tasks")
 }
 
+/// Personal / non-academic calendar items (chores, errands, life admin).
+model ChoreTask {
+  id       String    @id
+  userId   String    @map("user_id")
+  title    String
+  startAt  DateTime? @map("start_at")
+  endAt    DateTime? @map("end_at")
+  isAllDay Boolean?  @default(true) @map("is_all_day")
+  priority String?
+  location String?
+  detail   String?   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId], map: "chore_tasks_user_id_idx")
+  @@map("chore_tasks")
+}
+
 // 文档处理结果 - 存储前端返回的完整JSON数据
 model ProcessingResult {
   id          String   @id @default(cuid())

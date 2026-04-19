@@ -1,8 +1,10 @@
 "use client"
 
+import './chat-workspace.css'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
-import { Button, DatePicker, Input, InputNumber, Modal, Select, Switch, Tag, message } from 'antd'
+import { Button, DatePicker, Input, InputNumber, Modal, Segmented, Select, Switch, Tag, message } from 'antd'
 import type { DateSelectArg } from '@fullcalendar/core'
 import CalendarView from '@/components/CalendarView'
 import CoursePlanBoard from '@/components/planner/CoursePlanBoard'
@@ -20,14 +22,16 @@ import {
 	saveCoursePolicies,
 	saveJsonToDatabase,
 	syncAcademicTasks,
+	syncChoresTasks,
 } from '@/services/academic-sync'
-import { type AcademicEvent, useAcademicPlannerStore } from '@/store/academic-planner'
+import { type AcademicEvent, type TaskCategory, useAcademicPlannerStore } from '@/store/academic-planner'
 
 const LOCAL_DRAFT_KEY = 'academic-events-draft-v1'
 
 const getSemesterProgress = (events: AcademicEvent[]) => {
-	if (events.length === 0) return 0
-	const sorted = [...events].sort((a, b) => a.start.localeCompare(b.start))
+	const academic = events.filter(item => item.taskCategory !== 'chores')
+	if (academic.length === 0) return 0
+	const sorted = [...academic].sort((a, b) => a.start.localeCompare(b.start))
 	const start = dayjs(sorted[0].start)
 	const end = dayjs(sorted[sorted.length - 1].start)
 	const totalDays = Math.max(end.diff(start, 'day'), 1)
@@ -76,11 +80,15 @@ export default function ChatPage() {
 	const [eventType, setEventType] = useState('Task')
 	const [eventWeight, setEventWeight] = useState(0)
 	const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium')
+	const [taskCategory, setTaskCategory] = useState<TaskCategory>('academic')
+	const [choreLocation, setChoreLocation] = useState('')
+	const [choreNotes, setChoreNotes] = useState('')
 	const [hasInitialized, setHasInitialized] = useState(false)
 	const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const observeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const lastPayloadFingerprint = useRef<string>('')
 	const syncedCourseCodesRef = useRef<Set<string>>(new Set())
+	const choresDirtyRef = useRef(false)
 
 	const getDefaultTimeRange = (allDay = false): [string, string] => {
 		if (allDay) {
@@ -94,7 +102,9 @@ export default function ChatPage() {
 	}
 
 	const pressureInfo = useMemo(() => {
-		const totalWeight = events.reduce((acc, curr) => acc + (curr.weight || 0), 0)
+		const totalWeight = events
+			.filter(e => e.taskCategory !== 'chores')
+			.reduce((acc, curr) => acc + (curr.weight || 0), 0)
 		if (totalWeight > 50) return { label: 'High Risk', color: 'red' }
 		return { label: 'Balanced', color: 'green' }
 	}, [events])
@@ -132,6 +142,7 @@ export default function ChatPage() {
 				setCoursePolicies(remoteCoursePolicies)
 				setSnapshots(remoteSnapshots)
 				setSemesterProgress(getSemesterProgress(finalEvents))
+				choresDirtyRef.current = false
 				localStorage.removeItem(LOCAL_DRAFT_KEY)
 				setSyncStatus('success')
 			} catch (error) {
@@ -174,7 +185,9 @@ export default function ChatPage() {
 		if (!hasInitialized) return
 		if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
 		syncTimerRef.current = setTimeout(() => {
-			const grouped = events.reduce<Record<string, AcademicEvent[]>>((acc, item) => {
+			const academicScoped = events.filter(item => item.taskCategory !== 'chores')
+			const choreEvents = events.filter(item => item.taskCategory === 'chores')
+			const grouped = academicScoped.reduce<Record<string, AcademicEvent[]>>((acc, item) => {
 				const key = item.courseCode || 'GENERAL'
 				acc[key] = acc[key] || []
 				acc[key].push(item)
@@ -185,17 +198,20 @@ export default function ChatPage() {
 			void (async () => {
 				try {
 					setSyncStatus('syncing')
-					await Promise.all(
-						Array.from(codesToSync).map(courseCode =>
-							syncAcademicTasks({
-								apiBase,
-								userId,
-								courseCode,
-								events: grouped[courseCode] || [],
-							})
-						)
+					const jobs: Promise<unknown>[] = Array.from(codesToSync).map(courseCode =>
+						syncAcademicTasks({
+							apiBase,
+							userId,
+							courseCode,
+							events: grouped[courseCode] || [],
+						})
 					)
+					if (choreEvents.length > 0 || choresDirtyRef.current) {
+						jobs.push(syncChoresTasks({ apiBase, userId, events: choreEvents }))
+					}
+					await Promise.all(jobs)
 					syncedCourseCodesRef.current = currentCourseCodes
+					choresDirtyRef.current = false
 					localStorage.removeItem(LOCAL_DRAFT_KEY)
 					setSyncStatus('success')
 				} catch (error) {
@@ -281,6 +297,9 @@ export default function ChatPage() {
 		setEventWeight(0)
 		setIsAllDayEvent(false)
 		setPriority('medium')
+		setTaskCategory('academic')
+		setChoreLocation('')
+		setChoreNotes('')
 		setSelectedTimeRange(getDefaultTimeRange(false))
 	}
 
@@ -288,10 +307,13 @@ export default function ChatPage() {
 		const shouldAllDay = Boolean(allDay)
 		setModalMode('create')
 		setEditingEventId(null)
+		setTaskCategory('academic')
 		setEventCourseCode('MANUAL')
 		setEventType('Task')
 		setEventWeight(0)
 		setPriority('medium')
+		setChoreLocation('')
+		setChoreNotes('')
 		setNewEventTitle('')
 		setIsAllDayEvent(shouldAllDay)
 		setSelectedTimeRange(range || getDefaultTimeRange(shouldAllDay))
@@ -299,6 +321,8 @@ export default function ChatPage() {
 	}
 
 	const handleDateSelect = (selectInfo: DateSelectArg) => {
+		const view = useAcademicPlannerStore.getState().calendarViewType
+		if (view !== 'timeGridWeek' && view !== 'timeGridDay') return
 		const allDay = !(selectInfo.startStr.includes('T') || (selectInfo.endStr || '').includes('T'))
 		openCreateModal([selectInfo.startStr, selectInfo.endStr], allDay)
 	}
@@ -310,13 +334,23 @@ export default function ChatPage() {
 	const handleEventClick = (eventId: string) => {
 		const target = events.find(item => item.id === eventId)
 		if (!target) return
+		const cat: TaskCategory = target.taskCategory === 'chores' ? 'chores' : 'academic'
 		setModalMode('edit')
 		setEditingEventId(target.id)
+		setTaskCategory(cat)
 		setNewEventTitle(target.title)
 		setEventCourseCode(target.courseCode || 'MANUAL')
 		setEventType(target.type || 'Task')
 		setEventWeight(target.weight || 0)
 		setPriority(target.priority || 'medium')
+		setChoreLocation(typeof target.extendedProps?.location === 'string' ? target.extendedProps.location : '')
+		setChoreNotes(
+			typeof target.extendedProps?.detail === 'string'
+				? target.extendedProps.detail
+				: typeof target.extendedProps?.notes === 'string'
+					? target.extendedProps.notes
+					: ''
+		)
 		const allDay = target.allDay ?? !target.start.includes('T')
 		setIsAllDayEvent(allDay)
 		setSelectedTimeRange([target.start, target.end || target.start])
@@ -342,23 +376,46 @@ export default function ChatPage() {
 			message.warning('End time must be later than start time')
 			return
 		}
-		const highRisk = eventType === 'Exam' || eventWeight >= 30
-		const normalizedCourseCode = eventCourseCode.trim() || 'MANUAL'
-		const nextEvent: AcademicEvent = {
-			id: editingEventId || `user-${Date.now()}`,
-			title: newEventTitle.trim(),
-			start,
-			end,
-			allDay: isAllDayEvent,
-			color: highRisk ? '#ef4444' : '#8b5cf6',
-			weight: eventWeight,
-			type: eventType,
-			courseCode: normalizedCourseCode,
-			priority,
-			extendedProps: { source: 'manual' },
+		if (taskCategory === 'academic') {
+			const highRisk = eventType === 'Exam' || eventWeight >= 30
+			const normalizedCourseCode = eventCourseCode.trim() || 'MANUAL'
+			const nextEvent: AcademicEvent = {
+				id: editingEventId || `user-${Date.now()}`,
+				title: newEventTitle.trim(),
+				start,
+				end,
+				allDay: isAllDayEvent,
+				color: highRisk ? '#fbcfe8' : '#bbf7d0',
+				weight: eventWeight,
+				type: eventType,
+				courseCode: normalizedCourseCode,
+				taskCategory: 'academic',
+				priority,
+				extendedProps: { source: 'manual', taskCategory: 'academic' },
+			}
+			saveSnapshot()
+			upsertEvent(nextEvent)
+		} else {
+			const nextEvent: AcademicEvent = {
+				id: editingEventId || `chore-${Date.now()}`,
+				title: newEventTitle.trim(),
+				start,
+				end,
+				allDay: isAllDayEvent,
+				taskCategory: 'chores',
+				type: 'Chore',
+				color: '#bbf7d0',
+				priority,
+				extendedProps: {
+					taskCategory: 'chores',
+					location: choreLocation.trim() || undefined,
+					detail: choreNotes.trim() || undefined,
+				},
+			}
+			saveSnapshot()
+			upsertEvent(nextEvent)
+			choresDirtyRef.current = true
 		}
-		saveSnapshot()
-		upsertEvent(nextEvent)
 		handleModalClose()
 		message.success(modalMode === 'edit' ? 'Task updated' : 'Task added to calendar')
 	}
@@ -375,6 +432,7 @@ export default function ChatPage() {
 			cancelText: 'Cancel',
 			onOk: async () => {
 				saveSnapshot()
+				if (target.taskCategory === 'chores') choresDirtyRef.current = true
 				removeEvent(editingEventId)
 				handleModalClose()
 				message.success('Task deleted')
@@ -404,12 +462,25 @@ export default function ChatPage() {
 
 		try {
 			setSyncStatus('syncing')
-			await syncAcademicTasks({
-				apiBase,
-				userId,
-				courseCode: changed.courseCode || 'GENERAL',
-				events: nextEvents.filter(item => (item.courseCode || 'GENERAL') === (changed.courseCode || 'GENERAL')),
-			})
+			if (changed.taskCategory === 'chores') {
+				choresDirtyRef.current = true
+				await syncChoresTasks({
+					apiBase,
+					userId,
+					events: nextEvents.filter(item => item.taskCategory === 'chores'),
+				})
+			} else {
+				await syncAcademicTasks({
+					apiBase,
+					userId,
+					courseCode: changed.courseCode || 'GENERAL',
+					events: nextEvents.filter(
+						item =>
+							item.taskCategory !== 'chores' &&
+							(item.courseCode || 'GENERAL') === (changed.courseCode || 'GENERAL')
+					),
+				})
+			}
 			setSyncStatus('success')
 			return true
 		} catch (error) {
@@ -427,9 +498,11 @@ export default function ChatPage() {
 		return <Tag>Idle</Tag>
 	}, [syncStatus])
 
-	const selectedCourseEvents = selectedCourseId
-		? events.filter(item => `course-${item.courseCode || 'UNKNOWN'}` === selectedCourseId)
-		: events
+	const selectedCourseEvents = (
+		selectedCourseId
+			? events.filter(item => `course-${item.courseCode || 'UNKNOWN'}` === selectedCourseId)
+			: events
+	).filter(item => item.taskCategory !== 'chores')
 	const selectedCourseCode = selectedCourseId?.replace(/^course-/, '') || null
 	const selectedCourseDetail = selectedCourseCode
 		? courseDetails.find(item => item.courseCode === selectedCourseCode)
@@ -439,19 +512,19 @@ export default function ChatPage() {
 		: null
 
 	return (
-		<div className="flex h-screen w-screen overflow-hidden bg-slate-100">
+		<div className="chat-workspace flex h-screen w-screen overflow-hidden bg-slate-100">
 			<aside className="flex h-full w-64 flex-col border-r border-slate-200 bg-white">
 				<div className="border-b border-slate-200 px-4 py-4">
-					<p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Academic Workspace</p>
+					<p className="text-xs font-semibold uppercase tracking-wider text-slate-600">Academic Workspace</p>
 					<h2 className="mt-1 text-lg font-bold text-slate-800">DDL Strategist</h2>
 				</div>
 				<div className="space-y-2 p-3">
 					<button
 						type="button"
-						className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+						className={`planner-mode-toggle w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition outline-none ring-offset-0 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
 							uiMode === 'calendar'
-								? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm shadow-indigo-200'
-								: 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
+								? 'bg-indigo-100 text-indigo-950 shadow-sm ring-1 ring-indigo-200/90'
+								: 'bg-slate-100 text-slate-800 hover:bg-slate-200/90'
 						}`}
 						onClick={() => setUiMode('calendar')}
 					>
@@ -459,10 +532,10 @@ export default function ChatPage() {
 					</button>
 					<button
 						type="button"
-						className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 ${
+						className={`planner-mode-toggle w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition outline-none ring-offset-0 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 ${
 							uiMode === 'planner'
-								? 'bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-sm shadow-indigo-200'
-								: 'bg-slate-100/90 text-slate-700 hover:bg-slate-200/80'
+								? 'bg-indigo-100 text-indigo-950 shadow-sm ring-1 ring-indigo-200/90'
+								: 'bg-slate-100 text-slate-800 hover:bg-slate-200/90'
 						}`}
 						onClick={() => setUiMode('planner')}
 					>
@@ -470,24 +543,24 @@ export default function ChatPage() {
 					</button>
 				</div>
 				<div className="flex-1 overflow-y-auto border-t border-slate-200 p-3">
-					<p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">All Stored Courses</p>
+					<p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">All Stored Courses</p>
 					<div className="space-y-2">
 						{courses.map(course => (
 							<button
 								key={course.id}
 								type="button"
 								onClick={() => setSelectedCourseId(course.id)}
-								className={`w-full rounded-lg border px-3 py-2 text-left transition ${
+								className={`w-full rounded-lg border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 ${
 									selectedCourseId === course.id
 										? 'border-indigo-400 bg-indigo-50'
 										: 'border-slate-200 bg-white hover:border-slate-300'
 								}`}
 							>
 								<p className="truncate text-sm font-semibold text-slate-800">{course.courseCode}</p>
-								<p className="text-xs text-slate-500">{course.milestones.length} tasks</p>
+								<p className="text-xs text-slate-600">{course.milestones.length} tasks</p>
 							</button>
 						))}
-						{courses.length === 0 ? <p className="text-xs text-slate-400">No courses synced yet.</p> : null}
+						{courses.length === 0 ? <p className="text-xs text-slate-600">No courses synced yet.</p> : null}
 					</div>
 				</div>
 			</aside>
@@ -498,14 +571,20 @@ export default function ChatPage() {
 						<h1 className="text-lg font-bold text-slate-800">
 							{uiMode === 'calendar' ? 'Calendar Scheduling' : 'Planner Insights'}
 						</h1>
-						<p className="text-xs text-slate-500">
+						<p className="text-xs text-slate-600">
 							{courses.length} courses · {events.length} tasks · {snapshots.length} snapshots
 						</p>
 					</div>
 					<div className="flex items-center gap-2">
 						{syncStatusTag}
 						<Tag color={pressureInfo.color}>{pressureInfo.label}</Tag>
-						<Button size="small" onClick={restoreSnapshot} disabled={!lastOperationSnapshot}>
+						<Button
+							size="small"
+							type="default"
+							onClick={restoreSnapshot}
+							disabled={!lastOperationSnapshot}
+							className="text-slate-800"
+						>
 							Undo
 						</Button>
 					</div>
@@ -539,13 +618,13 @@ export default function ChatPage() {
 							<div className="col-span-4 flex h-full flex-col gap-3 overflow-y-auto">
 								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 									<h3 className="text-sm font-semibold text-slate-800">Course Profile</h3>
-									<p className="mt-2 text-xs text-slate-500">
+									<p className="mt-2 text-xs text-slate-600">
 										{selectedCourseDetail?.courseName || selectedCourseDetail?.name || selectedCourseCode || 'Select a course'}
 									</p>
 									{selectedCourseDetail?.description ? (
 										<p className="mt-2 line-clamp-5 text-xs text-slate-600">{selectedCourseDetail.description}</p>
 									) : (
-										<p className="mt-2 text-xs text-slate-400">No course description stored.</p>
+										<p className="mt-2 text-xs text-slate-600">No course description stored.</p>
 									)}
 								</div>
 
@@ -554,7 +633,7 @@ export default function ChatPage() {
 									{selectedCoursePolicy?.rawPolicyText ? (
 										<>
 											<p className="mt-2 line-clamp-4 text-xs text-slate-600">{selectedCoursePolicy.rawPolicyText}</p>
-											<div className="mt-2 space-y-1 text-xs text-slate-500">
+											<div className="mt-2 space-y-1 text-xs text-slate-600">
 												{selectedCoursePolicy.extensionRule ? <p>Extension: {selectedCoursePolicy.extensionRule}</p> : null}
 												{selectedCoursePolicy.integrityRule ? <p>Integrity: {selectedCoursePolicy.integrityRule}</p> : null}
 												{selectedCoursePolicy.examAidRule ? <p>Exam aid: {selectedCoursePolicy.examAidRule}</p> : null}
@@ -562,7 +641,7 @@ export default function ChatPage() {
 											</div>
 										</>
 									) : (
-										<p className="mt-2 text-xs text-slate-400">No policy parsed for current course.</p>
+										<p className="mt-2 text-xs text-slate-600">No policy parsed for current course.</p>
 									)}
 								</div>
 
@@ -578,7 +657,7 @@ export default function ChatPage() {
 												<p>{item.sourceType || 'academic'} · {item.createdAt ? dayjs(item.createdAt).format('MM-DD HH:mm') : '--'}</p>
 											</div>
 										))}
-										{snapshots.length === 0 ? <p className="text-xs text-slate-400">No snapshots yet.</p> : null}
+										{snapshots.length === 0 ? <p className="text-xs text-slate-600">No snapshots yet.</p> : null}
 									</div>
 								</div>
 
@@ -593,86 +672,146 @@ export default function ChatPage() {
 				</main>
 			</section>
 
-			<div className="z-20 h-full w-[420px] border-l border-slate-200 bg-white shadow-2xl">
+			<div className="chat-workspace z-20 h-full w-[420px] border-l border-slate-200 bg-white shadow-2xl">
 				<ChatLayoutWrapper />
 			</div>
 
 			<Modal
-				title={modalMode === 'edit' ? 'Edit Scheduled Task' : 'Create New Academic Task'}
+				rootClassName="chat-workspace"
+				title={modalMode === 'edit' ? 'Edit calendar item' : 'New calendar item'}
 				open={isModalOpen}
 				onOk={() => {
 					void handleModalOk()
 				}}
 				onCancel={handleModalClose}
-				okText={modalMode === 'edit' ? 'Update Task' : 'Save to Calendar'}
+				okText={modalMode === 'edit' ? 'Save changes' : 'Add to calendar'}
 				cancelText="Cancel"
+				okButtonProps={{
+					className: '!bg-indigo-200 !text-slate-900 !border-indigo-300 hover:!bg-indigo-300 !font-semibold',
+				}}
+				cancelButtonProps={{
+					className: '!text-slate-800',
+				}}
 			>
 				<div className="space-y-3 py-2">
 					<div>
-						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Task Name</p>
+						<p className="mb-2 text-xs font-bold uppercase text-slate-600">Category</p>
+						<Segmented<TaskCategory>
+							block
+							disabled={modalMode === 'edit'}
+							value={taskCategory}
+							onChange={value => setTaskCategory(value as TaskCategory)}
+							options={[
+								{ label: 'Academic', value: 'academic' },
+								{ label: 'Chores / personal', value: 'chores' },
+							]}
+						/>
+						<p className="mt-1 text-xs text-slate-600">
+							{taskCategory === 'academic'
+								? 'Course-linked assessments and deadlines sync with your planner.'
+								: 'Personal errands and life tasks are stored separately from academic data.'}
+						</p>
+					</div>
+					<div>
+						<p className="mb-2 text-xs font-bold uppercase text-slate-600">Title</p>
 						<Input
-							placeholder="e.g. Study for quiz"
+							placeholder={taskCategory === 'academic' ? 'e.g. Midterm review' : 'e.g. Groceries, dentist'}
 							value={newEventTitle}
 							onChange={event => setNewEventTitle(event.target.value)}
-							onPressEnter={handleModalOk}
+							onPressEnter={() => void handleModalOk()}
 							autoFocus
 						/>
 					</div>
 					<div>
-						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Selected Time</p>
-						<div className="rounded bg-gray-50 p-2 text-sm text-gray-600">
-							{selectedTimeRange?.[0]} {selectedTimeRange?.[1] ? `to ${selectedTimeRange[1]}` : ''}
+						<p className="mb-2 text-xs font-bold uppercase text-slate-600">Time</p>
+						<div className="rounded-md bg-slate-50 p-2 text-sm text-slate-700">
+							{selectedTimeRange?.[0]} {selectedTimeRange?.[1] ? `→ ${selectedTimeRange[1]}` : ''}
 						</div>
 					</div>
-					<div className="flex items-center justify-between rounded bg-gray-50 p-2 text-sm text-gray-600">
-						<span>All Day Event</span>
+					<div className="flex items-center justify-between rounded-md bg-slate-50 p-2 text-sm text-slate-700">
+						<span>All-day</span>
 						<Switch checked={isAllDayEvent} onChange={setIsAllDayEvent} />
 					</div>
-					<div className="grid grid-cols-2 gap-3">
-						<div>
-							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Course</p>
-							<Input value={eventCourseCode} onChange={event => setEventCourseCode(event.target.value)} />
+					{taskCategory === 'academic' ? (
+						<div className="grid grid-cols-2 gap-3">
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Course code</p>
+								<Input value={eventCourseCode} onChange={event => setEventCourseCode(event.target.value)} />
+							</div>
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Assessment type</p>
+								<Select
+									value={eventType}
+									onChange={value => setEventType(value)}
+									options={[
+										{ value: 'Task', label: 'Task' },
+										{ value: 'Exam', label: 'Exam' },
+										{ value: 'Project', label: 'Project' },
+										{ value: 'Quiz', label: 'Quiz' },
+									]}
+									className="w-full"
+								/>
+							</div>
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Weight (%)</p>
+								<InputNumber
+									min={0}
+									max={100}
+									value={eventWeight}
+									onChange={value => setEventWeight(Number(value) || 0)}
+									className="w-full"
+								/>
+							</div>
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Priority</p>
+								<Select
+									value={priority}
+									onChange={value => setPriority(value)}
+									options={[
+										{ value: 'low', label: 'Low' },
+										{ value: 'medium', label: 'Medium' },
+										{ value: 'high', label: 'High' },
+									]}
+									className="w-full"
+								/>
+							</div>
 						</div>
-						<div>
-							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Type</p>
-							<Select
-								value={eventType}
-								onChange={value => setEventType(value)}
-								options={[
-									{ value: 'Task', label: 'Task' },
-									{ value: 'Exam', label: 'Exam' },
-									{ value: 'Project', label: 'Project' },
-									{ value: 'Quiz', label: 'Quiz' },
-								]}
-								className="w-full"
-							/>
+					) : (
+						<div className="grid grid-cols-1 gap-3">
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Location (optional)</p>
+								<Input
+									placeholder="e.g. Campus mailroom"
+									value={choreLocation}
+									onChange={e => setChoreLocation(e.target.value)}
+								/>
+							</div>
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Notes (optional)</p>
+								<Input.TextArea
+									rows={3}
+									placeholder="Anything you want to remember"
+									value={choreNotes}
+									onChange={e => setChoreNotes(e.target.value)}
+								/>
+							</div>
+							<div>
+								<p className="mb-2 text-xs font-bold uppercase text-slate-600">Priority</p>
+								<Select
+									value={priority}
+									onChange={value => setPriority(value)}
+									options={[
+										{ value: 'low', label: 'Low' },
+										{ value: 'medium', label: 'Medium' },
+										{ value: 'high', label: 'High' },
+									]}
+									className="w-full"
+								/>
+							</div>
 						</div>
-						<div>
-							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Weight (%)</p>
-							<InputNumber
-								min={0}
-								max={100}
-								value={eventWeight}
-								onChange={value => setEventWeight(Number(value) || 0)}
-								className="w-full"
-							/>
-						</div>
-						<div>
-							<p className="mb-2 text-xs font-bold uppercase text-gray-400">Priority</p>
-							<Select
-								value={priority}
-								onChange={value => setPriority(value)}
-								options={[
-									{ value: 'low', label: 'Low' },
-									{ value: 'medium', label: 'Medium' },
-									{ value: 'high', label: 'High' },
-								]}
-								className="w-full"
-							/>
-						</div>
-					</div>
+					)}
 					<div>
-						<p className="mb-2 text-xs font-bold uppercase text-gray-400">Adjust Date Range</p>
+						<p className="mb-2 text-xs font-bold uppercase text-slate-600">Adjust date & time</p>
 						<DatePicker.RangePicker
 							className="w-full"
 							showTime={!isAllDayEvent}
@@ -697,7 +836,7 @@ export default function ChatPage() {
 					{modalMode === 'edit' ? (
 						<div className="border-t border-slate-200 pt-3">
 							<Button danger block onClick={() => void handleDeleteEvent()}>
-								Delete task
+								Delete
 							</Button>
 						</div>
 					) : null}

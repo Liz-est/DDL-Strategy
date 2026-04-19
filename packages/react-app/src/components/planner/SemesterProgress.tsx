@@ -16,12 +16,12 @@ export default function SemesterProgress({ semesterProgress, events }: SemesterP
 	}).length
 
 	return (
-		<Card title="学期进度" className="h-full">
+		<Card title="Semester progress" className="h-full">
 			<div className="space-y-4">
 				<Progress percent={semesterProgress} strokeColor="#4f46e5" />
 				<div className="grid grid-cols-2 gap-3">
-					<Statistic title="7天内任务" value={upcomingCount} />
-					<Statistic title="高风险任务" value={highRiskCount} valueStyle={{ color: '#dc2626' }} />
+					<Statistic title="Tasks in next 7 days" value={upcomingCount} />
+					<Statistic title="High-risk tasks" value={highRiskCount} valueStyle={{ color: '#dc2626' }} />
 				</div>
 			</div>
 		</Card>

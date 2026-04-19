@@ -13,7 +13,9 @@ export default function CoursePlanBoard({
 	onSelectCourse,
 }: CoursePlanBoardProps) {
 	if (courses.length === 0) {
-		return <Empty description="暂无课程计划，先在日历中添加或导入任务" />
+		return (
+			<Empty description="No course plans yet. Add or import academic tasks from the calendar or chat first." />
+		)
 	}
 
 	return (
@@ -27,22 +29,30 @@ export default function CoursePlanBoard({
 							<Tag color="blue">{course.completionRate}%</Tag>
 						</div>
 					}
-					className={`cursor-pointer transition-all ${
+					role="button"
+					tabIndex={0}
+					className={`cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 ${
 						selectedCourseId === course.id ? 'ring-2 ring-indigo-500' : 'hover:shadow-md'
 					}`}
 					onClick={() => onSelectCourse(course.id)}
+					onKeyDown={e => {
+						if (e.key === 'Enter' || e.key === ' ') {
+							e.preventDefault()
+							onSelectCourse(course.id)
+						}
+					}}
 				>
 					<div className="space-y-2 text-sm">
-						<p className="text-slate-500">课程代码：{course.courseCode}</p>
-						<p className="font-semibold text-slate-700">关键节点</p>
+						<p className="text-slate-600">Course code: {course.courseCode}</p>
+						<p className="font-semibold text-slate-800">Key milestones</p>
 						<div className="max-h-36 space-y-2 overflow-y-auto pr-1">
 							{course.milestones.slice(0, 6).map(milestone => (
 								<div key={milestone.id} className="rounded-md bg-slate-50 px-3 py-2">
 									<div className="flex items-center justify-between gap-3">
-										<span className="truncate text-slate-700">{milestone.title}</span>
+										<span className="truncate text-slate-800">{milestone.title}</span>
 										<Tag color={milestone.weight >= 30 ? 'red' : 'default'}>{milestone.weight}%</Tag>
 									</div>
-									<div className="text-xs text-slate-500">
+									<div className="text-xs text-slate-600">
 										{milestone.dueDate} · {milestone.type}
 									</div>
 								</div>

@@ -4,12 +4,14 @@ import {
 	createApiUrl,
 	extractAcademicPayloadFromText,
 	loadAcademicSnapshots,
+	mapChoreRowToEvent,
 	mapTaskToEvent,
 	mergeUniqueEvents,
 	normalizeAcademicPayload,
 	parseGradingPolicyText,
 	saveJsonToDatabase,
 	syncAcademicTasks,
+	syncChoresTasks,
 } from '@/services/academic-sync'
 import type { AcademicEvent } from '@/store/academic-planner'
 
@@ -145,6 +147,28 @@ describe('academic-sync utilities', () => {
 		expect(parsed.extensionRule?.includes('Extensions')).toBe(true)
 	})
 
+	test('mergeUniqueEvents should treat academic and chores with same title as distinct', () => {
+		const current: AcademicEvent[] = [
+			{
+				id: '1',
+				title: 'Buy book',
+				start: '2026-04-10',
+				courseCode: 'AIE1902',
+				taskCategory: 'academic',
+			},
+		]
+		const incoming: AcademicEvent[] = [
+			{
+				id: '2',
+				title: 'Buy book',
+				start: '2026-04-10',
+				taskCategory: 'chores',
+			},
+		]
+		const merged = mergeUniqueEvents(current, incoming)
+		expect(merged).toHaveLength(2)
+	})
+
 	test('mergeUniqueEvents should deduplicate by title/start/courseCode', () => {
 		const current: AcademicEvent[] = [
 			{
@@ -228,6 +252,87 @@ describe('academic-sync requests', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(3)
 	})
 
+	test('mapChoreRowToEvent should map overview row to chores calendar event', () => {
+		const event = mapChoreRowToEvent({
+			id: 'chore-1',
+			title: 'Groceries',
+			start_at: '2026-04-20',
+			end_at: '2026-04-20T12:00:00.000Z',
+			is_all_day: true,
+			priority: 'low',
+			location: 'Store',
+			detail: 'Milk',
+		})
+		expect(event.taskCategory).toBe('chores')
+		expect(event.extendedProps?.location).toBe('Store')
+		expect(event.extendedProps?.detail).toBe('Milk')
+	})
+
+	test('syncAcademicTasks should strip chores from payload', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await syncAcademicTasks({
+			apiBase: '',
+			userId: 'user-123',
+			courseCode: 'AIE1902',
+			events: [
+				{
+					id: 'a1',
+					title: 'Exam',
+					start: '2026-05-01',
+					courseCode: 'AIE1902',
+					taskCategory: 'academic',
+				},
+				{
+					id: 'c1',
+					title: 'Laundry',
+					start: '2026-05-02',
+					taskCategory: 'chores',
+				},
+			],
+		})
+
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.tasks).toHaveLength(1)
+		expect(payload.tasks[0].id).toBe('a1')
+	})
+
+	test('syncChoresTasks should post to chores sync endpoint', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await syncChoresTasks({
+			apiBase: '',
+			userId: 'user-123',
+			events: [
+				{
+					id: 'c1',
+					title: 'Dentist',
+					start: '2026-06-01',
+					taskCategory: 'chores',
+					extendedProps: { location: 'Clinic', detail: 'Bring card' },
+				},
+			],
+		})
+
+		expect(fetchMock).toHaveBeenCalledTimes(1)
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		expect(url).toBe('/api/client/chores/sync')
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.tasks[0].location).toBe('Clinic')
+	})
+
 	test('syncAcademicTasks should send empty tasks for reconciliation delete', async () => {
 		const fetchMock = vi.fn(async () => ({
 			ok: true,
@@ -288,5 +393,47 @@ describe('academic-sync requests', () => {
 		expect(result.courses[0]?.courseCode).toBe('AIE1902')
 		expect(result.coursePolicies).toHaveLength(1)
 		expect(result.courseDetails).toHaveLength(1)
+	})
+
+	test('loadAcademicSnapshots should merge choreTasks into events', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({
+				data: {
+					courses: [],
+					policies: [],
+					rules: [],
+					tasks: [
+						{
+							id: 'task-1',
+							title: 'Final Exam',
+							course_code: 'AIE1902',
+							due_date: '2026-06-01',
+							is_all_day: true,
+						},
+					],
+					choreTasks: [
+						{
+							id: 'chore-1',
+							title: 'Groceries',
+							start_at: '2026-06-02',
+							is_all_day: true,
+						},
+					],
+					snapshots: [],
+				},
+			}),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		const result = await loadAcademicSnapshots({
+			apiBase: '',
+			userId: 'user-123',
+		})
+
+		expect(result.events).toHaveLength(2)
+		expect(result.events.some(e => e.id === 'chore-1' && e.taskCategory === 'chores')).toBe(true)
+		expect(result.events.some(e => e.id === 'task-1' && e.taskCategory === 'academic')).toBe(true)
 	})
 })

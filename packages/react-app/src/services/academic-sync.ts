@@ -78,6 +78,17 @@ interface OverviewTaskItem {
 	rationale?: string | null
 }
 
+interface OverviewChoreItem {
+	id: string
+	title: string
+	start_at?: string | Date | null
+	end_at?: string | Date | null
+	is_all_day?: boolean | number | null
+	priority?: string | null
+	location?: string | null
+	detail?: string | null
+}
+
 interface OverviewSnapshotItem {
 	id: string
 	course_code?: string | null
@@ -93,6 +104,52 @@ interface NormalizedTaskRow {
 }
 
 const DEFAULT_COURSE = 'UNKNOWN'
+
+const parseJsonSafe = (raw: string): unknown[] | null => {
+	try {
+		const parsed = JSON.parse(raw)
+		return Array.isArray(parsed) ? parsed : null
+	} catch {
+		return null
+	}
+}
+
+const toIsoLikeString = (value: unknown): string | undefined => {
+	if (value == null) return undefined
+	if (value instanceof Date) return value.toISOString()
+	if (typeof value === 'string') return value
+	return undefined
+}
+
+export const mapChoreRowToEvent = (row: OverviewChoreItem): AcademicEvent => {
+	const allDay = row.is_all_day === true || row.is_all_day === 1
+	const startRaw = toIsoLikeString(row.start_at)
+	const start =
+		startRaw ||
+		(() => {
+			const d = new Date()
+			return allDay ? d.toISOString().slice(0, 10) : d.toISOString()
+		})()
+	const endRaw = toIsoLikeString(row.end_at)
+	const priority =
+		row.priority === 'low' || row.priority === 'medium' || row.priority === 'high' ? row.priority : 'medium'
+	return {
+		id: row.id,
+		title: row.title,
+		start,
+		end: endRaw,
+		allDay,
+		taskCategory: 'chores',
+		type: 'Chore',
+		color: '#bbf7d0',
+		priority,
+		extendedProps: {
+			taskCategory: 'chores',
+			location: row.location ?? undefined,
+			detail: row.detail ?? undefined,
+		},
+	}
+}
 
 const isEscaped = (text: string, pos: number) => {
 	let index = pos - 1
@@ -512,13 +569,15 @@ export const mapTaskToEvent = (
 		start: startAt,
 		end: endAt,
 		allDay,
-		color: highRisk ? '#ef4444' : '#10b981',
+		color: highRisk ? '#fbcfe8' : '#bbf7d0',
 		weight,
 		type,
 		courseCode,
+		taskCategory: 'academic',
 		priority: highRisk ? 'high' : 'medium',
 		extendedProps: {
 			source: 'ai',
+			taskCategory: 'academic',
 			courseName,
 			detail: typeof task.description === 'string' ? task.description : null,
 			sourceQuote: typeof task.source_quote === 'string' ? task.source_quote : null,
@@ -535,9 +594,11 @@ export const mapTaskToEvent = (
 }
 
 export const mergeUniqueEvents = (current: AcademicEvent[], incoming: AcademicEvent[]) => {
-	const keys = new Set(current.map(item => `${item.title}::${item.start}::${item.courseCode ?? ''}`))
+	const keyOf = (item: AcademicEvent) =>
+		`${item.title}::${item.start}::${item.courseCode ?? ''}::${item.taskCategory ?? 'academic'}`
+	const keys = new Set(current.map(keyOf))
 	const unique = incoming.filter(item => {
-		const key = `${item.title}::${item.start}::${item.courseCode ?? ''}`
+		const key = keyOf(item)
 		if (keys.has(key)) return false
 		keys.add(key)
 		return true
@@ -546,7 +607,8 @@ export const mergeUniqueEvents = (current: AcademicEvent[], incoming: AcademicEv
 }
 
 export const buildCoursePlans = (events: AcademicEvent[], courseDetails: CourseDetail[] = []): CoursePlan[] => {
-	const grouped = events.reduce<Record<string, AcademicEvent[]>>((acc, event) => {
+	const scoped = events.filter(item => item.taskCategory !== 'chores')
+	const grouped = scoped.reduce<Record<string, AcademicEvent[]>>((acc, event) => {
 		const code = event.courseCode || DEFAULT_COURSE
 		acc[code] = acc[code] || []
 		acc[code].push(event)
@@ -652,7 +714,8 @@ export const syncAcademicTasks = async (params: {
 }) => {
 	const { apiBase, userId, courseCode, events } = params
 	const url = createApiUrl(apiBase, '/academic/sync')
-	const tasks = events
+	const academicScoped = events.filter(item => item.taskCategory !== 'chores')
+	const tasks = academicScoped
 		.map(event => ({
 		id: String(event.id || '').trim(),
 		title: String(event.title || '').trim(),
@@ -697,6 +760,41 @@ export const syncAcademicTasks = async (params: {
 	)
 }
 
+export const syncChoresTasks = async (params: { apiBase: string; userId: string; events: AcademicEvent[] }) => {
+	const { apiBase, userId, events } = params
+	const url = createApiUrl(apiBase, '/chores/sync')
+	const tasks = events
+		.filter(item => item.taskCategory === 'chores')
+		.map(event => ({
+			id: String(event.id || '').trim(),
+			title: String(event.title || '').trim(),
+			startAt: event.start,
+			endAt: event.end || null,
+			allDay: event.allDay ?? true,
+			priority: event.priority || null,
+			location:
+				typeof event.extendedProps?.location === 'string' ? event.extendedProps.location : null,
+			detail:
+				typeof event.extendedProps?.detail === 'string'
+					? event.extendedProps.detail
+					: typeof event.extendedProps?.notes === 'string'
+						? event.extendedProps.notes
+						: null,
+		}))
+		.filter(item => item.id && item.title)
+
+	return withRetry(() =>
+		requestJson(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId,
+				tasks,
+			}),
+		})
+	)
+}
+
 export const loadAcademicSnapshots = async (params: { apiBase: string; userId: string }) => {
 	const overviewUrl = createApiUrl(params.apiBase, `/academic/overview?userId=${encodeURIComponent(params.userId)}`)
 	try {
@@ -706,12 +804,14 @@ export const loadAcademicSnapshots = async (params: { apiBase: string; userId: s
 				policies?: OverviewPolicyItem[]
 				rules?: OverviewPolicyRuleItem[]
 				tasks?: OverviewTaskItem[]
+				choreTasks?: OverviewChoreItem[]
 				snapshots?: OverviewSnapshotItem[]
 			}
 		}>(overviewUrl)
 		const data = overview.data || {}
 		const tasks = Array.isArray(data.tasks) ? data.tasks : []
-		const events = tasks.map((task, index) =>
+		const choreRows = Array.isArray(data.choreTasks) ? data.choreTasks : []
+		const academicEvents = tasks.map((task, index) =>
 			mapTaskToEvent(
 				{
 					id: task.id,
@@ -733,6 +833,8 @@ export const loadAcademicSnapshots = async (params: { apiBase: string; userId: s
 				task.course_name || task.course_code || undefined
 			)
 		)
+		const choreEvents = choreRows.map(row => mapChoreRowToEvent(row))
+		const events = [...academicEvents, ...choreEvents]
 		const courses = (Array.isArray(data.courses) ? data.courses : []).map(
 			item =>
 				({

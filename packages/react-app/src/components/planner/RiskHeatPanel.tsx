@@ -31,16 +31,16 @@ export default function RiskHeatPanel({ events }: RiskHeatPanelProps) {
 	const nonZeroRows = heatRows.filter(row => row.count > 0)
 
 	return (
-		<Card title="风险热区（未来14天）" className="h-full">
+		<Card title="Risk heatmap (next 14 days)" className="h-full">
 			{nonZeroRows.length === 0 ? (
-				<Empty description="未来14天暂无任务压力" />
+				<Empty description="No upcoming workload in the next 14 days." />
 			) : (
 				<div className="space-y-2">
 					{nonZeroRows.map(row => (
 						<div key={row.day} className="flex items-center justify-between rounded-md border px-3 py-2">
-							<div className="text-sm text-slate-700">{row.day}</div>
+							<div className="text-sm text-slate-800">{row.day}</div>
 							<div className="flex items-center gap-2">
-								<span className="text-xs text-slate-500">{row.count} tasks</span>
+								<span className="text-xs text-slate-600">{row.count} tasks</span>
 								<Tag color={row.level.color}>{row.level.label}</Tag>
 							</div>
 						</div>

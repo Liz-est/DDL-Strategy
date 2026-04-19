@@ -9,6 +9,8 @@ export type CalendarViewType =
 	| 'timeGridDay'
 	| 'listWeek'
 
+export type TaskCategory = 'academic' | 'chores'
+
 export interface AcademicEvent {
 	id: string
 	title: string
@@ -20,6 +22,8 @@ export interface AcademicEvent {
 	type?: string
 	courseCode?: string
 	priority?: 'low' | 'medium' | 'high'
+	/** Defaults to academic when omitted (legacy events). */
+	taskCategory?: TaskCategory
 	extendedProps?: Record<string, unknown>
 }
 

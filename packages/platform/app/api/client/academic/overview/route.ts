@@ -45,6 +45,16 @@ export async function GET(request: Request) {
       prisma.$queryRawUnsafe(`SELECT * FROM processing_results WHERE user_id = ? ORDER BY created_at DESC`, userId),
     ]);
 
+    let choreTasks: unknown[] = [];
+    try {
+      choreTasks = (await prisma.$queryRawUnsafe(
+        `SELECT * FROM chore_tasks WHERE user_id = ? ORDER BY COALESCE(start_at, created_at) ASC`,
+        userId
+      )) as unknown[];
+    } catch {
+      choreTasks = [];
+    }
+
     return addCorsHeaders(
       NextResponse.json(
         {
@@ -54,6 +64,7 @@ export async function GET(request: Request) {
             policies: Array.isArray(policies) ? policies : [],
             rules: Array.isArray(rules) ? rules : [],
             tasks: Array.isArray(tasks) ? tasks : [],
+            choreTasks: Array.isArray(choreTasks) ? choreTasks : [],
             snapshots: Array.isArray(snapshots) ? snapshots : [],
             processingResults: Array.isArray(processingResults) ? processingResults : [],
           },

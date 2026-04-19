@@ -4,7 +4,7 @@
 *.log*
 
 # Dist
-node_modules
+node_modules/
 dist/
 
 # IDE
@@ -18,12 +18,17 @@ dist/
 # 框架临时文件
 .next
 
+# Vite / Vitest 磁盘缓存（monorepo 子包内也可能出现）
+**/.vite/
+
+# 测试覆盖率输出
+coverage/
+
 # 环境变量文件 - 包含敏感信息，不应提交到版本控制
 .env*
 !.env.template
-# sql
-mysql_data/
-node_modules/
+# MySQL Docker 数据卷（docker-compose 绑定 ./mysql_data）
+/mysql_data/
 .env
 *.log
 
