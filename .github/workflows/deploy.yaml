@@ -26,12 +26,12 @@ jobs:
           fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
-          cache: pnpm
+          cache: true
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22.21.1
-          cache: pnpm
+          cache: true
       - name: Provenance downgrade check
         uses: danielroe/provenance-action@0.1.0
       - name: Setup Pages
