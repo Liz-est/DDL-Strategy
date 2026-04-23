@@ -72,3 +72,28 @@
 .chat-workspace .ant-switch:focus-visible {
 	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45) !important;
 }
+
+/* Course Planner: hide scrollbar chrome, keep scroll (wheel / trackpad) */
+.chat-workspace .planner-scroll {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.chat-workspace .planner-scroll::-webkit-scrollbar {
+	display: none;
+}
+
+/* Planner course cards: title can shrink/truncate beside extra (icon + %) */
+.chat-workspace .ant-card-head-title {
+	min-width: 0;
+	overflow: hidden;
+}
+
+/* Left rail stored-course edit icon: no visible frame (browser defaults) */
+.chat-workspace .chat-stored-course-edit {
+	-webkit-appearance: none;
+	appearance: none;
+	border-style: none !important;
+	box-shadow: none !important;
+	outline: none;
+}

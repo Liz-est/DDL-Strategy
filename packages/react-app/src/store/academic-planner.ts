@@ -72,6 +72,10 @@ export interface CourseDetail {
 	courseName?: string | null
 	description?: string | null
 	sourceQuote?: string | null
+	/** 0–100; when set, overrides computed course completion in planner */
+	manualCompletionRate?: number | null
+	/** 0–100; when set and this course is selected, overrides semester bar */
+	manualSemesterProgress?: number | null
 }
 
 export interface IngestionSnapshotItem {

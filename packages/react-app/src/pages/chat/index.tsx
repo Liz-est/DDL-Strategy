@@ -2,9 +2,11 @@
 
 import './chat-workspace.css'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import dayjs from 'dayjs'
+import { EditOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Input, InputNumber, Modal, Segmented, Select, Switch, Tag, message } from 'antd'
+import CoursePlannerEditDrawer from '@/components/planner/CoursePlannerEditDrawer'
 import type { DateSelectArg } from '@fullcalendar/core'
 import CalendarView from '@/components/CalendarView'
 import CoursePlanBoard from '@/components/planner/CoursePlanBoard'
@@ -69,7 +71,9 @@ export default function ChatPage() {
 		setSyncStatus,
 		saveSnapshot,
 		restoreSnapshot,
+		updateEvent,
 	} = useAcademicPlannerStore()
+	const [plannerEditCourseId, setPlannerEditCourseId] = useState<string | null>(null)
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
 	const [editingEventId, setEditingEventId] = useState<string | null>(null)
@@ -511,6 +515,41 @@ export default function ChatPage() {
 		? coursePolicies.find(item => item.courseCode === selectedCourseCode)
 		: null
 
+	const effectiveSemesterProgress = useMemo(() => {
+		const m = selectedCourseDetail?.manualSemesterProgress
+		if (m != null && Number.isFinite(m)) return Math.max(0, Math.min(100, Math.round(m)))
+		return semesterProgress
+	}, [selectedCourseDetail?.manualSemesterProgress, semesterProgress])
+
+	const refetchPlanner = useCallback(async () => {
+		if (!userId) return
+		setSyncStatus('syncing')
+		try {
+			const r = await loadAcademicSnapshots({ apiBase, userId })
+			const localEvents = useAcademicPlannerStore.getState().events
+			const merged = mergeUniqueEvents(localEvents, r.events)
+			setEvents(merged)
+			setCourses(buildCoursePlans(merged, r.courseDetails))
+			setCourseDetails(r.courseDetails)
+			setCoursePolicies(r.coursePolicies)
+			setSnapshots(r.snapshots)
+			setSemesterProgress(getSemesterProgress(merged))
+			setSyncStatus('success')
+		} catch (error) {
+			setSyncStatus('error', (error as Error).message)
+		}
+	}, [
+		userId,
+		apiBase,
+		setSyncStatus,
+		setEvents,
+		setCourses,
+		setCourseDetails,
+		setCoursePolicies,
+		setSnapshots,
+		setSemesterProgress,
+	])
+
 	return (
 		<div className="chat-workspace flex h-screen w-screen overflow-hidden bg-slate-100">
 			<aside className="flex h-full w-64 flex-col border-r border-slate-200 bg-white">
@@ -542,23 +581,41 @@ export default function ChatPage() {
 						Course Planner
 					</button>
 				</div>
-				<div className="flex-1 overflow-y-auto border-t border-slate-200 p-3">
+				<div className="planner-scroll flex-1 overflow-y-auto border-t border-slate-200 p-3">
 					<p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">All Stored Courses</p>
-					<div className="space-y-2">
+						<div className="space-y-2">
 						{courses.map(course => (
-							<button
+							<div
 								key={course.id}
-								type="button"
-								onClick={() => setSelectedCourseId(course.id)}
-								className={`w-full rounded-lg border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-2 ${
+								className={`flex min-w-0 items-stretch gap-1 rounded-lg border py-1.5 pl-2 pr-1.5 transition ${
 									selectedCourseId === course.id
 										? 'border-indigo-400 bg-indigo-50'
-										: 'border-slate-200 bg-white hover:border-slate-300'
+										: 'border-slate-200 bg-white'
 								}`}
 							>
-								<p className="truncate text-sm font-semibold text-slate-800">{course.courseCode}</p>
-								<p className="text-xs text-slate-600">{course.milestones.length} tasks</p>
-							</button>
+								<button
+									type="button"
+									onClick={() => setSelectedCourseId(course.id)}
+									className="min-w-0 flex-1 rounded-md px-1.5 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-1"
+								>
+									<p className="truncate text-sm font-semibold text-slate-800" title={course.courseCode}>
+										{course.courseCode}
+									</p>
+									<p className="text-xs text-slate-600">{course.milestones.length} tasks</p>
+								</button>
+								<button
+									type="button"
+									aria-label="Edit course"
+									className="chat-stored-course-edit flex h-8 w-8 shrink-0 items-center justify-center self-center rounded-md border-0 bg-slate-100/90 p-0 text-slate-500 shadow-none outline-none ring-0 transition hover:bg-slate-200 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-0"
+									onClick={e => {
+										e.stopPropagation()
+										setSelectedCourseId(course.id)
+										setPlannerEditCourseId(course.id)
+									}}
+								>
+									<EditOutlined className="text-[15px]" />
+								</button>
+							</div>
 						))}
 						{courses.length === 0 ? <p className="text-xs text-slate-600">No courses synced yet.</p> : null}
 					</div>
@@ -606,7 +663,7 @@ export default function ChatPage() {
 					) : (
 						<div className="grid h-full grid-cols-12 gap-4">
 							<div className="col-span-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-								<div className="h-full overflow-y-auto p-4">
+								<div className="planner-scroll h-full overflow-y-auto p-4">
 									<CoursePlanBoard
 										courses={courses}
 										selectedCourseId={selectedCourseId}
@@ -615,7 +672,7 @@ export default function ChatPage() {
 								</div>
 							</div>
 
-							<div className="col-span-4 flex h-full flex-col gap-3 overflow-y-auto">
+							<div className="planner-scroll col-span-4 flex h-full flex-col gap-3 overflow-y-auto">
 								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 									<h3 className="text-sm font-semibold text-slate-800">Course Profile</h3>
 									<p className="mt-2 text-xs text-slate-600">
@@ -645,12 +702,12 @@ export default function ChatPage() {
 									)}
 								</div>
 
-								<SemesterProgress semesterProgress={semesterProgress} events={selectedCourseEvents} />
+								<SemesterProgress semesterProgress={effectiveSemesterProgress} events={selectedCourseEvents} />
 								<RiskHeatPanel events={selectedCourseEvents} />
 
 								<div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 									<h3 className="text-sm font-semibold text-slate-800">Ingestion History</h3>
-									<div className="mt-2 max-h-40 space-y-2 overflow-y-auto">
+									<div className="planner-scroll mt-2 max-h-40 space-y-2 overflow-y-auto">
 										{snapshots.slice(0, 8).map(item => (
 											<div key={item.id} className="rounded border border-slate-100 bg-slate-50 px-2 py-1 text-xs text-slate-600">
 												<p className="font-medium">{item.courseCode || 'UNKNOWN'}</p>
@@ -842,6 +899,26 @@ export default function ChatPage() {
 					) : null}
 				</div>
 			</Modal>
+
+			<CoursePlannerEditDrawer
+				open={Boolean(plannerEditCourseId)}
+				onClose={() => setPlannerEditCourseId(null)}
+				courseId={plannerEditCourseId}
+				userId={userId}
+				apiBase={apiBase}
+				events={events}
+				courseDetails={courseDetails}
+				coursePolicies={coursePolicies}
+				courses={courses}
+				updateEvent={updateEvent}
+				onRefetch={refetchPlanner}
+				onCourseDeleted={deletedCode => {
+					setPlannerEditCourseId(null)
+					if (selectedCourseId === `course-${deletedCode}`) {
+						setSelectedCourseId(null)
+					}
+				}}
+			/>
 		</div>
 	)
 }

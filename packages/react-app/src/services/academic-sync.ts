@@ -34,6 +34,8 @@ interface OverviewCourseItem {
 	course_name?: string | null
 	description?: string | null
 	source_quote?: string | null
+	manual_completion_rate?: number | null
+	manual_semester_progress?: number | null
 }
 
 interface OverviewPolicyItem {
@@ -103,7 +105,7 @@ interface NormalizedTaskRow {
 	task: JsonObject
 }
 
-const DEFAULT_COURSE = 'UNKNOWN'
+export const DEFAULT_COURSE = 'UNKNOWN'
 
 const parseJsonSafe = (raw: string): unknown[] | null => {
 	try {
@@ -630,15 +632,18 @@ export const buildCoursePlans = (events: AcademicEvent[], courseDetails: CourseD
 				type: item.type || 'Task',
 			}))
 		const completedWeight = milestones.reduce((acc, item) => acc + item.weight, 0)
-		const completionRate = Math.min(100, Math.round((completedWeight / 100) * 100))
+		const computedRate = Math.min(100, Math.round((completedWeight / 100) * 100))
+		const detail = courseDetails.find(item => item.courseCode === courseCode)
+		const override = detail?.manualCompletionRate
+		const completionRate =
+			typeof override === 'number' && Number.isFinite(override)
+				? Math.max(0, Math.min(100, Math.round(override)))
+				: computedRate
 
 		return {
 			id: `course-${courseCode}`,
 			courseCode,
-			courseName:
-				courseDetails.find(item => item.courseCode === courseCode)?.courseName ||
-				courseDetails.find(item => item.courseCode === courseCode)?.name ||
-				courseCode,
+			courseName: detail?.courseName || detail?.name || courseCode,
 			completionRate,
 			milestones,
 		}
@@ -677,11 +682,18 @@ export const saveCoursePolicies = async (params: {
 	apiBase: string
 	userId: string
 	courseCode: string
-	gradingPolicy: JsonObject
+	gradingPolicy: JsonObject | string
 }) => {
 	const { apiBase, userId, courseCode, gradingPolicy } = params
-	if (!gradingPolicy || !courseCode || courseCode === DEFAULT_COURSE) return null
+	if (!courseCode || courseCode === DEFAULT_COURSE) return null
+	if (typeof gradingPolicy === 'string') {
+		if (!gradingPolicy.trim()) return null
+	} else if (!gradingPolicy) {
+		return null
+	}
 	const parsed = parseGradingPolicyText(gradingPolicy as JsonValue)
+	const fromObject =
+		typeof gradingPolicy === 'object' && gradingPolicy && !Array.isArray(gradingPolicy) ? (gradingPolicy as JsonObject) : null
 
 	const url = createApiUrl(apiBase, '/policies/save')
 	return withRetry(() =>
@@ -691,9 +703,9 @@ export const saveCoursePolicies = async (params: {
 			body: JSON.stringify({
 				userId,
 				courseCode,
-				late_policy: gradingPolicy.late_policy || null,
-				absence_policy: gradingPolicy.absence_policy || null,
-				grading_notes: gradingPolicy.grading_notes || null,
+				late_policy: fromObject?.late_policy != null ? fromObject.late_policy : parsed.latePolicy,
+				absence_policy: fromObject?.absence_policy != null ? fromObject.absence_policy : parsed.absencePolicy,
+				grading_notes: fromObject?.grading_notes != null ? fromObject.grading_notes : parsed.gradingNotes,
 				rawPolicyText: parsed.rawPolicyText,
 				extensionRule: parsed.extensionRule,
 				integrityRule: parsed.integrityRule,
@@ -702,6 +714,63 @@ export const saveCoursePolicies = async (params: {
 				parsedPolicyJson: parsed.parsedPolicyJson,
 				rules: parsed.rules,
 			}),
+		})
+	)
+}
+
+export const upsertCourseProfile = async (params: {
+	apiBase: string
+	userId: string
+	courseCode: string
+	name?: string | null
+	courseName?: string | null
+	description?: string | null
+	sourceQuote?: string | null
+	manualCompletionRate?: number | null
+	manualSemesterProgress?: number | null
+}) => {
+	const { apiBase, userId, courseCode } = params
+	if (!userId || !courseCode) return null
+	const url = createApiUrl(apiBase, '/academic/course/upsert')
+	return withRetry(() =>
+		requestJson(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId,
+				courseCode,
+				name: params.name ?? null,
+				courseName: params.courseName ?? null,
+				description: params.description ?? null,
+				sourceQuote: params.sourceQuote ?? null,
+				manualCompletionRate: params.manualCompletionRate ?? null,
+				manualSemesterProgress: params.manualSemesterProgress ?? null,
+			}),
+		})
+	)
+}
+
+/** Course codes that must not be bulk-deleted (shared buckets). */
+export const PROTECTED_COURSE_CODES_FOR_DELETE = new Set(['UNKNOWN', 'GENERAL'])
+
+export const isCourseCodeDeletable = (courseCode: string | null | undefined): boolean => {
+	const code = typeof courseCode === 'string' ? courseCode.trim() : ''
+	if (!code) return false
+	return !PROTECTED_COURSE_CODES_FOR_DELETE.has(code)
+}
+
+export const deleteCourseBundle = async (params: { apiBase: string; userId: string; courseCode: string }) => {
+	const { apiBase, userId, courseCode } = params
+	const trimmed = typeof courseCode === 'string' ? courseCode.trim() : ''
+	if (!userId || !trimmed || !isCourseCodeDeletable(trimmed)) {
+		throw new Error('Invalid course or protected course code')
+	}
+	const url = createApiUrl(apiBase, '/academic/course/delete')
+	return withRetry(() =>
+		requestJson(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userId, courseCode: trimmed }),
 		})
 	)
 }
@@ -835,6 +904,11 @@ export const loadAcademicSnapshots = async (params: { apiBase: string; userId: s
 		)
 		const choreEvents = choreRows.map(row => mapChoreRowToEvent(row))
 		const events = [...academicEvents, ...choreEvents]
+		const toNum = (v: unknown): number | null => {
+			if (v == null) return null
+			const n = typeof v === 'number' ? v : Number(v)
+			return Number.isFinite(n) ? n : null
+		}
 		const courses = (Array.isArray(data.courses) ? data.courses : []).map(
 			item =>
 				({
@@ -843,6 +917,12 @@ export const loadAcademicSnapshots = async (params: { apiBase: string; userId: s
 					courseName: item.course_name ?? null,
 					description: item.description ?? null,
 					sourceQuote: item.source_quote ?? null,
+					manualCompletionRate: toNum(
+						(item as OverviewCourseItem & { manualCompletionRate?: unknown }).manualCompletionRate ?? item.manual_completion_rate
+					),
+					manualSemesterProgress: toNum(
+						(item as OverviewCourseItem & { manualSemesterProgress?: unknown }).manualSemesterProgress ?? item.manual_semester_progress
+					),
 				}) satisfies CourseDetail
 		)
 		const policyRulesByPolicyId = new Map<string, CoursePolicyRule[]>()

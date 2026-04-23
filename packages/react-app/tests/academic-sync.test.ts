@@ -1,8 +1,11 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 
 import {
+	buildCoursePlans,
 	createApiUrl,
+	deleteCourseBundle,
 	extractAcademicPayloadFromText,
+	isCourseCodeDeletable,
 	loadAcademicSnapshots,
 	mapChoreRowToEvent,
 	mapTaskToEvent,
@@ -12,6 +15,7 @@ import {
 	saveJsonToDatabase,
 	syncAcademicTasks,
 	syncChoresTasks,
+	upsertCourseProfile,
 } from '@/services/academic-sync'
 import type { AcademicEvent } from '@/store/academic-planner'
 
@@ -393,6 +397,70 @@ describe('academic-sync requests', () => {
 		expect(result.courses[0]?.courseCode).toBe('AIE1902')
 		expect(result.coursePolicies).toHaveLength(1)
 		expect(result.courseDetails).toHaveLength(1)
+	})
+
+	test('buildCoursePlans should prefer manual completion over computed weight', () => {
+		const events: Parameters<typeof buildCoursePlans>[0] = [
+			{ id: '1', title: 'A', start: '2026-01-01', courseCode: 'C1', type: 'Task', weight: 50, taskCategory: 'academic' },
+		]
+		const withOverride = buildCoursePlans(events, [
+			{ courseCode: 'C1', manualCompletionRate: 88, courseName: 'Course 1' },
+		])
+		expect(withOverride[0]?.completionRate).toBe(88)
+		const computed = buildCoursePlans(events, [{ courseCode: 'C1', courseName: 'Course 1' }])
+		expect(computed[0]?.completionRate).toBe(50)
+	})
+
+	test('isCourseCodeDeletable should block bucket codes', () => {
+		expect(isCourseCodeDeletable('UNKNOWN')).toBe(false)
+		expect(isCourseCodeDeletable('GENERAL')).toBe(false)
+		expect(isCourseCodeDeletable('MAT3007')).toBe(true)
+	})
+
+	test('deleteCourseBundle should post to /academic/course/delete', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await deleteCourseBundle({
+			apiBase: '',
+			userId: 'u1',
+			courseCode: 'MAT3007',
+		})
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		expect(url).toBe('/api/client/academic/course/delete')
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.courseCode).toBe('MAT3007')
+	})
+
+	test('deleteCourseBundle should reject protected codes', async () => {
+		await expect(deleteCourseBundle({ apiBase: '', userId: 'u1', courseCode: 'UNKNOWN' })).rejects.toThrow()
+	})
+
+	test('upsertCourseProfile should post to /academic/course/upsert', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await upsertCourseProfile({
+			apiBase: '',
+			userId: 'u1',
+			courseCode: 'AIE1',
+			courseName: 'Name',
+			manualCompletionRate: 10,
+		})
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		expect(url).toBe('/api/client/academic/course/upsert')
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.manualCompletionRate).toBe(10)
 	})
 
 	test('loadAcademicSnapshots should merge choreTasks into events', async () => {

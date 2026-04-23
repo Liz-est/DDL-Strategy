@@ -2,6 +2,12 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
 	output: 'standalone',
+	// ESLint 9 + FlatCompat(extends `eslint-config-next`) yields a circular config graph that Next
+	// tries to JSON-serialize during `next build` / `next lint`, which throws. Run ESLint via CLI
+	// when migrating to a native flat config (see eslint.config.mjs).
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 	async headers() {
 		return [
 			{

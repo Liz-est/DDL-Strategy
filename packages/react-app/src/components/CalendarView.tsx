@@ -16,6 +16,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth'
 import listPlugin from '@fullcalendar/list'
 import { getNextCalendarViewForDrill } from '@/lib/calendar-drilldown'
+import { shouldShowCalendarQuickAddFab } from '@/lib/calendar-fab'
 import type { AcademicEvent, CalendarViewType } from '@/store/academic-planner'
 
 interface CalendarProps {
@@ -160,7 +161,7 @@ export default function CalendarView({
 				</div>
 			</div>
 
-			<div className="calendar-panel flex-1 overflow-hidden px-4 pb-4 pt-3">
+			<div className="calendar-panel relative flex-1 overflow-hidden px-4 pb-4 pt-3">
 				<style>{`
           .calendar-shell .fc {
             font-family: inherit;
@@ -296,6 +297,16 @@ export default function CalendarView({
 						onViewChange(view)
 					}}
 				/>
+				{shouldShowCalendarQuickAddFab(activeView) ? (
+					<button
+						type="button"
+						onClick={onQuickAdd}
+						className="absolute bottom-5 right-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-2xl font-light leading-none text-white shadow-lg ring-1 ring-indigo-700/30 transition hover:bg-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+						aria-label="Quick add task"
+					>
+						+
+					</button>
+				) : null}
 			</div>
 		</div>
 	)

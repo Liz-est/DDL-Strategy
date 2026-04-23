@@ -115,6 +115,10 @@ model AcademicCourse {
   description       String?  @db.LongText
   sourceQuote       String?  @map("source_quote") @db.LongText
   rawCourseInfoJson String?  @map("raw_course_info_json") @db.LongText
+  /// 0-100: when set, overrides computed completion on planner cards
+  manualCompletionRate Int?  @map("manual_completion_rate")
+  /// 0-100: when set and this course is selected, overrides semester progress display
+  manualSemesterProgress Int? @map("manual_semester_progress")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
   policies          CoursePolicy[]

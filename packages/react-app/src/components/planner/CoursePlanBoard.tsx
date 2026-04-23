@@ -24,9 +24,11 @@ export default function CoursePlanBoard({
 				<Card
 					key={course.id}
 					title={
-						<div className="flex items-center justify-between">
-							<span>{course.courseName}</span>
-							<Tag color="blue">{course.completionRate}%</Tag>
+						<div className="flex min-w-0 items-center justify-between gap-2">
+							<span className="min-w-0 flex-1 truncate">{course.courseName}</span>
+							<Tag color="blue" className="m-0 shrink-0">
+								{course.completionRate}%
+							</Tag>
 						</div>
 					}
 					role="button"
@@ -43,9 +45,11 @@ export default function CoursePlanBoard({
 					}}
 				>
 					<div className="space-y-2 text-sm">
-						<p className="text-slate-600">Course code: {course.courseCode}</p>
+						<p className="truncate text-slate-600" title={course.courseCode}>
+							Course code: {course.courseCode}
+						</p>
 						<p className="font-semibold text-slate-800">Key milestones</p>
-						<div className="max-h-36 space-y-2 overflow-y-auto pr-1">
+						<div className="planner-scroll max-h-36 space-y-2 overflow-y-auto pr-1">
 							{course.milestones.slice(0, 6).map(milestone => (
 								<div key={milestone.id} className="rounded-md bg-slate-50 px-3 py-2">
 									<div className="flex items-center justify-between gap-3">
