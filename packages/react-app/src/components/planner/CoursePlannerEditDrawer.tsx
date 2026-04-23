@@ -1,5 +1,6 @@
 'use client'
 
+import { DeleteOutlined } from '@ant-design/icons'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button, Drawer, Form, Input, InputNumber, Modal, Space, Table, message } from 'antd'
 import {
@@ -28,20 +29,22 @@ const toDateInput = (start: string) => {
 	return /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : start
 }
 
+const createMilestoneDraftId = () => `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+
 interface CoursePlannerEditDrawerProps {
 	open: boolean
 	onClose: () => void
 	courseId: string | null
 	userId: string | null
 	apiBase: string
-	events: AcademicEvent[]
 	courseDetails: CourseDetail[]
 	coursePolicies: CoursePolicyProfile[]
 	courses: CoursePlan[]
-	updateEvent: (id: string, patch: Partial<AcademicEvent>) => void
 	onRefetch: () => Promise<void>
 	/** Called after successful delete so parent can clear selection / drawer id */
 	onCourseDeleted?: (courseCode: string) => void
+	/** Called after successful save so parent can keep left selection stable. */
+	onCourseSaved?: (nextCourseCode: string, previousCourseCode: string) => void
 }
 
 export default function CoursePlannerEditDrawer({
@@ -50,13 +53,12 @@ export default function CoursePlannerEditDrawer({
 	courseId,
 	userId,
 	apiBase,
-	events,
 	courseDetails,
 	coursePolicies,
 	courses,
-	updateEvent,
 	onRefetch,
 	onCourseDeleted,
+	onCourseSaved,
 }: CoursePlannerEditDrawerProps) {
 	const [form] = Form.useForm()
 	const [milestoneRows, setMilestoneRows] = useState<MilestoneRow[]>([])
@@ -83,6 +85,7 @@ export default function CoursePlannerEditDrawer({
 		const d = detail
 		const pol = policy
 		form.setFieldsValue({
+			courseCode,
 			name: d?.name ?? '',
 			courseName: d?.courseName ?? p?.courseName ?? courseCode,
 			description: d?.description ?? '',
@@ -117,6 +120,23 @@ export default function CoursePlannerEditDrawer({
 		})
 	}
 
+	const addMilestoneRow = () => {
+		setMilestoneRows(prev => [
+			...prev,
+			{
+				id: createMilestoneDraftId(),
+				title: '',
+				dueDate: '',
+				type: 'Task',
+				weight: 0,
+			},
+		])
+	}
+
+	const removeMilestoneRow = (index: number) => {
+		setMilestoneRows(prev => prev.filter((_, i) => i !== index))
+	}
+
 	const handleSave = async () => {
 		if (!userId || !courseCode) {
 			message.error('Not signed in or invalid course')
@@ -124,12 +144,19 @@ export default function CoursePlannerEditDrawer({
 		}
 		const values = await form.validateFields().catch(() => null)
 		if (!values) return
+		const nextCourseCode = String(values.courseCode || '')
+			.trim()
+			.toUpperCase()
+		if (!nextCourseCode) {
+			message.error('Course code is required')
+			return
+		}
 		setSaving(true)
 		try {
 			await upsertCourseProfile({
 				apiBase,
 				userId,
-				courseCode,
+				courseCode: nextCourseCode,
 				name: values.name || null,
 				courseName: values.courseName || null,
 				description: values.description || null,
@@ -139,42 +166,88 @@ export default function CoursePlannerEditDrawer({
 			})
 
 			const nextPolicy = typeof values.policyRaw === 'string' ? values.policyRaw : ''
-			if (courseCode !== DEFAULT_COURSE && nextPolicy.trim() !== (initialPolicyText || '').trim()) {
+			if (nextCourseCode !== DEFAULT_COURSE && nextPolicy.trim() !== (initialPolicyText || '').trim()) {
 				if (nextPolicy.trim()) {
-					await saveCoursePolicies({ apiBase, userId, courseCode, gradingPolicy: nextPolicy })
+					await saveCoursePolicies({ apiBase, userId, courseCode: nextCourseCode, gradingPolicy: nextPolicy })
 				}
 				// If cleared, skip API (no "empty policy" contract); user can re-run ingestion later.
 			}
 
-			for (const row of milestoneRows) {
-				const event = events.find(e => e.id === row.id)
-				if (!event) continue
-				const nextStart = row.dueDate
-					? /[T]/.test(row.dueDate) || /:/.test(row.dueDate)
-						? row.dueDate
-						: `${row.dueDate}T00:00:00`
-					: event.start
-				if (
-					event.title !== row.title ||
-					(event.start || '').slice(0, 10) !== (nextStart || '').slice(0, 10) ||
-					(event.type || 'Task') !== row.type ||
-					Number(event.weight || 0) !== Number(row.weight)
-				) {
-					updateEvent(event.id, {
-						title: row.title,
-						start: nextStart,
-						type: row.type,
-						weight: row.weight,
-					})
+			const previousCode = courseCode
+			const currentEvents = useAcademicPlannerStore.getState().events
+			const oldCourseEvents = currentEvents.filter(
+				e => e.taskCategory !== 'chores' && (e.courseCode || 'GENERAL') === previousCode
+			)
+			const oldCourseEventsById = new Map(oldCourseEvents.map(item => [item.id, item]))
+			const normalizedRows = milestoneRows
+				.map(row => ({
+					...row,
+					title: row.title.trim(),
+					type: row.type.trim() || 'Task',
+					weight: Math.max(0, Math.min(100, Number(row.weight) || 0)),
+				}))
+				.filter(row => row.title)
+
+			const rebuiltEvents: AcademicEvent[] = normalizedRows.map(row => {
+				const prev = oldCourseEventsById.get(row.id)
+				const start =
+					row.dueDate && !/[T]/.test(row.dueDate) && !/:/.test(row.dueDate)
+						? `${row.dueDate}T00:00:00`
+						: row.dueDate || prev?.start || new Date().toISOString()
+				return {
+					...(prev || {
+						id: row.id,
+						allDay: true,
+						taskCategory: 'academic' as const,
+						extendedProps: {},
+					}),
+					id: row.id,
+					title: row.title,
+					start,
+					courseCode: nextCourseCode,
+					type: row.type,
+					weight: row.weight,
+					taskCategory: 'academic',
+					extendedProps: {
+						...(prev?.extendedProps || {}),
+						courseName: values.courseName || prev?.extendedProps?.courseName,
+					},
+				}
+			})
+
+			const oldIds = new Set(oldCourseEvents.map(item => item.id))
+			const withoutOld = currentEvents.filter(item => !oldIds.has(item.id))
+			const merged = new Map<string, AcademicEvent>()
+			;[...withoutOld, ...rebuiltEvents].forEach(item => merged.set(item.id, item))
+			const nextAllEvents = Array.from(merged.values())
+			useAcademicPlannerStore.getState().setEvents(nextAllEvents)
+
+			if (nextCourseCode !== DEFAULT_COURSE) {
+				await syncAcademicTasks({
+					apiBase,
+					userId,
+					courseCode: nextCourseCode,
+					events: nextAllEvents.filter(
+						item => item.taskCategory !== 'chores' && (item.courseCode || 'GENERAL') === nextCourseCode
+					),
+				})
+			}
+			if (previousCode !== nextCourseCode && previousCode !== DEFAULT_COURSE) {
+				await syncAcademicTasks({
+					apiBase,
+					userId,
+					courseCode: previousCode,
+					events: nextAllEvents.filter(
+						item => item.taskCategory !== 'chores' && (item.courseCode || 'GENERAL') === previousCode
+					),
+				})
+				if (isCourseCodeDeletable(previousCode)) {
+					await deleteCourseBundle({ apiBase, userId, courseCode: previousCode })
 				}
 			}
 
-			if (courseCode !== DEFAULT_COURSE) {
-				const latest = useAcademicPlannerStore.getState().events
-				await syncAcademicTasks({ apiBase, userId, courseCode, events: latest })
-			}
-
 			await onRefetch()
+			onCourseSaved?.(nextCourseCode, previousCode)
 			message.success('Course updated')
 			onClose()
 		} catch (e) {
@@ -245,8 +318,13 @@ export default function CoursePlannerEditDrawer({
 			}
 		>
 			<Form form={form} layout="vertical" className="space-y-0">
-				<div className="mb-1 text-xs font-semibold text-slate-500">Course code (read-only)</div>
-				<Input value={courseCode} disabled className="mb-3" />
+				<Form.Item
+					name="courseCode"
+					label="Course code"
+					rules={[{ required: true, message: 'Course code is required' }]}
+				>
+					<Input placeholder="e.g. MAT3007H" />
+				</Form.Item>
 				<Form.Item name="name" label="Short name / label">
 					<Input placeholder="Name" />
 				</Form.Item>
@@ -283,7 +361,12 @@ export default function CoursePlannerEditDrawer({
 				</Form.Item>
 			</Form>
 
-			<div className="mb-2 mt-4 text-sm font-semibold text-slate-800">Milestones / tasks</div>
+			<div className="mb-2 mt-4 flex items-center justify-between gap-2">
+				<div className="text-sm font-semibold text-slate-800">Milestones / tasks</div>
+				<Button size="small" onClick={addMilestoneRow}>
+					Add task
+				</Button>
+			</div>
 			<Table
 				size="small"
 				pagination={false}
@@ -312,6 +395,22 @@ export default function CoursePlannerEditDrawer({
 							onChange={v => updateRow(i, { weight: Number(v) || 0 })}
 						/>
 					)},
+					{
+						title: '',
+						key: 'actions',
+						width: 44,
+						align: 'center',
+						render: (_, __, i) => (
+							<button
+								type="button"
+								aria-label="Remove task"
+								className="inline-flex h-8 w-8 items-center justify-center rounded-md border-0 bg-transparent p-0 text-slate-400 transition hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:ring-offset-0"
+								onClick={() => removeMilestoneRow(i)}
+							>
+								<DeleteOutlined className="text-[14px]" />
+							</button>
+						),
+					},
 				]}
 			/>
 		</Drawer>

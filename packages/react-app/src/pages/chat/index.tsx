@@ -71,7 +71,6 @@ export default function ChatPage() {
 		setSyncStatus,
 		saveSnapshot,
 		restoreSnapshot,
-		updateEvent,
 	} = useAcademicPlannerStore()
 	const [plannerEditCourseId, setPlannerEditCourseId] = useState<string | null>(null)
 	const [isModalOpen, setIsModalOpen] = useState(false)
@@ -526,14 +525,14 @@ export default function ChatPage() {
 		setSyncStatus('syncing')
 		try {
 			const r = await loadAcademicSnapshots({ apiBase, userId })
-			const localEvents = useAcademicPlannerStore.getState().events
-			const merged = mergeUniqueEvents(localEvents, r.events)
-			setEvents(merged)
-			setCourses(buildCoursePlans(merged, r.courseDetails))
+			// Replace from server: merging with local would resurrect rows the user deleted on the server
+			// (delete course / delete tasks) because mergeUniqueEvents only appends, never removes.
+			setEvents(r.events)
+			setCourses(buildCoursePlans(r.events, r.courseDetails))
 			setCourseDetails(r.courseDetails)
 			setCoursePolicies(r.coursePolicies)
 			setSnapshots(r.snapshots)
-			setSemesterProgress(getSemesterProgress(merged))
+			setSemesterProgress(getSemesterProgress(r.events))
 			setSyncStatus('success')
 		} catch (error) {
 			setSyncStatus('error', (error as Error).message)
@@ -906,12 +905,15 @@ export default function ChatPage() {
 				courseId={plannerEditCourseId}
 				userId={userId}
 				apiBase={apiBase}
-				events={events}
 				courseDetails={courseDetails}
 				coursePolicies={coursePolicies}
 				courses={courses}
-				updateEvent={updateEvent}
 				onRefetch={refetchPlanner}
+				onCourseSaved={(nextCourseCode, previousCourseCode) => {
+					if (selectedCourseId === `course-${previousCourseCode}`) {
+						setSelectedCourseId(`course-${nextCourseCode}`)
+					}
+				}}
 				onCourseDeleted={deletedCode => {
 					setPlannerEditCourseId(null)
 					if (selectedCourseId === `course-${deletedCode}`) {
