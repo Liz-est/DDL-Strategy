@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPrisma } from '@/lib/prisma';
+import { createHash } from 'node:crypto';
 
 // 获取 Prisma 单例
 const prisma = getPrisma();
@@ -29,6 +30,63 @@ interface ParsedPolicyResult {
   rules: ParsedPolicyRule[]
 }
 
+interface NormalizeCoursesResult {
+  courses: JsonObject[]
+  parseError: string | null
+  source: 'array' | 'courses' | 'assessments' | 'none'
+  invalidCourseIndexes: number[]
+}
+
+const toNonEmptyText = (value: unknown) => (typeof value === 'string' ? value.trim() : '')
+
+const asObjectArray = (value: unknown): JsonObject[] =>
+  Array.isArray(value)
+    ? value.filter((item): item is JsonObject => !!toObject(item))
+    : []
+
+const hasMeaningfulCourseContent = (course: JsonObject) => {
+  const courseInfo = toObject(course.course_info) ?? {}
+  const hasIdentity =
+    !!toNonEmptyText(courseInfo.course_code) ||
+    !!toNonEmptyText(courseInfo.course_name) ||
+    !!toNonEmptyText(courseInfo.name)
+  const hasTasks = asObjectArray(course.deadlines).length > 0 || asObjectArray(course.assessments).length > 0
+  const hasPolicy = !!toNonEmptyText(courseInfo.grading_policy) || !!toNonEmptyText(course.grading_policy)
+  return hasIdentity || hasTasks || hasPolicy
+}
+
+const mergeCoursesByCode = (courses: JsonObject[], fallbackCourseCode?: string | null): JsonObject[] => {
+  const merged = new Map<string, JsonObject>()
+  for (const item of courses) {
+    const courseInfo = toObject(item.course_info) ?? {}
+    const normalizedCourseCode = normalizeCourseCode(courseInfo, fallbackCourseCode || null)
+    const existing = merged.get(normalizedCourseCode)
+    if (!existing) {
+      merged.set(normalizedCourseCode, item)
+      continue
+    }
+    const existingInfo = toObject(existing.course_info) ?? {}
+    const nextInfo = toObject(item.course_info) ?? {}
+    const mergedInfo: JsonObject = {
+      ...existingInfo,
+      ...nextInfo,
+      course_code: toNonEmptyText(existingInfo.course_code) || toNonEmptyText(nextInfo.course_code) || normalizedCourseCode,
+      course_name: toNonEmptyText(existingInfo.course_name) || toNonEmptyText(nextInfo.course_name) || toNonEmptyText(nextInfo.name) || normalizedCourseCode,
+    }
+    const mergedDeadlines = [...asObjectArray(existing.deadlines), ...asObjectArray(item.deadlines)]
+    const mergedAssessments = [...asObjectArray(existing.assessments), ...asObjectArray(item.assessments)]
+    merged.set(normalizedCourseCode, {
+      ...existing,
+      ...item,
+      course_info: mergedInfo,
+      deadlines: mergedDeadlines.length > 0 ? mergedDeadlines : existing.deadlines ?? item.deadlines ?? [],
+      assessments: mergedAssessments.length > 0 ? mergedAssessments : existing.assessments ?? item.assessments ?? [],
+      grading_policy: item.grading_policy ?? existing.grading_policy ?? null,
+    })
+  }
+  return Array.from(merged.values())
+}
+
 const toObject = (value: unknown): JsonObject | null => {
   if (value && typeof value === 'object' && !Array.isArray(value)) return value as JsonObject
   return null
@@ -43,40 +101,92 @@ const parseJsonSafe = (value: unknown): JsonValue | null => {
   }
 }
 
-const normalizeCourses = (jsonData: unknown, fallbackCourseCode?: string | null): JsonObject[] => {
+const normalizeCourses = (jsonData: unknown, fallbackCourseCode?: string | null): NormalizeCoursesResult => {
   const parsed =
     typeof jsonData === 'string'
       ? parseJsonSafe(jsonData)
       : (jsonData as JsonValue | null)
-  if (!parsed) return []
+  if (!parsed) {
+    return {
+      courses: [],
+      parseError: typeof jsonData === 'string' ? 'jsonData is not valid JSON string.' : 'jsonData is empty or invalid.',
+      source: 'none',
+      invalidCourseIndexes: [],
+    }
+  }
   if (Array.isArray(parsed)) {
-    return parsed.filter(item => !!toObject(item)) as JsonObject[]
+    const invalidCourseIndexes: number[] = []
+    const courses = parsed
+      .map((item, index) => {
+        const asObject = toObject(item)
+        if (!asObject) invalidCourseIndexes.push(index)
+        return asObject
+      })
+      .filter((item): item is JsonObject => !!item)
+    return {
+      courses,
+      parseError: null,
+      source: 'array',
+      invalidCourseIndexes,
+    }
   }
 
   const payload = toObject(parsed)
-  if (!payload) return []
+  if (!payload) {
+    return {
+      courses: [],
+      parseError: 'jsonData root must be an object or an array.',
+      source: 'none',
+      invalidCourseIndexes: [],
+    }
+  }
 
+  const invalidCourseIndexes: number[] = []
   const directCourses = Array.isArray(payload.courses)
-    ? payload.courses.filter(item => !!toObject(item)).map(item => item as JsonObject)
+    ? payload.courses
+      .map((item, index) => {
+        const asObject = toObject(item)
+        if (!asObject) invalidCourseIndexes.push(index)
+        return asObject
+      })
+      .filter((item): item is JsonObject => !!item)
     : []
-  if (directCourses.length > 0) return directCourses
+  if (directCourses.length > 0) {
+    const meaningful = directCourses.filter(hasMeaningfulCourseContent)
+    return {
+      courses: mergeCoursesByCode(meaningful, fallbackCourseCode),
+      parseError: null,
+      source: 'courses',
+      invalidCourseIndexes,
+    }
+  }
 
   const directAssessments = Array.isArray(payload.assessments)
     ? payload.assessments.filter(item => !!toObject(item)).map(item => item as JsonObject)
     : []
   if (directAssessments.length > 0) {
-    return [
-      {
-        course_info: {
-          course_code: fallbackCourseCode || 'UNKNOWN',
-          course_name: fallbackCourseCode || 'UNKNOWN',
+    return {
+      courses: [
+        {
+          course_info: {
+            course_code: fallbackCourseCode || 'UNKNOWN',
+            course_name: fallbackCourseCode || 'UNKNOWN',
+          },
+          assessments: directAssessments,
+          grading_policy: payload.grading_policy ?? null,
         },
-        assessments: directAssessments,
-        grading_policy: payload.grading_policy ?? null,
-      },
-    ]
+      ],
+      parseError: null,
+      source: 'assessments',
+      invalidCourseIndexes: [],
+    }
   }
-  return []
+  return {
+    courses: [],
+    parseError: '`jsonData` must contain `courses` or `assessments` array.',
+    source: 'none',
+    invalidCourseIndexes,
+  }
 }
 
 const asPolicyText = (value: unknown) => {
@@ -187,6 +297,15 @@ const normalizeCourseCode = (courseInfo: JsonObject, fallback: string | null) =>
   return value ? value.trim() : 'UNKNOWN'
 }
 
+const stableHash = (...parts: (string | number | null | undefined)[]) =>
+  createHash('sha1')
+    .update(parts.map(part => (part == null ? '' : String(part))).join('::'))
+    .digest('hex')
+    .slice(0, 24)
+
+const makeStableId = (prefix: string, ...parts: (string | number | null | undefined)[]) =>
+  `${prefix}_${stableHash(...parts)}`
+
 // 辅助函数：为响应添加 CORS 头
 function addCorsHeaders(response: NextResponse, origin?: string | null) {
   response.headers.set('Access-Control-Allow-Origin', origin || '*');
@@ -253,6 +372,49 @@ export async function POST(request: Request) {
 
     console.log("📥 后端收到文档处理结果，准备存储到数据库");
 
+    const normalized = normalizeCourses(jsonData, courseCode || null)
+    const courses = normalized.courses
+    console.log('[document/save] normalized payload', {
+      source: normalized.source,
+      rawType: typeof jsonData,
+      coursesCount: courses.length,
+      invalidCourseIndexes: normalized.invalidCourseIndexes,
+      parseError: normalized.parseError,
+    })
+    if (normalized.parseError) {
+      return addCorsHeaders(
+        NextResponse.json(
+          {
+            error: normalized.parseError,
+            detail: {
+              source: normalized.source,
+              invalidCourseIndexes: normalized.invalidCourseIndexes,
+            },
+          },
+          { status: 422 }
+        ),
+        origin
+      );
+    }
+    if (courses.length === 0) {
+      return addCorsHeaders(
+        NextResponse.json(
+          {
+            error: 'No valid academic courses found in jsonData.',
+            detail: {
+              source: normalized.source,
+              invalidCourseIndexes: normalized.invalidCourseIndexes,
+            },
+          },
+          { status: 422 }
+        ),
+        origin
+      );
+    }
+
+    // Duplicates are merged in normalizeCourses to avoid false 409 failures
+    // when payload contains placeholder/empty courses.
+
     const result = await prisma.$transaction(async (tx) => {
       const processingResult = await tx.processingResult.create({
         data: {
@@ -271,12 +433,14 @@ export async function POST(request: Request) {
         },
       });
 
-      const courses = normalizeCourses(jsonData, courseCode || null)
       for (const [index, item] of courses.entries()) {
         const courseInfo = toObject(item.course_info) ?? {}
         const normalizedCourseCode = normalizeCourseCode(courseInfo, courseCode || null)
-        const courseId = `course-${userId}-${normalizedCourseCode}`
-        const policyId = `policy-${userId}-${normalizedCourseCode}`
+        if (normalizedCourseCode.length > 191) {
+          throw new Error(`course_code exceeds varchar(191): ${normalizedCourseCode.slice(0, 48)}...`)
+        }
+        const courseId = makeStableId('course', userId, normalizedCourseCode)
+        const policyId = makeStableId('policy', userId, normalizedCourseCode)
         const courseName =
           typeof courseInfo.course_name === 'string' && courseInfo.course_name.trim()
             ? courseInfo.course_name.trim()
@@ -344,7 +508,7 @@ export async function POST(request: Request) {
             `INSERT INTO course_policy_rules
               (id, policy_id, rule_type, threshold_value, penalty_percent, time_unit, raw_quote, rule_order, created_at)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-            `rule-${policyId}-${rule.ruleOrder}`,
+            makeStableId('rule', policyId, rule.ruleOrder),
             policyId,
             rule.ruleType,
             rule.thresholdValue,
@@ -359,7 +523,7 @@ export async function POST(request: Request) {
           `INSERT INTO ingestion_snapshots
             (id, user_id, course_code, course_id, processing_result_id, source_type, raw_json, report_text, parsed_policy_json, created_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-          `snapshot-${processingResult.id}-${normalizedCourseCode}-${index}`,
+          makeStableId('snapshot', processingResult.id, normalizedCourseCode, index),
           userId,
           normalizedCourseCode,
           courseId,

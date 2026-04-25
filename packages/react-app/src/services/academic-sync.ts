@@ -23,6 +23,19 @@ interface ParsedPayload {
 	parsed: JsonObject | JsonObject[]
 }
 
+export interface AcademicPayloadExtractionResult {
+	payload: ParsedPayload | null
+	errorCode:
+		| 'EMPTY_TEXT'
+		| 'NO_JSON_BLOCK'
+		| 'JSON_PARSE_FAILED'
+		| 'INVALID_ACADEMIC_SHAPE'
+		| 'NORMALIZATION_FAILED'
+		| null
+	errorMessage: string | null
+	source: 'anchors' | 'hints' | null
+}
+
 interface AcademicSnapshotItem {
 	rawData: string | JsonObject | JsonObject[]
 	courseCode: string | null
@@ -206,6 +219,63 @@ const extractBalanced = (text: string, start: number) => {
 	return null
 }
 
+const extractBalancedLoose = (text: string, start: number) => {
+	const open = text[start]
+	const pairMap: Record<string, string> = { '[': ']', '{': '}' }
+	const close = pairMap[open]
+	if (!close) return null
+	let depth = 1
+	for (let i = start + 1; i < text.length; i++) {
+		const current = text[i]
+		if (current === open) depth++
+		if (current === close) depth--
+		if (depth === 0) {
+			return text.slice(start, i + 1)
+		}
+	}
+	return null
+}
+
+const repairUnescapedQuotes = (text: string) => {
+	let output = ''
+	let inString = false
+	let escaped = false
+	for (let i = 0; i < text.length; i++) {
+		const current = text[i]
+		if (!inString) {
+			if (current === '"') inString = true
+			output += current
+			continue
+		}
+		if (escaped) {
+			output += current
+			escaped = false
+			continue
+		}
+		if (current === '\\') {
+			output += current
+			escaped = true
+			continue
+		}
+		if (current === '"') {
+			let j = i + 1
+			while (j < text.length && /\s/.test(text[j])) j++
+			const next = text[j] || ''
+			// For valid JSON strings, a closing quote is followed by , } ] or :.
+			// Anything else is likely an unescaped inner quote from LLM output.
+			if (next && ![',', '}', ']', ':'].includes(next)) {
+				output += '\\"'
+				continue
+			}
+			inString = false
+			output += current
+			continue
+		}
+		output += current
+	}
+	return output
+}
+
 const parseLooseJson = (rawText: string): JsonObject | JsonObject[] | null => {
 	const cleaned = rawText.replace(/```json|```/g, '').trim()
 	if (!cleaned) return null
@@ -217,9 +287,50 @@ const parseLooseJson = (rawText: string): JsonObject | JsonObject[] | null => {
 		try {
 			return JSON.parse(noTrailingComma)
 		} catch {
-			return null
+			const repairedQuotes = repairUnescapedQuotes(noTrailingComma)
+			try {
+				return JSON.parse(repairedQuotes)
+			} catch {
+				return null
+			}
 		}
 	}
+}
+
+const validateAcademicShape = (parsed: JsonObject | JsonObject[]) => {
+	const payload = Array.isArray(parsed) ? ({ assessments: parsed } as JsonObject) : parsed
+	const hasCourses = Object.prototype.hasOwnProperty.call(payload, 'courses')
+	const hasAssessments = Object.prototype.hasOwnProperty.call(payload, 'assessments')
+	if (!hasCourses && !hasAssessments) {
+		return {
+			ok: false,
+			reason: 'Payload missing both `courses` and `assessments`.',
+		}
+	}
+	if (hasCourses && !Array.isArray(payload.courses)) {
+		return {
+			ok: false,
+			reason: '`courses` must be an array when present.',
+		}
+	}
+	if (Array.isArray(payload.courses)) {
+		const invalidIndex = payload.courses.findIndex(
+			(item: JsonValue) => !(typeof item === 'object' && item !== null && !Array.isArray(item))
+		)
+		if (invalidIndex >= 0) {
+			return {
+				ok: false,
+				reason: `courses[${invalidIndex}] must be an object.`,
+			}
+		}
+	}
+	if (hasAssessments && !Array.isArray(payload.assessments)) {
+		return {
+			ok: false,
+			reason: '`assessments` must be an array when present.',
+		}
+	}
+	return { ok: true, reason: null }
 }
 
 const toObject = (value: JsonValue | undefined): JsonObject | null => {
@@ -241,16 +352,20 @@ const parseWeightValue = (value: JsonValue | undefined) => {
 
 const parseCourseArray = (value: JsonValue | undefined): JsonObject[] => {
 	if (Array.isArray(value)) {
-		return value.filter((item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item))
+		return value.filter(
+			(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+		)
 	}
 	if (typeof value === 'string') {
 		const parsed = parseLooseJson(value)
 		if (Array.isArray(parsed)) {
-			return parsed.filter((item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item))
+			return parsed.filter(
+				(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+			)
 		}
 		if (parsed && Array.isArray(parsed.courses)) {
 			return parsed.courses.filter(
-				(item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+				(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
 			)
 		}
 	}
@@ -369,7 +484,7 @@ export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): Par
 
 	const directAssessments = Array.isArray(rootPayload.assessments)
 		? rootPayload.assessments.filter(
-				(item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+				(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
 		  )
 		: []
 
@@ -377,7 +492,7 @@ export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): Par
 		const rootCourseInfo = toObject(rootPayload.course_info) ?? {}
 		const courseName = pickFirstText(rootCourseInfo.course_name, rootCourseInfo.name, rootCourseInfo.course_code) || DEFAULT_COURSE
 		const courseCode = pickFirstText(rootCourseInfo.course_code, rootCourseInfo.course_name, rootCourseInfo.name) || DEFAULT_COURSE
-		directAssessments.forEach(task => {
+		directAssessments.forEach((task: JsonObject) => {
 			rows.push({ task, courseCode, courseName })
 		})
 	}
@@ -390,16 +505,16 @@ export const normalizeAcademicPayload = (parsed: JsonObject | JsonObject[]): Par
 			const courseCode = pickFirstText(courseInfo.course_code, courseInfo.course_name, courseInfo.name) || DEFAULT_COURSE
 			const deadlines = Array.isArray(courseItem.deadlines)
 				? courseItem.deadlines.filter(
-						(item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+						(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
 				  )
 				: []
 			const legacyAssessments = Array.isArray(courseItem.assessments)
 				? courseItem.assessments.filter(
-						(item): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
+						(item: JsonValue): item is JsonObject => typeof item === 'object' && item !== null && !Array.isArray(item)
 				  )
 				: []
 			const taskList = deadlines.length > 0 ? deadlines : legacyAssessments
-			taskList.forEach(task => {
+			taskList.forEach((task: JsonObject) => {
 				rows.push({ task, courseCode, courseName })
 			})
 		})
@@ -472,7 +587,7 @@ const extractPayloadFromAnchors = (text: string): { normalized: ParsedPayload; j
 			if (p === -1) break
 			for (let j = p; j >= 0; j--) {
 				if (text[j] !== '{') continue
-				const rawJson = extractBalanced(text, j)
+				const rawJson = extractBalanced(text, j) ?? extractBalancedLoose(text, j)
 				if (!rawJson) continue
 				const parsed = parseLooseJson(rawJson)
 				if (!parsed) continue
@@ -489,8 +604,45 @@ const extractPayloadFromAnchors = (text: string): { normalized: ParsedPayload; j
 	return best
 }
 
-export const extractAcademicPayloadFromText = (text: string): ParsedPayload | null => {
-	if (!text) return null
+const extractPayloadFromHints = (text: string): { normalized: ParsedPayload; jsonStart: number; rawJson: string } | null => {
+	const hints = ['"courses"', 'courses', '"assessments"', 'assessments', '"deadlines"', 'deadlines'] as const
+	let best: { normalized: ParsedPayload; jsonStart: number; rawJson: string } | null = null
+
+	for (const hint of hints) {
+		let from = 0
+		while (true) {
+			const p = text.indexOf(hint, from)
+			if (p === -1) break
+			for (let j = p; j >= 0; j--) {
+				if (text[j] !== '{') continue
+				const rawJson = extractBalanced(text, j) ?? extractBalancedLoose(text, j)
+				if (!rawJson) continue
+				const parsed = parseLooseJson(rawJson)
+				if (!parsed) continue
+				const shape = validateAcademicShape(parsed)
+				if (!shape.ok) continue
+				const normalized = normalizeAcademicPayload(parsed)
+				if (!normalized || normalized.rows.length === 0) continue
+				if (!best || rawJson.length > best.rawJson.length) {
+					best = { normalized, jsonStart: j, rawJson }
+				}
+			}
+			from = p + hint.length
+		}
+	}
+
+	return best
+}
+
+export const extractAcademicPayloadFromTextResult = (text: string): AcademicPayloadExtractionResult => {
+	if (!text) {
+		return {
+			payload: null,
+			errorCode: 'EMPTY_TEXT',
+			errorMessage: 'Input text is empty.',
+			source: null,
+		}
+	}
 
 	const fromAnchors = extractPayloadFromAnchors(text)
 	if (fromAnchors) {
@@ -499,26 +651,103 @@ export const extractAcademicPayloadFromText = (text: string): ParsedPayload | nu
 			const tail = text.slice(fromAnchors.jsonStart + fromAnchors.rawJson.length).trim()
 			if (tail.length > 40) advice = tail
 		}
-		if (advice !== fromAnchors.normalized.advice) {
-			return { ...fromAnchors.normalized, advice }
+		const payload = advice !== fromAnchors.normalized.advice ? { ...fromAnchors.normalized, advice } : fromAnchors.normalized
+		return {
+			payload,
+			errorCode: null,
+			errorMessage: null,
+			source: 'anchors',
 		}
-		return fromAnchors.normalized
 	}
 
-	const jsonRegex =
-		/(\{[\s\S]*?("courses"|"assessments"|"deadlines"|"due_date_raw"|"due_date")[\s\S]*?\}|\[[\s\S]*?("due_date_raw"|"due_date")[\s\S]*?\])/
-	const result = jsonRegex.exec(text)
-	if (!result) return null
+	const fromHints = extractPayloadFromHints(text)
+	if (fromHints) {
+		let advice = fromHints.normalized.advice
+		if (!advice) {
+			const tail = text.slice(fromHints.jsonStart + fromHints.rawJson.length).trim()
+			if (tail.length > 40) advice = tail
+		}
+		const payload = advice !== fromHints.normalized.advice ? { ...fromHints.normalized, advice } : fromHints.normalized
+		return {
+			payload,
+			errorCode: null,
+			errorMessage: null,
+			source: 'hints',
+		}
+	}
 
-	const start = result.index ?? 0
-	const arrayPos = text.indexOf('[', start)
-	const objectPos = text.indexOf('{', start)
-	const startPos =
-		arrayPos !== -1 && objectPos !== -1 ? Math.min(arrayPos, objectPos) : Math.max(arrayPos, objectPos)
-	const rawCandidate = startPos >= 0 ? extractBalanced(text, startPos) : result[0]
-	const parsed = parseLooseJson(rawCandidate ?? result[0])
-	if (!parsed) return null
-	return normalizeAcademicPayload(parsed)
+	const coarseHint = /("courses"|"assessments"|"deadlines"|courses|assessments|deadlines)/.test(text)
+	if (!coarseHint) {
+		return {
+			payload: null,
+			errorCode: 'NO_JSON_BLOCK',
+			errorMessage: 'No academic JSON block found in text.',
+			source: null,
+		}
+	}
+
+	const firstBrace = text.indexOf('{')
+	if (firstBrace === -1) {
+		return {
+			payload: null,
+			errorCode: 'NO_JSON_BLOCK',
+			errorMessage: 'Academic keywords found but no JSON object start found.',
+			source: null,
+		}
+	}
+	const rawCandidate = extractBalanced(text, firstBrace) ?? extractBalancedLoose(text, firstBrace)
+	if (!rawCandidate) {
+		return {
+			payload: null,
+			errorCode: 'NO_JSON_BLOCK',
+			errorMessage: 'JSON object appears incomplete (unbalanced braces).',
+			source: null,
+		}
+	}
+	const parsed = parseLooseJson(rawCandidate)
+	if (!parsed) {
+		return {
+			payload: null,
+			errorCode: 'JSON_PARSE_FAILED',
+			errorMessage: 'Failed to parse candidate JSON. Check quote escaping/newlines in string values.',
+			source: null,
+		}
+	}
+	const shape = validateAcademicShape(parsed)
+	if (!shape.ok) {
+		return {
+			payload: null,
+			errorCode: 'INVALID_ACADEMIC_SHAPE',
+			errorMessage: shape.reason,
+			source: null,
+		}
+	}
+	const normalized = normalizeAcademicPayload(parsed)
+	if (!normalized) {
+		return {
+			payload: null,
+			errorCode: 'NORMALIZATION_FAILED',
+			errorMessage: 'Academic payload parsed but no valid rows could be normalized.',
+			source: null,
+		}
+	}
+	return {
+		payload: normalized,
+		errorCode: null,
+		errorMessage: null,
+		source: null,
+	}
+}
+
+export const extractAcademicPayloadFromText = (text: string): ParsedPayload | null => {
+	const result = extractAcademicPayloadFromTextResult(text)
+	if (!result.payload && result.errorMessage) {
+		console.warn('[academic-sync] extract payload failed', {
+			errorCode: result.errorCode,
+			errorMessage: result.errorMessage,
+		})
+	}
+	return result.payload
 }
 
 export const mapTaskToEvent = (

@@ -169,8 +169,11 @@ export class CustomProvider<
 			const outputs = (data as { outputs?: unknown }).outputs
 			if (!outputs || typeof outputs !== 'object') return ''
 			const values = Object.values(outputs as Record<string, unknown>)
-			const firstString = values.find(value => typeof value === 'string' && value.trim())
-			if (typeof firstString === 'string') return firstString
+			const stringValues = values
+				.filter((value): value is string => typeof value === 'string' && value.trim())
+				.map(value => value.trim())
+			if (stringValues.length === 1) return stringValues[0]
+			if (stringValues.length > 1) return stringValues.join('\n\n')
 			try {
 				return JSON.stringify(outputs, null, 2)
 			} catch {

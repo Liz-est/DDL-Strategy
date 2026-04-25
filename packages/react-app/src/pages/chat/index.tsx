@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/use-auth'
 import ChatLayoutWrapper from '@/layout/chat-layout-wrapper'
 import {
 	buildCoursePlans,
-	extractAcademicPayloadFromText,
+	extractAcademicPayloadFromTextResult,
 	loadAcademicSnapshots,
 	mapTaskToEvent,
 	mergeUniqueEvents,
@@ -107,6 +107,7 @@ export default function ChatPage() {
 	const choresDirtyRef = useRef(false)
 	const seenImportFingerprintsRef = useRef<Set<string>>(new Set())
 	const duplicateNoticeShownFingerprintsRef = useRef<Set<string>>(new Set())
+	const lastExtractionErrorRef = useRef<string>('')
 
 	const getDefaultTimeRange = (allDay = false): [string, string] => {
 		if (allDay) {
@@ -260,58 +261,94 @@ export default function ChatPage() {
 		const observer = new MutationObserver(() => {
 			if (observeTimerRef.current) clearTimeout(observeTimerRef.current)
 			observeTimerRef.current = setTimeout(() => {
-				const content = document.body?.innerText || ''
-				const payload = extractAcademicPayloadFromText(content)
-				if (!payload) return
-
-				const fingerprint = makeAiImportFingerprint({
-					courseCode: payload.courseCode,
-					parsed: payload.parsed,
-					rowCount: payload.rows.length,
-				})
-				if (fingerprint === lastPayloadFingerprint.current) return
-				if (seenImportFingerprintsRef.current.has(fingerprint)) {
-					if (!duplicateNoticeShownFingerprintsRef.current.has(fingerprint)) {
-						message.info('Detected duplicate AI output; skipped re-import.')
-						duplicateNoticeShownFingerprintsRef.current.add(fingerprint)
+				void (async () => {
+					const content = document.body?.innerText || ''
+					const extraction = extractAcademicPayloadFromTextResult(content)
+					if (!extraction.payload) {
+						const hasAcademicHint = /("courses"|"assessments"|"deadlines"|courses|assessments|deadlines)/.test(content)
+						if (hasAcademicHint && extraction.errorMessage) {
+							const nextError = `${extraction.errorCode || 'UNKNOWN'}::${extraction.errorMessage}`
+							if (nextError !== lastExtractionErrorRef.current) {
+								lastExtractionErrorRef.current = nextError
+								console.warn('[chat] academic payload extraction failed', {
+									errorCode: extraction.errorCode,
+									errorMessage: extraction.errorMessage,
+								})
+								message.warning('Detected AI output but failed to parse valid academic JSON. Please check quote escaping/JSON format.')
+							}
+						}
+						return
 					}
-					return
-				}
-				lastPayloadFingerprint.current = fingerprint
-				seenImportFingerprintsRef.current.add(fingerprint)
-				const key = userId ? `${AI_IMPORT_FINGERPRINTS_KEY}:${userId}` : `${AI_IMPORT_FINGERPRINTS_KEY}:guest`
-				const list = Array.from(seenImportFingerprintsRef.current).slice(-MAX_IMPORT_FINGERPRINTS)
-				seenImportFingerprintsRef.current = new Set(list)
-				localStorage.setItem(key, JSON.stringify(list))
+					lastExtractionErrorRef.current = ''
+					const payload = extraction.payload
 
-				const newEvents = payload.rows.map((row, index) =>
-					mapTaskToEvent(row.task, row.courseCode, index, row.courseName)
-				)
-				const merged = mergeUniqueEvents(useAcademicPlannerStore.getState().events, newEvents)
-				if (merged.length === useAcademicPlannerStore.getState().events.length) return
-
-				setEvents(merged)
-				setCourses(buildCoursePlans(merged, useAcademicPlannerStore.getState().courseDetails))
-				if (userId) {
-					void saveJsonToDatabase({
-						apiBase,
-						userId,
+					const fingerprint = makeAiImportFingerprint({
 						courseCode: payload.courseCode,
-						jsonData: payload.parsed,
-						adviceText: payload.advice,
-						courseSummaryJson: payload.courseSummaryJson,
-						description: `Extracted ${newEvents.length} tasks`,
+						parsed: payload.parsed,
+						rowCount: payload.rows.length,
 					})
-					if (payload.gradingPolicy) {
-						void saveCoursePolicies({
+					if (fingerprint === lastPayloadFingerprint.current) return
+					if (seenImportFingerprintsRef.current.has(fingerprint)) {
+						if (!duplicateNoticeShownFingerprintsRef.current.has(fingerprint)) {
+							message.info('Detected duplicate AI output; skipped re-import.')
+							duplicateNoticeShownFingerprintsRef.current.add(fingerprint)
+						}
+						return
+					}
+					lastPayloadFingerprint.current = fingerprint
+					seenImportFingerprintsRef.current.add(fingerprint)
+					const key = userId ? `${AI_IMPORT_FINGERPRINTS_KEY}:${userId}` : `${AI_IMPORT_FINGERPRINTS_KEY}:guest`
+					const list = Array.from(seenImportFingerprintsRef.current).slice(-MAX_IMPORT_FINGERPRINTS)
+					seenImportFingerprintsRef.current = new Set(list)
+					localStorage.setItem(key, JSON.stringify(list))
+
+					const newEvents = payload.rows.map((row, index) =>
+						mapTaskToEvent(row.task, row.courseCode, index, row.courseName)
+					)
+					const merged = mergeUniqueEvents(useAcademicPlannerStore.getState().events, newEvents)
+					if (merged.length === useAcademicPlannerStore.getState().events.length) return
+
+					const distinctCourseCodes = Array.from(new Set(payload.rows.map(row => row.courseCode))).filter(Boolean)
+					console.info('[chat] academic payload accepted', {
+						source: extraction.source,
+						rows: payload.rows.length,
+						courses: distinctCourseCodes.length,
+						courseCodes: distinctCourseCodes,
+					})
+
+					setEvents(merged)
+					setCourses(buildCoursePlans(merged, useAcademicPlannerStore.getState().courseDetails))
+					if (!userId) {
+						message.success(`Imported ${newEvents.length} tasks from AI result`)
+						return
+					}
+
+					try {
+						await saveJsonToDatabase({
 							apiBase,
 							userId,
 							courseCode: payload.courseCode,
-							gradingPolicy: payload.gradingPolicy,
+							jsonData: payload.parsed,
+							adviceText: payload.advice,
+							courseSummaryJson: payload.courseSummaryJson,
+							description: `Extracted ${newEvents.length} tasks`,
 						})
+						if (payload.gradingPolicy) {
+							await saveCoursePolicies({
+								apiBase,
+								userId,
+								courseCode: payload.courseCode,
+								gradingPolicy: payload.gradingPolicy,
+							})
+						}
+						message.success(`Imported ${newEvents.length} tasks and synced to database`)
+					} catch (error) {
+						console.error('[chat] imported tasks but failed to persist database records', error)
+						message.warning(
+							`Imported ${newEvents.length} tasks locally, but database sync failed: ${(error as Error).message}`
+						)
 					}
-				}
-				message.success(`Imported ${newEvents.length} tasks from AI result`)
+				})()
 			}, 900)
 		})
 

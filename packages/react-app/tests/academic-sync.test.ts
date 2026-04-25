@@ -5,6 +5,7 @@ import {
 	createApiUrl,
 	deleteCourseBundle,
 	extractAcademicPayloadFromText,
+	extractAcademicPayloadFromTextResult,
 	isCourseCodeDeletable,
 	loadAcademicSnapshots,
 	mapChoreRowToEvent,
@@ -88,6 +89,109 @@ describe('academic-sync utilities', () => {
 		const payload = extractAcademicPayloadFromText(noisy)
 		expect(payload?.rows).toHaveLength(2)
 		expect(payload?.advice?.includes('Semester Preparation Report')).toBe(true)
+	})
+
+	test('extractAcademicPayloadFromText should parse four-course payload without truncation', () => {
+		const text = JSON.stringify({
+			courses: [
+				{
+					course_info: { course_code: 'MATH2002', course_name: 'Calculus II (B)' },
+					deadlines: [
+						{ title: 'Midterm', due_date: '2026-03-21', task_type_standardized: 'Exam' },
+						{ title: 'Final', due_date: '2026-05-15', task_type_standardized: 'Exam' },
+					],
+				},
+				{
+					course_info: { course_code: 'MAT3007H', course_name: 'Honours Optimization' },
+					deadlines: [{ title: 'Assignments', due_date: '2026-02-06', task_type_standardized: 'Homework' }],
+				},
+				{
+					course_info: { course_code: 'AIE1902', course_name: 'AI Exploration II' },
+					deadlines: [{ title: 'Final project', due_date: '2026-04-22', task_type_standardized: 'Project' }],
+				},
+				{
+					course_info: { course_code: 'FIN2010', course_name: 'FIN2010' },
+					deadlines: [{ title: 'Final Exam', due_date: '2026-05-09', task_type_standardized: 'Exam' }],
+				},
+			],
+		})
+		const payload = extractAcademicPayloadFromText(text)
+		expect(payload).not.toBeNull()
+		expect(payload?.rows).toHaveLength(5)
+		expect(new Set(payload?.rows.map(item => item.courseCode))).toEqual(
+			new Set(['MATH2002', 'MAT3007H', 'AIE1902', 'FIN2010'])
+		)
+	})
+
+	test('extractAcademicPayloadFromText should parse six-course payload from noisy mixed text', () => {
+		const rawJson = JSON.stringify({
+			courses: Array.from({ length: 6 }).map((_, index) => ({
+				course_info: { course_code: `COURSE${index + 1}`, course_name: `Course ${index + 1}` },
+				deadlines: [{ title: `Task ${index + 1}`, due_date: `2026-04-${10 + index}`, task_type_standardized: 'Task' }],
+			})),
+			advice: 'Review each week',
+		})
+		const mixedText = `header noise\n{ invalid: true }\n${rawJson}\nfooter report text`
+		const payload = extractAcademicPayloadFromText(mixedText)
+		expect(payload).not.toBeNull()
+		expect(payload?.rows).toHaveLength(6)
+		expect(payload?.advice).toContain('Review each week')
+	})
+
+	test('extractAcademicPayloadFromTextResult should return parse diagnostics for malformed JSON', () => {
+		const malformed = `{
+  "courses": [
+    {
+      "course_info": {
+        "course_name": "Calculus II",
+        "grading_policy": "Missing midterm will result in "0" grade."
+      },
+      "deadlines": []
+    }
+  ]
+}`
+		const result = extractAcademicPayloadFromTextResult(malformed)
+		expect(result.payload).toBeNull()
+		expect(['JSON_PARSE_FAILED', 'NORMALIZATION_FAILED']).toContain(result.errorCode)
+		expect(result.errorMessage).toBeTruthy()
+	})
+
+	test('extractAcademicPayloadFromText should recover from unescaped quotes in description', () => {
+		const text = `{
+  "courses": [
+    {
+      "course_info": {
+        "course_name": "AI Exploration II"
+      },
+      "deadlines": [
+        {
+          "title": "Final Project Report and Presentation",
+          "type": "Project",
+          "due_date": "2026-05-17",
+          "description": "Note: syllabus states "No Final exam" but includes a final project."
+        }
+      ]
+    },
+    {
+      "course_info": {
+        "course_name": "Honours Optimization"
+      },
+      "deadlines": [
+        {
+          "title": "Final exam",
+          "type": "Exam",
+          "due_date": "2026-04-30"
+        }
+      ]
+    }
+  ]
+}`
+		const payload = extractAcademicPayloadFromText(text)
+		expect(payload).not.toBeNull()
+		expect(payload?.rows).toHaveLength(2)
+		expect(new Set(payload?.rows.map(item => item.courseCode))).toEqual(
+			new Set(['AI Exploration II', 'Honours Optimization'])
+		)
 	})
 
 	test('normalizeAcademicPayload should parse courses JSON string payload', () => {

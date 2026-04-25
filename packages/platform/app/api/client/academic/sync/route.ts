@@ -64,6 +64,13 @@ const normalizeTaskId = (value: unknown) => {
   return raw.slice(0, 180);
 };
 
+const truncateText = (value: unknown, max = 191) => {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return trimmed.slice(0, max);
+}
+
 // 2. 处理 POST 核心请求
 export async function POST(request: Request) {
   const origin = request.headers.get('origin');
@@ -71,7 +78,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { userId, courseCode, tasks } = body;
-    const normalizedCourseCode = typeof courseCode === 'string' && courseCode.trim() ? courseCode.trim() : 'GENERAL';
+    const normalizedCourseCode = typeof courseCode === 'string' && courseCode.trim() ? courseCode.trim().slice(0, 191) : 'GENERAL';
 
     if (!userId || !Array.isArray(tasks)) {
       return addCorsHeaders(
@@ -84,14 +91,14 @@ export async function POST(request: Request) {
       .filter((task: any) => task && typeof task.title === 'string' && task.title.trim())
       .map((task: any) => ({
         id: normalizeTaskId(task.id),
-        title: task.title.trim(),
+        title: truncateText(task.title) || 'Untitled',
         startAt: toValidDateOrNull(task.startAt),
         endAt: toValidDateOrNull(task.endAt),
         allDay: typeof task.allDay === 'boolean' ? task.allDay : true,
         dueDate: toDueDateStringOrNull(task.dueDate),
         weight: typeof task.weight === 'number' ? task.weight : Number(task.weight) || 0,
-        type: task.type || 'Task',
-        courseName: task.courseName || null,
+        type: truncateText(task.type) || 'Task',
+        courseName: truncateText(task.courseName),
         detail: task.detail || null,
         sourceQuote: task.sourceQuote || null,
         pageNumbersJson: task.pageNumbers ? JSON.stringify(task.pageNumbers) : null,
@@ -99,62 +106,65 @@ export async function POST(request: Request) {
         rationale: task.rationale || null,
       }))
       .filter((task: any) => task.id);
+    const dedupedById = new Map<string, (typeof normalizedTasks)[number]>();
+    normalizedTasks.forEach(task => {
+      dedupedById.set(task.id, task);
+    });
+    const uniqueTasks = Array.from(dedupedById.values());
 
     let upsertCount = 0;
     let deletedCount = 0;
 
     await prisma.$transaction(async tx => {
-      if (normalizedTasks.length > 0) {
-        await Promise.all(
-          normalizedTasks.map(task =>
-            tx.$executeRawUnsafe(
-              `INSERT INTO academic_tasks (id, user_id, title, start_at, end_at, is_all_day, due_date, weight, type, course_code, course_name, detail, source_quote, page_numbers_json, estimated_hours, rationale) 
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-               ON DUPLICATE KEY UPDATE
-                title = VALUES(title),
-                start_at = VALUES(start_at),
-                end_at = VALUES(end_at),
-                is_all_day = VALUES(is_all_day),
-                due_date = VALUES(due_date),
-                weight = VALUES(weight),
-                type = VALUES(type),
-                course_name = VALUES(course_name),
-                detail = VALUES(detail),
-                source_quote = VALUES(source_quote),
-                page_numbers_json = VALUES(page_numbers_json),
-                estimated_hours = VALUES(estimated_hours),
-                rationale = VALUES(rationale)`,
-              task.id,
-              userId,
-              task.title,
-              task.startAt,
-              task.endAt,
-              task.allDay,
-              task.dueDate,
-              task.weight,
-              task.type,
-              normalizedCourseCode,
-              task.courseName,
-              task.detail,
-              task.sourceQuote,
-              task.pageNumbersJson,
-              task.estimatedHours,
-              task.rationale
-            )
-          )
-        );
+      if (uniqueTasks.length > 0) {
+        for (const task of uniqueTasks) {
+          await tx.$executeRawUnsafe(
+            `INSERT INTO academic_tasks (id, user_id, title, start_at, end_at, is_all_day, due_date, weight, type, course_code, course_name, detail, source_quote, page_numbers_json, estimated_hours, rationale) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE
+              title = VALUES(title),
+              start_at = VALUES(start_at),
+              end_at = VALUES(end_at),
+              is_all_day = VALUES(is_all_day),
+              due_date = VALUES(due_date),
+              weight = VALUES(weight),
+              type = VALUES(type),
+              course_name = VALUES(course_name),
+              detail = VALUES(detail),
+              source_quote = VALUES(source_quote),
+              page_numbers_json = VALUES(page_numbers_json),
+              estimated_hours = VALUES(estimated_hours),
+              rationale = VALUES(rationale)`,
+            task.id,
+            userId,
+            task.title,
+            task.startAt,
+            task.endAt,
+            task.allDay,
+            task.dueDate,
+            task.weight,
+            task.type,
+            normalizedCourseCode,
+            task.courseName,
+            task.detail,
+            task.sourceQuote,
+            task.pageNumbersJson,
+            task.estimatedHours,
+            task.rationale
+          );
+        }
       }
-      upsertCount = normalizedTasks.length;
+      upsertCount = uniqueTasks.length;
 
-      if (normalizedTasks.length === 0) {
+      if (uniqueTasks.length === 0) {
         deletedCount = await tx.$executeRawUnsafe(
           `DELETE FROM academic_tasks WHERE user_id = ? AND course_code = ?`,
           userId,
           normalizedCourseCode
         );
       } else {
-        const placeholders = normalizedTasks.map(() => '?').join(', ');
-        const ids = normalizedTasks.map(item => item.id);
+        const placeholders = uniqueTasks.map(() => '?').join(', ');
+        const ids = uniqueTasks.map(item => item.id);
         deletedCount = await tx.$executeRawUnsafe(
           `DELETE FROM academic_tasks WHERE user_id = ? AND course_code = ? AND id NOT IN (${placeholders})`,
           userId,

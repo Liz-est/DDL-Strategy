@@ -189,18 +189,21 @@ export default function WorkflowLayout() {
 						} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
 							workflows.status = 'finished'
 							const { outputs, files } = parsedData.data || {}
-							const outputsLength = Object.keys(outputs)?.length
+							const outputRecord =
+								outputs && typeof outputs === 'object' ? (outputs as Record<string, string>) : {}
+							const outputsLength = Object.keys(outputRecord).length
 							if (outputsLength > 0) {
-								setResultDetail(outputs)
+								setResultDetail(outputRecord)
 							}
-							// 如果返回的对象只有一个属性, 则在 "结果" Tab 中渲染其值
-							if (outputsLength === 1) {
-								if (typeof Object.values(outputs)[0] === 'string') {
-									setText(Object.values(outputs)[0] as string)
-								}
-								if (files) {
-									setFiles(files)
-								}
+							const outputStrings = Object.values(outputRecord)
+								.filter((value): value is string => typeof value === 'string' && value.trim())
+								.map(value => value.trim())
+							// 多 key 时也尝试聚合文本，避免有输出但“结果”Tab 空白。
+							if (outputStrings.length > 0) {
+								setText(outputStrings.join('\n\n'))
+							}
+							if (files) {
+								setFiles(files)
 							}
 							setWorkflowStatus('finished')
 						} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
