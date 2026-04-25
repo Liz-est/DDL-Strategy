@@ -21,6 +21,12 @@ import {
 	MessageFileList,
 	WorkflowLogs,
 } from '@/components'
+import { useAuth } from '@/hooks/use-auth'
+import {
+	enrichWorkflowInputsWithSyllabus,
+	executeWithInputFileRetry,
+	prepareInputsForDify,
+} from '@/services/implicit-reupload'
 import { useGlobalStore } from '@/store'
 
 /**
@@ -28,6 +34,7 @@ import { useGlobalStore } from '@/store'
  */
 export default function WorkflowLayout() {
 	const { difyApi } = useGlobalStore()
+	const { userId } = useAuth()
 	const [entryForm] = Form.useForm()
 	const { currentApp } = useAppContext()
 	const [text, setText] = useState('')
@@ -42,23 +49,80 @@ export default function WorkflowLayout() {
 	const appMode = currentApp?.config?.info?.mode
 
 	const handleTriggerWorkflow = async (values: Record<string, unknown>) => {
-		const runner = () => {
-			if (appMode === AppModeEnums.WORKFLOW) {
-				return difyApi!.runWorkflow({
-					inputs: values,
+		if (!difyApi) {
+			throw new Error('Dify API not initialized')
+		}
+		// workflow 仅保留 Syllabus 相关隐式再上传，避免 chatflow 字段污染工作流入参
+		const workflowInputs: Record<string, unknown> = { ...values }
+		if (Object.prototype.hasOwnProperty.call(workflowInputs, 'Calendar')) {
+			delete workflowInputs.Calendar
+		}
+		let enrichedInputs: Record<string, unknown> = workflowInputs
+		try {
+			enrichedInputs = await enrichWorkflowInputsWithSyllabus({
+				inputs: workflowInputs,
+				userId,
+				difyApi,
+			})
+		} catch (enrichError) {
+			console.warn(
+				'[workflow] enrichWorkflowInputsWithSyllabus failed, continue without enrichment',
+				enrichError,
+			)
+			enrichedInputs = workflowInputs
+		}
+		console.log('[workflow] run body', {
+			inputKeys: Object.keys(enrichedInputs || {}),
+			hasSyllabus: Object.prototype.hasOwnProperty.call(enrichedInputs || {}, 'Syllabus'),
+		})
+		const requestWithInputs = async (nextInputs: Record<string, unknown>) => {
+			let serializableInputs: Record<string, unknown> = nextInputs
+			try {
+				serializableInputs = await prepareInputsForDify({
+					inputs: nextInputs,
+					targetKeys: ['Syllabus'],
+					difyApi,
+					forceLocalFile: true,
 				})
-			} else if (appMode === AppModeEnums.TEXT_GENERATOR) {
-				return difyApi!.completion({
-					inputs: values,
+			} catch (prepareError) {
+				console.warn(
+					'[workflow] prepareInputsForDify failed, fallback to raw inputs without Syllabus',
+					prepareError,
+				)
+				const cloned = { ...nextInputs }
+				delete cloned.Syllabus
+				serializableInputs = cloned
+			}
+			if (appMode === AppModeEnums.WORKFLOW) {
+				return difyApi.runWorkflow({
+					inputs: serializableInputs,
 				})
 			}
-			return Promise.reject(`不支持的应用类型: ${appMode}`)
+			if (appMode === AppModeEnums.TEXT_GENERATOR) {
+				return difyApi.completion({
+					inputs: serializableInputs,
+				})
+			}
+			return Promise.reject(new Error(`不支持的应用类型: ${appMode}`))
 		}
 
-		runner()
+		executeWithInputFileRetry({
+			inputs: enrichedInputs,
+			difyApi,
+			request: requestWithInputs,
+			targetKeys: ['Syllabus'],
+		})
+			.then(({ response }) => response)
 			.then(async res => {
+				if (!res.ok) {
+					const errorText = await res.text()
+					throw new Error(errorText || 'workflow request failed')
+				}
+				if (!res.body) {
+					throw new Error('workflow response stream is empty')
+				}
 				const readableStream = XStream({
-					readableStream: res.body as NonNullable<ReadableStream>,
+					readableStream: res.body,
 				})
 				const reader = readableStream.getReader()
 				let result = ''

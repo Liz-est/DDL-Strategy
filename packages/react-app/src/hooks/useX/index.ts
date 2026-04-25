@@ -7,6 +7,12 @@ import { FormInstance } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import { RESPONSE_MODE } from '@/config'
+import {
+	enrichChatflowInputsWithSyllabus,
+	executeWithInputFileRetry,
+	mergeConversationAndFormInputs,
+	prepareInputsForDify,
+} from '@/services/implicit-reupload'
 import { IAgentMessage } from '@/types'
 import { DifyApi } from '@/utils/dify-api'
 
@@ -18,6 +24,7 @@ interface IUseXOptions {
 		conversationId: string | undefined
 		appId?: string
 		difyApi?: DifyApi
+		storedInputs?: Record<string, unknown>
 	}>
 	entryForm: FormInstance<Record<string, unknown>>
 	filesRef: React.MutableRefObject<IFile[]>
@@ -59,22 +66,147 @@ export const useX = (options: IUseXOptions) => {
 					manual: true,
 					fetch: async (_, options) => {
 						const body = options?.body ? JSON.parse(options.body as string) : {}
+						const difyApi = latestProps.current.difyApi
+						if (!difyApi) {
+							throw new Error('Dify API not initialized')
+						}
 
-						// 实时获取 inputs 和 files，确保获取到的是最新值
 						const currentInputs = entryForm.getFieldsValue() || {}
 						const currentFiles = filesRef.current || []
+						const mergedInputs = mergeConversationAndFormInputs(
+							latestProps.current.storedInputs || {},
+							currentInputs,
+						)
+						// chatflow 改为统一使用 Syllabus 承载“用户上传 + 隐式再上传”
+						const chatflowInputs: Record<string, unknown> = { ...mergedInputs }
+						if (Object.prototype.hasOwnProperty.call(chatflowInputs, 'Calendar')) {
+							delete chatflowInputs.Calendar
+						}
+						let enrichedInputs: Record<string, unknown> = mergedInputs
+						try {
+							enrichedInputs = await enrichChatflowInputsWithSyllabus({
+								inputs: chatflowInputs,
+								userId: user,
+								difyApi,
+							})
+						} catch (enrichError) {
+							console.warn(
+								'[chatflow] enrichChatflowInputsWithSyllabus failed, continue without enrichment',
+								enrichError,
+							)
+							enrichedInputs = chatflowInputs
+						}
 
-						// 覆盖 body 中的 inputs 和 files
-						body.inputs = currentInputs
+						body.inputs = enrichedInputs
 						body.files = currentFiles
 						const { conversationId } = latestProps.current
 						if (!body.conversation_id && conversationId && !isTempId(conversationId)) {
 							body.conversation_id = conversationId
 						}
-						if (!latestProps.current.difyApi) {
-							throw new Error('Dify API not initialized')
+						if (body.conversation_id && isTempId(body.conversation_id)) {
+							body.conversation_id = undefined
 						}
-						return latestProps.current.difyApi.sendMessage(body)
+
+						const requestWithInputs = async (nextInputs: Record<string, unknown>) => {
+							let serializableInputs: Record<string, unknown> = nextInputs
+							try {
+								serializableInputs = await prepareInputsForDify({
+									inputs: nextInputs,
+									targetKeys: ['Syllabus'],
+									difyApi,
+									forceLocalFile: true,
+								})
+							} catch (prepareError) {
+								console.warn(
+									'[chatflow] prepareInputsForDify failed, fallback to raw inputs without Syllabus',
+									prepareError,
+								)
+								const cloned = { ...nextInputs }
+								delete cloned.Syllabus
+								serializableInputs = cloned
+							}
+							const toInputFiles = (value: unknown): IFile[] => {
+								const pickOne = (item: unknown): IFile | null => {
+									if (!item || typeof item !== 'object') return null
+									const file = item as Record<string, unknown>
+									const transfer_method =
+										file.transfer_method === 'remote_url' ? 'remote_url' : 'local_file'
+									if (transfer_method === 'local_file') {
+										const upload_file_id =
+											typeof file.upload_file_id === 'string'
+												? file.upload_file_id
+												: typeof file.related_id === 'string'
+													? file.related_id
+													: ''
+										if (!upload_file_id) return null
+										return {
+											type: (typeof file.type === 'string' ? file.type : 'document') as IFile['type'],
+											transfer_method: 'local_file',
+											upload_file_id,
+										}
+									}
+									const url = typeof file.url === 'string' ? file.url : ''
+									if (!url) return null
+									return {
+										type: (typeof file.type === 'string' ? file.type : 'document') as IFile['type'],
+										transfer_method: 'remote_url',
+										url,
+									}
+								}
+								if (Array.isArray(value)) {
+									return value
+										.map(item => pickOne(item))
+										.filter((item): item is IFile => !!item)
+								}
+								const single = pickOne(value)
+								return single ? [single] : []
+							}
+							const syllabusFiles = toInputFiles(serializableInputs.Syllabus)
+							const mergedFiles = [...(currentFiles || []), ...syllabusFiles]
+							const dedupedFiles = mergedFiles.filter((file, index, arr) => {
+								const key =
+									file.transfer_method === 'local_file'
+										? file.upload_file_id || ''
+										: file.url || ''
+								if (!key) return true
+								return arr.findIndex(other => {
+									const otherKey =
+										other.transfer_method === 'local_file'
+											? other.upload_file_id || ''
+											: other.url || ''
+									return otherKey === key
+								}) === index
+							})
+							console.log('[chatflow] serializable Syllabus', serializableInputs.Syllabus)
+							console.log('[chatflow] outbound files', dedupedFiles)
+							return difyApi.sendMessage({
+								...body,
+								inputs: serializableInputs,
+								files: dedupedFiles,
+							})
+						}
+
+						console.log('[chatflow] sendMessage body', {
+							query: body.query,
+							conversation_id: body.conversation_id,
+							inputKeys: Object.keys(enrichedInputs || {}),
+							hasSyllabus: Object.prototype.hasOwnProperty.call(enrichedInputs || {}, 'Syllabus'),
+							files: Array.isArray(currentFiles) ? currentFiles.length : 0,
+							syllabusShape: Array.isArray(enrichedInputs?.Syllabus)
+								? 'array'
+								: typeof enrichedInputs?.Syllabus,
+						})
+						const result = await executeWithInputFileRetry({
+							inputs: enrichedInputs,
+							difyApi,
+							request: requestWithInputs,
+							targetKeys: ['Syllabus'],
+						})
+						if (!result.response?.ok) {
+							const errText = await result.response?.clone().text().catch(() => '')
+							console.error('[chatflow] sendMessage non-ok response', result.response?.status, errText)
+						}
+						return result.response
 					},
 					params: {
 						// 这里传入空对象是为了满足类型要求，实际请求时会在 fetch 中获取最新值
@@ -87,6 +219,18 @@ export const useX = (options: IUseXOptions) => {
 					callbacks: {
 						onSuccess: messages => {
 							console.log('onSuccess', messages)
+							try {
+								const first = Array.isArray(messages) && messages.length > 0 ? messages[0] : null
+								console.log('[chatflow] onSuccess:first', {
+									status: first?.status,
+									role: first?.message?.role,
+									content: first?.message?.content,
+									error: first?.message?.error,
+									workflows: first?.message?.workflows,
+								})
+							} catch (e) {
+								console.warn('[chatflow] onSuccess debug log failed', e)
+							}
 							// setMessages(messages)
 						},
 						onError: error => {

@@ -41,6 +41,29 @@ export async function OPTIONS(request: Request) {
   return response;
 }
 
+const toValidDateOrNull = (value: unknown) => {
+  if (!value) return null;
+  const date = new Date(String(value));
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const toDueDateStringOrNull = (value: unknown) => {
+  if (value == null) return null;
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed || null;
+  }
+  const date = toValidDateOrNull(value);
+  return date ? date.toISOString() : null;
+};
+
+const normalizeTaskId = (value: unknown) => {
+  const raw = typeof value === 'string' ? value.trim() : '';
+  if (!raw) return '';
+  // Keep id within typical indexed varchar limits.
+  return raw.slice(0, 180);
+};
+
 // 2. 处理 POST 核心请求
 export async function POST(request: Request) {
   const origin = request.headers.get('origin');
@@ -58,14 +81,14 @@ export async function POST(request: Request) {
     }
 
     const normalizedTasks = tasks
-      .filter((task: any) => task && typeof task.id === 'string' && task.id.trim() && typeof task.title === 'string' && task.title.trim())
+      .filter((task: any) => task && typeof task.title === 'string' && task.title.trim())
       .map((task: any) => ({
-        id: task.id.trim(),
+        id: normalizeTaskId(task.id),
         title: task.title.trim(),
-        startAt: task.startAt ? new Date(task.startAt) : null,
-        endAt: task.endAt ? new Date(task.endAt) : null,
+        startAt: toValidDateOrNull(task.startAt),
+        endAt: toValidDateOrNull(task.endAt),
         allDay: typeof task.allDay === 'boolean' ? task.allDay : true,
-        dueDate: task.dueDate || null,
+        dueDate: toDueDateStringOrNull(task.dueDate),
         weight: typeof task.weight === 'number' ? task.weight : Number(task.weight) || 0,
         type: task.type || 'Task',
         courseName: task.courseName || null,
@@ -74,7 +97,8 @@ export async function POST(request: Request) {
         pageNumbersJson: task.pageNumbers ? JSON.stringify(task.pageNumbers) : null,
         estimatedHours: task.estimatedHours ?? null,
         rationale: task.rationale || null,
-      }));
+      }))
+      .filter((task: any) => task.id);
 
     let upsertCount = 0;
     let deletedCount = 0;

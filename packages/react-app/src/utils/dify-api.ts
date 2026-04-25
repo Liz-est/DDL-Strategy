@@ -598,15 +598,64 @@ export class DifyApi {
 	 */
 	uploadFile = async (file: File) => {
 		const formData = new FormData()
-		formData.append('file', file)
+		const normalizeUploadFilename = (input: File) => {
+			const rawName = (input.name || '').trim()
+			const hasExtension = /\.[^./\\]+$/.test(rawName)
+			if (rawName && hasExtension) return rawName
+			const extByMime: Record<string, string> = {
+				'text/plain': '.txt',
+				'text/markdown': '.md',
+				'application/pdf': '.pdf',
+				'application/json': '.json',
+			}
+			const fallbackExt = extByMime[input.type] || '.txt'
+			if (!rawName) return `upload-${Date.now()}${fallbackExt}`
+			return `${rawName}${fallbackExt}`
+		}
+		const finalFilename = normalizeUploadFilename(file)
+		// Always pass filename explicitly, so multipart keeps the suffix.
+		formData.append('file', file, finalFilename)
 		formData.append('user', this.options.user)
-		return this.baseRequest
-			.baseRequest('/files/upload', {
-				method: 'POST',
-				body: formData,
-			})
-			.then(res => res.json())
-			.then(res => res.data) as Promise<IUploadFileResponse>
+		console.log('[upload] sending file', {
+			originalName: file.name,
+			finalFilename,
+			declaredMime: file.type,
+			size: file.size,
+		})
+		const response = await this.baseRequest.baseRequest('/files/upload', {
+			method: 'POST',
+			body: formData,
+		})
+		const rawText = await response.text()
+		let payload: any = {}
+		try {
+			payload = rawText ? JSON.parse(rawText) : {}
+		} catch {
+			payload = { error: rawText || 'Upload API returned non-JSON response' }
+		}
+		const data = payload?.data
+		if (!response.ok) {
+			const msg =
+				data?.message ||
+				data?.error ||
+				payload?.message ||
+				payload?.error ||
+				`Upload failed with status ${response.status}`
+			console.error('[upload] failed', { status: response.status, msg, payload })
+			throw new Error(String(msg))
+		}
+		if (!data || typeof data.id !== 'string' || !data.id) {
+			console.error('[upload] missing id in response', payload)
+			throw new Error('Upload response missing file id')
+		}
+		console.log('[upload] dify recognized', {
+			id: data.id,
+			name: data.name,
+			extension: data.extension,
+			mime_type: data.mime_type,
+			size: data.size,
+		})
+		return data as IUploadFileResponse
 	}
 
 	/**

@@ -29,6 +29,19 @@ import {
 import { type AcademicEvent, type TaskCategory, useAcademicPlannerStore } from '@/store/academic-planner'
 
 const LOCAL_DRAFT_KEY = 'academic-events-draft-v1'
+const AI_IMPORT_FINGERPRINTS_KEY = 'ai-import-fingerprints-v1'
+const MAX_IMPORT_FINGERPRINTS = 200
+
+const makeAiImportFingerprint = (params: { courseCode: string; parsed: unknown; rowCount: number }) => {
+	const serialized = (() => {
+		try {
+			return JSON.stringify(params.parsed)
+		} catch {
+			return String(params.parsed)
+		}
+	})()
+	return `${params.courseCode}::${params.rowCount}::${serialized}`
+}
 
 const getSemesterProgress = (events: AcademicEvent[]) => {
 	const academic = events.filter(item => item.taskCategory !== 'chores')
@@ -92,6 +105,8 @@ export default function ChatPage() {
 	const lastPayloadFingerprint = useRef<string>('')
 	const syncedCourseCodesRef = useRef<Set<string>>(new Set())
 	const choresDirtyRef = useRef(false)
+	const seenImportFingerprintsRef = useRef<Set<string>>(new Set())
+	const duplicateNoticeShownFingerprintsRef = useRef<Set<string>>(new Set())
 
 	const getDefaultTimeRange = (allDay = false): [string, string] => {
 		if (allDay) {
@@ -230,6 +245,18 @@ export default function ChatPage() {
 	}, [apiBase, events, hasInitialized, setSyncStatus, userId])
 
 	useEffect(() => {
+		const key = userId ? `${AI_IMPORT_FINGERPRINTS_KEY}:${userId}` : `${AI_IMPORT_FINGERPRINTS_KEY}:guest`
+		const raw = localStorage.getItem(key)
+		if (!raw) return
+		try {
+			const parsed = JSON.parse(raw) as string[]
+			seenImportFingerprintsRef.current = new Set(parsed.filter(item => typeof item === 'string'))
+		} catch {
+			seenImportFingerprintsRef.current = new Set()
+		}
+	}, [userId])
+
+	useEffect(() => {
 		const observer = new MutationObserver(() => {
 			if (observeTimerRef.current) clearTimeout(observeTimerRef.current)
 			observeTimerRef.current = setTimeout(() => {
@@ -237,15 +264,25 @@ export default function ChatPage() {
 				const payload = extractAcademicPayloadFromText(content)
 				if (!payload) return
 
-				const firstTaskTitle =
-					typeof payload.rows[0]?.task?.title === 'string'
-						? payload.rows[0].task.title
-						: typeof payload.rows[0]?.task?.name === 'string'
-							? payload.rows[0].task.name
-							: ''
-				const fingerprint = `${payload.courseCode}-${payload.rows.length}-${firstTaskTitle}`
+				const fingerprint = makeAiImportFingerprint({
+					courseCode: payload.courseCode,
+					parsed: payload.parsed,
+					rowCount: payload.rows.length,
+				})
 				if (fingerprint === lastPayloadFingerprint.current) return
+				if (seenImportFingerprintsRef.current.has(fingerprint)) {
+					if (!duplicateNoticeShownFingerprintsRef.current.has(fingerprint)) {
+						message.info('Detected duplicate AI output; skipped re-import.')
+						duplicateNoticeShownFingerprintsRef.current.add(fingerprint)
+					}
+					return
+				}
 				lastPayloadFingerprint.current = fingerprint
+				seenImportFingerprintsRef.current.add(fingerprint)
+				const key = userId ? `${AI_IMPORT_FINGERPRINTS_KEY}:${userId}` : `${AI_IMPORT_FINGERPRINTS_KEY}:guest`
+				const list = Array.from(seenImportFingerprintsRef.current).slice(-MAX_IMPORT_FINGERPRINTS)
+				seenImportFingerprintsRef.current = new Set(list)
+				localStorage.setItem(key, JSON.stringify(list))
 
 				const newEvents = payload.rows.map((row, index) =>
 					mapTaskToEvent(row.task, row.courseCode, index, row.courseName)

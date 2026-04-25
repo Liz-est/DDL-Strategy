@@ -12,6 +12,7 @@ import {
 	mergeUniqueEvents,
 	normalizeAcademicPayload,
 	parseGradingPolicyText,
+	renameCourseCode,
 	saveJsonToDatabase,
 	syncAcademicTasks,
 	syncChoresTasks,
@@ -439,6 +440,28 @@ describe('academic-sync requests', () => {
 
 	test('deleteCourseBundle should reject protected codes', async () => {
 		await expect(deleteCourseBundle({ apiBase: '', userId: 'u1', courseCode: 'UNKNOWN' })).rejects.toThrow()
+	})
+
+	test('renameCourseCode should post to /academic/course/rename', async () => {
+		const fetchMock = vi.fn(async () => ({
+			ok: true,
+			json: async () => ({ success: true }),
+			text: async () => '',
+		}))
+		vi.stubGlobal('fetch', fetchMock)
+
+		await renameCourseCode({
+			apiBase: '',
+			userId: 'u1',
+			fromCourseCode: 'MAT3007',
+			toCourseCode: 'MAT3008',
+		})
+
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+		expect(url).toBe('/api/client/academic/course/rename')
+		const payload = JSON.parse((init.body as string) || '{}')
+		expect(payload.fromCourseCode).toBe('MAT3007')
+		expect(payload.toCourseCode).toBe('MAT3008')
 	})
 
 	test('upsertCourseProfile should post to /academic/course/upsert', async () => {

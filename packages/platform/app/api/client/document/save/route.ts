@@ -272,7 +272,7 @@ export async function POST(request: Request) {
       });
 
       const courses = normalizeCourses(jsonData, courseCode || null)
-      for (const item of courses) {
+      for (const [index, item] of courses.entries()) {
         const courseInfo = toObject(item.course_info) ?? {}
         const normalizedCourseCode = normalizeCourseCode(courseInfo, courseCode || null)
         const courseId = `course-${userId}-${normalizedCourseCode}`
@@ -359,7 +359,7 @@ export async function POST(request: Request) {
           `INSERT INTO ingestion_snapshots
             (id, user_id, course_code, course_id, processing_result_id, source_type, raw_json, report_text, parsed_policy_json, created_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-          `snapshot-${processingResult.id}-${normalizedCourseCode}`,
+          `snapshot-${processingResult.id}-${normalizedCourseCode}-${index}`,
           userId,
           normalizedCourseCode,
           courseId,

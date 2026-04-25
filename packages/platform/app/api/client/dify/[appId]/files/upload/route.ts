@@ -32,8 +32,20 @@ export async function POST(
 			},
 			body: proxyFormData,
 		})
-		const data = await response.json()
-		return createDifyApiResponse(data, response.status)
+		const contentType = response.headers.get('content-type') || ''
+		const rawText = await response.text()
+		let parsedData: unknown = rawText
+		if (contentType.includes('application/json')) {
+			try {
+				parsedData = rawText ? JSON.parse(rawText) : {}
+			} catch {
+				parsedData = {
+					error: 'Invalid JSON from upstream upload API',
+					raw: rawText,
+				}
+			}
+		}
+		return createDifyApiResponse(parsedData, response.status)
 	} catch (error) {
 		const resolvedParams = await params
 		return handleApiError(error, `Error uploading file for ${resolvedParams.appId}`)

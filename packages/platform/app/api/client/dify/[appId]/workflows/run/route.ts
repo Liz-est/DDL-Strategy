@@ -73,6 +73,89 @@ export async function POST(
 		// 获取用户ID
 		const userId = getUserIdFromRequest(request)
 
+		// 服务端兜底：剔除非 Dify 标准的文件字段（如 originFileObj），避免触发 Type is not JSON serializable: File
+		type SanitizedFile = {
+			type: string
+			transfer_method: 'local_file' | 'remote_url'
+			upload_file_id?: string
+			url?: string
+		}
+		const sanitizeOneFile = (item: unknown): SanitizedFile | null => {
+			if (!item || typeof item !== 'object') return null
+			const file = item as Record<string, unknown>
+			const transfer_method =
+				file.transfer_method === 'remote_url' ? 'remote_url' : 'local_file'
+			const type =
+				typeof file.type === 'string' && file.type ? (file.type as string) : 'document'
+			if (transfer_method === 'local_file') {
+				const upload_file_id =
+					typeof file.upload_file_id === 'string' && file.upload_file_id
+						? (file.upload_file_id as string)
+						: typeof file.related_id === 'string' && file.related_id
+							? (file.related_id as string)
+							: ''
+				if (!upload_file_id) return null
+				return { type, transfer_method: 'local_file', upload_file_id }
+			}
+			const url =
+				typeof file.url === 'string' && file.url
+					? (file.url as string)
+					: typeof file.remote_url === 'string'
+						? (file.remote_url as string)
+						: ''
+			if (!url) return null
+			return { type, transfer_method: 'remote_url', url }
+		}
+		const sanitizeFileArray = (value: unknown): SanitizedFile[] => {
+			if (Array.isArray(value)) {
+				return value.map(sanitizeOneFile).filter((x): x is SanitizedFile => !!x)
+			}
+			const single = sanitizeOneFile(value)
+			return single ? [single] : []
+		}
+		const looksLikeFileObject = (obj: Record<string, unknown>) =>
+			'upload_file_id' in obj ||
+			'related_id' in obj ||
+			'url' in obj ||
+			'remote_url' in obj ||
+			'originFileObj' in obj ||
+			'transfer_method' in obj
+		const sanitizedInputs: Record<string, unknown> = {}
+		for (const [key, value] of Object.entries(
+			(inputs as Record<string, unknown> | undefined) || {},
+		)) {
+			if (Array.isArray(value)) {
+				if (
+					value.length > 0 &&
+					value.some(item => item && typeof item === 'object') &&
+					value.some(
+						item =>
+							item &&
+							typeof item === 'object' &&
+							looksLikeFileObject(item as Record<string, unknown>),
+					)
+				) {
+					const cleaned = sanitizeFileArray(value)
+					if (cleaned.length > 0) sanitizedInputs[key] = cleaned
+					continue
+				}
+				sanitizedInputs[key] = value
+				continue
+			}
+			if (value && typeof value === 'object') {
+				const obj = value as Record<string, unknown>
+				if (looksLikeFileObject(obj)) {
+					const cleaned = sanitizeOneFile(obj)
+					if (cleaned) sanitizedInputs[key] = cleaned
+					continue
+				}
+			}
+			sanitizedInputs[key] = value
+		}
+		console.log('[workflows/run proxy] normalized payload', {
+			inputKeys: Object.keys(sanitizedInputs),
+		})
+
 		// 代理请求到 Dify API
 		const response = await fetch(`${app.requestConfig.apiBase}/workflows/run`, {
 			method: 'POST',
@@ -83,7 +166,7 @@ export async function POST(
 			body: JSON.stringify({
 				response_mode: 'streaming',
 				user: userId,
-				inputs,
+				inputs: sanitizedInputs,
 			}),
 		})
 

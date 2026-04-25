@@ -68,6 +68,7 @@ export default function ChatboxWrapper(props: IChatboxWrapperProps) {
 		conversationId: currentConversationId,
 		appId: currentAppId,
 		difyApi,
+		storedInputs: currentConversationInfo?.inputs || {},
 	})
 
 	const defaultRequestLimit = 10

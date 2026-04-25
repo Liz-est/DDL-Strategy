@@ -6,6 +6,7 @@ import { Button, Drawer, Form, Input, InputNumber, Modal, Space, Table, message 
 import {
 	deleteCourseBundle,
 	isCourseCodeDeletable,
+	renameCourseCode,
 	saveCoursePolicies,
 	syncAcademicTasks,
 	upsertCourseProfile,
@@ -153,6 +154,15 @@ export default function CoursePlannerEditDrawer({
 		}
 		setSaving(true)
 		try {
+			const previousCode = courseCode
+			if (previousCode !== nextCourseCode) {
+				await renameCourseCode({
+					apiBase,
+					userId,
+					fromCourseCode: previousCode,
+					toCourseCode: nextCourseCode,
+				})
+			}
 			await upsertCourseProfile({
 				apiBase,
 				userId,
@@ -173,7 +183,6 @@ export default function CoursePlannerEditDrawer({
 				// If cleared, skip API (no "empty policy" contract); user can re-run ingestion later.
 			}
 
-			const previousCode = courseCode
 			const currentEvents = useAcademicPlannerStore.getState().events
 			const oldCourseEvents = currentEvents.filter(
 				e => e.taskCategory !== 'chores' && (e.courseCode || 'GENERAL') === previousCode
@@ -232,20 +241,6 @@ export default function CoursePlannerEditDrawer({
 					),
 				})
 			}
-			if (previousCode !== nextCourseCode && previousCode !== DEFAULT_COURSE) {
-				await syncAcademicTasks({
-					apiBase,
-					userId,
-					courseCode: previousCode,
-					events: nextAllEvents.filter(
-						item => item.taskCategory !== 'chores' && (item.courseCode || 'GENERAL') === previousCode
-					),
-				})
-				if (isCourseCodeDeletable(previousCode)) {
-					await deleteCourseBundle({ apiBase, userId, courseCode: previousCode })
-				}
-			}
-
 			await onRefetch()
 			onCourseSaved?.(nextCourseCode, previousCode)
 			message.success('Course updated')

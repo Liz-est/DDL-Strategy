@@ -8,12 +8,14 @@ import {
 	EventEnum,
 	IAgentThought,
 	IChunkChatCompletionResponse,
+	IErrorEvent,
 	IFile,
 	IMessageFileItem,
 	IWorkflowNode,
 } from '@dify-chat/api'
 import { Roles } from '@dify-chat/core'
 import { isTempId } from '@dify-chat/helpers'
+import { message as antdMessage } from 'antd'
 
 import { IAgentMessage } from '@/types'
 
@@ -114,8 +116,12 @@ export class CustomProvider<
 	transformMessage(info: TransformMessage<ChatMessage, Output>): ChatMessage {
 		const { originMessage, chunk } = info || {}
 		const workflows = (originMessage?.workflows as NonNullable<IAgentMessage['workflows']>) || {}
-		const agentThoughts: IAgentThought[] = []
-		const files: IMessageFileItem[] = []
+		const agentThoughts: IAgentThought[] = Array.isArray(originMessage?.agentThoughts)
+			? [...(originMessage.agentThoughts as IAgentThought[])]
+			: []
+		const files: IMessageFileItem[] = Array.isArray(originMessage?.files)
+			? [...(originMessage.files as IMessageFileItem[])]
+			: []
 		let messageId = originMessage?.id || ''
 
 		if (!chunk || !chunk?.data || (chunk?.data && chunk?.data?.includes('[DONE]'))) {
@@ -158,6 +164,22 @@ export class CustomProvider<
 			console.error('解析 JSON 失败', error)
 			return originMessage as ChatMessage
 		}
+		const pickWorkflowOutputText = (data?: Record<string, unknown>) => {
+			if (!data || typeof data !== 'object') return ''
+			const outputs = (data as { outputs?: unknown }).outputs
+			if (!outputs || typeof outputs !== 'object') return ''
+			const values = Object.values(outputs as Record<string, unknown>)
+			const firstString = values.find(value => typeof value === 'string' && value.trim())
+			if (typeof firstString === 'string') return firstString
+			try {
+				return JSON.stringify(outputs, null, 2)
+			} catch {
+				return ''
+			}
+		}
+		if (parsedData.event !== EventEnum.PING) {
+			console.log('[chatflow] stream event', parsedData.event, parsedData)
+		}
 		if (parsedData.conversation_id && parsedData.conversation_id !== this.currentConversationId) {
 			this.currentConversationId = parsedData.conversation_id
 			this.onConversationIdChange?.(this.currentConversationId)
@@ -185,13 +207,49 @@ export class CustomProvider<
 		} else if (parsedData.event === EventEnum.WORKFLOW_FINISHED) {
 			console.log('工作流结束', parsedData)
 			workflows.status = 'finished'
+			const workflowFinishedData = (innerData || {}) as Record<string, unknown>
+			const status =
+				typeof workflowFinishedData.status === 'string' ? workflowFinishedData.status : ''
+			const errorMsg =
+				typeof workflowFinishedData.error === 'string' ? workflowFinishedData.error : ''
+			const workflowText = pickWorkflowOutputText(workflowFinishedData)
 			this.setWorkflowDataStorage({
 				conversationId: this.currentConversationId!,
 				messageId,
 				value: workflows,
 			})
+			if (status === 'failed' || errorMsg) {
+				console.error('[chatflow] workflow failed', workflowFinishedData)
+				const tip = errorMsg || '工作流执行失败（无错误描述）'
+				let displayTip = tip
+				// 典型 Dify 工作流节点错误：节点把 File 变量直接 JSON 序列化
+				if (/Type is not JSON serializable:\s*File/i.test(tip)) {
+					displayTip =
+						'工作流内部错误：某个节点把 Calendar/Syllabus 这类 File 变量直接 JSON 序列化了。\n' +
+						'请到 Dify 控制台打开本应用，检查使用 Calendar/Syllabus 的节点（常见：Code 节点、Template 节点、Tool 入参）。\n' +
+						'修复建议：\n' +
+						'  • Code 节点：用 Calendar.text_content 或文档抽取工具，不要直接对 File 做 json.dumps；\n' +
+						'  • Template 节点：使用 {{#Calendar.text_content#}} / {{#Calendar.url#}} 而不是 {{Calendar}}；\n' +
+						'  • LLM 节点：在变量插槽里把 Calendar 作为「文件内容」引用，而不是「JSON 对象」引用；\n' +
+						'  • 也可以临时执行 localStorage.setItem("IMPLICIT_REUPLOAD_DISABLED","1") 关闭隐式注入做对照实验。'
+					console.warn('[chatflow] workflow failed: File JSON-serialization detected', {
+						suggestion: displayTip,
+					})
+				}
+				antdMessage.error(displayTip)
+				return {
+					...originMessage,
+					status: 'error',
+					error: displayTip,
+					content: workflowText || displayTip,
+					workflows,
+					role: Roles.AI,
+					id: messageId,
+				} as unknown as ChatMessage
+			}
 			return {
 				...originMessage,
+				content: workflowText || originMessage?.content || '',
 				workflows,
 			} as ChatMessage
 		} else if (parsedData.event === EventEnum.WORKFLOW_NODE_STARTED) {
@@ -256,25 +314,32 @@ export class CustomProvider<
 				id: messageId,
 			} as ChatMessage
 		}
-		// if (parsedData.event === EventEnum.ERROR) {
-		// 	onError({
-		// 		name: `${(parsedData as unknown as IErrorEvent).status}: ${(parsedData as unknown as IErrorEvent).code}`,
-		// 		message: (parsedData as unknown as IErrorEvent).message,
-		// 	})
-		// 	getConversationMessages(parsedData.conversation_id)
-		// }
+		if (parsedData.event === EventEnum.ERROR) {
+			const err = parsedData as unknown as IErrorEvent
+			const errMessage =
+				err.message || `${err.status ?? ''}${err.code ? `: ${err.code}` : ''}` || 'Dify 返回错误事件'
+			console.error('Dify ERROR event', err)
+			antdMessage.error(errMessage)
+			return {
+				...originMessage,
+				status: 'error',
+				error: errMessage,
+				role: Roles.AI,
+				id: messageId,
+			} as unknown as ChatMessage
+		}
 		if (parsedData.event === EventEnum.AGENT_MESSAGE) {
+			const text = parsedData.answer || ''
 			const lastAgentThought = agentThoughts[agentThoughts.length - 1]
-
-			if (lastAgentThought) {
-				// 将agent_message以流式形式输出到最后一条agent_thought里
-				const text = parsedData.answer
+			if (lastAgentThought && typeof lastAgentThought.thought === 'string') {
+				// 将 agent_message 也同步写入最后一条 thought，便于思维链展示
 				lastAgentThought.thought += text
 			}
 
 			return {
 				...originMessage,
 				taskId: this.currentTaskId,
+				content: (originMessage?.content || '') + text,
 				agentThoughts,
 				id: messageId,
 			} as ChatMessage

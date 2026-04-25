@@ -71,6 +71,26 @@ export function createDifyResponseProxy(response: Response) {
 export async function createFormDataProxy(request: NextRequest) {
 	const proxyFormData = new FormData()
 	const formData = await request.formData()
+	const extensionFromMime = (mimeType: string) => {
+		const map: Record<string, string> = {
+			'text/plain': '.txt',
+			'text/markdown': '.md',
+			'application/pdf': '.pdf',
+			'application/json': '.json',
+			'application/msword': '.doc',
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+			'text/csv': '.csv',
+		}
+		return map[mimeType] || ''
+	}
+	const ensureFilenameWithExtension = (name: string, mimeType: string, key: string) => {
+		const normalizedName = (name || '').trim()
+		const hasExtension = /\.[^./\\]+$/.test(normalizedName)
+		if (normalizedName && hasExtension) return normalizedName
+		const ext = extensionFromMime(mimeType) || '.txt'
+		if (!normalizedName) return `${key}-${Date.now()}${ext}`
+		return `${normalizedName}${ext}`
+	}
 
 	for (const [key, value] of formData.entries()) {
 		if (
@@ -79,7 +99,12 @@ export async function createFormDataProxy(request: NextRequest) {
 			typeof value.arrayBuffer === 'function' &&
 			'name' in value
 		) {
-			proxyFormData.append(key, value, value.name)
+			const filename = ensureFilenameWithExtension(
+				typeof value.name === 'string' ? value.name : '',
+				typeof value.type === 'string' ? value.type : '',
+				key,
+			)
+			proxyFormData.append(key, value, filename)
 		} else {
 			proxyFormData.append(key, value as string)
 		}

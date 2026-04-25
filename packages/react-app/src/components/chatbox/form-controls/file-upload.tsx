@@ -133,19 +133,28 @@ export default function FileUpload(props: IFileUploadProps) {
 			}
 		}
 		const { clear } = mockLoadingProgress()
-
-		const result = await difyApi!.uploadFile(file)
-		clear()
-		const fileType = getDifyFileType(file.name, allowed_file_types)
-		updateFiles([
-			{
-				...fileBaseInfo,
-				upload_file_id: result.id,
-				type: fileType || 'custom',
-				percent: 100,
-				status: 'done',
-			},
-		])
+		try {
+			const result = await difyApi!.uploadFile(file)
+			const fileType = getDifyFileType(file.name, allowed_file_types)
+			updateFiles([
+				{
+					...fileBaseInfo,
+					upload_file_id: result.id,
+					type: fileType || 'custom',
+					percent: 100,
+					status: 'done',
+				},
+			])
+		} catch (error) {
+			console.error('[file-upload] upload failed', error)
+			message.error((error as Error)?.message || '文件上传失败')
+			updateFiles(
+				files.filter(item => item.uid !== file.uid),
+				'remove',
+			)
+		} finally {
+			clear()
+		}
 	}
 
 	/**

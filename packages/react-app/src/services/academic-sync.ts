@@ -775,6 +775,33 @@ export const deleteCourseBundle = async (params: { apiBase: string; userId: stri
 	)
 }
 
+export const renameCourseCode = async (params: {
+	apiBase: string
+	userId: string
+	fromCourseCode: string
+	toCourseCode: string
+}) => {
+	const { apiBase, userId, fromCourseCode, toCourseCode } = params
+	const from = String(fromCourseCode || '').trim()
+	const to = String(toCourseCode || '').trim()
+	if (!userId || !from || !to) {
+		throw new Error('Missing required params for course rename')
+	}
+	if (from === to) return { success: true }
+	const url = createApiUrl(apiBase, '/academic/course/rename')
+	return withRetry(() =>
+		requestJson(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				userId,
+				fromCourseCode: from,
+				toCourseCode: to,
+			}),
+		})
+	)
+}
+
 export const syncAcademicTasks = async (params: {
 	apiBase: string
 	userId: string
@@ -783,10 +810,17 @@ export const syncAcademicTasks = async (params: {
 }) => {
 	const { apiBase, userId, courseCode, events } = params
 	const url = createApiUrl(apiBase, '/academic/sync')
+	const toSafeTaskId = (event: AcademicEvent, index: number) => {
+		const raw = String(event.id || '').trim()
+		if (raw) return raw.slice(0, 180)
+		const title = String(event.title || 'task').replace(/\s+/g, '-').slice(0, 80)
+		const start = String(event.start || '').replace(/[^\dT:-]/g, '').slice(0, 24)
+		return `task-${index}-${title}-${start}`.slice(0, 180)
+	}
 	const academicScoped = events.filter(item => item.taskCategory !== 'chores')
 	const tasks = academicScoped
-		.map(event => ({
-		id: String(event.id || '').trim(),
+		.map((event, index) => ({
+		id: toSafeTaskId(event, index),
 		title: String(event.title || '').trim(),
 		startAt: event.start,
 		endAt: event.end || null,
